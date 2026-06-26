@@ -1,0 +1,26 @@
+schema: aetherpanel.template/v1
+id: arma3
+name: Arma 3
+category: Tactical
+summary: Arma 3 dedicated server with launch-argument mod load order.
+install: { method: steamcmd, app_id: "233780", install_dir: /data, image: ghcr.io/aetherpanel/steamcmd:latest, anonymous: false }
+runtime:
+  working_dir: /data
+  startup: './arma3server_x64 -config=server.cfg -port={game_port} {workshop_launch_args}'
+  stop_command: "#shutdown"
+  console: true
+resources: { min_ram_mb: 4096, recommended_ram_mb: 8192, min_disk_gb: 40, cpu: 4 shared vCPU }
+ports:
+  - { key: game, name: Game Port, default: 2302, protocol: udp, required: true }
+  - { key: steam_query, name: Steam Query, default: 2303, protocol: udp, required: true }
+config_files:
+  - { path: server.cfg, type: text, editable: true }
+workshop:
+  enabled: true
+  providers: [steam]
+  app_id: "107410"
+  collection_support: true
+  config_injection: { file: startup.args, key: mod, format: launch_args }
+backup: { include: [profiles, server.cfg, mpmissions], exclude: [steamapps/downloading] }
+supported_os: [linux, windows]
+source: { type: curated, needs_review: false }

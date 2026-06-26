@@ -1,0 +1,22 @@
+schema: aetherpanel.template/v1
+id: minecraft-java
+name: Minecraft Java
+category: Sandbox
+summary: Java Edition server with version, plugin, and world management.
+install: { method: docker_image, install_dir: /data, image: itzg/minecraft-server:latest, anonymous: true }
+runtime: { working_dir: /data, startup: docker-entrypoint.sh, stop_command: stop, console: true }
+resources: { min_ram_mb: 2048, recommended_ram_mb: 4096, min_disk_gb: 10, cpu: 2 shared vCPU }
+ports:
+  - { key: game, name: Game Port, default: 25565, protocol: tcp, required: true }
+config_files:
+  - { path: server.properties, type: properties, editable: true }
+environment:
+  EULA: "TRUE"
+  TYPE: "PAPER"
+  MEMORY: "{memory_mb}M"
+startup_variables:
+  - { key: VERSION, label: Minecraft Version, default: LATEST, customer_editable: true }
+workshop: { enabled: false, providers: [] }
+backup: { include: [world, plugins, server.properties], exclude: [cache, logs] }
+supported_os: [linux]
+source: { type: curated, needs_review: false }

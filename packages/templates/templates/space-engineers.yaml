@@ -1,0 +1,25 @@
+schema: aetherpanel.template/v1
+id: space-engineers
+name: Space Engineers
+category: Space
+summary: Space Engineers server with PublishedFileId mod XML support.
+install: { method: steamcmd, app_id: "298740", install_dir: /data, image: ghcr.io/aetherpanel/steamcmd:latest, anonymous: true }
+runtime:
+  working_dir: /data
+  startup: './DedicatedServer64/SpaceEngineersDedicated.exe -noconsole -path Z:\data'
+  stop_command: save
+  console: true
+resources: { min_ram_mb: 6144, recommended_ram_mb: 12288, min_disk_gb: 40, cpu: 4 shared vCPU }
+ports:
+  - { key: game, name: Game Port, default: 27016, protocol: udp, required: true }
+config_files:
+  - { path: Saves/World/Sandbox_config.sbc, type: xml, editable: true }
+workshop:
+  enabled: true
+  providers: [steam]
+  app_id: "244850"
+  collection_support: true
+  config_injection: { file: Saves/World/Sandbox_config.sbc, key: PublishedFileId, format: xml_nodes }
+backup: { include: [Saves], exclude: [steamapps/downloading] }
+supported_os: [windows]
+source: { type: curated, needs_review: false }

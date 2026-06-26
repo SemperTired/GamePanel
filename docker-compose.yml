@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aetherpanel}
+      POSTGRES_USER: ${POSTGRES_USER:-aetherpanel}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./deploy/postgres/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: .
+      dockerfile: deploy/api.Dockerfile
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      DATABASE_REQUIRED: "true"
+      REDIS_REQUIRED: "true"
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    ports:
+      - "4100:4100"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  worker:
+    build:
+      context: .
+      dockerfile: deploy/worker.Dockerfile
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      DATABASE_REQUIRED: "true"
+      REDIS_REQUIRED: "true"
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  web:
+    build:
+      context: .
+      dockerfile: deploy/web.Dockerfile
+    ports:
+      - "4000:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

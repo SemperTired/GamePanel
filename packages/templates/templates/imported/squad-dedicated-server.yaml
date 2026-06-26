@@ -1,0 +1,45 @@
+schema: aetherpanel.template/v1
+id: squad-dedicated-server
+name: Squad
+category: Imported
+summary: Squad Dedicated Server
+install:
+  method: steamcmd
+  app_id: 'True'
+  anonymous: true
+  install_dir: /data
+  image: ghcr.io/aetherpanel/steamcmd:latest
+runtime:
+  working_dir: /data
+  startup: 403240/SquadGame/Binaries/Linux/SquadGameServer
+  console: true
+resources:
+  min_ram_mb: 2048
+  recommended_ram_mb: 4096
+  min_disk_gb: 20
+  cpu: 2 shared vCPU
+ports:
+  - key: game
+    name: Game Port
+    default: 27015
+    protocol: udp
+    required: true
+config_files: []
+environment: {}
+startup_variables: []
+workshop:
+  enabled: false
+  providers: []
+  collection_support: false
+backup:
+  include:
+    - /data
+  exclude:
+    - /data/steamapps/downloading
+supported_os:
+  - linux
+  - windows
+source:
+  type: amp_import
+  url: https://github.com/CubeCoders/AMPTemplates
+  needs_review: true

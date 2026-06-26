@@ -1,0 +1,26 @@
+schema: aetherpanel.template/v1
+id: dayz
+name: DayZ
+category: Survival
+summary: DayZ dedicated server with mod folders and launch parameter generation.
+install: { method: steamcmd, app_id: "223350", install_dir: /data, image: ghcr.io/aetherpanel/steamcmd:latest, anonymous: false }
+runtime:
+  working_dir: /data
+  startup: './DayZServer -config=serverDZ.cfg -port={game_port} {workshop_launch_args}'
+  stop_command: "#shutdown"
+  console: true
+resources: { min_ram_mb: 6144, recommended_ram_mb: 12288, min_disk_gb: 50, cpu: 4 shared vCPU }
+ports:
+  - { key: game, name: Game Port, default: 2302, protocol: udp, required: true }
+  - { key: query, name: Query Port, default: 27016, protocol: udp, required: true }
+config_files:
+  - { path: serverDZ.cfg, type: text, editable: true }
+workshop:
+  enabled: true
+  providers: [steam]
+  app_id: "221100"
+  collection_support: true
+  config_injection: { file: startup.args, key: mod, format: launch_args }
+backup: { include: [mpmissions, profiles, serverDZ.cfg], exclude: [steamapps/downloading] }
+supported_os: [linux, windows]
+source: { type: curated, needs_review: false }

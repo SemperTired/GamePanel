@@ -1,0 +1,28 @@
+schema: aetherpanel.template/v1
+id: ark-survival-evolved
+name: "ARK: Survival Evolved"
+category: Survival
+summary: ARK SE dedicated server with ActiveMods config injection.
+install: { method: steamcmd, app_id: "376030", install_dir: /data, image: ghcr.io/aetherpanel/steamcmd:latest, anonymous: true }
+runtime:
+  working_dir: /data
+  startup: './ShooterGame/Binaries/Linux/ShooterGameServer TheIsland?listen?SessionName="{server_name}"?ServerAdminPassword="{rcon_password}" -server -log'
+  stop_command: DoExit
+  console: true
+resources: { min_ram_mb: 8192, recommended_ram_mb: 12288, min_disk_gb: 80, cpu: 4 shared vCPU }
+ports:
+  - { key: game, name: Game Port, default: 7777, protocol: udp, required: true }
+  - { key: query, name: Query Port, default: 27015, protocol: udp, required: true }
+  - { key: rcon, name: RCON Port, default: 27020, protocol: tcp, required: true }
+config_files:
+  - { path: ShooterGame/Saved/Config/LinuxServer/GameUserSettings.ini, type: ini, editable: true }
+  - { path: ShooterGame/Saved/Config/LinuxServer/Game.ini, type: ini, editable: true }
+workshop:
+  enabled: true
+  providers: [steam]
+  app_id: "346110"
+  collection_support: false
+  config_injection: { file: ShooterGame/Saved/Config/LinuxServer/GameUserSettings.ini, key: ActiveMods, format: comma_separated_ids }
+backup: { include: [ShooterGame/Saved], exclude: [steamapps/downloading] }
+supported_os: [linux, windows]
+source: { type: curated, needs_review: false }

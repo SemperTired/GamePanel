@@ -1,0 +1,44 @@
+schema: aetherpanel.template/v1
+id: risk-of-rain-2
+name: Risk of Rain 2
+category: Imported
+summary: Risk of Rain 2 Dedicated Server
+install:
+  method: steamcmd
+  app_id: 'False'
+  anonymous: true
+  install_dir: /data
+  image: ghcr.io/aetherpanel/steamcmd:latest
+runtime:
+  working_dir: /data
+  startup: /usr/bin/xvfb-run
+  console: true
+resources:
+  min_ram_mb: 2048
+  recommended_ram_mb: 4096
+  min_disk_gb: 20
+  cpu: 2 shared vCPU
+ports:
+  - key: game
+    name: Game Port
+    default: 27015
+    protocol: udp
+    required: true
+config_files: []
+environment: {}
+startup_variables: []
+workshop:
+  enabled: false
+  providers: []
+  collection_support: false
+backup:
+  include:
+    - /data
+  exclude:
+    - /data/steamapps/downloading
+supported_os:
+  - linux
+source:
+  type: amp_import
+  url: https://github.com/CubeCoders/AMPTemplates
+  needs_review: true

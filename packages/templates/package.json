@@ -1,0 +1,17 @@
+{
+  "name": "@aetherpanel/templates",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@aetherpanel/shared": "workspace:*",
+    "js-yaml": "^4.1.0",
+    "zod": "^4.1.11"
+  }
+}

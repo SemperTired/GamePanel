@@ -1,0 +1,17 @@
+schema: aetherpanel.template/v1
+id: minecraft-bedrock
+name: Minecraft Bedrock
+category: Sandbox
+summary: Bedrock dedicated server for cross-platform players.
+install: { method: docker_image, install_dir: /data, image: itzg/minecraft-bedrock-server:latest, anonymous: true }
+runtime: { working_dir: /data, startup: docker-entrypoint.sh, stop_command: stop, console: true }
+resources: { min_ram_mb: 1024, recommended_ram_mb: 2048, min_disk_gb: 8, cpu: 1 shared vCPU }
+ports:
+  - { key: game, name: Game Port, default: 19132, protocol: udp, required: true }
+config_files:
+  - { path: server.properties, type: properties, editable: true }
+environment: { EULA: "TRUE" }
+workshop: { enabled: false, providers: [] }
+backup: { include: [worlds, server.properties], exclude: [logs] }
+supported_os: [linux]
+source: { type: curated, needs_review: false }

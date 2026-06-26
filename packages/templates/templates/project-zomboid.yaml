@@ -1,0 +1,22 @@
+schema: aetherpanel.template/v1
+id: project-zomboid
+name: Project Zomboid
+category: Survival
+summary: Dedicated server with WorkshopItems and Mods load-order support.
+install: { method: docker_image, app_id: "380870", install_dir: /data, image: docker.io/renegademaster/zomboid-dedicated-server:latest, anonymous: true }
+runtime: { working_dir: /data, startup: start-server.sh, stop_command: save; quit, console: true }
+resources: { min_ram_mb: 4096, recommended_ram_mb: 8192, min_disk_gb: 20, cpu: 3 shared vCPU }
+ports:
+  - { key: game, name: Game Port, default: 16261, protocol: udp, required: true }
+  - { key: steam, name: Steam Port, default: 8766, protocol: udp, required: true }
+config_files:
+  - { path: Server/servertest.ini, type: ini, editable: true }
+workshop:
+  enabled: true
+  providers: [steam]
+  app_id: "108600"
+  collection_support: true
+  config_injection: { file: Server/servertest.ini, key: WorkshopItems, format: semicolon_separated_ids }
+backup: { include: [Saves, Server], exclude: [steamapps/downloading] }
+supported_os: [linux]
+source: { type: curated, needs_review: false }

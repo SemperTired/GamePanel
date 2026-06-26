@@ -1,0 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(25, 199, 255, 0.18), transparent 28rem),
+    radial-gradient(circle at 80% 0%, rgba(139, 92, 246, 0.16), transparent 24rem),
+    linear-gradient(135deg, #050914, #07111f 45%, #040711);
+  color: #e7f4ff;
+}
+
+.glass {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.72), rgba(2, 6, 23, 0.64));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px);
+}
+
+.glow {
+  box-shadow: 0 0 24px rgba(25, 199, 255, 0.18);
+}
