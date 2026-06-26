@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { AuthGuard, RequirePermission } from "../auth/auth.guard.js";
 import { ModsService } from "./mods.service.js";
@@ -14,6 +14,18 @@ export class ModsController {
   @RequirePermission("services:mods")
   list(@Param("serviceId") serviceId: string) {
     return this.mods.list(serviceId);
+  }
+
+  @Get("providers")
+  @RequirePermission("services:mods")
+  providers(@Param("serviceId") serviceId: string) {
+    return this.mods.providers(serviceId);
+  }
+
+  @Get("search")
+  @RequirePermission("services:mods")
+  search(@Param("serviceId") serviceId: string, @Query("provider") provider = "steam", @Query("q") query = "") {
+    return this.mods.search(serviceId, provider as any, query);
   }
 
   @Post()

@@ -96,7 +96,7 @@ export const configFileSchema = z.object({
 });
 export type ConfigFile = z.infer<typeof configFileSchema>;
 
-export const workshopAdapterSchema = z.enum(["steam", "modio", "thunderstore", "curseforge", "github", "direct_url", "manual"]);
+export const workshopAdapterSchema = z.enum(["steam", "nexusmods", "modio", "thunderstore", "curseforge", "github", "direct_url", "manual"]);
 export type WorkshopAdapter = z.infer<typeof workshopAdapterSchema>;
 
 export const gameTemplateSchema = z.object({
@@ -162,6 +162,9 @@ export const modEntrySchema = z.object({
   id: z.string().min(1),
   provider: workshopAdapterSchema,
   name: z.string().default(""),
+  summary: z.string().default(""),
+  thumbnail_url: z.string().url().optional(),
+  page_url: z.string().url().optional(),
   enabled: z.boolean().default(true),
   order: z.number().int().default(0),
   version_lock: z.string().optional(),

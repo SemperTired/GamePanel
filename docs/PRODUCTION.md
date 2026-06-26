@@ -2,6 +2,8 @@
 
 AetherPanel runs as an AetherNode.org platform service. It does not depend on AMP, WHMCS, or existing AetherNode website processes.
 
+It can be mounted behind the main AetherNode website as `/panel` or exposed as a dedicated panel subdomain. See `deploy/nginx/aethernode-subprocess.conf` for an example edge proxy that routes the customer UI and `/api/v1` API to the AetherPanel services.
+
 ## Required Services
 
 - PostgreSQL 16+ for durable platform data.
@@ -65,6 +67,21 @@ PAYPAL_CURRENCY=USD
 ```
 
 Webhook fulfillment marks the service `paid` and queues an `install` provisioning job after a verified completed payment event.
+
+## Mod Providers
+
+AetherPanel supports provider-aware mod management through `/api/v1/services/:serviceId/mods/*`.
+
+```env
+STEAM_WEB_API_KEY=...
+NEXUSMODS_API_KEY=...
+MODIO_API_KEY=...
+CURSEFORGE_API_KEY=...
+```
+
+Steam Workshop search is API-backed when a game template has `workshop.app_id`. Nexus Mods, mod.io, CurseForge, direct URL, GitHub, and manual uploads use the same installed-mod contract, but each game still needs a verified adapter before fully automated installation should be advertised.
+
+The customer portal includes an embedded provider WebUI/browser so customers can search visually instead of copying raw mod IDs. Some third-party providers block iframing with browser security headers; in those cases the panel displays the WebUI entry point and an external open button while preserving one-click install for API-searchable providers.
 
 ## Docker Compose
 

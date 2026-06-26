@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Activity, Boxes, CreditCard, FileTerminal, Gauge, Gamepad2, KeyRound, LayoutDashboard, ListChecks, Loader2, Network, Play, RotateCcw, Search, Server, Settings, Shield, Square, Terminal, UploadCloud, Users } from "lucide-react";
+import { Activity, Boxes, CreditCard, ExternalLink, Gauge, Gamepad2, Globe2, ImageIcon, KeyRound, LayoutDashboard, ListChecks, Loader2, Network, Play, Plus, RotateCcw, Search, Server, Settings, Shield, Sparkles, Square, UploadCloud, Users } from "lucide-react";
 import "./styles/global.css";
 import { api, login, logout, token } from "./lib/api";
 
 type Template = { id: string; name: string; category: string; summary: string; resources: { recommended_ram_mb: number; min_disk_gb: number; cpu: string }; workshop: { enabled: boolean; providers: string[] }; ports: Array<{ key: string; default: number; protocol: string }> };
-type Service = { id: string; name: string; template_id: string; status: string; power_state: string; ports: Array<{ key: string; host: number; protocol: string }>; mods: Array<{ id: string; provider: string; enabled: boolean; order: number }> };
+type ModEntry = { id: string; provider: string; name?: string; summary?: string; thumbnail_url?: string; page_url?: string; enabled: boolean; order: number };
+type Service = { id: string; name: string; template_id: string; status: string; power_state: string; ports: Array<{ key: string; host: number; protocol: string }>; mods: ModEntry[] };
+type ModProvider = { id: string; name: string; configured: boolean; searchable: boolean; web_url: string; note: string };
+type ModSearchItem = { id: string; provider: string; name: string; summary?: string; thumbnail_url?: string; page_url?: string; tags?: string[]; subscriptions?: number; favorited?: number };
 
 function Shell() {
   const [active, setActive] = useState("dashboard");
@@ -172,20 +175,123 @@ function ServiceRows({ services, onPick }: any) {
 }
 
 function Mods({ service, refresh }: any) {
-  const [id, setId] = useState("");
-  async function add() {
-    if (!service || !id) return;
-    await api(`/services/${service.id}/mods`, { method: "POST", body: JSON.stringify({ id, provider: "steam", enabled: true }) });
-    setId("");
+  const [providers, setProviders] = useState<ModProvider[]>([]);
+  const [provider, setProvider] = useState("steam");
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<ModSearchItem[]>([]);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const activeProvider = providers.find((item) => item.id === provider);
+
+  useEffect(() => {
+    if (!service) return;
+    api<{ providers: ModProvider[] }>(`/services/${service.id}/mods/providers`).then((data) => {
+      setProviders(data.providers);
+      setProvider((current) => data.providers.some((item) => item.id === current) ? current : data.providers[0]?.id || "steam");
+    }).catch((error) => setMessage(error.message));
+  }, [service?.id]);
+
+  async function searchMods() {
+    if (!service) return;
+    setLoading(true);
+    setMessage("");
+    try {
+      const data = await api<{ items: ModSearchItem[]; message?: string }>(`/services/${service.id}/mods/search?provider=${encodeURIComponent(provider)}&q=${encodeURIComponent(query)}`);
+      setResults(data.items || []);
+      setMessage(data.message || "");
+    } catch (error) {
+      setResults([]);
+      setMessage(error instanceof Error ? error.message : "Search failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function installMod(mod: ModSearchItem) {
+    if (!service) return;
+    await api(`/services/${service.id}/mods`, { method: "POST", body: JSON.stringify({ ...mod, enabled: true }) });
     await refresh();
   }
-  return <div className="glass rounded-2xl p-6">
-    <h2 className="mb-2 font-display text-2xl">Steam Workshop Manager</h2>
-    <p className="mb-5 text-sm text-slate-400">Add Workshop IDs, enable/disable mods, and let game adapters write config or launch arguments.</p>
-    {!service ? <div className="text-slate-400">Select a service first.</div> : <>
-      <div className="mb-4 flex gap-2"><input value={id} onChange={(e) => setId(e.target.value)} placeholder="Workshop item ID" className="flex-1 rounded-xl border border-white/10 bg-black/30 px-4 py-2 outline-none focus:border-cyan/50" /><button onClick={add} className="rounded-xl bg-cyan px-4 py-2 font-semibold text-slate-950">Add Mod</button></div>
-      <Panel title={`${service.name} Mods`} items={service.mods || []} empty="No mods installed yet." />
-    </>}
+
+  if (!service) {
+    return <div className="empty-state"><Boxes className="mx-auto mb-4 h-12 w-12 text-cyan" /><h2>Select a server</h2><p>Choose a service first, then AetherPanel will show the mod providers supported by that game.</p></div>;
+  }
+
+  return <div className="space-y-6">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7">
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-5">
+        <div>
+          <div className="mb-2 flex items-center gap-2 text-sm uppercase tracking-[0.25em] text-cyan"><Sparkles className="h-4 w-4" /> Game Hub</div>
+          <h2 className="font-display text-4xl font-bold">{service.name}</h2>
+          <p className="mt-2 max-w-2xl text-sm text-slate-300">Search Workshop providers, preview mods visually, and install compatible content without hunting for raw IDs.</p>
+        </div>
+        <div className="rounded-2xl border border-cyan/30 bg-cyan/10 px-5 py-4">
+          <div className="text-3xl font-bold text-cyan">{service.mods?.length || 0}</div>
+          <div className="text-xs uppercase tracking-[0.18em] text-slate-300">Installed Mods</div>
+        </div>
+      </div>
+    </section>
+
+    <section className="grid grid-cols-[320px_1fr] gap-5">
+      <aside className="command-panel rounded-3xl p-5">
+        <h3 className="mb-4 font-display text-2xl">Providers</h3>
+        <div className="space-y-3">
+          {providers.map((item) => <button key={item.id} onClick={() => { setProvider(item.id); setResults([]); setMessage(item.note); }} className={`provider-tile ${provider === item.id ? "provider-tile-active" : ""}`}>
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/8"><Globe2 className="h-5 w-5" /></span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold">{item.name}</span>
+              <span className={item.searchable ? "text-xs text-emerald-300" : "text-xs text-amber-200"}>{item.searchable ? "API search ready" : item.configured ? "WebUI/manual flow" : "Needs API key"}</span>
+            </span>
+          </button>)}
+        </div>
+        <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-slate-300">{activeProvider?.note || "Provider details will appear here."}</div>
+      </aside>
+
+      <div className="space-y-5">
+        <div className="command-panel rounded-3xl p-5">
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <div>
+              <h3 className="font-display text-2xl">{activeProvider?.name || "Mod Browser"}</h3>
+              <p className="text-sm text-slate-400">Search through the provider API when available, or browse the embedded provider WebUI.</p>
+            </div>
+            {activeProvider?.web_url && <a href={activeProvider.web_url} target="_blank" className="icon-button"><ExternalLink className="h-4 w-4" /> Open</a>}
+          </div>
+          <div className="flex gap-3">
+            <div className="relative flex-1"><Search className="absolute left-4 top-3.5 h-4 w-4 text-slate-500" /><input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => event.key === "Enter" && searchMods()} placeholder="Search by mod name, keyword, collection, or author..." className="field pl-11" /></div>
+            <button onClick={searchMods} className="primary-button min-w-32">{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />} Search</button>
+          </div>
+          {message && <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">{message}</div>}
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          {results.map((mod) => <article key={`${mod.provider}-${mod.id}`} className="mod-card overflow-hidden rounded-3xl">
+            <div className="mod-art">
+              {mod.thumbnail_url ? <img src={mod.thumbnail_url} alt="" loading="lazy" /> : <ImageIcon className="h-10 w-10 text-slate-500" />}
+            </div>
+            <div className="p-4">
+              <div className="mb-2 flex items-start justify-between gap-2"><h4 className="font-display text-xl leading-5">{mod.name}</h4><span className="rounded-full bg-cyan/15 px-2 py-1 text-xs text-cyan">{mod.provider}</span></div>
+              <p className="min-h-16 text-sm text-slate-400">{mod.summary || "No provider description supplied."}</p>
+              <div className="mt-4 flex items-center gap-2">
+                <button onClick={() => installMod(mod)} className="primary-button flex-1"><Plus className="h-4 w-4" /> Install</button>
+                {mod.page_url && <a className="icon-button" href={mod.page_url} target="_blank"><ExternalLink className="h-4 w-4" /></a>}
+              </div>
+            </div>
+          </article>)}
+        </div>
+
+        {!results.length && <div className="browser-frame">
+          {activeProvider?.web_url ? <iframe title={`${activeProvider.name} browser`} src={activeProvider.web_url} /> : <div className="grid h-full place-items-center text-slate-400">This provider uses manual uploads.</div>}
+        </div>}
+
+        <div className="command-panel rounded-3xl p-5">
+          <h3 className="mb-4 font-display text-2xl">Installed Loadout</h3>
+          {service.mods?.length ? <div className="grid grid-cols-2 gap-3">{service.mods.map((mod: ModEntry) => <div key={`${mod.provider}-${mod.id}`} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+            <div className="flex items-center justify-between gap-3"><strong>{mod.name || mod.id}</strong><span className="rounded-full bg-emerald-400/10 px-2 py-1 text-xs text-emerald-200">{mod.enabled ? "Enabled" : "Disabled"}</span></div>
+            <div className="mt-1 text-xs text-slate-400">{mod.provider} · order {mod.order + 1}</div>
+          </div>)}</div> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No mods installed yet.</div>}
+        </div>
+      </div>
+    </section>
   </div>;
 }
 
