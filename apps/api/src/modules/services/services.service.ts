@@ -3,12 +3,13 @@ import { createServiceSchema } from "@aetherpanel/shared";
 import { createDockerRuntime } from "@aetherpanel/runtime-docker";
 import { DataStore, ServiceRecord } from "../data.module.js";
 import { TemplatesService } from "../templates/templates.service.js";
+import { InfrastructureService } from "../infrastructure/infrastructure.service.js";
 
 const runtime = createDockerRuntime();
 
 @Injectable()
 export class ServicesService {
-  constructor(private readonly data: DataStore, private readonly templates: TemplatesService) {}
+  constructor(private readonly data: DataStore, private readonly templates: TemplatesService, private readonly infrastructure: InfrastructureService) {}
 
   list(user?: { sub?: string; role?: string }) {
     const records = [...this.data.services.values()];
@@ -44,6 +45,8 @@ export class ServicesService {
         host_ip: "0.0.0.0",
       })),
       mods: [],
+      startup_variables: payload.startup_variables,
+      network_mappings: [],
       created_at: now,
       updated_at: now,
     };
@@ -91,6 +94,7 @@ export class ServicesService {
     service.runtime_id = runtimeId;
     service.status = "active";
     service.power_state = "created";
+    service.network_mappings = this.infrastructure.planForService(service.id).mappings;
     service.updated_at = new Date().toISOString();
     await this.data.saveService(service);
     return service;

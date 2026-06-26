@@ -45,6 +45,38 @@ REDIS_REQUIRED=true
 PROVISIONING_QUEUE=redis
 ```
 
+## Service Files And Config
+
+Each service gets a scoped data root for file manager and managed configuration operations.
+
+```env
+AETHERPANEL_DATA_ROOT=/var/lib/aetherpanel/services
+FILE_MANAGER_MAX_READ_BYTES=1048576
+```
+
+The file manager uses safe relative paths only and rejects traversal outside the service directory. Template-defined `config_files` and `startup_variables` appear in the customer configuration UI.
+
+## Infrastructure Connectors
+
+AetherPanel can register infrastructure connectors for per-instance connection information and port-forward automation.
+
+Supported connector contracts:
+
+- `unifi_os`: stores UniFiOS connection settings, tests login, generates port-forward mappings, and defaults to dry-run.
+- `upnp`: reserved provider for node-side UPnP discovery/forwarding.
+- `manual`: records mappings without attempting network automation.
+
+```env
+AETHERNODE_WAN_IP=75.122.94.89
+UNIFI_OS_BASE_URL=https://gateway.example.local
+UNIFI_OS_SITE_ID=default
+UNIFI_OS_USERNAME=...
+UNIFI_OS_PASSWORD=...
+UNIFI_OS_DRY_RUN=true
+```
+
+Keep UniFiOS connectors in dry-run until the target console/site write endpoint is verified in staging. The panel generates the exact mapping plan per service before applying changes.
+
 ## PayPal
 
 Production PayPal endpoints:

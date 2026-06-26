@@ -23,6 +23,8 @@ export interface ServiceRecord {
   node_id?: string;
   ports: Array<{ key: string; host: number; container: number; protocol: PortProtocol; host_ip: string }>;
   mods: unknown[];
+  startup_variables?: Record<string, string>;
+  network_mappings?: unknown[];
   created_at: string;
   updated_at: string;
 }
@@ -54,6 +56,7 @@ export class DataStore {
   public readonly nodes = new Map<string, unknown>();
   public readonly settings = new Map<string, unknown>();
   public readonly provisioningJobs = new Map<string, unknown>();
+  public readonly infrastructureConnectors = new Map<string, unknown>();
   public databaseOnline = false;
   private seeded = false;
 
@@ -131,17 +134,26 @@ export class DataStore {
         created_at timestamptz not null default now()
       );
       create index if not exists audit_logs_created_idx on audit_logs(created_at desc);
+      create table if not exists infrastructure_connectors (
+        id text primary key,
+        provider text not null,
+        name text not null,
+        data jsonb not null,
+        created_at timestamptz not null default now(),
+        updated_at timestamptz not null default now()
+      );
     `);
   }
 
   private async hydrate(): Promise<void> {
-    const [users, services, nodes, settings, jobs, audits] = await Promise.all([
+    const [users, services, nodes, settings, jobs, audits, connectors] = await Promise.all([
       this.pool.query("select id, email, name, role, password_hash, created_at from users"),
       this.pool.query("select data from services"),
       this.pool.query("select data from nodes"),
       this.pool.query("select section, data from settings"),
       this.pool.query("select data from provisioning_jobs"),
       this.pool.query("select id, actor, action, target, metadata, created_at from audit_logs order by created_at desc limit 500"),
+      this.pool.query("select data from infrastructure_connectors"),
     ]);
 
     for (const row of users.rows) this.users.set(row.id, { ...row, created_at: new Date(row.created_at).toISOString() });
@@ -159,6 +171,7 @@ export class DataStore {
         created_at: new Date(row.created_at).toISOString(),
       });
     }
+    for (const row of connectors.rows) this.infrastructureConnectors.set(row.data.id, this.deserializeDates(row.data));
   }
 
   private deserializeDates(value: Record<string, unknown>) {
@@ -247,6 +260,17 @@ export class DataStore {
        values($1, $2, $3, $4, $5, $6, now())
        on conflict(id) do update set status = excluded.status, data = excluded.data, updated_at = now()`,
       [job.id, job.service_id, job.action, job.status, job, job.created_at ?? new Date().toISOString()],
+    );
+  }
+
+  async saveInfrastructureConnector(connector: Record<string, unknown>): Promise<void> {
+    this.infrastructureConnectors.set(String(connector.id), connector);
+    if (!this.databaseOnline) return;
+    await this.pool.query(
+      `insert into infrastructure_connectors(id, provider, name, data, created_at, updated_at)
+       values($1, $2, $3, $4, $5, now())
+       on conflict(id) do update set provider = excluded.provider, name = excluded.name, data = excluded.data, updated_at = now()`,
+      [connector.id, connector.provider, connector.name, connector, connector.created_at ?? new Date().toISOString()],
     );
   }
 

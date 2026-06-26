@@ -57,3 +57,12 @@ create table if not exists audit_logs (
 );
 
 create index if not exists audit_logs_created_idx on audit_logs(created_at desc);
+
+create table if not exists infrastructure_connectors (
+  id text primary key,
+  provider text not null,
+  name text not null,
+  data jsonb not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);

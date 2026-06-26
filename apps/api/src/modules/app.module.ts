@@ -11,6 +11,9 @@ import { SettingsModule } from "./settings/settings.module.js";
 import { NodesModule } from "./nodes/nodes.module.js";
 import { BillingModule } from "./billing/billing.module.js";
 import { AuditModule } from "./audit/audit.module.js";
+import { FilesModule } from "./files/files.module.js";
+import { ConfigurationsModule } from "./configurations/configurations.module.js";
+import { InfrastructureModule } from "./infrastructure/infrastructure.module.js";
 
 @Module({
   imports: [
@@ -26,6 +29,9 @@ import { AuditModule } from "./audit/audit.module.js";
     SettingsModule,
     NodesModule,
     BillingModule,
+    FilesModule,
+    ConfigurationsModule,
+    InfrastructureModule,
   ],
 })
 export class AppModule {}

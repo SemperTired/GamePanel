@@ -3,6 +3,7 @@ import { ServicesController } from "./services.controller.js";
 import { ServicesService } from "./services.service.js";
 import { TemplatesModule } from "../templates/templates.module.js";
 import { ProvisioningModule } from "../provisioning/provisioning.module.js";
+import { InfrastructureModule } from "../infrastructure/infrastructure.module.js";
 
-@Module({ imports: [TemplatesModule, ProvisioningModule], controllers: [ServicesController], providers: [ServicesService], exports: [ServicesService] })
+@Module({ imports: [TemplatesModule, ProvisioningModule, InfrastructureModule], controllers: [ServicesController], providers: [ServicesService], exports: [ServicesService] })
 export class ServicesModule {}

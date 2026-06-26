@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Activity, Boxes, CreditCard, ExternalLink, Gauge, Gamepad2, Globe2, ImageIcon, KeyRound, LayoutDashboard, ListChecks, Loader2, Network, Play, Plus, RotateCcw, Search, Server, Settings, Shield, Sparkles, Square, UploadCloud, Users } from "lucide-react";
+import { Activity, Boxes, CreditCard, ExternalLink, FileText, Folder, Gauge, Gamepad2, Globe2, ImageIcon, KeyRound, LayoutDashboard, ListChecks, Loader2, Network, Play, Plus, RotateCcw, Save, Search, Server, Settings, Shield, SlidersHorizontal, Sparkles, Square, UploadCloud, Users } from "lucide-react";
 import "./styles/global.css";
 import { api, login, logout, token } from "./lib/api";
 
@@ -9,6 +9,7 @@ type ModEntry = { id: string; provider: string; name?: string; summary?: string;
 type Service = { id: string; name: string; template_id: string; status: string; power_state: string; ports: Array<{ key: string; host: number; protocol: string }>; mods: ModEntry[] };
 type ModProvider = { id: string; name: string; configured: boolean; searchable: boolean; web_url: string; note: string };
 type ModSearchItem = { id: string; provider: string; name: string; summary?: string; thumbnail_url?: string; page_url?: string; tags?: string[]; subscriptions?: number; favorited?: number };
+type FileEntry = { name: string; type: "file" | "directory"; size: number; updated_at: string };
 
 function Shell() {
   const [active, setActive] = useState("dashboard");
@@ -51,8 +52,11 @@ function Shell() {
   const nav = [
     ["dashboard", LayoutDashboard, "Dashboard"],
     ["services", Server, "Services"],
+    ["files", Folder, "Files"],
+    ["config", SlidersHorizontal, "Config"],
     ["templates", Gamepad2, "Game Templates"],
     ["mods", Boxes, "Workshop Mods"],
+    ["infrastructure", Network, "Infrastructure"],
     ["nodes", Network, "Nodes"],
     ["billing", CreditCard, "Billing"],
     ["provisioning", ListChecks, "Provisioning"],
@@ -95,7 +99,10 @@ function Shell() {
         {active === "dashboard" && <Dashboard stats={stats} audits={audits} services={services} />}
         {active === "templates" && <Templates templates={templates} />}
         {active === "services" && <Services services={services} templates={templates} selected={selectedService} setSelected={setSelectedService} refresh={refresh} logs={logs} />}
+        {active === "files" && <FilesPanel service={selectedService} />}
+        {active === "config" && <ConfigurationPanel service={selectedService} />}
         {active === "mods" && <Mods service={selectedService} refresh={refresh} />}
+        {active === "infrastructure" && <InfrastructurePanel service={selectedService} />}
         {active === "nodes" && <Panel title="Nodes" items={nodes} empty="No nodes yet. The local Docker node is seeded by the API." />}
         {active === "billing" && <Billing />}
         {active === "provisioning" && <Provisioning />}
@@ -172,6 +179,158 @@ function ServiceRows({ services, onPick }: any) {
   return <div className="space-y-2">{services.map((service: Service) => <button key={service.id} onClick={() => onPick?.(service)} className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-left hover:border-cyan/40">
     <span><span className="font-semibold">{service.name}</span><span className="ml-2 text-xs text-slate-500">{service.template_id}</span></span><span className="text-xs text-cyan">{service.power_state}</span>
   </button>)}</div>;
+}
+
+function FilesPanel({ service }: { service: Service | null }) {
+  const [path, setPath] = useState(".");
+  const [entries, setEntries] = useState<FileEntry[]>([]);
+  const [openFile, setOpenFile] = useState("");
+  const [content, setContent] = useState("");
+  const [message, setMessage] = useState("");
+
+  async function load(target = path) {
+    if (!service) return;
+    setMessage("");
+    const data = await api<FileEntry[]>(`/services/${service.id}/files?path=${encodeURIComponent(target)}`);
+    setEntries(data);
+    setPath(target);
+  }
+
+  async function readFile(name: string) {
+    if (!service) return;
+    const filePath = path === "." ? name : `${path}/${name}`;
+    const data = await api<{ content: string; path: string }>(`/services/${service.id}/files/content?path=${encodeURIComponent(filePath)}`);
+    setOpenFile(data.path);
+    setContent(data.content);
+  }
+
+  async function saveFile() {
+    if (!service || !openFile) return;
+    await api(`/services/${service.id}/files/content`, { method: "PUT", body: JSON.stringify({ path: openFile, content }) });
+    setMessage(`Saved ${openFile}`);
+    await load(path);
+  }
+
+  useEffect(() => { if (service) load(".").catch((error) => setMessage(error.message)); }, [service?.id]);
+
+  if (!service) return <div className="empty-state"><Folder className="mx-auto mb-4 h-12 w-12 text-cyan" /><h2>Select a server</h2><p>Files are scoped to a single service volume.</p></div>;
+  return <div className="grid grid-cols-[360px_1fr] gap-5">
+    <div className="command-panel rounded-3xl p-5">
+      <div className="mb-4 flex items-center justify-between"><h2 className="font-display text-2xl">Files</h2><button className="icon-button" onClick={() => load(".")}>Root</button></div>
+      <div className="mb-3 rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-xs text-slate-300">{path}</div>
+      <div className="space-y-2">
+        {path !== "." && <button className="provider-tile" onClick={() => load(path.split("/").slice(0, -1).join("/") || ".")}><Folder className="h-4 w-4" /> ..</button>}
+        {entries.map((entry) => <button key={entry.name} className="provider-tile" onClick={() => entry.type === "directory" ? load(path === "." ? entry.name : `${path}/${entry.name}`) : readFile(entry.name)}>
+          {entry.type === "directory" ? <Folder className="h-4 w-4" /> : <FileText className="h-4 w-4" />}
+          <span className="flex-1 truncate">{entry.name}</span>
+          <span className="text-xs text-slate-500">{entry.type === "file" ? `${entry.size}b` : "dir"}</span>
+        </button>)}
+      </div>
+      {message && <div className="mt-4 rounded-xl border border-cyan/20 bg-cyan/10 px-3 py-2 text-sm text-cyan">{message}</div>}
+    </div>
+    <div className="command-panel rounded-3xl p-5">
+      <div className="mb-4 flex items-center justify-between"><h2 className="font-display text-2xl">{openFile || "Select a file"}</h2><button className="primary-button" onClick={saveFile} disabled={!openFile}><Save className="h-4 w-4" /> Save</button></div>
+      <textarea value={content} onChange={(event) => setContent(event.target.value)} className="h-[620px] w-full rounded-2xl border border-white/10 bg-black/40 p-4 font-mono text-sm text-emerald-100 outline-none focus:border-cyan/50" spellCheck={false} />
+    </div>
+  </div>;
+}
+
+function ConfigurationPanel({ service }: { service: Service | null }) {
+  const [config, setConfig] = useState<any>(null);
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [message, setMessage] = useState("");
+
+  async function load() {
+    if (!service) return;
+    const data = await api<any>(`/services/${service.id}/configuration`);
+    setConfig(data);
+    setValues(Object.fromEntries((data.startup_variables || []).map((variable: any) => [variable.key, variable.value || ""])));
+  }
+
+  async function save() {
+    if (!service) return;
+    const data = await api<any>(`/services/${service.id}/configuration/startup`, { method: "PUT", body: JSON.stringify({ values }) });
+    setConfig(data);
+    setMessage("Configuration saved. Restart the service to apply startup changes.");
+  }
+
+  useEffect(() => { load().catch((error) => setMessage(error.message)); }, [service?.id]);
+
+  if (!service) return <div className="empty-state"><SlidersHorizontal className="mx-auto mb-4 h-12 w-12 text-cyan" /><h2>Select a server</h2><p>Configuration is generated from the selected game template.</p></div>;
+  return <div className="space-y-5">
+    <div className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Instance Config</div><h2 className="font-display text-4xl font-bold">{service.name}</h2></div></div>
+    <div className="grid grid-cols-2 gap-5">
+      <div className="command-panel rounded-3xl p-5">
+        <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">Startup Variables</h3><button className="primary-button" onClick={save}><Save className="h-4 w-4" /> Save</button></div>
+        <div className="space-y-3">
+          {(config?.startup_variables || []).map((variable: any) => <label key={variable.key} className="block">
+            <span className="mb-1 block text-sm text-slate-300">{variable.label}</span>
+            <input className="field" value={values[variable.key] || ""} onChange={(event) => setValues({ ...values, [variable.key]: event.target.value })} disabled={!variable.customer_editable} />
+          </label>)}
+          {!config?.startup_variables?.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No startup variables declared for this template yet.</div>}
+        </div>
+      </div>
+      <div className="command-panel rounded-3xl p-5">
+        <h3 className="mb-4 font-display text-2xl">Managed Config Files</h3>
+        <div className="space-y-3">{(config?.config_files || []).map((file: any) => <div key={file.path} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+          <strong>{file.path}</strong><div className="mt-1 text-xs text-slate-400">{file.type} · {file.editable ? "editable" : "locked"}</div>
+        </div>)}</div>
+        {!config?.config_files?.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">This template has no managed config files yet. Use Files for manual edits.</div>}
+      </div>
+    </div>
+    {message && <div className="rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
+  </div>;
+}
+
+function InfrastructurePanel({ service }: { service: Service | null }) {
+  const [connectors, setConnectors] = useState<any[]>([]);
+  const [form, setForm] = useState({ name: "AetherNode UniFi", provider: "unifi_os", base_url: "https://unifi.ui.com", site_id: "default", gateway_ip: "", wan_ip: "", dry_run: true });
+  const [plan, setPlan] = useState<any>(null);
+  const [message, setMessage] = useState("");
+
+  async function load() {
+    setConnectors(await api<any[]>("/infrastructure/connectors"));
+  }
+  async function create() {
+    const connector = await api<any>("/infrastructure/connectors", { method: "POST", body: JSON.stringify(form) });
+    setMessage(`Connector saved: ${connector.name}`);
+    await load();
+  }
+  async function planPorts() {
+    if (!service) return;
+    setPlan(await api<any>(`/infrastructure/services/${service.id}/port-plan`));
+  }
+  async function applyPorts() {
+    if (!service) return;
+    setPlan(await api<any>(`/infrastructure/services/${service.id}/apply-port-forwards`, { method: "POST", body: JSON.stringify({}) }));
+  }
+  useEffect(() => { load().catch((error) => setMessage(error.message)); }, []);
+
+  return <div className="space-y-5">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Backend Infrastructure</div><h2 className="font-display text-4xl font-bold">Network Automation</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Register UniFiOS, UPnP, or manual connectors so AetherPanel can prepare customer-facing port mappings per instance.</p></div></section>
+    <div className="grid grid-cols-[420px_1fr] gap-5">
+      <div className="command-panel rounded-3xl p-5">
+        <h3 className="mb-4 font-display text-2xl">New Connector</h3>
+        <div className="space-y-3">
+          <input className="field" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Connector name" />
+          <select className="field" value={form.provider} onChange={(e) => setForm({ ...form, provider: e.target.value })}><option value="unifi_os">UniFiOS</option><option value="upnp">UPnP</option><option value="manual">Manual</option></select>
+          <input className="field" value={form.base_url} onChange={(e) => setForm({ ...form, base_url: e.target.value })} placeholder="UniFiOS base URL" />
+          <input className="field" value={form.gateway_ip} onChange={(e) => setForm({ ...form, gateway_ip: e.target.value })} placeholder="Internal game node IP" />
+          <input className="field" value={form.wan_ip} onChange={(e) => setForm({ ...form, wan_ip: e.target.value })} placeholder="WAN IP shown to players" />
+          <label className="flex items-center gap-2 text-sm text-slate-300"><input type="checkbox" checked={form.dry_run} onChange={(e) => setForm({ ...form, dry_run: e.target.checked })} /> Dry run only</label>
+          <button className="primary-button w-full" onClick={create}><Plus className="h-4 w-4" /> Save Connector</button>
+        </div>
+      </div>
+      <div className="space-y-5">
+        <Panel title="Connectors" items={connectors} empty="No infrastructure connectors yet." />
+        <div className="command-panel rounded-3xl p-5">
+          <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">Port Plan</h3><div className="flex gap-2"><button className="icon-button" onClick={planPorts}>Plan</button><button className="primary-button" onClick={applyPorts}>Apply</button></div></div>
+          {service ? <pre className="max-h-80 overflow-auto rounded-2xl bg-black/30 p-4 text-xs text-slate-300">{JSON.stringify(plan || service.ports, null, 2)}</pre> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">Select a service to generate mappings.</div>}
+        </div>
+      </div>
+    </div>
+    {message && <div className="rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
+  </div>;
 }
 
 function Mods({ service, refresh }: any) {
