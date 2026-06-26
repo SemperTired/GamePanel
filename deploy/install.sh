@@ -14,7 +14,11 @@ fi
 
 cp .env.example .env
 sed -i "s/JWT_SECRET=.*/JWT_SECRET=$(openssl rand -hex 48)/" .env
+sed -i "s/ENCRYPTION_KEY=.*/ENCRYPTION_KEY=$(openssl rand -base64 32 | tr -d '\\n')/" .env
 sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$(openssl rand -hex 18)/" .env
+sed -i "s/DATABASE_REQUIRED=.*/DATABASE_REQUIRED=true/" .env
+sed -i "s/REDIS_REQUIRED=.*/REDIS_REQUIRED=true/" .env
+sed -i "s/NODE_ENV=.*/NODE_ENV=production/" .env
 
 docker compose up -d --build
 echo "AetherPanel is starting on http://$(hostname -I | awk '{print $1}'):4000"
