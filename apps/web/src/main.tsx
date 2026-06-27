@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Activity, Bell, Boxes, CreditCard, Database, ExternalLink, FileText, Folder, Gauge, Gamepad2, Globe2, ImageIcon, KeyRound, LayoutDashboard, ListChecks, Loader2, Mail, Network, Play, Plus, RotateCcw, Router, Save, Search, Server, Settings, Shield, SlidersHorizontal, Sparkles, Square, Trash2, UploadCloud, Users, Wifi } from "lucide-react";
+import { Activity, Bell, Boxes, CreditCard, Database, ExternalLink, FileText, Folder, Gauge, Gamepad2, Globe2, ImageIcon, KeyRound, LayoutDashboard, ListChecks, Loader2, Mail, Network, Play, Plus, RotateCcw, Router, Save, Search, Send, Server, Settings, Shield, SlidersHorizontal, Sparkles, Square, Terminal, Trash2, UploadCloud, UserPlus, Users, Wifi } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import "./styles/global.css";
 import { api, login, logout, token } from "./lib/api";
@@ -9,7 +9,7 @@ type Template = { id: string; name: string; category: string; summary: string; i
 type ModEntry = { id: string; provider: string; name?: string; summary?: string; thumbnail_url?: string; page_url?: string; enabled: boolean; order: number };
 type ServicePort = { key: string; host: number; container?: number; protocol: string; host_ip?: string };
 type NetworkMapping = { id?: string; name?: string; wan_ip?: string; external_port?: number; internal_ip?: string; internal_port?: number };
-type Service = { id: string; name: string; template_id: string; status: string; power_state: string; ports: ServicePort[]; mods: ModEntry[]; runtime_id?: string; node_id?: string; network_mappings?: NetworkMapping[]; startup_variables?: Record<string, string> };
+type Service = { id: string; name: string; template_id: string; owner_user_id?: string; location_id?: string; status: string; power_state: string; ports: ServicePort[]; mods: ModEntry[]; runtime_id?: string; node_id?: string; network_mappings?: NetworkMapping[]; startup_variables?: Record<string, string> };
 type ModProvider = { id: string; name: string; configured: boolean; searchable: boolean; web_url: string; note: string };
 type ModSearchItem = { id: string; provider: string; name: string; summary?: string; thumbnail_url?: string; page_url?: string; tags?: string[]; subscriptions?: number; favorited?: number };
 type FileEntry = { name: string; type: "file" | "directory"; size: number; updated_at: string };
@@ -60,7 +60,7 @@ function Shell() {
   }), [services, templates, nodes]);
 
   const navGroups: Array<{ label: string; items: NavItem[] }> = [
-    { label: "Operate", items: [["dashboard", LayoutDashboard, "Overview"], ["services", Server, "Instances"], ["files", Folder, "Files"], ["config", SlidersHorizontal, "Config"], ["mods", Boxes, "Mods"], ["backups", Database, "Backups"]] },
+    { label: "Operate", items: [["dashboard", LayoutDashboard, "Overview"], ["services", Server, "Instances"], ["console", Terminal, "Console"], ["files", Folder, "Files"], ["config", SlidersHorizontal, "Config"], ["mods", Boxes, "Mods"], ["backups", Database, "Backups"]] },
     { label: "Deploy", items: [["templates", Gamepad2, "Game Library"], ["provisioning", ListChecks, "Queue"], ["nodes", Network, "Nodes"]] },
     { label: "Business", items: [["billing", CreditCard, "Billing"], ["users", Users, "Users"], ["audit", Shield, "Audit"]] },
     { label: "Platform", items: [["infrastructure", Router, "Network"], ["settings", Settings, "Settings"]] },
@@ -132,6 +132,7 @@ function Shell() {
         {active === "dashboard" && <Dashboard stats={stats} audits={audits} services={services} />}
         {active === "templates" && <Templates templates={templates} nodes={nodes} refresh={refresh} setActive={setActive} setSelectedService={setSelectedService} />}
         {active === "services" && <Services services={services} templates={templates} selected={selectedService} setSelected={setSelectedService} refresh={refresh} logs={logs} />}
+        {active === "console" && <ConsolePanel service={selectedService} logs={logs} setLogs={setLogs} />}
         {active === "files" && <FilesPanel service={selectedService} />}
         {active === "config" && <ConfigurationPanel service={selectedService} />}
         {active === "mods" && <Mods service={selectedService} refresh={refresh} />}
@@ -405,6 +406,14 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
 }
 
 function Services({ services, templates, selected, setSelected, refresh, logs }: any) {
+  const [users, setUsers] = useState<any[]>([]);
+  const [edit, setEdit] = useState<Record<string, any>>({});
+  const [message, setMessage] = useState("");
+  useEffect(() => { api<any[]>("/users").then(setUsers).catch(() => undefined); }, []);
+  useEffect(() => {
+    if (!selected) return;
+    setEdit({ name: selected.name, owner_user_id: selected.owner_user_id || "", status: selected.status, node_id: selected.node_id || "local", location_id: selected.location_id || "local" });
+  }, [selected?.id]);
   async function createService(templateId: string) {
     await api("/services", { method: "POST", body: JSON.stringify({ name: `${templateId} server`, template_id: templateId, owner_user_id: "usr_superadmin", location_id: "local", auto_start: false }) });
     await refresh();
@@ -431,6 +440,13 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
     if (!selected || !confirm(`Terminate ${selected.name}? This removes the runtime container and service record.`)) return;
     await api(`/services/${selected.id}`, { method: "DELETE" });
     setSelected(null);
+    await refresh();
+  }
+  async function saveService() {
+    if (!selected) return;
+    const updated = await api<Service>(`/services/${selected.id}`, { method: "PUT", body: JSON.stringify(edit) });
+    setSelected(updated);
+    setMessage("Instance settings saved");
     await refresh();
   }
   const template = selected ? templates.find((item: Template) => item.id === selected.template_id) : null;
@@ -471,8 +487,62 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
           <InfoBlock title="Connection Info" items={(selected.ports || []).map((port: ServicePort) => [`${port.key} ${port.protocol}`, `${port.host_ip || "0.0.0.0"}:${port.host}`])} />
           <InfoBlock title="Network Mappings" items={(selected.network_mappings || []).map((mapping: NetworkMapping) => [mapping.name || mapping.id || "mapping", `${mapping.wan_ip || "WAN"}:${mapping.external_port || "?"} -> ${mapping.internal_ip || "LAN"}:${mapping.internal_port || "?"}`])} empty="No port-forward mappings recorded yet." />
         </div>
-        <pre className="h-72 overflow-auto rounded-xl border border-white/10 bg-black/40 p-4 font-mono text-xs text-emerald-200">{logs}</pre>
+        <div className="mb-5 grid grid-cols-2 gap-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+            <div className="mb-3 font-semibold">Assignment & Status</div>
+            <div className="space-y-3">
+              <label className="setting-field"><span>Name</span><input className="field" value={edit.name || ""} onChange={(event) => setEdit({ ...edit, name: event.target.value })} /></label>
+              <label className="setting-field"><span>Owner</span><select className="field" value={edit.owner_user_id || ""} onChange={(event) => setEdit({ ...edit, owner_user_id: event.target.value })}>{users.map((user) => <option key={user.id} value={user.id}>{user.name} - {user.email}</option>)}</select></label>
+              <label className="setting-field"><span>Status</span><select className="field" value={edit.status || selected.status} onChange={(event) => setEdit({ ...edit, status: event.target.value })}>{["pending_payment", "paid", "queued", "provisioning", "installing", "active", "suspended", "terminated", "failed"].map((status) => <option key={status} value={status}>{status}</option>)}</select></label>
+              <button className="icon-button w-full" onClick={saveService}><Save className="h-4 w-4" /> Save Instance</button>
+              {message && <div className="rounded-xl border border-cyan/20 bg-cyan/10 px-3 py-2 text-sm text-cyan">{message}</div>}
+            </div>
+          </div>
+          <ConsoleFrame title="Live Console Preview" logs={logs} compact />
+        </div>
       </div>}
+    </div>
+  </div>;
+}
+
+function ConsolePanel({ service, logs, setLogs }: { service: Service | null; logs: string; setLogs: (value: string) => void }) {
+  const [command, setCommand] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function refreshLogs() {
+    if (!service) return;
+    setLogs(await api<string>(`/services/${service.id}/logs`));
+  }
+  async function sendCommand(event: React.FormEvent) {
+    event.preventDefault();
+    if (!service || !command.trim()) return;
+    setBusy(true);
+    try {
+      await api(`/services/${service.id}/command`, { method: "POST", body: JSON.stringify({ command }) });
+      setLogs(`${logs}\n> ${command}`);
+      setCommand("");
+      await refreshLogs();
+    } finally {
+      setBusy(false);
+    }
+  }
+  if (!service) return <div className="empty-state"><Terminal className="mx-auto mb-4 h-12 w-12 text-cyan" /><h2>Select an instance</h2><p>The console attaches to the selected game server and shows plain terminal output.</p></div>;
+  return <div className="space-y-5">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10 flex items-center justify-between gap-5"><div><div className="text-sm uppercase tracking-[0.25em] text-cyan">Interactive Terminal</div><h2 className="font-display text-4xl font-bold">{service.name}</h2><p className="mt-2 text-sm text-slate-300">Send commands, review stdout/stderr, and operate the instance without JSON log dumps.</p></div><button className="icon-button" onClick={refreshLogs}><RotateCcw className="h-4 w-4" /> Refresh</button></div></section>
+    <ConsoleFrame title="Console Output" logs={logs} />
+    <form onSubmit={sendCommand} className="command-panel flex items-center gap-3 rounded-3xl p-4">
+      <Terminal className="h-5 w-5 text-cyan" />
+      <input className="field" value={command} onChange={(event) => setCommand(event.target.value)} placeholder="say Server restart in 5 minutes" />
+      <button className="primary-button" disabled={busy || !command.trim()}><Send className="h-4 w-4" /> Send</button>
+    </form>
+  </div>;
+}
+
+function ConsoleFrame({ title, logs, compact }: { title: string; logs: string; compact?: boolean }) {
+  const lines = (logs || "[panel] No console output yet.").split(/\r?\n/).slice(compact ? -120 : -500);
+  return <div className="console-frame rounded-3xl p-5">
+    <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">{title}</h3><span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200">text console</span></div>
+    <div className={`${compact ? "h-64" : "h-[620px]"} overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 font-mono text-xs leading-5 text-emerald-100`}>
+      {lines.map((line, index) => <div key={`${index}-${line.slice(0, 20)}`}><span className="select-none text-slate-600">{String(index + 1).padStart(3, "0")} </span>{line}</div>)}
     </div>
   </div>;
 }
@@ -967,21 +1037,47 @@ function BackupsPanel({ service }: { service: Service | null }) {
 
 function UsersPanel() {
   const [users, setUsers] = useState<any[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [roles, setRoles] = useState<string[]>([]);
   const [message, setMessage] = useState("");
+  const [form, setForm] = useState({ email: "", name: "", password: "", role: "customer" });
   async function load() {
-    const [userData, roleData] = await Promise.all([api<any[]>("/users"), api<string[]>("/users/roles")]);
+    const [userData, roleData, serviceData] = await Promise.all([api<any[]>("/users"), api<string[]>("/users/roles"), api<Service[]>("/services")]);
     setUsers(userData);
     setRoles(roleData);
+    setServices(serviceData);
+  }
+  async function createUser(event: React.FormEvent) {
+    event.preventDefault();
+    const created = await api<any>("/users", { method: "POST", body: JSON.stringify(form) });
+    setMessage(`Created ${created.email}`);
+    setForm({ email: "", name: "", password: "", role: "customer" });
+    await load();
   }
   async function updateRole(user: any, role: string) {
     const updated = await api<any>(`/users/${user.id}/role`, { method: "PUT", body: JSON.stringify({ role }) });
     setUsers((items) => items.map((item) => item.id === updated.id ? updated : item));
     setMessage(`${updated.email} is now ${updated.role}`);
   }
+  async function assignService(service: Service, owner_user_id: string) {
+    await api<Service>(`/services/${service.id}`, { method: "PUT", body: JSON.stringify({ owner_user_id }) });
+    const owner = users.find((user) => user.id === owner_user_id);
+    setMessage(`${service.name} assigned to ${owner?.email || owner_user_id}`);
+    await load();
+  }
   useEffect(() => { load().catch((error) => setMessage(error.message)); }, []);
   return <div className="space-y-5">
     <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Access Control</div><h2 className="font-display text-4xl font-bold">Users & Roles</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Assign platform roles for staff, customers, viewers, and superadmins.</p></div></section>
+    <form onSubmit={createUser} className="command-panel rounded-3xl p-5">
+      <div className="mb-4 flex items-center gap-3"><UserPlus className="h-5 w-5 text-cyan" /><h3 className="font-display text-2xl">Create User</h3></div>
+      <div className="grid grid-cols-4 gap-3">
+        <input className="field" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} placeholder="customer@example.com" />
+        <input className="field" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="Customer name" />
+        <input className="field" type="password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} placeholder="Temporary password" />
+        <select className="field" value={form.role} onChange={(event) => setForm({ ...form, role: event.target.value })}>{roles.map((role) => <option key={role} value={role}>{role}</option>)}</select>
+      </div>
+      <button className="primary-button mt-4"><UserPlus className="h-4 w-4" /> Create User</button>
+    </form>
     <div className="command-panel rounded-3xl p-5">
       <div className="space-y-3">{users.map((user) => <div key={user.id} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
         <div><div className="font-semibold">{user.name}</div><div className="text-sm text-slate-400">{user.email}</div></div>
@@ -989,6 +1085,14 @@ function UsersPanel() {
       </div>)}</div>
       {!users.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No users loaded.</div>}
       {message && <div className="mt-4 rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
+    </div>
+    <div className="command-panel rounded-3xl p-5">
+      <h3 className="mb-4 font-display text-2xl">Instance Assignments</h3>
+      <div className="space-y-3">{services.map((service) => <div key={service.id} className="grid grid-cols-[1fr_320px] items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+        <div><div className="font-semibold">{service.name}</div><div className="text-sm text-slate-400">{service.template_id} · {service.status} · {service.power_state}</div></div>
+        <select className="field" value={service.owner_user_id || ""} onChange={(event) => assignService(service, event.target.value)}>{users.map((user) => <option key={user.id} value={user.id}>{user.name} - {user.email}</option>)}</select>
+      </div>)}</div>
+      {!services.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No services available to assign.</div>}
     </div>
   </div>;
 }

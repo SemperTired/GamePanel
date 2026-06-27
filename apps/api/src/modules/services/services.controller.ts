@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { AuthGuard, RequirePermission } from "../auth/auth.guard.js";
 import { ServicesService } from "./services.service.js";
@@ -26,6 +26,12 @@ export class ServicesController {
   @RequirePermission("services:read")
   get(@Param("id") id: string) {
     return this.services.get(id);
+  }
+
+  @Put(":id")
+  @RequirePermission("services:write")
+  update(@Param("id") id: string, @Body() body: unknown) {
+    return this.services.update(id, body);
   }
 
   @Post(":id/provision")

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotFoundException, Param, Put, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import bcrypt from "bcryptjs";
 import { Role, roleSchema, roles } from "@aetherpanel/shared";
@@ -22,6 +22,26 @@ export class UsersController {
   @RequirePermission("users:read")
   listRoles() {
     return roles;
+  }
+
+  @Post()
+  @RequirePermission("users:write")
+  async create(@Body() body: { email: string; name?: string; role?: Role; password?: string }) {
+    const email = String(body.email || "").trim().toLowerCase();
+    if (!email.includes("@")) throw new BadRequestException("Valid email is required");
+    const existing = [...this.data.users.values()].find((user) => user.email.toLowerCase() === email);
+    if (existing) return this.safe(existing);
+    const now = new Date().toISOString();
+    const user: UserRecord = {
+      id: `usr_${crypto.randomUUID()}`,
+      email,
+      name: body.name?.trim() || email.split("@")[0],
+      role: roleSchema.parse(body.role || "customer"),
+      password_hash: await bcrypt.hash(body.password || crypto.randomUUID(), 10),
+      created_at: now,
+    };
+    await this.data.saveUser(user);
+    return this.safe(user);
   }
 
   @Put(":id/role")

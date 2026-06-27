@@ -424,6 +424,15 @@ body::after {
   z-index: 1;
 }
 
+.console-frame {
+  border: 1px solid rgba(34, 211, 238, 0.18);
+  background:
+    radial-gradient(circle at top left, rgba(34, 211, 238, 0.14), transparent 34%),
+    linear-gradient(145deg, rgba(3, 7, 18, 0.92), rgba(10, 15, 28, 0.76));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+}
+
 .provider-tile {
   display: flex;
   width: 100%;

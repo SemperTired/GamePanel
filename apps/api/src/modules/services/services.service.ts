@@ -24,6 +24,26 @@ export class ServicesService {
     return service;
   }
 
+  async update(id: string, input: unknown) {
+    const service = this.get(id);
+    if (!input || typeof input !== "object") throw new BadRequestException("Update body is required");
+    const body = input as Record<string, unknown>;
+    if (typeof body.name === "string" && body.name.trim()) service.name = body.name.trim();
+    if (typeof body.owner_user_id === "string" && body.owner_user_id.trim()) {
+      if (!this.data.users.has(body.owner_user_id)) throw new BadRequestException("Unknown owner_user_id");
+      service.owner_user_id = body.owner_user_id;
+    }
+    if (typeof body.node_id === "string" && body.node_id.trim()) service.node_id = body.node_id;
+    if (typeof body.location_id === "string" && body.location_id.trim()) service.location_id = body.location_id;
+    if (typeof body.status === "string" && ["pending_payment", "paid", "queued", "provisioning", "installing", "active", "suspended", "terminated", "failed"].includes(body.status)) service.status = body.status;
+    if (body.startup_variables && typeof body.startup_variables === "object") {
+      service.startup_variables = { ...(service.startup_variables || {}), ...(body.startup_variables as Record<string, string>) };
+    }
+    service.updated_at = new Date().toISOString();
+    await this.data.saveService(service);
+    return service;
+  }
+
   async create(input: unknown): Promise<ServiceRecord> {
     const normalized = this.normalizeCreateInput(input);
     const payload = createServiceSchema.parse(normalized);
