@@ -7,8 +7,8 @@
     "outDir": "dist",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "declaration": false,
-    "declarationMap": false
+    "declaration": true,
+    "emitDeclarationOnly": true
   },
   "references": [{ "path": "../../packages/shared" }],
   "include": ["src/**/*.ts", "src/**/*.tsx"]

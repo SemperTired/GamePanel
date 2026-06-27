@@ -1,15 +1,19 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Activity, Boxes, CreditCard, ExternalLink, FileText, Folder, Gauge, Gamepad2, Globe2, ImageIcon, KeyRound, LayoutDashboard, ListChecks, Loader2, Network, Play, Plus, RotateCcw, Save, Search, Server, Settings, Shield, SlidersHorizontal, Sparkles, Square, UploadCloud, Users } from "lucide-react";
+import { Activity, Bell, Boxes, CreditCard, Database, ExternalLink, FileText, Folder, Gauge, Gamepad2, Globe2, ImageIcon, KeyRound, LayoutDashboard, ListChecks, Loader2, Mail, Network, Play, Plus, RotateCcw, Router, Save, Search, Server, Settings, Shield, SlidersHorizontal, Sparkles, Square, UploadCloud, Users, Wifi } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import "./styles/global.css";
 import { api, login, logout, token } from "./lib/api";
 
-type Template = { id: string; name: string; category: string; summary: string; resources: { recommended_ram_mb: number; min_disk_gb: number; cpu: string }; workshop: { enabled: boolean; providers: string[] }; ports: Array<{ key: string; default: number; protocol: string }> };
+type Template = { id: string; name: string; category: string; summary: string; resources: { recommended_ram_mb: number; min_disk_gb: number; cpu: string }; workshop: { enabled: boolean; providers: string[] }; ports: Array<{ key: string; default: number; protocol: string }>; source?: { needs_review?: boolean; type?: string } };
 type ModEntry = { id: string; provider: string; name?: string; summary?: string; thumbnail_url?: string; page_url?: string; enabled: boolean; order: number };
-type Service = { id: string; name: string; template_id: string; status: string; power_state: string; ports: Array<{ key: string; host: number; protocol: string }>; mods: ModEntry[] };
+type ServicePort = { key: string; host: number; container?: number; protocol: string; host_ip?: string };
+type NetworkMapping = { id?: string; name?: string; wan_ip?: string; external_port?: number; internal_ip?: string; internal_port?: number };
+type Service = { id: string; name: string; template_id: string; status: string; power_state: string; ports: ServicePort[]; mods: ModEntry[]; runtime_id?: string; node_id?: string; network_mappings?: NetworkMapping[]; startup_variables?: Record<string, string> };
 type ModProvider = { id: string; name: string; configured: boolean; searchable: boolean; web_url: string; note: string };
 type ModSearchItem = { id: string; provider: string; name: string; summary?: string; thumbnail_url?: string; page_url?: string; tags?: string[]; subscriptions?: number; favorited?: number };
 type FileEntry = { name: string; type: "file" | "directory"; size: number; updated_at: string };
+type NavItem = [string, LucideIcon, string];
 
 function Shell() {
   const [active, setActive] = useState("dashboard");
@@ -47,54 +51,78 @@ function Shell() {
     running: services.filter((s) => s.power_state === "running").length,
     workshop: templates.filter((t) => t.workshop.enabled).length,
     nodes: nodes.length,
+    templates: templates.length,
+    review: templates.filter((t) => t.source?.needs_review).length,
+    mods: services.reduce((total, service) => total + (service.mods?.length || 0), 0),
+    ports: services.reduce((total, service) => total + (service.ports?.length || 0), 0),
   }), [services, templates, nodes]);
 
-  const nav = [
-    ["dashboard", LayoutDashboard, "Dashboard"],
-    ["services", Server, "Services"],
-    ["files", Folder, "Files"],
-    ["config", SlidersHorizontal, "Config"],
-    ["templates", Gamepad2, "Game Templates"],
-    ["mods", Boxes, "Workshop Mods"],
-    ["infrastructure", Network, "Infrastructure"],
-    ["nodes", Network, "Nodes"],
-    ["billing", CreditCard, "Billing"],
-    ["provisioning", ListChecks, "Provisioning"],
-    ["users", Users, "Users"],
-    ["settings", Settings, "Settings"],
-    ["audit", Shield, "Audit"],
-  ] as const;
+  const navGroups: Array<{ label: string; items: NavItem[] }> = [
+    { label: "Operate", items: [["dashboard", LayoutDashboard, "Overview"], ["services", Server, "Instances"], ["files", Folder, "Files"], ["config", SlidersHorizontal, "Config"], ["mods", Boxes, "Mods"]] },
+    { label: "Deploy", items: [["templates", Gamepad2, "Game Library"], ["provisioning", ListChecks, "Queue"], ["nodes", Network, "Nodes"]] },
+    { label: "Business", items: [["billing", CreditCard, "Billing"], ["users", Users, "Users"], ["audit", Shield, "Audit"]] },
+    { label: "Platform", items: [["infrastructure", Router, "Network"], ["settings", Settings, "Settings"]] },
+  ];
+  const nav = navGroups.flatMap((group) => group.items);
+  const selectedTemplate = selectedService ? templates.find((template) => template.id === selectedService.template_id) : null;
 
   if (loading) return <div className="min-h-screen grid place-items-center"><Loader2 className="h-8 w-8 animate-spin text-cyan" /></div>;
 
   return (
-    <div className="min-h-screen grid grid-cols-[260px_1fr]">
-      <aside className="border-r border-white/10 bg-black/30 p-4">
-        <div className="mb-8 flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-cyan/15 text-cyan glow"><Server /></div>
+    <div className="panel-shell min-h-screen">
+      <aside className="panel-sidebar">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="grid h-10 w-10 place-items-center rounded-xl bg-cyan/15 text-cyan glow"><Gauge /></div>
           <div>
             <div className="font-display text-xl font-bold">AetherPanel</div>
-            <div className="text-xs text-slate-400">Proprietary Hosting OS</div>
+            <div className="text-xs text-slate-400">AetherNode Control</div>
           </div>
         </div>
-        <nav className="space-y-1">
-          {nav.map(([id, Icon, label]) => (
-            <button key={id} onClick={() => setActive(id)} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${active === id ? "bg-cyan/15 text-cyan" : "text-slate-300 hover:bg-white/5 hover:text-white"}`}>
-              <Icon className="h-4 w-4" /> {label}
-            </button>
-          ))}
+
+        <div className="service-switcher">
+          <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.18em] text-slate-500"><span>Active Instance</span><span>{services.length}</span></div>
+          {selectedService ? <div className="rounded-2xl border border-cyan/20 bg-cyan/10 p-3">
+            <div className="truncate font-semibold">{selectedService.name}</div>
+            <div className="mt-1 truncate text-xs text-slate-400">{selectedTemplate?.name || selectedService.template_id}</div>
+            <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+              <span className="rounded-lg bg-black/25 px-2 py-1 text-emerald-200">{selectedService.status}</span>
+              <span className="rounded-lg bg-black/25 px-2 py-1 text-cyan">{selectedService.power_state}</span>
+            </div>
+          </div> : <div className="rounded-2xl border border-dashed border-white/15 p-4 text-sm text-slate-400">No service selected</div>}
+          <div className="mt-3 max-h-36 space-y-1 overflow-auto">
+            {services.slice(0, 8).map((service) => <button key={service.id} onClick={() => setSelectedService(service)} className={`mini-service ${selectedService?.id === service.id ? "mini-service-active" : ""}`}>
+              <span className="truncate">{service.name}</span><span>{service.power_state}</span>
+            </button>)}
+          </div>
+        </div>
+
+        <nav className="mt-5 space-y-5">
+          {navGroups.map((group) => <div key={group.label}>
+            <div className="mb-2 px-2 text-[0.68rem] font-bold uppercase tracking-[0.22em] text-slate-500">{group.label}</div>
+            <div className="space-y-1">
+              {group.items.map(([id, Icon, label]) => (
+                <button key={id} onClick={() => setActive(id)} className={`nav-item ${active === id ? "nav-item-active" : ""}`}>
+                  <Icon className="h-4 w-4" /> {label}
+                </button>
+              ))}
+            </div>
+          </div>)}
         </nav>
         <button onClick={logout} className="mt-8 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-3 py-2 text-sm text-slate-300 hover:bg-white/5">
           <KeyRound className="h-4 w-4" /> Sign out
         </button>
       </aside>
-      <main className="p-8">
-        <header className="mb-8 flex items-center justify-between">
+      <main className="panel-main">
+        <header className="topbar">
           <div>
-            <div className="text-sm uppercase tracking-[0.3em] text-cyan">Control Plane</div>
+            <div className="text-sm uppercase tracking-[0.3em] text-cyan">AetherNode Hosting</div>
             <h1 className="font-display text-4xl font-bold">{nav.find(([id]) => id === active)?.[2]}</h1>
           </div>
-          <div className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-200">Docker MVP Runtime</div>
+          <div className="topbar-metrics">
+            <span><Server className="h-4 w-4" /> {stats.active} active</span>
+            <span><Gamepad2 className="h-4 w-4" /> {stats.templates} games</span>
+            <span><Network className="h-4 w-4" /> {stats.nodes} nodes</span>
+          </div>
         </header>
         {active === "dashboard" && <Dashboard stats={stats} audits={audits} services={services} />}
         {active === "templates" && <Templates templates={templates} />}
@@ -107,7 +135,7 @@ function Shell() {
         {active === "billing" && <Billing />}
         {active === "provisioning" && <Provisioning />}
         {active === "users" && <Placeholder icon={Users} title="Users & Roles" body="RBAC contracts are implemented for superadmin, provider admin, staff, customer, and viewer roles." />}
-        {active === "settings" && <Placeholder icon={Settings} title="Settings" body="Branding, Steam, payment gateway, security, and support settings are exposed through /api/v1/settings/:section." />}
+        {active === "settings" && <SettingsPanel />}
         {active === "audit" && <Panel title="Audit Log" items={audits} empty="No audit events yet." />}
       </main>
     </div>
@@ -115,17 +143,53 @@ function Shell() {
 }
 
 function Dashboard({ stats, audits, services }: any) {
+  const statusRows = [
+    ["Active Services", stats.active, Server, "Provisioned and customer-visible"],
+    ["Running Now", stats.running, Activity, "Power state currently running"],
+    ["Game Catalog", stats.templates, Gamepad2, `${stats.review} imported templates pending review`],
+    ["Open Ports", stats.ports, Wifi, "Customer-facing bindings planned"],
+    ["Workshop Ready", stats.workshop, Boxes, "Templates with mod provider support"],
+    ["Nodes Online", stats.nodes, Network, "Runtime capacity records"],
+    ["Installed Mods", stats.mods, Sparkles, "Across all services"],
+    ["Audit Events", audits.length, Shield, "Recent platform activity"],
+  ];
   return <div className="space-y-6">
+    <section className="dashboard-hero">
+      <div className="relative z-10">
+        <div className="mb-2 text-sm uppercase tracking-[0.28em] text-cyan">Operator Overview</div>
+        <h2 className="font-display text-5xl font-bold">AetherNode Service Control</h2>
+        <p className="mt-3 max-w-3xl text-slate-300">Monitor game instances, provisioning state, network exposure, customer workload, and template readiness from one focused workspace.</p>
+      </div>
+      <div className="relative z-10 grid grid-cols-3 gap-3">
+        <MetricPill label="Healthy" value={`${Math.max(0, stats.active - services.filter((s: Service) => s.status === "failed").length)}`} />
+        <MetricPill label="Queued" value={services.filter((s: Service) => s.status === "queued").length} />
+        <MetricPill label="Suspended" value={services.filter((s: Service) => s.status === "suspended").length} />
+      </div>
+    </section>
+
     <div className="grid grid-cols-4 gap-4">
-      {[["Active Services", stats.active, Server], ["Running", stats.running, Activity], ["Workshop Ready", stats.workshop, Boxes], ["Nodes", stats.nodes, Network]].map(([label, value, Icon]: any) => (
-        <div key={label} className="glass rounded-2xl p-5"><Icon className="mb-4 text-cyan" /><div className="text-3xl font-bold">{value}</div><div className="text-sm text-slate-400">{label}</div></div>
+      {statusRows.map(([label, value, Icon, detail]: any) => (
+        <div key={label} className="metric-card"><Icon className="text-cyan" /><div className="mt-4 text-3xl font-bold">{value}</div><div className="text-sm font-semibold text-slate-200">{label}</div><p>{detail}</p></div>
       ))}
     </div>
-    <div className="grid grid-cols-[1.3fr_0.7fr] gap-4">
-      <div className="glass rounded-2xl p-6"><h2 className="mb-4 font-display text-2xl">Live Services</h2><ServiceRows services={services} /></div>
-      <div className="glass rounded-2xl p-6"><h2 className="mb-4 font-display text-2xl">Recent Audit</h2><pre className="max-h-80 overflow-auto text-xs text-slate-300">{JSON.stringify(audits.slice(0, 8), null, 2)}</pre></div>
+
+    <div className="grid grid-cols-[1.25fr_0.75fr] gap-4">
+      <div className="command-panel rounded-3xl p-6"><h2 className="mb-4 font-display text-2xl">Instances</h2><ServiceRows services={services} detailed /></div>
+      <div className="command-panel rounded-3xl p-6"><h2 className="mb-4 font-display text-2xl">Recent Activity</h2><ActivityFeed audits={audits} /></div>
     </div>
   </div>;
+}
+
+function MetricPill({ label, value }: { label: string; value: string | number }) {
+  return <div className="rounded-2xl border border-white/10 bg-black/25 p-4"><div className="text-3xl font-bold text-white">{value}</div><div className="text-xs uppercase tracking-[0.18em] text-slate-400">{label}</div></div>;
+}
+
+function ActivityFeed({ audits }: { audits: any[] }) {
+  if (!audits.length) return <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No recent activity.</div>;
+  return <div className="space-y-3">{audits.slice(0, 10).map((audit) => <div key={audit.id || `${audit.action}-${audit.created_at}`} className="activity-row">
+    <div className="grid h-9 w-9 place-items-center rounded-xl bg-cyan/10 text-cyan"><Shield className="h-4 w-4" /></div>
+    <div className="min-w-0"><div className="truncate text-sm font-semibold">{audit.action || "event"}</div><div className="truncate text-xs text-slate-500">{audit.actor || "system"} · {audit.target || "platform"}</div></div>
+  </div>)}</div>;
 }
 
 function Templates({ templates }: { templates: Template[] }) {
@@ -154,8 +218,9 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
     await api(`/services/${selected.id}/power/${action}`, { method: "POST" });
     await refresh();
   }
+  const template = selected ? templates.find((item: Template) => item.id === selected.template_id) : null;
   return <div className="grid grid-cols-[360px_1fr] gap-5">
-    <div className="glass rounded-2xl p-5">
+    <div className="command-panel rounded-3xl p-5">
       <h2 className="mb-4 font-display text-2xl">Deploy</h2>
       <div className="max-h-[560px] space-y-2 overflow-auto">
         {templates.slice(0, 24).map((template: Template) => <button key={template.id} onClick={() => createService(template.id)} className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-left text-sm hover:border-cyan/40">
@@ -164,20 +229,41 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
       </div>
     </div>
     <div className="space-y-5">
-      <div className="glass rounded-2xl p-5"><h2 className="mb-4 font-display text-2xl">Services</h2><ServiceRows services={services} onPick={setSelected} /></div>
-      {selected && <div className="glass rounded-2xl p-5">
-        <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">{selected.name}</h3><span className="text-sm text-slate-400">{selected.status} · {selected.power_state}</span></div>
-        <div className="mb-4 flex gap-2">{["start", "stop", "restart", "kill"].map((action) => <button key={action} onClick={() => power(action)} className="rounded-xl bg-cyan/15 px-3 py-2 text-sm capitalize text-cyan hover:bg-cyan/25">{action === "start" ? <Play className="inline h-4 w-4" /> : action === "stop" ? <Square className="inline h-4 w-4" /> : <RotateCcw className="inline h-4 w-4" />} {action}</button>)}</div>
+      <div className="command-panel rounded-3xl p-5"><h2 className="mb-4 font-display text-2xl">Instances</h2><ServiceRows services={services} onPick={setSelected} selectedId={selected?.id} detailed /></div>
+      {selected && <div className="command-panel rounded-3xl p-5">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+          <div><h3 className="font-display text-3xl">{selected.name}</h3><div className="mt-1 text-sm text-slate-400">{template?.name || selected.template_id} · {selected.node_id || "local node"}</div></div>
+          <div className="flex gap-2">{["start", "stop", "restart", "kill"].map((action) => <button key={action} onClick={() => power(action)} className="control-button">{action === "start" ? <Play className="h-4 w-4" /> : action === "stop" ? <Square className="h-4 w-4" /> : <RotateCcw className="h-4 w-4" />} {action}</button>)}</div>
+        </div>
+        <div className="mb-5 grid grid-cols-5 gap-3">
+          <DataPoint icon={Activity} label="State" value={selected.power_state} />
+          <DataPoint icon={Shield} label="Status" value={selected.status} />
+          <DataPoint icon={Wifi} label="Ports" value={selected.ports?.length || 0} />
+          <DataPoint icon={Boxes} label="Mods" value={selected.mods?.length || 0} />
+          <DataPoint icon={Database} label="Runtime" value={selected.runtime_id ? "Ready" : "Pending"} />
+        </div>
+        <div className="mb-5 grid grid-cols-2 gap-4">
+          <InfoBlock title="Connection Info" items={(selected.ports || []).map((port: ServicePort) => [`${port.key} ${port.protocol}`, `${port.host_ip || "0.0.0.0"}:${port.host}`])} />
+          <InfoBlock title="Network Mappings" items={(selected.network_mappings || []).map((mapping: NetworkMapping) => [mapping.name || mapping.id || "mapping", `${mapping.wan_ip || "WAN"}:${mapping.external_port || "?"} -> ${mapping.internal_ip || "LAN"}:${mapping.internal_port || "?"}`])} empty="No port-forward mappings recorded yet." />
+        </div>
         <pre className="h-72 overflow-auto rounded-xl border border-white/10 bg-black/40 p-4 font-mono text-xs text-emerald-200">{logs}</pre>
       </div>}
     </div>
   </div>;
 }
 
-function ServiceRows({ services, onPick }: any) {
+function DataPoint({ icon: Icon, label, value }: any) {
+  return <div className="data-point"><Icon className="h-4 w-4 text-cyan" /><div><div className="text-xs text-slate-500">{label}</div><div className="truncate font-semibold">{value}</div></div></div>;
+}
+
+function InfoBlock({ title, items, empty }: { title: string; items: Array<[string, string]>; empty?: string }) {
+  return <div className="rounded-2xl border border-white/10 bg-black/20 p-4"><h4 className="mb-3 font-semibold">{title}</h4>{items.length ? <div className="space-y-2">{items.map(([key, value]) => <div key={`${key}-${value}`} className="flex items-center justify-between gap-3 text-sm"><span className="text-slate-400">{key}</span><span className="font-mono text-cyan">{value}</span></div>)}</div> : <div className="text-sm text-slate-500">{empty || "No data yet."}</div>}</div>;
+}
+
+function ServiceRows({ services, onPick, selectedId, detailed }: any) {
   if (!services.length) return <div className="rounded-xl border border-dashed border-white/15 p-8 text-center text-slate-400">No services yet.</div>;
-  return <div className="space-y-2">{services.map((service: Service) => <button key={service.id} onClick={() => onPick?.(service)} className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-left hover:border-cyan/40">
-    <span><span className="font-semibold">{service.name}</span><span className="ml-2 text-xs text-slate-500">{service.template_id}</span></span><span className="text-xs text-cyan">{service.power_state}</span>
+  return <div className="space-y-2">{services.map((service: Service) => <button key={service.id} onClick={() => onPick?.(service)} className={`service-row ${selectedId === service.id ? "service-row-active" : ""}`}>
+    <span className="min-w-0"><span className="block truncate font-semibold">{service.name}</span><span className="text-xs text-slate-500">{service.template_id}</span>{detailed && <span className="mt-2 flex gap-2 text-[0.7rem] text-slate-400"><span>{service.ports?.length || 0} ports</span><span>{service.mods?.length || 0} mods</span><span>{service.node_id || "local"}</span></span>}</span><span className={`status-pill ${service.power_state === "running" ? "status-good" : ""}`}>{service.power_state}</span>
   </button>)}</div>;
 }
 
@@ -330,6 +416,62 @@ function InfrastructurePanel({ service }: { service: Service | null }) {
       </div>
     </div>
     {message && <div className="rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
+  </div>;
+}
+
+function SettingsPanel() {
+  const [settings, setSettings] = useState<Record<string, any>>({});
+  const [activeSection, setActiveSection] = useState("branding");
+  const [message, setMessage] = useState("");
+  const sections = [
+    ["branding", Gauge, "Branding"],
+    ["payments", CreditCard, "Payments"],
+    ["steam", Gamepad2, "Steam"],
+    ["security", Shield, "Security"],
+    ["infrastructure", Router, "Infrastructure"],
+    ["mail", Mail, "Mail"],
+    ["notifications", Bell, "Notifications"],
+    ["support", Users, "Support"],
+  ] as const;
+
+  async function load() {
+    setSettings(await api<Record<string, any>>("/settings"));
+  }
+  async function save(section = activeSection) {
+    await api(`/settings/${section}`, { method: "PUT", body: JSON.stringify(settings[section] || {}) });
+    setMessage(`${section} settings saved`);
+  }
+  function update(section: string, key: string, value: any) {
+    setSettings({ ...settings, [section]: { ...(settings[section] || {}), [key]: value } });
+  }
+
+  useEffect(() => { load().catch((error) => setMessage(error.message)); }, []);
+  const current = settings[activeSection] || {};
+
+  return <div className="grid grid-cols-[280px_1fr] gap-5">
+    <div className="command-panel rounded-3xl p-5">
+      <h2 className="mb-4 font-display text-2xl">Settings</h2>
+      <div className="space-y-2">{sections.map(([id, Icon, label]) => <button key={id} onClick={() => setActiveSection(id)} className={`provider-tile ${activeSection === id ? "provider-tile-active" : ""}`}>
+        <Icon className="h-4 w-4" /><span>{label}</span>
+      </button>)}</div>
+    </div>
+    <div className="command-panel rounded-3xl p-6">
+      <div className="mb-6 flex items-center justify-between">
+        <div><div className="text-sm uppercase tracking-[0.22em] text-cyan">Platform Settings</div><h2 className="font-display text-3xl capitalize">{activeSection}</h2></div>
+        <button className="primary-button" onClick={() => save()}><Save className="h-4 w-4" /> Save Section</button>
+      </div>
+      <div className="settings-grid">
+        {Object.entries(current).map(([key, value]) => <label key={key} className="setting-field">
+          <span>{key.replaceAll("_", " ")}</span>
+          {typeof value === "boolean"
+            ? <select className="field" value={String(value)} onChange={(event) => update(activeSection, key, event.target.value === "true")}><option value="true">Enabled</option><option value="false">Disabled</option></select>
+            : typeof value === "number"
+              ? <input className="field" type="number" value={value} onChange={(event) => update(activeSection, key, Number(event.target.value))} />
+              : <input className="field" value={String(value ?? "")} onChange={(event) => update(activeSection, key, event.target.value)} />}
+        </label>)}
+      </div>
+      {message && <div className="mt-5 rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
+    </div>
   </div>;
 }
 

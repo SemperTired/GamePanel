@@ -76,7 +76,7 @@ export class DataStore {
     } catch (error) {
       this.databaseOnline = false;
       const message = error instanceof Error ? error.message : String(error);
-      if (databaseRequired()) throw new Error(`PostgreSQL is required but unavailable: ${message}`);
+      if (databaseRequired()) throw new Error(`PostgreSQL is required but unavailable: ${message}`, { cause: error });
       console.warn(`[data] PostgreSQL unavailable, using volatile memory store: ${message}`);
     }
   }

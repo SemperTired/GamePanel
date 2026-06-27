@@ -1,10 +1,19 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import yaml from "js-yaml";
 import { GameTemplate, ModEntry, gameTemplateSchema } from "@aetherpanel/shared";
 export { additionalStarterTemplates } from "./starter-catalog.js";
 
-export const templatesDir = path.resolve(process.cwd(), "packages/templates/templates");
+const moduleDir = path.dirname(fileURLToPath(import.meta.url));
+const templateDirCandidates = [
+  path.resolve(moduleDir, "../templates"),
+  path.resolve(moduleDir, "../../templates"),
+  path.resolve(process.cwd(), "packages/templates/templates"),
+  path.resolve(process.cwd(), "templates"),
+];
+
+export const templatesDir = templateDirCandidates.find((candidate) => fs.existsSync(candidate)) || templateDirCandidates[0];
 
 export function loadTemplateFile(file: string): GameTemplate {
   const raw = fs.readFileSync(file, "utf8");
