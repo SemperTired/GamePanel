@@ -26,12 +26,16 @@ export class ProvisioningService implements OnModuleDestroy {
     }
   }
 
-  async enqueue(serviceId: string, action = "install") {
+  async enqueue(serviceId: string, action = "install", metadata: Record<string, unknown> = {}) {
     const now = new Date().toISOString();
-    const record = { id: crypto.randomUUID(), service_id: serviceId, action, status: "queued", queue: "memory", created_at: now, updated_at: now };
+    const record = { id: crypto.randomUUID(), service_id: serviceId, action, status: "queued", queue: "memory", metadata, created_at: now, updated_at: now };
     try {
       if (this.queue) {
-        const job = await this.queue.add(action, { serviceId, action, requestId: record.id });
+        const timeoutMs = Number(process.env.PROVISIONING_QUEUE_TIMEOUT_MS || 3000);
+        const job = await Promise.race([
+          this.queue.add(action, { serviceId, action, requestId: record.id, metadata }),
+          new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`Redis queue add timed out after ${timeoutMs}ms`)), timeoutMs)),
+        ]);
         record.queue = "redis";
         record.status = "queued";
         Object.assign(record, { bullmq_job_id: String(job.id) });

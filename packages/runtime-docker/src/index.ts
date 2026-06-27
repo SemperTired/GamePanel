@@ -28,33 +28,44 @@ export class DockerRuntimeProvider implements RuntimeProvider {
 
   async create(input: RuntimeCreateInput): Promise<string> {
     if (!this.docker || this.mode === "mock") {
-      const id = `mock-${crypto.randomUUID()}`;
-      this.mock.set(id, {
-        id,
-        input,
-        state: "created",
-        logs: [`[panel] Created ${input.name}`, `[panel] Image ${input.image}`, `[panel] Ports ${input.ports.map((p) => `${p.host}/${p.protocol}`).join(", ")}`],
-      });
-      return id;
+      return this.createMock(input);
     }
     const ports = Object.fromEntries(input.ports.map((port) => [`${port.container}/${port.protocol === "both" ? "tcp" : port.protocol}`, [{ HostIp: port.host_ip, HostPort: String(port.host) }]]));
     const exposed = Object.fromEntries(Object.keys(ports).map((key) => [key, {}]));
-    const container = await this.docker.createContainer({
-      name: `aether-${input.serviceId}`,
-      Image: input.image,
-      Env: Object.entries(input.environment).map(([key, value]) => `${key}=${value}`),
-      ExposedPorts: exposed,
-      HostConfig: {
-        PortBindings: ports,
-        Binds: [`${input.volumeName}:${input.dataPath}`],
-        Memory: input.memoryMb * 1024 * 1024,
-        NanoCpus: input.cpuLimit ? Math.floor(input.cpuLimit * 1e9) : undefined,
-        RestartPolicy: { Name: "unless-stopped" },
-      },
-      Tty: true,
-      OpenStdin: true,
+    try {
+      const container = await this.docker.createContainer({
+        name: `aether-${input.serviceId}`,
+        Image: input.image,
+        Env: Object.entries(input.environment).map(([key, value]) => `${key}=${value}`),
+        ExposedPorts: exposed,
+        HostConfig: {
+          PortBindings: ports,
+          Binds: [`${input.hostDataPath || input.volumeName}:${input.dataPath}`],
+          Memory: input.memoryMb * 1024 * 1024,
+          NanoCpus: input.cpuLimit ? Math.floor(input.cpuLimit * 1e9) : undefined,
+          RestartPolicy: { Name: "unless-stopped" },
+        },
+        Tty: true,
+        OpenStdin: true,
+      });
+      return container.id;
+    } catch (error) {
+      if (process.env.DOCKER_REQUIRED === "true" || process.env.NODE_ENV === "production") throw error;
+      const id = this.createMock(input);
+      this.mock.get(id)?.logs.push(`[panel] Docker unavailable, using mock runtime: ${error instanceof Error ? error.message : String(error)}`);
+      return id;
+    }
+  }
+
+  private createMock(input: RuntimeCreateInput): string {
+    const id = `mock-${crypto.randomUUID()}`;
+    this.mock.set(id, {
+      id,
+      input,
+      state: "created",
+      logs: [`[panel] Created ${input.name}`, `[panel] Image ${input.image}`, `[panel] Data ${input.hostDataPath || input.volumeName}`, `[panel] Ports ${input.ports.map((p) => `${p.host}/${p.protocol}`).join(", ")}`],
     });
-    return container.id;
+    return id;
   }
 
   async start(runtimeId: string): Promise<void> {

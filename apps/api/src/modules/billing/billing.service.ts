@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { DataStore } from "../data.module.js";
 import { ProvisioningService } from "../provisioning/provisioning.service.js";
+import { ServicesService } from "../services/services.service.js";
 
 const paypalBaseUrl = () => process.env.PAYPAL_MODE === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
 
 @Injectable()
 export class BillingService {
-  constructor(private readonly data: DataStore, private readonly provisioning: ProvisioningService) {}
+  constructor(private readonly data: DataStore, private readonly provisioning: ProvisioningService, private readonly services: ServicesService) {}
 
   gateways() {
     return [
@@ -72,6 +73,45 @@ export class BillingService {
     return { received: true, verified, fulfillment };
   }
 
+  async receivePaymentFulfillment(secret: string | undefined, body: any) {
+    const expected = process.env.AETHERPANEL_FULFILLMENT_SECRET;
+    if (expected && secret !== expected) throw new UnauthorizedException("Invalid fulfillment secret");
+    if (!expected && process.env.NODE_ENV === "production") throw new UnauthorizedException("Fulfillment secret is required in production");
+    if (!body?.paid) return { action: "ignored", reason: "payment_not_marked_paid" };
+
+    let serviceId = body.service_id;
+    if (!serviceId) {
+      const service = await this.services.create({
+        name: body.service_name || `${body.customer_email || "Customer"} ${body.template_id}`,
+        template_id: body.template_id,
+        owner_user_id: body.owner_user_id || body.customer_id || body.customer_email,
+        location_id: body.location_id || "local",
+        node_id: body.node_id,
+        memory_mb: body.memory_mb,
+        disk_gb: body.disk_gb,
+        cpu_limit: body.cpu_limit,
+        startup_variables: body.startup_variables || {},
+      });
+      serviceId = service.id;
+    }
+
+    const service = this.data.services.get(serviceId);
+    if (!service) throw new BadRequestException("Unknown service");
+    service.status = "paid";
+    service.updated_at = new Date().toISOString();
+    await this.data.saveService(service);
+    const job = await this.provisioning.enqueue(service.id, "install", { source: "aethernode", payment_id: body.payment_id || body.order_id, amount: body.amount, currency: body.currency });
+    await this.data.recordAudit({
+      id: crypto.randomUUID(),
+      actor: "aethernode",
+      action: "billing.fulfillment_payment_completed",
+      target: service.id,
+      metadata: { job_id: job.id, payment_id: body.payment_id || body.order_id },
+      created_at: new Date().toISOString(),
+    });
+    return { action: "queued_provisioning", service_id: service.id, job_id: job.id };
+  }
+
   private async paypalAccessToken(): Promise<string> {
     const clientId = process.env.PAYPAL_CLIENT_ID;
     const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
@@ -126,7 +166,7 @@ export class BillingService {
     service.status = "paid";
     service.updated_at = new Date().toISOString();
     await this.data.saveService(service);
-    const job = await this.provisioning.enqueue(service.id, "install");
+    const job = await this.provisioning.enqueue(service.id, "install", { source: "paypal", event_type: type });
     await this.data.recordAudit({
       id: crypto.randomUUID(),
       actor: "paypal",

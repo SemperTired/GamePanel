@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { createServiceSchema } from "@aetherpanel/shared";
+import { PortProtocol, createServiceSchema } from "@aetherpanel/shared";
 import { createDockerRuntime } from "@aetherpanel/runtime-docker";
+import { buildInstallPlan, prepareServiceFiles } from "@aetherpanel/templates";
 import { DataStore, ServiceRecord } from "../data.module.js";
 import { TemplatesService } from "../templates/templates.service.js";
 import { InfrastructureService } from "../infrastructure/infrastructure.service.js";
@@ -29,21 +30,24 @@ export class ServicesService {
     const template = this.templates.get(payload.template_id);
     if (!template) throw new BadRequestException("Unknown template");
     const now = new Date().toISOString();
+    const serviceId = crypto.randomUUID();
+    const installPlan = buildInstallPlan(template, serviceId);
     const service: ServiceRecord = {
-      id: crypto.randomUUID(),
+      id: serviceId,
       name: payload.name,
       template_id: payload.template_id,
       owner_user_id: payload.owner_user_id,
-      status: "queued",
+      status: "pending_payment",
       power_state: "created",
+      location_id: payload.location_id,
       node_id: payload.node_id || "local",
-      ports: template.ports.map((port, index) => ({
+      install: installPlan,
+      ports: this.allocatePorts(template.ports.map((port) => ({
         key: port.key,
-        host: port.default + index,
+        preferred: port.default,
         container: port.default,
         protocol: port.protocol,
-        host_ip: "0.0.0.0",
-      })),
+      }))),
       mods: [],
       startup_variables: payload.startup_variables,
       network_mappings: [],
@@ -52,6 +56,25 @@ export class ServicesService {
     };
     await this.data.saveService(service);
     return service;
+  }
+
+  private allocatePorts(requested: Array<{ key: string; preferred: number; container: number; protocol: PortProtocol }>) {
+    const start = Number(process.env.PORT_POOL_START || 30000);
+    const end = Number(process.env.PORT_POOL_END || 60000);
+    const bindIp = process.env.NODE_BIND_IP || "0.0.0.0";
+    const used = new Set([...this.data.services.values()].flatMap((service) => service.ports.map((port) => `${port.host}/${port.protocol}`)));
+    let cursor = start;
+    return requested.map((port) => {
+      let host = port.preferred >= start && port.preferred <= end ? port.preferred : cursor;
+      while (used.has(`${host}/${port.protocol}`) || host < start || host > end) {
+        host += 1;
+        if (host > end) host = start;
+        if (host === cursor) throw new BadRequestException("No available ports in the configured port pool");
+      }
+      cursor = host + 1;
+      used.add(`${host}/${port.protocol}`);
+      return { key: port.key, host, container: port.container, protocol: port.protocol, host_ip: bindIp };
+    });
   }
 
   private normalizeCreateInput(input: unknown) {
@@ -78,15 +101,19 @@ export class ServicesService {
     const template = this.templates.get(service.template_id);
     if (!template) throw new BadRequestException("Unknown template");
     service.status = "installing";
+    service.power_state = "installing";
     service.updated_at = new Date().toISOString();
     await this.data.saveService(service);
+    const installPlan = buildInstallPlan(template, service.id);
+    await prepareServiceFiles(installPlan, { runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true" });
     const runtimeId = await runtime.create({
       serviceId: service.id,
       name: service.name,
-      image: template.install.image || "ghcr.io/aetherpanel/steamcmd:latest",
+      image: installPlan.image,
       environment: template.environment,
       ports: service.ports,
       volumeName: `aether_${service.id.replaceAll("-", "").slice(0, 12)}`,
+      hostDataPath: installPlan.servicePath,
       memoryMb: template.resources.recommended_ram_mb,
       dataPath: "/data",
       startupCommand: template.runtime.startup,
@@ -94,7 +121,12 @@ export class ServicesService {
     service.runtime_id = runtimeId;
     service.status = "active";
     service.power_state = "created";
-    service.network_mappings = this.infrastructure.planForService(service.id).mappings;
+    service.install = installPlan;
+    try {
+      service.network_mappings = (await this.infrastructure.applyForService(service.id)).mappings;
+    } catch {
+      service.network_mappings = this.infrastructure.planForService(service.id).mappings;
+    }
     service.updated_at = new Date().toISOString();
     await this.data.saveService(service);
     return service;

@@ -21,6 +21,8 @@ export interface ServiceRecord {
   power_state: string;
   runtime_id?: string;
   node_id?: string;
+  location_id?: string;
+  install?: unknown;
   ports: Array<{ key: string; host: number; container: number; protocol: PortProtocol; host_ip: string }>;
   mods: unknown[];
   startup_variables?: Record<string, string>;

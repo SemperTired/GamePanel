@@ -3,7 +3,7 @@ import { Worker } from "bullmq";
 import { Pool } from "pg";
 import { createDockerRuntime } from "@aetherpanel/runtime-docker";
 import { RuntimePortBinding } from "@aetherpanel/shared";
-import { loadTemplates } from "@aetherpanel/templates";
+import { buildInstallPlan, loadTemplates, prepareServiceFiles } from "@aetherpanel/templates";
 
 const connection = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -28,6 +28,30 @@ async function updateJob(requestId: string, status: string, data: Record<string,
   );
 }
 
+async function prepareInstallFiles(service: any, template: any, requestId: string) {
+  const plan = buildInstallPlan(template, service.id);
+  await updateJob(requestId, "installing", { step: "prepare_files", install: plan });
+  if (process.env.AETHERPANEL_RUN_INSTALLERS === "true" && plan.commands.length) await updateJob(requestId, "installing", { step: "run_installer", command_count: plan.commands.length });
+  await prepareServiceFiles(plan, { runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true" });
+  return plan;
+}
+
+function buildNetworkMappings(service: any) {
+  const wanIp = process.env.AETHERNODE_WAN_IP || "";
+  const internalIp = process.env.NODE_LAN_IP || process.env.NODE_BIND_IP || "127.0.0.1";
+  return (service.ports || []).map((port: RuntimePortBinding) => ({
+    id: `${service.id}-${port.key}-${port.host}-${port.protocol}`,
+    name: `AetherPanel ${service.name} ${port.key}`,
+    protocol: port.protocol,
+    external_port: port.host,
+    internal_port: port.host,
+    internal_ip: internalIp,
+    wan_ip: wanIp,
+    enabled: true,
+    applied: process.env.NETWORK_APPLY_MODE === "live" ? false : "dry_run",
+  }));
+}
+
 async function provisionService(serviceId: string, requestId: string) {
   await updateJob(requestId, "provisioning");
   const serviceResult = await pool.query("select data from services where id = $1", [serviceId]);
@@ -36,6 +60,7 @@ async function provisionService(serviceId: string, requestId: string) {
 
   const template = loadTemplates().find((candidate) => candidate.id === service.template_id);
   if (!template) throw new Error(`Template ${service.template_id} not found`);
+  const installPlan = await prepareInstallFiles(service, template, requestId);
 
   await pool.query("update services set status = $1, data = data || $2::jsonb, updated_at = now() where id = $3", [
     "installing",
@@ -46,16 +71,17 @@ async function provisionService(serviceId: string, requestId: string) {
   const runtimeId = await runtime.create({
     serviceId: service.id,
     name: service.name,
-    image: template.install.image || "ghcr.io/aetherpanel/steamcmd:latest",
+    image: installPlan.image,
     environment: template.environment,
     ports: service.ports as RuntimePortBinding[],
     volumeName: `aether_${service.id.replaceAll("-", "").slice(0, 12)}`,
+    hostDataPath: installPlan.servicePath,
     memoryMb: template.resources.recommended_ram_mb,
     dataPath: "/data",
     startupCommand: template.runtime.startup,
   });
 
-  const patch = { runtime_id: runtimeId, status: "active", power_state: "created", updated_at: new Date().toISOString() };
+  const patch = { runtime_id: runtimeId, status: "active", power_state: "created", install: installPlan, network_mappings: buildNetworkMappings(service), updated_at: new Date().toISOString() };
   await pool.query(
     "update services set status = $1, power_state = $2, data = data || $3::jsonb, updated_at = now() where id = $4",
     ["active", "created", JSON.stringify(patch), serviceId],

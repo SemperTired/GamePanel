@@ -36,4 +36,9 @@ export class BillingController {
   webhook(@Headers() headers: Record<string, string | string[] | undefined>, @Body() body: unknown) {
     return this.billing.receiveWebhook(headers, body);
   }
+
+  @Post("fulfillment/payment-completed")
+  paymentCompleted(@Headers("x-aetherpanel-secret") secret: string | undefined, @Body() body: unknown) {
+    return this.billing.receivePaymentFulfillment(secret, body);
+  }
 }

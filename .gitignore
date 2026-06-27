@@ -9,6 +9,8 @@ build
 coverage
 *.log
 tmp
+var
+apps/*/var
 .vite
 .turbo
 packages/**/src/**/*.js

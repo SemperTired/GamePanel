@@ -110,11 +110,16 @@ export const gameTemplateSchema = z.object({
   category: z.string().min(1),
   summary: z.string().default(""),
   install: z.object({
-    method: z.enum(["steamcmd", "docker_image", "manual", "custom"]),
+    method: z.enum(["steamcmd", "docker_image", "manual", "custom", "alderon", "fivem", "direct_archive"]),
     app_id: z.string().optional(),
     anonymous: z.boolean().default(true),
     install_dir: z.string().default("/data"),
     image: z.string().optional(),
+    installer_url: z.string().url().optional(),
+    cache_key: z.string().optional(),
+    copy_strategy: z.enum(["copy", "hardlink", "reflink", "rsync"]).default("copy"),
+    preinstall: z.array(z.string()).default([]),
+    postinstall: z.array(z.string()).default([]),
   }),
   runtime: z.object({
     executable: z.string().optional(),
@@ -192,6 +197,7 @@ export interface RuntimeCreateInput {
   environment: Record<string, string>;
   ports: RuntimePortBinding[];
   volumeName: string;
+  hostDataPath?: string;
   memoryMb: number;
   cpuLimit?: number;
   dataPath: string;
