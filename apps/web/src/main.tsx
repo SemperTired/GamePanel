@@ -24,8 +24,10 @@ function Shell() {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [logs, setLogs] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   async function refresh() {
+    setLoadError("");
     const [templateData, serviceData, nodeData, auditData] = await Promise.all([
       api<Template[]>("/templates"),
       api<Service[]>("/services"),
@@ -40,7 +42,7 @@ function Shell() {
     setLoading(false);
   }
 
-  useEffect(() => { refresh().catch(() => setLoading(false)); }, []);
+  useEffect(() => { refresh().catch((error) => { setLoadError(error instanceof Error ? error.message : "Unable to load panel data"); setLoading(false); }); }, []);
   useEffect(() => {
     if (!selectedService) return;
     api<string>(`/services/${selectedService.id}/logs`).then(setLogs).catch((error) => setLogs(error.message));
@@ -124,14 +126,17 @@ function Shell() {
             <span><Network className="h-4 w-4" /> {stats.nodes} nodes</span>
           </div>
         </header>
+        {loadError && <div className="mb-5 rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-100">
+          Could not load panel data: {loadError}. Try signing out and back in if your session expired.
+        </div>}
         {active === "dashboard" && <Dashboard stats={stats} audits={audits} services={services} />}
-        {active === "templates" && <Templates templates={templates} />}
+        {active === "templates" && <Templates templates={templates} nodes={nodes} refresh={refresh} setActive={setActive} setSelectedService={setSelectedService} />}
         {active === "services" && <Services services={services} templates={templates} selected={selectedService} setSelected={setSelectedService} refresh={refresh} logs={logs} />}
         {active === "files" && <FilesPanel service={selectedService} />}
         {active === "config" && <ConfigurationPanel service={selectedService} />}
         {active === "mods" && <Mods service={selectedService} refresh={refresh} />}
         {active === "infrastructure" && <InfrastructurePanel service={selectedService} />}
-        {active === "nodes" && <Panel title="Nodes" items={nodes} empty="No nodes yet. The local Docker node is seeded by the API." />}
+        {active === "nodes" && <Nodes nodes={nodes} refresh={refresh} />}
         {active === "billing" && <Billing />}
         {active === "provisioning" && <Provisioning />}
         {active === "users" && <Placeholder icon={Users} title="Users & Roles" body="RBAC contracts are implemented for superadmin, provider admin, staff, customer, and viewer roles." />}
@@ -192,18 +197,126 @@ function ActivityFeed({ audits }: { audits: any[] }) {
   </div>)}</div>;
 }
 
-function Templates({ templates }: { templates: Template[] }) {
+function Templates({ templates, nodes, refresh, setActive, setSelectedService }: { templates: Template[]; nodes: any[]; refresh: () => Promise<void>; setActive: (value: string) => void; setSelectedService: (service: Service | null) => void }) {
   const [q, setQ] = useState("");
-  const filtered = templates.filter((template) => `${template.name} ${template.category}`.toLowerCase().includes(q.toLowerCase()));
-  return <div className="space-y-4">
-    <div className="relative"><Search className="absolute left-4 top-3 h-4 w-4 text-slate-500" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search templates..." className="w-full rounded-2xl border border-white/10 bg-black/25 py-3 pl-11 pr-4 outline-none focus:border-cyan/50" /></div>
-    <div className="grid grid-cols-3 gap-4">
-      {filtered.map((template) => <div key={template.id} className="glass rounded-2xl p-5">
-        <div className="mb-2 flex items-center justify-between"><h3 className="font-display text-xl">{template.name}</h3><span className="rounded-full bg-violet/15 px-2 py-1 text-xs text-violet-200">{template.category}</span></div>
-        <p className="mb-4 min-h-12 text-sm text-slate-400">{template.summary}</p>
-        <div className="grid grid-cols-3 gap-2 text-xs text-slate-300"><span>{template.resources.recommended_ram_mb / 1024}GB RAM</span><span>{template.resources.min_disk_gb}GB disk</span><span>{template.ports[0]?.default}/{template.ports[0]?.protocol}</span></div>
-        {template.workshop.enabled && <div className="mt-4 rounded-xl border border-cyan/20 bg-cyan/10 px-3 py-2 text-xs text-cyan">Workshop: {template.workshop.providers.join(", ")}</div>}
-      </div>)}
+  const [selectedId, setSelectedId] = useState("path-of-titans");
+  const [serviceName, setServiceName] = useState("AetherNode Path of Titans Test");
+  const [nodeId, setNodeId] = useState("amp-linux-target");
+  const [memoryMb, setMemoryMb] = useState(8192);
+  const [diskGb, setDiskGb] = useState(25);
+  const [cpuLimit, setCpuLimit] = useState(4);
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+  const filtered = templates.filter((template) => `${template.name} ${template.category} ${template.id}`.toLowerCase().includes(q.toLowerCase()));
+  const selected = templates.find((template) => template.id === selectedId) || templates.find((template) => template.id === "path-of-titans") || templates[0];
+
+  useEffect(() => {
+    if (!selected) return;
+    setServiceName((current) => current && current !== "AetherNode Path of Titans Test" ? current : `AetherNode ${selected.name} Test`);
+    setMemoryMb(selected.resources.recommended_ram_mb);
+    setDiskGb(selected.resources.min_disk_gb);
+  }, [selected?.id]);
+
+  async function deploy(provision = true) {
+    if (!selected) return;
+    setBusy(true);
+    setMessage("");
+    try {
+      const service = await api<Service>("/services", {
+        method: "POST",
+        body: JSON.stringify({
+          name: serviceName || `AetherNode ${selected.name} Test`,
+          template_id: selected.id,
+          owner_user_id: "usr_superadmin",
+          location_id: "local",
+          node_id: nodeId || "local",
+          memory_mb: memoryMb,
+          disk_gb: diskGb,
+          cpu_limit: cpuLimit,
+          auto_start: false,
+        }),
+      });
+      const finalService = provision ? await api<Service>(`/services/${service.id}/provision`, { method: "POST" }) : service;
+      await refresh();
+      setSelectedService(finalService);
+      setActive("services");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Deploy failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!templates.length) return <div className="empty-state"><Gamepad2 className="mx-auto mb-4 h-12 w-12 text-cyan" /><h2>Game library did not load</h2><p>No templates were returned by the API. Check login/session state and the `/api/v1/templates` endpoint.</p></div>;
+
+  return <div className="space-y-6">
+    <section className="deploy-hero">
+      <div className="relative z-10">
+        <div className="mb-2 flex items-center gap-2 text-sm uppercase tracking-[0.24em] text-cyan"><UploadCloud className="h-4 w-4" /> One Click Deploy</div>
+        <h2 className="font-display text-5xl font-bold">Launch a game server</h2>
+        <p className="mt-3 max-w-3xl text-slate-300">Pick a supported title, choose the runtime target and resources, then create and provision the instance. Start with Path of Titans for the first production smoke.</p>
+      </div>
+      <div className="relative z-10 grid grid-cols-3 gap-3">
+        <MetricPill label="Templates" value={templates.length} />
+        <MetricPill label="Targets" value={nodes.length || 1} />
+        <MetricPill label="Workshop" value={templates.filter((template) => template.workshop.enabled).length} />
+      </div>
+    </section>
+
+    <div className="grid grid-cols-[minmax(0,1fr)_390px] gap-5">
+      <section className="command-panel rounded-3xl p-5">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="font-display text-2xl">Game Library</h3>
+            <p className="text-sm text-slate-400">Curated templates deploy immediately. Imported templates are visible but marked for review.</p>
+          </div>
+          <button className="primary-button" onClick={() => { setQ("Path of Titans"); setSelectedId("path-of-titans"); }}>Path of Titans Test</button>
+        </div>
+        <div className="relative mb-4"><Search className="absolute left-4 top-3.5 h-4 w-4 text-slate-500" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search 247 supported games..." className="field pl-11" /></div>
+        <div className="template-grid">
+          {filtered.map((template) => <button key={template.id} onClick={() => setSelectedId(template.id)} className={`template-tile ${selected?.id === template.id ? "template-tile-active" : ""}`}>
+            <div className="template-art"><Gamepad2 className="h-9 w-9 text-cyan" /></div>
+            <div className="p-4 text-left">
+              <div className="mb-2 flex items-start justify-between gap-2"><h4 className="font-display text-xl leading-5">{template.name}</h4><span className="rounded-full bg-violet/15 px-2 py-1 text-[0.68rem] text-violet-100">{template.category}</span></div>
+              <p className="line-clamp-2 min-h-10 text-sm text-slate-400">{template.summary}</p>
+              <div className="mt-4 grid grid-cols-3 gap-2 text-[0.72rem] text-slate-300"><span>{template.resources.recommended_ram_mb / 1024}GB RAM</span><span>{template.resources.min_disk_gb}GB disk</span><span>{template.ports.length} ports</span></div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {template.workshop.enabled && <span className="rounded-full bg-cyan/10 px-2 py-1 text-[0.68rem] text-cyan">Mods</span>}
+                {template.source?.needs_review && <span className="rounded-full bg-amber-300/10 px-2 py-1 text-[0.68rem] text-amber-100">Review</span>}
+              </div>
+            </div>
+          </button>)}
+        </div>
+      </section>
+
+      <aside className="command-panel rounded-3xl p-5">
+        <h3 className="font-display text-2xl">Deploy Instance</h3>
+        {selected ? <div className="mt-4 space-y-4">
+          <div className="rounded-2xl border border-cyan/20 bg-cyan/10 p-4">
+            <div className="text-xs uppercase tracking-[0.2em] text-cyan">Selected Game</div>
+            <div className="mt-1 font-display text-3xl font-bold">{selected.name}</div>
+            <p className="mt-2 text-sm text-slate-300">{selected.summary}</p>
+          </div>
+          <label className="setting-field"><span>Instance Name</span><input className="field" value={serviceName} onChange={(event) => setServiceName(event.target.value)} /></label>
+          <label className="setting-field"><span>Runtime Target</span><select className="field" value={nodeId} onChange={(event) => setNodeId(event.target.value)}>
+            <option value="amp-linux-target">AMP Linux Target - 10.1.10.48</option>
+            <option value="local">Local Docker Node</option>
+            {nodes.map((node) => <option key={node.id} value={node.id}>{node.name || node.id}</option>)}
+          </select></label>
+          <div className="grid grid-cols-3 gap-3">
+            <label className="setting-field"><span>RAM MB</span><input className="field" type="number" value={memoryMb} onChange={(event) => setMemoryMb(Number(event.target.value))} /></label>
+            <label className="setting-field"><span>Disk GB</span><input className="field" type="number" value={diskGb} onChange={(event) => setDiskGb(Number(event.target.value))} /></label>
+            <label className="setting-field"><span>CPU</span><input className="field" type="number" value={cpuLimit} onChange={(event) => setCpuLimit(Number(event.target.value))} /></label>
+          </div>
+          <InfoBlock title="Ports" items={selected.ports.map((port) => [port.key, `${port.default}/${port.protocol}`])} />
+          <InfoBlock title="Install" items={[["method", selected.id === "path-of-titans" ? "alderon" : selected.source?.type || "template"], ["mods", selected.workshop.enabled ? selected.workshop.providers.join(", ") : "none"]]} />
+          <div className="grid grid-cols-2 gap-3">
+            <button disabled={busy} className="icon-button" onClick={() => deploy(false)}><Plus className="h-4 w-4" /> Create Only</button>
+            <button disabled={busy} className="primary-button" onClick={() => deploy(true)}>{busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />} Create & Provision</button>
+          </div>
+          {message && <div className="rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-100">{message}</div>}
+        </div> : <div className="mt-4 rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">Select a game to deploy.</div>}
+      </aside>
     </div>
   </div>;
 }
@@ -216,6 +329,12 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
   async function power(action: string) {
     if (!selected) return;
     await api(`/services/${selected.id}/power/${action}`, { method: "POST" });
+    await refresh();
+  }
+  async function provision() {
+    if (!selected) return;
+    const service = await api<Service>(`/services/${selected.id}/provision`, { method: "POST" });
+    setSelected(service);
     await refresh();
   }
   const template = selected ? templates.find((item: Template) => item.id === selected.template_id) : null;
@@ -233,7 +352,10 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
       {selected && <div className="command-panel rounded-3xl p-5">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           <div><h3 className="font-display text-3xl">{selected.name}</h3><div className="mt-1 text-sm text-slate-400">{template?.name || selected.template_id} · {selected.node_id || "local node"}</div></div>
-          <div className="flex gap-2">{["start", "stop", "restart", "kill"].map((action) => <button key={action} onClick={() => power(action)} className="control-button">{action === "start" ? <Play className="h-4 w-4" /> : action === "stop" ? <Square className="h-4 w-4" /> : <RotateCcw className="h-4 w-4" />} {action}</button>)}</div>
+          <div className="flex flex-wrap gap-2">
+            {!selected.runtime_id && <button onClick={provision} className="primary-button"><UploadCloud className="h-4 w-4" /> Provision</button>}
+            {["start", "stop", "restart", "kill"].map((action) => <button key={action} onClick={() => power(action)} className="control-button">{action === "start" ? <Play className="h-4 w-4" /> : action === "stop" ? <Square className="h-4 w-4" /> : <RotateCcw className="h-4 w-4" />} {action}</button>)}
+          </div>
         </div>
         <div className="mb-5 grid grid-cols-5 gap-3">
           <DataPoint icon={Activity} label="State" value={selected.power_state} />
@@ -265,6 +387,58 @@ function ServiceRows({ services, onPick, selectedId, detailed }: any) {
   return <div className="space-y-2">{services.map((service: Service) => <button key={service.id} onClick={() => onPick?.(service)} className={`service-row ${selectedId === service.id ? "service-row-active" : ""}`}>
     <span className="min-w-0"><span className="block truncate font-semibold">{service.name}</span><span className="text-xs text-slate-500">{service.template_id}</span>{detailed && <span className="mt-2 flex gap-2 text-[0.7rem] text-slate-400"><span>{service.ports?.length || 0} ports</span><span>{service.mods?.length || 0} mods</span><span>{service.node_id || "local"}</span></span>}</span><span className={`status-pill ${service.power_state === "running" ? "status-good" : ""}`}>{service.power_state}</span>
   </button>)}</div>;
+}
+
+function Nodes({ nodes, refresh }: { nodes: any[]; refresh: () => Promise<void> }) {
+  const [form, setForm] = useState({
+    id: "amp-linux-target",
+    name: "AMP Linux Target",
+    host: "10.1.10.48",
+    ssh_user: "user",
+    runtime: "docker-ssh",
+    role: "linux-target",
+    status: "ready",
+    data_root: "/srv/aetherpanel/services",
+    cache_root: "/srv/aetherpanel/cache",
+  });
+  const [message, setMessage] = useState("");
+
+  async function saveNode() {
+    setMessage("");
+    try {
+      await api("/nodes", { method: "POST", body: JSON.stringify(form) });
+      await refresh();
+      setMessage("Runtime target saved. Remote Docker-over-SSH execution is represented in node metadata; install the node agent or set DOCKER_HOST for live remote provisioning.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not save node");
+    }
+  }
+
+  return <div className="grid grid-cols-[380px_1fr] gap-5">
+    <section className="command-panel rounded-3xl p-5">
+      <h2 className="font-display text-2xl">Runtime Target</h2>
+      <p className="mt-1 text-sm text-slate-400">Register the Linux target that will host Docker game instances.</p>
+      <div className="mt-5 space-y-3">
+        {Object.entries(form).map(([key, value]) => <label key={key} className="setting-field">
+          <span>{key.replaceAll("_", " ")}</span>
+          <input className="field" value={String(value)} onChange={(event) => setForm({ ...form, [key]: event.target.value })} />
+        </label>)}
+        <button className="primary-button w-full" onClick={saveNode}><Save className="h-4 w-4" /> Save AMP Linux Target</button>
+        {message && <div className="rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
+      </div>
+    </section>
+    <section className="command-panel rounded-3xl p-5">
+      <div className="mb-4 flex items-center justify-between"><h2 className="font-display text-2xl">Registered Nodes</h2><span className="status-pill">{nodes.length} total</span></div>
+      {nodes.length ? <div className="grid grid-cols-2 gap-4">{nodes.map((node) => <article key={node.id} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+        <div className="mb-2 flex items-center justify-between gap-3"><strong>{node.name || node.id}</strong><span className="status-pill status-good">{node.status || "unknown"}</span></div>
+        <div className="space-y-2 text-sm text-slate-300">
+          <div className="flex justify-between gap-3"><span className="text-slate-500">Host</span><span className="font-mono">{node.host || node.lan_ip || "local"}</span></div>
+          <div className="flex justify-between gap-3"><span className="text-slate-500">Runtime</span><span>{node.runtime || "docker"}</span></div>
+          <div className="flex justify-between gap-3"><span className="text-slate-500">Data</span><span className="truncate font-mono">{node.data_root || "default"}</span></div>
+        </div>
+      </article>)}</div> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No nodes registered yet.</div>}
+    </section>
+  </div>;
 }
 
 function FilesPanel({ service }: { service: Service | null }) {

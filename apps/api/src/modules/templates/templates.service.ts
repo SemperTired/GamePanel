@@ -4,7 +4,9 @@ import { additionalStarterTemplates, loadTemplates } from "@aetherpanel/template
 
 @Injectable()
 export class TemplatesService {
-  private readonly templates: GameTemplate[] = [...loadTemplates(), ...additionalStarterTemplates].filter((template, index, list) => list.findIndex((item) => item.id === template.id) === index);
+  private readonly templates: GameTemplate[] = [...loadTemplates(), ...additionalStarterTemplates]
+    .sort((a, b) => Number(a.source?.needs_review ?? false) - Number(b.source?.needs_review ?? false))
+    .filter((template, index, list) => list.findIndex((item) => item.id === template.id) === index);
 
   list() {
     return this.templates;

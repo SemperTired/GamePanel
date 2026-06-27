@@ -1,0 +1,68 @@
+schema: aetherpanel.template/v1
+id: path-of-titans
+name: Path of Titans
+category: Survival
+summary: Alderon Games dedicated server with future TitanCore, live map, mod, and event tooling hooks.
+install:
+  method: alderon
+  anonymous: false
+  install_dir: /data
+  image: ghcr.io/aetherpanel/alderon-runtime:latest
+  cache_key: path-of-titans
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
+runtime:
+  executable: PathOfTitans/Binaries/Linux/PathOfTitansServer-Linux-Shipping
+  working_dir: /data
+  startup: ./PathOfTitans/Binaries/Linux/PathOfTitansServer-Linux-Shipping -log
+  console: true
+resources:
+  min_ram_mb: 4096
+  recommended_ram_mb: 8192
+  min_disk_gb: 25
+  cpu: 4 shared vCPU
+ports:
+  - key: game
+    name: Game Port
+    default: 7777
+    protocol: udp
+    required: true
+  - key: query
+    name: Query Port
+    default: 7778
+    protocol: udp
+    required: true
+config_files:
+  - path: Saved/Config/LinuxServer/Game.ini
+    type: ini
+    editable: true
+  - path: Saved/Config/LinuxServer/GameUserSettings.ini
+    type: ini
+    editable: true
+environment:
+  AETHERPANEL_GAME: path-of-titans
+startup_variables:
+  - key: SERVER_NAME
+    label: Server Name
+    default: AetherNode Path of Titans
+    customer_editable: true
+  - key: MAX_PLAYERS
+    label: Max Players
+    default: "100"
+    customer_editable: true
+workshop:
+  enabled: true
+  providers: [modio, direct_url, manual]
+  collection_support: true
+backup:
+  include:
+    - Saved
+    - PathOfTitans/Saved
+  exclude:
+    - Saved/Logs
+supported_os: [linux, windows]
+source:
+  type: curated
+  url: https://alderongames.com/
+  needs_review: false

@@ -151,6 +151,66 @@ body {
   background: linear-gradient(90deg, rgba(2, 6, 23, 0.92), rgba(2, 6, 23, 0.52));
 }
 
+.deploy-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 1rem;
+  overflow: hidden;
+  border-radius: 2rem;
+  border: 1px solid rgba(124, 58, 237, 0.24);
+  background:
+    linear-gradient(120deg, rgba(2, 6, 23, 0.92), rgba(88, 28, 135, 0.22)),
+    url("https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1800&q=80") center/cover;
+  padding: 2rem;
+}
+
+.deploy-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(2, 6, 23, 0.94), rgba(2, 6, 23, 0.56)),
+    radial-gradient(circle at 82% 18%, rgba(34, 211, 238, 0.18), transparent 20rem);
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  max-height: 58rem;
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
+.template-tile {
+  overflow: hidden;
+  border-radius: 1.35rem;
+  border: 1px solid rgba(148, 163, 184, 0.13);
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(2, 6, 23, 0.74)),
+    radial-gradient(circle at top right, rgba(34, 211, 238, 0.1), transparent 12rem);
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+.template-tile:hover,
+.template-tile-active {
+  transform: translateY(-2px);
+  border-color: rgba(34, 211, 238, 0.46);
+  background:
+    linear-gradient(180deg, rgba(14, 116, 144, 0.22), rgba(2, 6, 23, 0.78)),
+    radial-gradient(circle at top right, rgba(124, 58, 237, 0.18), transparent 13rem);
+}
+
+.template-art {
+  display: grid;
+  height: 7.5rem;
+  place-items: center;
+  background:
+    radial-gradient(circle at 22% 18%, rgba(34, 211, 238, 0.25), transparent 9rem),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.72), rgba(30, 41, 59, 0.68));
+}
+
 .metric-card {
   border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 1.3rem;
