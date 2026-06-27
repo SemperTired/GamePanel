@@ -147,10 +147,31 @@ function Shell() {
         {active === "provisioning" && <Provisioning />}
         {active === "users" && <UsersPanel />}
         {active === "settings" && <SettingsPanel />}
-        {active === "audit" && <Panel title="Audit Log" items={audits} empty="No audit events yet." />}
+        {active === "audit" && <AuditConsole audits={audits} />}
       </main>
     </div>
   );
+}
+
+const gameArtLibrary: Array<[RegExp, string, string]> = [
+  [/minecraft/i, "Minecraft", "https://images.unsplash.com/photo-1627856013091-fed6e4e30025?auto=format&fit=crop&w=900&q=80"],
+  [/path.of.titans|dinosaur/i, "Path of Titans", "https://images.unsplash.com/photo-1525877442103-5ddb2089b2bb?auto=format&fit=crop&w=900&q=80"],
+  [/ark|survival evolved|survival ascended/i, "ARK", "https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&w=900&q=80"],
+  [/rust/i, "Rust", "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"],
+  [/zomboid|dayz|7 days|dead|zombie/i, "Survival", "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=900&q=80"],
+  [/arma|reforger|squad|insurgency|operation/i, "Tactical", "https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?auto=format&fit=crop&w=900&q=80"],
+  [/valheim|v rising|conan|enshrouded|forest/i, "Open World", "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=80"],
+  [/factorio|satisfactory|space engineers|stationeers/i, "Factory", "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80"],
+  [/terraria|starbound|tmod/i, "Adventure", "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80"],
+  [/counter|cs2|team fortress|garry|source|half-life/i, "Source", "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80"],
+  [/fivem|redm|gta|rage/i, "Roleplay", "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=900&q=80"],
+  [/palworld|creature|monster/i, "Creature", "https://images.unsplash.com/photo-1535223289827-42f1e9919769?auto=format&fit=crop&w=900&q=80"],
+];
+
+function gameVisual(input?: Pick<Template, "name" | "id" | "category"> | Pick<Service, "name" | "template_id"> | string) {
+  const text = typeof input === "string" ? input : `${(input as any)?.name || ""} ${(input as any)?.id || ""} ${(input as any)?.template_id || ""} ${(input as any)?.category || ""}`;
+  const match = gameArtLibrary.find(([pattern]) => pattern.test(text));
+  return { label: match?.[1] || "Game Server", image: match?.[2] || "https://images.unsplash.com/photo-1605902711622-cfb43c4437d0?auto=format&fit=crop&w=900&q=80" };
 }
 
 function Dashboard({ stats, audits, services }: any) {
@@ -185,7 +206,7 @@ function Dashboard({ stats, audits, services }: any) {
     </div>
 
     <div className="grid grid-cols-[1.25fr_0.75fr] gap-4">
-      <div className="command-panel rounded-3xl p-6"><h2 className="mb-4 font-display text-2xl">Instances</h2><ServiceRows services={services} detailed /></div>
+      <div className="command-panel rounded-3xl p-6"><h2 className="mb-4 font-display text-2xl">Live Fleet</h2><ServiceRows services={services} detailed /></div>
       <div className="command-panel rounded-3xl p-6"><h2 className="mb-4 font-display text-2xl">Recent Activity</h2><ActivityFeed audits={audits} /></div>
     </div>
   </div>;
@@ -201,6 +222,23 @@ function ActivityFeed({ audits }: { audits: any[] }) {
     <div className="grid h-9 w-9 place-items-center rounded-xl bg-cyan/10 text-cyan"><Shield className="h-4 w-4" /></div>
     <div className="min-w-0"><div className="truncate text-sm font-semibold">{audit.action || "event"}</div><div className="truncate text-xs text-slate-500">{audit.actor || "system"} · {audit.target || "platform"}</div></div>
   </div>)}</div>;
+}
+
+function AuditConsole({ audits }: { audits: any[] }) {
+  const lines = audits.map((audit) => {
+    const time = audit.created_at ? new Date(audit.created_at).toLocaleString() : "unknown time";
+    const metadata = audit.metadata ? ` ${JSON.stringify(audit.metadata)}` : "";
+    return `[${time}] ${audit.actor || "system"} :: ${audit.action || "event"} -> ${audit.target || "platform"}${metadata}`;
+  });
+  return <div className="space-y-5">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7">
+      <div className="relative z-10 flex items-center justify-between gap-5">
+        <div><div className="text-sm uppercase tracking-[0.25em] text-cyan">Security Console</div><h2 className="font-display text-4xl font-bold">Audit Stream</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Readable operator timeline for payments, provisioning, user actions, automation, and infrastructure events.</p></div>
+        <div className="rounded-2xl border border-cyan/20 bg-cyan/10 px-5 py-4 text-center"><div className="text-3xl font-bold text-white">{audits.length}</div><div className="text-xs uppercase tracking-[0.18em] text-cyan">events</div></div>
+      </div>
+    </section>
+    <ConsoleFrame title="Audit Console" logs={lines.join("\n") || "[audit] No audit events have been recorded yet."} />
+  </div>;
 }
 
 function Templates({ templates, nodes, refresh, setActive, setSelectedService }: { templates: Template[]; nodes: any[]; refresh: () => Promise<void>; setActive: (value: string) => void; setSelectedService: (service: Service | null) => void }) {
@@ -322,8 +360,10 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
         </div>
         <div className="relative mb-4"><Search className="absolute left-4 top-3.5 h-4 w-4 text-slate-500" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search 247 supported games..." className="field pl-11" /></div>
         <div className="template-grid">
-          {filtered.map((template) => <button key={template.id} onClick={() => setSelectedId(template.id)} className={`template-tile ${selected?.id === template.id ? "template-tile-active" : ""}`}>
-            <div className="template-art"><Gamepad2 className="h-9 w-9 text-cyan" /></div>
+          {filtered.map((template) => {
+            const visual = gameVisual(template);
+            return <button key={template.id} onClick={() => setSelectedId(template.id)} className={`template-tile ${selected?.id === template.id ? "template-tile-active" : ""}`}>
+            <div className="template-art premium-art" style={{ backgroundImage: `linear-gradient(180deg, rgba(2,6,23,0.02), rgba(2,6,23,0.74)), url(${visual.image})` }}><span>{visual.label}</span></div>
             <div className="p-4 text-left">
               <div className="mb-2 flex items-start justify-between gap-2"><h4 className="font-display text-xl leading-5">{template.name}</h4><span className="rounded-full bg-violet/15 px-2 py-1 text-[0.68rem] text-violet-100">{template.category}</span></div>
               <p className="line-clamp-2 min-h-10 text-sm text-slate-400">{template.summary}</p>
@@ -333,7 +373,8 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
                 {template.source?.needs_review && <span className="rounded-full bg-amber-300/10 px-2 py-1 text-[0.68rem] text-amber-100">Review</span>}
               </div>
             </div>
-          </button>)}
+          </button>;
+          })}
         </div>
       </section>
 
@@ -341,6 +382,7 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
         <h3 className="font-display text-2xl">Deploy Instance</h3>
         {selected ? <div className="mt-4 space-y-4">
           <div className="rounded-2xl border border-cyan/20 bg-cyan/10 p-4">
+            <div className="selected-game-art mb-4" style={{ backgroundImage: `linear-gradient(90deg, rgba(2,6,23,0.20), rgba(2,6,23,0.72)), url(${gameVisual(selected).image})` }} />
             <div className="text-xs uppercase tracking-[0.2em] text-cyan">Selected Game</div>
             <div className="mt-1 font-display text-3xl font-bold">{selected.name}</div>
             <p className="mt-2 text-sm text-slate-300">{selected.summary}</p>
@@ -561,9 +603,13 @@ function InfoBlock({ title, items, empty }: { title: string; items: Array<[strin
 
 function ServiceRows({ services, onPick, selectedId, detailed }: any) {
   if (!services.length) return <div className="rounded-xl border border-dashed border-white/15 p-8 text-center text-slate-400">No services yet.</div>;
-  return <div className="space-y-2">{services.map((service: Service) => <button key={service.id} onClick={() => onPick?.(service)} className={`service-row ${selectedId === service.id ? "service-row-active" : ""}`}>
-    <span className="min-w-0"><span className="block truncate font-semibold">{service.name}</span><span className="text-xs text-slate-500">{service.template_id}</span>{detailed && <span className="mt-2 flex gap-2 text-[0.7rem] text-slate-400"><span>{service.ports?.length || 0} ports</span><span>{service.mods?.length || 0} mods</span><span>{service.node_id || "local"}</span></span>}</span><span className={`status-pill ${service.power_state === "running" ? "status-good" : ""}`}>{service.power_state}</span>
-  </button>)}</div>;
+  return <div className="space-y-2">{services.map((service: Service) => {
+    const visual = gameVisual(service);
+    return <button key={service.id} onClick={() => onPick?.(service)} className={`service-row service-row-premium ${selectedId === service.id ? "service-row-active" : ""}`}>
+      <span className="service-thumb" style={{ backgroundImage: `linear-gradient(180deg, rgba(2,6,23,0.05), rgba(2,6,23,0.52)), url(${visual.image})` }} />
+      <span className="min-w-0 flex-1"><span className="block truncate font-semibold">{service.name}</span><span className="text-xs text-slate-500">{service.template_id}</span>{detailed && <span className="mt-2 flex flex-wrap gap-2 text-[0.7rem] text-slate-400"><span>{service.ports?.length || 0} ports</span><span>{service.mods?.length || 0} mods</span><span>{service.node_id || "local"}</span></span>}</span><span className={`status-pill ${service.power_state === "running" ? "status-good" : ""}`}>{service.power_state}</span>
+    </button>;
+  })}</div>;
 }
 
 function Nodes({ nodes, refresh }: { nodes: any[]; refresh: () => Promise<void> }) {
@@ -1214,7 +1260,15 @@ function Provisioning() {
   </div>;
 }
 
-function Panel({ title, items, empty }: any) { return <div className="glass rounded-2xl p-6"><h2 className="mb-4 font-display text-2xl">{title}</h2>{items?.length ? <pre className="max-h-[620px] overflow-auto text-xs text-slate-300">{JSON.stringify(items, null, 2)}</pre> : <div className="rounded-xl border border-dashed border-white/15 p-8 text-center text-slate-400">{empty}</div>}</div>; }
+function Panel({ title, items, empty }: any) {
+  return <div className="command-panel rounded-3xl p-6">
+    <div className="mb-4 flex items-center justify-between gap-3"><h2 className="font-display text-2xl">{title}</h2><span className="status-pill">{items?.length || 0}</span></div>
+    {items?.length ? <div className="record-grid">{items.map((item: any, index: number) => <article key={item.id || `${title}-${index}`} className="record-card">
+      <div className="mb-3 flex items-center justify-between gap-3"><strong>{item.name || item.action || item.subject || item.id || `Record ${index + 1}`}</strong><span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-xs text-slate-300">{item.status || item.queue || item.provider || "record"}</span></div>
+      <div className="space-y-2">{Object.entries(item).filter(([key]) => !["metadata", "data", "password", "body"].includes(key)).slice(0, 8).map(([key, value]) => <div key={key} className="record-line"><span>{key.replaceAll("_", " ")}</span><strong>{typeof value === "object" ? JSON.stringify(value) : String(value)}</strong></div>)}</div>
+    </article>)}</div> : <div className="rounded-xl border border-dashed border-white/15 p-8 text-center text-slate-400">{empty}</div>}
+  </div>;
+}
 
 function Login() {
   const [email, setEmail] = useState("admin@aetherpanel.local");
