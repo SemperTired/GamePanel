@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Activity, Bell, Boxes, CreditCard, Database, ExternalLink, FileText, Folder, Gauge, Gamepad2, Globe2, ImageIcon, KeyRound, LayoutDashboard, ListChecks, Loader2, Mail, Network, Play, Plus, RotateCcw, Router, Save, Search, Send, Server, Settings, Shield, SlidersHorizontal, Sparkles, Square, Terminal, Trash2, UploadCloud, UserPlus, Users, Wifi } from "lucide-react";
+import { Activity, Bell, Boxes, CalendarClock, CreditCard, Database, ExternalLink, FileText, Folder, Gauge, Gamepad2, Globe2, ImageIcon, KeyRound, LayoutDashboard, ListChecks, Loader2, Mail, Network, Play, Plus, RotateCcw, Router, Save, Search, Send, Server, Settings, Shield, SlidersHorizontal, Sparkles, Square, Terminal, Trash2, UploadCloud, UserPlus, Users, Wifi } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import "./styles/global.css";
 import { api, login, logout, token } from "./lib/api";
@@ -10,6 +10,8 @@ type ModEntry = { id: string; provider: string; name?: string; summary?: string;
 type ServicePort = { key: string; host: number; container?: number; protocol: string; host_ip?: string };
 type NetworkMapping = { id?: string; name?: string; wan_ip?: string; external_port?: number; internal_ip?: string; internal_port?: number };
 type Service = { id: string; name: string; template_id: string; owner_user_id?: string; location_id?: string; status: string; power_state: string; ports: ServicePort[]; mods: ModEntry[]; runtime_id?: string; node_id?: string; network_mappings?: NetworkMapping[]; startup_variables?: Record<string, string> };
+type ScheduledTask = { id: string; service_id: string; name: string; action: string; cadence: string; enabled: boolean; next_run_at?: string; last_run_at?: string; last_status?: string; last_error?: string; command?: string; interval_minutes?: number; time_of_day?: string; day_of_week?: number };
+type EmailRecord = { id: string; to: string; subject: string; body: string; status: string; created_at: string; updated_at: string };
 type ModProvider = { id: string; name: string; configured: boolean; searchable: boolean; web_url: string; note: string };
 type ModSearchItem = { id: string; provider: string; name: string; summary?: string; thumbnail_url?: string; page_url?: string; tags?: string[]; subscriptions?: number; favorited?: number };
 type FileEntry = { name: string; type: "file" | "directory"; size: number; updated_at: string };
@@ -60,9 +62,9 @@ function Shell() {
   }), [services, templates, nodes]);
 
   const navGroups: Array<{ label: string; items: NavItem[] }> = [
-    { label: "Operate", items: [["dashboard", LayoutDashboard, "Overview"], ["services", Server, "Instances"], ["console", Terminal, "Console"], ["files", Folder, "Files"], ["config", SlidersHorizontal, "Config"], ["mods", Boxes, "Mods"], ["backups", Database, "Backups"]] },
+    { label: "Operate", items: [["dashboard", LayoutDashboard, "Overview"], ["services", Server, "Instances"], ["console", Terminal, "Console"], ["files", Folder, "Files"], ["config", SlidersHorizontal, "Config"], ["mods", Boxes, "Mods"], ["backups", Database, "Backups"], ["scheduler", CalendarClock, "Scheduler"]] },
     { label: "Deploy", items: [["templates", Gamepad2, "Game Library"], ["provisioning", ListChecks, "Queue"], ["nodes", Network, "Nodes"]] },
-    { label: "Business", items: [["billing", CreditCard, "Billing"], ["users", Users, "Users"], ["audit", Shield, "Audit"]] },
+    { label: "Business", items: [["billing", CreditCard, "Billing"], ["users", Users, "Users"], ["mail", Mail, "Mail"], ["audit", Shield, "Audit"]] },
     { label: "Platform", items: [["infrastructure", Router, "Network"], ["settings", Settings, "Settings"]] },
   ];
   const nav = navGroups.flatMap((group) => group.items);
@@ -137,9 +139,11 @@ function Shell() {
         {active === "config" && <ConfigurationPanel service={selectedService} />}
         {active === "mods" && <Mods service={selectedService} refresh={refresh} />}
         {active === "backups" && <BackupsPanel service={selectedService} />}
+        {active === "scheduler" && <SchedulerPanel service={selectedService} services={services} />}
         {active === "infrastructure" && <InfrastructurePanel service={selectedService} />}
         {active === "nodes" && <Nodes nodes={nodes} refresh={refresh} />}
         {active === "billing" && <Billing />}
+        {active === "mail" && <MailOutbox />}
         {active === "provisioning" && <Provisioning />}
         {active === "users" && <UsersPanel />}
         {active === "settings" && <SettingsPanel />}
@@ -1032,6 +1036,96 @@ function BackupsPanel({ service }: { service: Service | null }) {
       </article>)}</div> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No backups yet.</div>}
       {message && <div className="mt-4 rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
     </div>
+  </div>;
+}
+
+function SchedulerPanel({ service, services }: { service: Service | null; services: Service[] }) {
+  const [tasks, setTasks] = useState<ScheduledTask[]>([]);
+  const [message, setMessage] = useState("");
+  const [form, setForm] = useState({ service_id: service?.id || "", name: "Daily backup", action: "backup", cadence: "daily", time_of_day: "04:00", interval_minutes: "60", command: "say Scheduled maintenance starting" });
+  async function load() {
+    const suffix = service ? `?service_id=${service.id}` : "";
+    setTasks(await api<ScheduledTask[]>(`/scheduler/tasks${suffix}`));
+  }
+  async function createTask(event: React.FormEvent) {
+    event.preventDefault();
+    const task = await api<ScheduledTask>("/scheduler/tasks", {
+      method: "POST",
+      body: JSON.stringify({
+        ...form,
+        service_id: form.service_id || service?.id,
+        interval_minutes: Number(form.interval_minutes),
+      }),
+    });
+    setMessage(`Scheduled ${task.name}`);
+    await load();
+  }
+  async function runTask(task: ScheduledTask) {
+    const updated = await api<ScheduledTask>(`/scheduler/tasks/${task.id}/run`, { method: "POST" });
+    setMessage(`${updated.name}: ${updated.last_status || "run queued"}`);
+    await load();
+  }
+  async function toggleTask(task: ScheduledTask) {
+    await api<ScheduledTask>(`/scheduler/tasks/${task.id}`, { method: "PUT", body: JSON.stringify({ enabled: !task.enabled }) });
+    await load();
+  }
+  async function deleteTask(task: ScheduledTask) {
+    if (!window.confirm(`Delete scheduled task ${task.name}?`)) return;
+    await api(`/scheduler/tasks/${task.id}`, { method: "DELETE" });
+    await load();
+  }
+  useEffect(() => { setForm((current) => ({ ...current, service_id: service?.id || current.service_id })); }, [service?.id]);
+  useEffect(() => { load().catch((error) => setMessage(error.message)); }, [service?.id]);
+  return <div className="space-y-5">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Automation</div><h2 className="font-display text-4xl font-bold">Scheduler</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Create customer-safe automation for restarts, backups, power actions, and server console commands.</p></div></section>
+    <form onSubmit={createTask} className="command-panel rounded-3xl p-5">
+      <div className="mb-4 flex items-center gap-3"><CalendarClock className="h-5 w-5 text-cyan" /><h3 className="font-display text-2xl">Create Scheduled Task</h3></div>
+      <div className="grid grid-cols-3 gap-3">
+        <label className="setting-field"><span>Instance</span><select className="field" value={form.service_id} onChange={(event) => setForm({ ...form, service_id: event.target.value })}>{services.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+        <label className="setting-field"><span>Name</span><input className="field" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} /></label>
+        <label className="setting-field"><span>Action</span><select className="field" value={form.action} onChange={(event) => setForm({ ...form, action: event.target.value })}>{["backup", "restart", "start", "stop", "kill", "command"].map((action) => <option key={action} value={action}>{action}</option>)}</select></label>
+        <label className="setting-field"><span>Cadence</span><select className="field" value={form.cadence} onChange={(event) => setForm({ ...form, cadence: event.target.value })}>{["daily", "weekly", "hourly", "interval", "manual"].map((cadence) => <option key={cadence} value={cadence}>{cadence}</option>)}</select></label>
+        <label className="setting-field"><span>Time</span><input className="field" value={form.time_of_day} onChange={(event) => setForm({ ...form, time_of_day: event.target.value })} placeholder="04:00" /></label>
+        <label className="setting-field"><span>Interval Minutes</span><input className="field" value={form.interval_minutes} onChange={(event) => setForm({ ...form, interval_minutes: event.target.value })} /></label>
+      </div>
+      {form.action === "command" && <label className="setting-field mt-3"><span>Command</span><input className="field" value={form.command} onChange={(event) => setForm({ ...form, command: event.target.value })} /></label>}
+      <button className="primary-button mt-4"><Plus className="h-4 w-4" /> Add Task</button>
+    </form>
+    <div className="command-panel rounded-3xl p-5">
+      <h3 className="mb-4 font-display text-2xl">Scheduled Automation</h3>
+      {tasks.length ? <div className="space-y-3">{tasks.map((task) => <div key={task.id} className="grid grid-cols-[1fr_auto] gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+        <div><div className="flex items-center gap-2"><strong>{task.name}</strong><span className={`rounded-full px-2 py-1 text-xs ${task.enabled ? "bg-emerald-400/10 text-emerald-200" : "bg-slate-500/10 text-slate-300"}`}>{task.enabled ? "enabled" : "disabled"}</span><span className="rounded-full bg-cyan/10 px-2 py-1 text-xs text-cyan">{task.action}</span></div>
+          <div className="mt-1 text-sm text-slate-400">{task.cadence} · next {task.next_run_at || "manual only"} · last {task.last_status || "never"}</div>
+          {task.last_error && <div className="mt-2 text-sm text-red-200">{task.last_error}</div>}</div>
+        <div className="flex items-center gap-2"><button className="control-button" onClick={() => runTask(task)}><Play className="h-4 w-4" /> Run</button><button className="control-button" onClick={() => toggleTask(task)}>{task.enabled ? "Disable" : "Enable"}</button><button className="control-button danger" onClick={() => deleteTask(task)}><Trash2 className="h-4 w-4" /></button></div>
+      </div>)}</div> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No scheduled tasks yet.</div>}
+      {message && <div className="mt-4 rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
+    </div>
+  </div>;
+}
+
+function MailOutbox() {
+  const [emails, setEmails] = useState<EmailRecord[]>([]);
+  const [selected, setSelected] = useState<EmailRecord | null>(null);
+  const [message, setMessage] = useState("");
+  async function load() {
+    const data = await api<EmailRecord[]>("/email/outbox");
+    setEmails(data);
+    setSelected((current) => current || data[0] || null);
+  }
+  useEffect(() => { load().catch((error) => setMessage(error.message)); }, []);
+  return <div className="space-y-5">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10 flex items-center justify-between gap-5"><div><div className="text-sm uppercase tracking-[0.25em] text-cyan">Customer Communications</div><h2 className="font-display text-4xl font-bold">Mail Outbox</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Review provisioning and login emails generated by payment fulfillment.</p></div><button className="icon-button" onClick={load}><RotateCcw className="h-4 w-4" /> Refresh</button></div></section>
+    <div className="grid grid-cols-[380px_1fr] gap-5">
+      <div className="command-panel rounded-3xl p-4">
+        {emails.map((email) => <button key={email.id} onClick={() => setSelected(email)} className={`mini-service mb-2 w-full ${selected?.id === email.id ? "mini-service-active" : ""}`}><span className="truncate">{email.subject}</span><span>{email.status}</span></button>)}
+        {!emails.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No customer emails generated yet.</div>}
+      </div>
+      <div className="console-frame rounded-3xl p-5">
+        {selected ? <><div className="mb-4"><div className="text-sm text-slate-400">To {selected.to}</div><h3 className="font-display text-2xl">{selected.subject}</h3><div className="mt-1 text-xs text-slate-500">{selected.status} · {selected.created_at}</div></div><pre className="h-[520px] overflow-auto whitespace-pre-wrap rounded-2xl border border-white/10 bg-black/60 p-4 font-mono text-sm leading-6 text-emerald-100">{selected.body}</pre></> : <div className="empty-state"><Mail className="mx-auto mb-4 h-12 w-12 text-cyan" /><h2>No email selected</h2><p>Select an outbox item to read the customer-facing message.</p></div>}
+      </div>
+    </div>
+    {message && <div className="rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-100">{message}</div>}
   </div>;
 }
 

@@ -41,6 +41,37 @@ export type AuditRecord = {
   created_at: string;
 };
 
+export interface EmailRecord {
+  id: string;
+  to: string;
+  subject: string;
+  body: string;
+  status: "queued" | "sent" | "failed";
+  metadata?: unknown;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ScheduledTaskRecord {
+  id: string;
+  service_id: string;
+  name: string;
+  action: "start" | "stop" | "restart" | "kill" | "backup" | "command";
+  cadence: "manual" | "hourly" | "daily" | "weekly" | "interval";
+  enabled: boolean;
+  run_at?: string;
+  interval_minutes?: number;
+  day_of_week?: number;
+  time_of_day?: string;
+  command?: string;
+  last_run_at?: string;
+  next_run_at?: string;
+  last_status?: "success" | "failed" | "running";
+  last_error?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 const databaseRequired = () => process.env.DATABASE_REQUIRED === "true" || process.env.NODE_ENV === "production";
 
 export class DataStore {
@@ -60,6 +91,8 @@ export class DataStore {
   public readonly settings = new Map<string, unknown>();
   public readonly provisioningJobs = new Map<string, unknown>();
   public readonly infrastructureConnectors = new Map<string, unknown>();
+  public readonly emails = new Map<string, EmailRecord>();
+  public readonly scheduledTasks = new Map<string, ScheduledTaskRecord>();
   public databaseOnline = false;
   private seeded = false;
 
@@ -145,11 +178,33 @@ export class DataStore {
         created_at timestamptz not null default now(),
         updated_at timestamptz not null default now()
       );
+      create table if not exists email_outbox (
+        id text primary key,
+        recipient text not null,
+        subject text not null,
+        body text not null,
+        status text not null,
+        data jsonb not null default '{}'::jsonb,
+        created_at timestamptz not null default now(),
+        updated_at timestamptz not null default now()
+      );
+      create index if not exists email_outbox_created_idx on email_outbox(created_at desc);
+      create table if not exists scheduled_tasks (
+        id text primary key,
+        service_id text not null,
+        action text not null,
+        enabled boolean not null default true,
+        data jsonb not null,
+        created_at timestamptz not null default now(),
+        updated_at timestamptz not null default now()
+      );
+      create index if not exists scheduled_tasks_service_idx on scheduled_tasks(service_id);
+      create index if not exists scheduled_tasks_enabled_idx on scheduled_tasks(enabled);
     `);
   }
 
   private async hydrate(): Promise<void> {
-    const [users, services, nodes, settings, jobs, audits, connectors] = await Promise.all([
+    const [users, services, nodes, settings, jobs, audits, connectors, emails, scheduledTasks] = await Promise.all([
       this.pool.query("select id, email, name, role, password_hash, created_at from users"),
       this.pool.query("select data from services"),
       this.pool.query("select data from nodes"),
@@ -157,6 +212,8 @@ export class DataStore {
       this.pool.query("select data from provisioning_jobs"),
       this.pool.query("select id, actor, action, target, metadata, created_at from audit_logs order by created_at desc limit 500"),
       this.pool.query("select data from infrastructure_connectors"),
+      this.pool.query("select data from email_outbox order by created_at desc limit 1000"),
+      this.pool.query("select data from scheduled_tasks"),
     ]);
 
     for (const row of users.rows) this.users.set(row.id, { ...row, created_at: new Date(row.created_at).toISOString() });
@@ -175,6 +232,8 @@ export class DataStore {
       });
     }
     for (const row of connectors.rows) this.infrastructureConnectors.set(row.data.id, this.deserializeDates(row.data));
+    for (const row of emails.rows) this.emails.set(row.data.id, this.deserializeDates(row.data) as EmailRecord);
+    for (const row of scheduledTasks.rows) this.scheduledTasks.set(row.data.id, this.deserializeDates(row.data) as ScheduledTaskRecord);
   }
 
   private deserializeDates(value: Record<string, unknown>) {
@@ -276,6 +335,30 @@ export class DataStore {
        values($1, $2, $3, $4, $5, now())
        on conflict(id) do update set provider = excluded.provider, name = excluded.name, data = excluded.data, updated_at = now()`,
       [connector.id, connector.provider, connector.name, connector, connector.created_at ?? new Date().toISOString()],
+    );
+  }
+
+  async saveEmail(email: EmailRecord): Promise<void> {
+    this.emails.set(email.id, email);
+    if (!this.databaseOnline) return;
+    await this.pool.query(
+      `insert into email_outbox(id, recipient, subject, body, status, data, created_at, updated_at)
+       values($1, $2, $3, $4, $5, $6, $7, $8)
+       on conflict(id) do update set recipient = excluded.recipient, subject = excluded.subject,
+       body = excluded.body, status = excluded.status, data = excluded.data, updated_at = excluded.updated_at`,
+      [email.id, email.to, email.subject, email.body, email.status, email, email.created_at, email.updated_at],
+    );
+  }
+
+  async saveScheduledTask(task: ScheduledTaskRecord): Promise<void> {
+    this.scheduledTasks.set(task.id, task);
+    if (!this.databaseOnline) return;
+    await this.pool.query(
+      `insert into scheduled_tasks(id, service_id, action, enabled, data, created_at, updated_at)
+       values($1, $2, $3, $4, $5, $6, $7)
+       on conflict(id) do update set service_id = excluded.service_id, action = excluded.action,
+       enabled = excluded.enabled, data = excluded.data, updated_at = excluded.updated_at`,
+      [task.id, task.service_id, task.action, task.enabled, task, task.created_at, task.updated_at],
     );
   }
 

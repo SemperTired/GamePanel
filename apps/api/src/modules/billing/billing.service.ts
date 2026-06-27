@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import bcrypt from "bcryptjs";
 import { DataStore } from "../data.module.js";
+import { EmailService } from "../email/email.service.js";
 import { ProvisioningService } from "../provisioning/provisioning.service.js";
 import { ServicesService } from "../services/services.service.js";
 
@@ -7,7 +9,7 @@ const paypalBaseUrl = () => process.env.PAYPAL_MODE === "live" ? "https://api-m.
 
 @Injectable()
 export class BillingService {
-  constructor(private readonly data: DataStore, private readonly provisioning: ProvisioningService, private readonly services: ServicesService) {}
+  constructor(private readonly data: DataStore, private readonly provisioning: ProvisioningService, private readonly services: ServicesService, private readonly email: EmailService) {}
 
   gateways() {
     return [
@@ -79,12 +81,20 @@ export class BillingService {
     if (!expected && process.env.NODE_ENV === "production") throw new UnauthorizedException("Fulfillment secret is required in production");
     if (!body?.paid) return { action: "ignored", reason: "payment_not_marked_paid" };
 
+    const customerEmail = String(body.customer_email || body.email || "").trim().toLowerCase();
+    if (!body.owner_user_id && !body.customer_id && !customerEmail) throw new BadRequestException("customer_email or owner_user_id is required");
+    const { user, temporaryPassword, created } = await this.ensureCustomerUser({
+      id: body.owner_user_id || body.customer_id,
+      email: customerEmail,
+      name: body.customer_name || body.name,
+    });
+
     let serviceId = body.service_id;
     if (!serviceId) {
       const service = await this.services.create({
         name: body.service_name || `${body.customer_email || "Customer"} ${body.template_id}`,
         template_id: body.template_id,
-        owner_user_id: body.owner_user_id || body.customer_id || body.customer_email,
+        owner_user_id: user.id,
         location_id: body.location_id || "local",
         node_id: body.node_id,
         memory_mb: body.memory_mb,
@@ -97,19 +107,45 @@ export class BillingService {
 
     const service = this.data.services.get(serviceId);
     if (!service) throw new BadRequestException("Unknown service");
+    service.owner_user_id = user.id;
     service.status = "paid";
     service.updated_at = new Date().toISOString();
     await this.data.saveService(service);
     const job = await this.provisioning.enqueue(service.id, "install", { source: "aethernode", payment_id: body.payment_id || body.order_id, amount: body.amount, currency: body.currency });
+    const queuedEmail = await this.email.queueWelcomeEmail(user, service, temporaryPassword || "(existing account password unchanged)");
     await this.data.recordAudit({
       id: crypto.randomUUID(),
       actor: "aethernode",
       action: "billing.fulfillment_payment_completed",
       target: service.id,
-      metadata: { job_id: job.id, payment_id: body.payment_id || body.order_id },
+      metadata: { job_id: job.id, payment_id: body.payment_id || body.order_id, user_id: user.id, user_created: created, email_id: queuedEmail.id },
       created_at: new Date().toISOString(),
     });
-    return { action: "queued_provisioning", service_id: service.id, job_id: job.id };
+    return { action: "queued_provisioning", service_id: service.id, job_id: job.id, user_id: user.id, user_created: created, email_id: queuedEmail.id };
+  }
+
+  private async ensureCustomerUser(input: { id?: string; email?: string; name?: string }) {
+    const existingById = input.id ? this.data.users.get(input.id) : undefined;
+    const existingByEmail = input.email ? [...this.data.users.values()].find((user) => user.email.toLowerCase() === input.email) : undefined;
+    const existing = existingById || existingByEmail;
+    if (existing) return { user: existing, temporaryPassword: "", created: false };
+    if (!input.email || !input.email.includes("@")) throw new BadRequestException("Valid customer_email is required for new customer accounts");
+    const password = this.temporaryPassword();
+    const now = new Date().toISOString();
+    const user = {
+      id: input.id || `usr_${crypto.randomUUID()}`,
+      email: input.email,
+      name: input.name?.trim() || input.email.split("@")[0],
+      role: "customer" as const,
+      password_hash: await bcrypt.hash(password, 10),
+      created_at: now,
+    };
+    await this.data.saveUser(user);
+    return { user, temporaryPassword: password, created: true };
+  }
+
+  private temporaryPassword() {
+    return `AN-${crypto.randomUUID().replaceAll("-", "").slice(0, 18)}`;
   }
 
   private async paypalAccessToken(): Promise<string> {
