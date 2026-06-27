@@ -63,7 +63,7 @@ function Shell() {
 
   const navGroups: Array<{ label: string; items: NavItem[] }> = [
     { label: "Operate", items: [["dashboard", LayoutDashboard, "Overview"], ["services", Server, "Instances"], ["console", Terminal, "Console"], ["files", Folder, "Files"], ["config", SlidersHorizontal, "Config"], ["mods", Boxes, "Mods"], ["backups", Database, "Backups"], ["scheduler", CalendarClock, "Scheduler"]] },
-    { label: "Deploy", items: [["templates", Gamepad2, "Game Library"], ["provisioning", ListChecks, "Queue"], ["nodes", Network, "Nodes"]] },
+    { label: "Provision", items: [["templates", Gamepad2, "Game Library"], ["provisioning", ListChecks, "Queue"], ["nodes", Network, "Nodes"]] },
     { label: "Business", items: [["billing", CreditCard, "Billing"], ["users", Users, "Users"], ["mail", Mail, "Mail"], ["audit", Shield, "Audit"]] },
     { label: "Platform", items: [["infrastructure", Router, "Network"], ["settings", Settings, "Settings"]] },
   ];
@@ -460,10 +460,6 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
     if (!selected) return;
     setEdit({ name: selected.name, owner_user_id: selected.owner_user_id || "", status: selected.status, node_id: selected.node_id || "local", location_id: selected.location_id || "local" });
   }, [selected?.id]);
-  async function createService(templateId: string) {
-    await api("/services", { method: "POST", body: JSON.stringify({ name: `${templateId} server`, template_id: templateId, owner_user_id: "usr_superadmin", location_id: "local", auto_start: false }) });
-    await refresh();
-  }
   async function power(action: string) {
     if (!selected) return;
     const service = await api<Service>(`/services/${selected.id}/power/${action}`, { method: "POST" });
@@ -496,17 +492,11 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
     await refresh();
   }
   const template = selected ? templates.find((item: Template) => item.id === selected.template_id) : null;
-  return <div className="grid grid-cols-[360px_1fr] gap-5">
-    <div className="command-panel rounded-3xl p-5">
-      <h2 className="mb-4 font-display text-2xl">Deploy</h2>
-      <div className="max-h-[560px] space-y-2 overflow-auto">
-        {templates.slice(0, 24).map((template: Template) => <button key={template.id} onClick={() => createService(template.id)} className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-left text-sm hover:border-cyan/40">
-          <span>{template.name}</span><UploadCloud className="h-4 w-4 text-cyan" />
-        </button>)}
+  return <div className="space-y-5">
+      <div className="command-panel rounded-3xl p-5">
+        <div className="mb-4 flex items-center justify-between gap-3"><div><h2 className="font-display text-2xl">Instances</h2><p className="text-sm text-slate-400">Manage purchased and provisioned game servers. New servers are created from Game Library.</p></div><span className="status-pill">{services.length} total</span></div>
+        <ServiceRows services={services} onPick={setSelected} selectedId={selected?.id} detailed />
       </div>
-    </div>
-    <div className="space-y-5">
-      <div className="command-panel rounded-3xl p-5"><h2 className="mb-4 font-display text-2xl">Instances</h2><ServiceRows services={services} onPick={setSelected} selectedId={selected?.id} detailed /></div>
       {selected && <div className="command-panel rounded-3xl p-5">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           <div><h3 className="font-display text-3xl">{selected.name}</h3><div className="mt-1 text-sm text-slate-400">{template?.name || selected.template_id} · {selected.node_id || "local node"}</div></div>
@@ -547,7 +537,6 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
           <ConsoleFrame title="Live Console Preview" logs={logs} compact />
         </div>
       </div>}
-    </div>
   </div>;
 }
 
@@ -691,6 +680,23 @@ function FilesPanel({ service }: { service: Service | null }) {
     setContent(data.content);
   }
 
+  async function createFile(name: string, template = "# Managed by AetherPanel\n") {
+    if (!service) return;
+    const filePath = path === "." ? name : `${path}/${name}`;
+    const data = await api<{ content: string; path: string }>(`/services/${service.id}/files/content?path=${encodeURIComponent(filePath)}&create=true&template=${encodeURIComponent(template)}`);
+    setOpenFile(data.path);
+    setContent(data.content);
+    await load(path);
+  }
+
+  async function createDirectory(name = "config") {
+    if (!service) return;
+    const dirPath = path === "." ? name : `${path}/${name}`;
+    await api(`/services/${service.id}/files/mkdir`, { method: "POST", body: JSON.stringify({ path: dirPath }) });
+    setMessage(`Created directory ${dirPath}`);
+    await load(path);
+  }
+
   async function saveFile() {
     if (!service || !openFile) return;
     await api(`/services/${service.id}/files/content`, { method: "PUT", body: JSON.stringify({ path: openFile, content }) });
@@ -705,6 +711,10 @@ function FilesPanel({ service }: { service: Service | null }) {
     <div className="command-panel rounded-3xl p-5">
       <div className="mb-4 flex items-center justify-between"><h2 className="font-display text-2xl">Files</h2><button className="icon-button" onClick={() => load(".")}>Root</button></div>
       <div className="mb-3 rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-xs text-slate-300">{path}</div>
+      <div className="mb-4 grid grid-cols-2 gap-2">
+        <button className="control-button justify-center" onClick={() => createFile("server.cfg")}><FileText className="h-4 w-4" /> New Config</button>
+        <button className="control-button justify-center" onClick={() => createDirectory()}><Folder className="h-4 w-4" /> New Folder</button>
+      </div>
       <div className="space-y-2">
         {path !== "." && <button className="provider-tile" onClick={() => load(path.split("/").slice(0, -1).join("/") || ".")}><Folder className="h-4 w-4" /> ..</button>}
         {entries.map((entry) => <button key={entry.name} className="provider-tile" onClick={() => entry.type === "directory" ? load(path === "." ? entry.name : `${path}/${entry.name}`) : readFile(entry.name)}>
@@ -713,6 +723,7 @@ function FilesPanel({ service }: { service: Service | null }) {
           <span className="text-xs text-slate-500">{entry.type === "file" ? `${entry.size}b` : "dir"}</span>
         </button>)}
       </div>
+      {!entries.length && <div className="mt-4 rounded-2xl border border-dashed border-white/15 p-5 text-center text-sm text-slate-400">This service directory is empty. Create a config file or provision/reinstall the service to populate game files.</div>}
       {message && <div className="mt-4 rounded-xl border border-cyan/20 bg-cyan/10 px-3 py-2 text-sm text-cyan">{message}</div>}
     </div>
     <div className="command-panel rounded-3xl p-5">
@@ -829,9 +840,20 @@ function InfrastructurePanel({ service }: { service: Service | null }) {
     setPlan(await api<any>(`/infrastructure/services/${service.id}/apply-port-forwards`, { method: "POST", body: JSON.stringify({}) }));
   }
   useEffect(() => { load().catch((error) => setMessage(error.message)); }, []);
+  const mappings = plan?.mappings || (service?.network_mappings as any[]) || [];
+  const fallbackPorts = service?.ports?.map((port) => ({
+    id: `${service.id}-${port.key}`,
+    name: port.key,
+    protocol: port.protocol,
+    external_port: port.host,
+    internal_port: port.host,
+    internal_ip: port.host_ip || "node",
+    wan_ip: "WAN",
+  })) || [];
+  const displayMappings = mappings.length ? mappings : fallbackPorts;
 
   return <div className="space-y-5">
-    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Backend Infrastructure</div><h2 className="font-display text-4xl font-bold">Network Automation</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Register UniFiOS, UPnP, or manual connectors so AetherPanel can prepare customer-facing port mappings per instance.</p></div></section>
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Connection Routing</div><h2 className="font-display text-4xl font-bold">Network & Ports</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Plan and apply the player-facing connection routes for the selected instance. Use dry-run until UniFiOS credentials are confirmed.</p></div></section>
     <div className="grid grid-cols-[420px_1fr] gap-5">
       <div className="command-panel rounded-3xl p-5">
         <h3 className="mb-4 font-display text-2xl">New Connector</h3>
@@ -846,10 +868,24 @@ function InfrastructurePanel({ service }: { service: Service | null }) {
         </div>
       </div>
       <div className="space-y-5">
-        <Panel title="Connectors" items={connectors} empty="No infrastructure connectors yet." />
         <div className="command-panel rounded-3xl p-5">
-          <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">Port Plan</h3><div className="flex gap-2"><button className="icon-button" onClick={planPorts}>Plan</button><button className="primary-button" onClick={applyPorts}>Apply</button></div></div>
-          {service ? <pre className="max-h-80 overflow-auto rounded-2xl bg-black/30 p-4 text-xs text-slate-300">{JSON.stringify(plan || service.ports, null, 2)}</pre> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">Select a service to generate mappings.</div>}
+          <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">Connectors</h3><span className="status-pill">{connectors.length} total</span></div>
+          {connectors.length ? <div className="grid grid-cols-2 gap-3">{connectors.map((connector) => <article key={connector.id} className="record-card">
+            <div className="mb-2 flex items-center justify-between gap-3"><strong>{connector.name}</strong><span className={`status-pill ${connector.enabled ? "status-good" : ""}`}>{connector.provider}</span></div>
+            <div className="space-y-2 text-sm text-slate-300"><div className="flex justify-between"><span>WAN</span><strong>{connector.wan_ip || "not set"}</strong></div><div className="flex justify-between"><span>Mode</span><strong>{connector.dry_run ? "dry run" : "live apply"}</strong></div><div className="flex justify-between"><span>Site</span><strong>{connector.site_id || "default"}</strong></div></div>
+          </article>)}</div> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No infrastructure connectors yet.</div>}
+        </div>
+        <div className="command-panel rounded-3xl p-5">
+          <div className="mb-4 flex items-center justify-between"><div><h3 className="font-display text-2xl">Connection Plan</h3><p className="text-sm text-slate-400">{service ? service.name : "Select an instance to preview routing."}</p></div><div className="flex gap-2"><button className="icon-button" onClick={planPorts}>Plan</button><button className="primary-button" onClick={applyPorts}>Apply</button></div></div>
+          {service ? <div className="grid grid-cols-2 gap-3">{displayMappings.map((mapping: any) => <article key={mapping.id || `${mapping.name}-${mapping.external_port}`} className="network-route">
+            <div className="mb-3 flex items-center justify-between gap-3"><strong>{mapping.name || "Game Port"}</strong><span className="status-pill">{mapping.protocol || "tcp"}</span></div>
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm">
+              <div className="rounded-xl bg-black/25 p-3"><div className="text-xs uppercase tracking-[0.16em] text-slate-500">Players</div><div className="font-mono text-cyan">{mapping.wan_ip || "WAN"}:{mapping.external_port || "?"}</div></div>
+              <Network className="h-5 w-5 text-slate-500" />
+              <div className="rounded-xl bg-black/25 p-3"><div className="text-xs uppercase tracking-[0.16em] text-slate-500">Node</div><div className="font-mono text-emerald-200">{mapping.internal_ip || "LAN"}:{mapping.internal_port || "?"}</div></div>
+            </div>
+          </article>)}</div> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">Select a service to generate mappings.</div>}
+          {plan?.result && <div className="mt-4 rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{plan.result.message || "Port plan updated."}</div>}
         </div>
       </div>
     </div>
@@ -920,6 +956,8 @@ function Mods({ service, refresh }: any) {
   const [results, setResults] = useState<ModSearchItem[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [manualId, setManualId] = useState("");
+  const [manualName, setManualName] = useState("");
   const activeProvider = providers.find((item) => item.id === provider);
 
   useEffect(() => {
@@ -949,6 +987,18 @@ function Mods({ service, refresh }: any) {
   async function installMod(mod: ModSearchItem) {
     if (!service) return;
     await api(`/services/${service.id}/mods`, { method: "POST", body: JSON.stringify({ ...mod, enabled: true }) });
+    await refresh();
+  }
+
+  async function installManualMod(event: React.FormEvent) {
+    event.preventDefault();
+    if (!service || !manualId.trim()) return;
+    await api(`/services/${service.id}/mods`, {
+      method: "POST",
+      body: JSON.stringify({ id: manualId.trim(), provider, name: manualName.trim() || `${activeProvider?.name || provider} ${manualId.trim()}`, enabled: true }),
+    });
+    setManualId("");
+    setManualName("");
     await refresh();
   }
 
@@ -991,7 +1041,7 @@ function Mods({ service, refresh }: any) {
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
               <h3 className="font-display text-2xl">{activeProvider?.name || "Mod Browser"}</h3>
-              <p className="text-sm text-slate-400">Search through the provider API when available, or browse the embedded provider WebUI.</p>
+              <p className="text-sm text-slate-400">Search through the provider API when available, or add a Workshop/mod ID directly. External providers open in a new tab.</p>
             </div>
             {activeProvider?.web_url && <a href={activeProvider.web_url} target="_blank" className="icon-button"><ExternalLink className="h-4 w-4" /> Open</a>}
           </div>
@@ -1001,6 +1051,15 @@ function Mods({ service, refresh }: any) {
           </div>
           {message && <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">{message}</div>}
         </div>
+
+        <form onSubmit={installManualMod} className="command-panel rounded-3xl p-5">
+          <div className="mb-4 flex items-center justify-between gap-4"><div><h3 className="font-display text-2xl">Add Mod By ID</h3><p className="text-sm text-slate-400">Use this for Steam Workshop IDs, Nexus/Mod.io IDs, collections, or providers that block iframe browsing.</p></div><span className="status-pill">{provider}</span></div>
+          <div className="grid grid-cols-[1fr_1fr_auto] gap-3">
+            <input className="field" value={manualId} onChange={(event) => setManualId(event.target.value)} placeholder="Mod or collection ID" />
+            <input className="field" value={manualName} onChange={(event) => setManualName(event.target.value)} placeholder="Friendly name optional" />
+            <button className="primary-button"><Plus className="h-4 w-4" /> Install</button>
+          </div>
+        </form>
 
         <div className="grid grid-cols-3 gap-4">
           {results.map((mod) => <article key={`${mod.provider}-${mod.id}`} className="mod-card overflow-hidden rounded-3xl">
@@ -1018,8 +1077,10 @@ function Mods({ service, refresh }: any) {
           </article>)}
         </div>
 
-        {!results.length && <div className="browser-frame">
-          {activeProvider?.web_url ? <iframe title={`${activeProvider.name} browser`} src={activeProvider.web_url} /> : <div className="grid h-full place-items-center text-slate-400">This provider uses manual uploads.</div>}
+        {!results.length && <div className="provider-guide rounded-3xl p-6">
+          <Globe2 className="h-10 w-10 text-cyan" />
+          <div><h3 className="font-display text-2xl">Provider Browser</h3><p className="mt-1 text-sm text-slate-400">Use the Open button to browse {activeProvider?.name || "the provider"} in a new tab, then paste the mod or collection ID above. This avoids blank embedded pages caused by provider frame-blocking policies.</p></div>
+          {activeProvider?.web_url && <a href={activeProvider.web_url} target="_blank" className="primary-button"><ExternalLink className="h-4 w-4" /> Open Provider</a>}
         </div>}
 
         <div className="command-panel rounded-3xl p-5">
@@ -1242,8 +1303,27 @@ function Billing() {
   const [message, setMessage] = useState("");
   useEffect(() => { api<any[]>("/billing/gateways").then(setGateways).catch((error) => setMessage(error.message)); }, []);
   return <div className="space-y-5">
-    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Revenue</div><h2 className="font-display text-4xl font-bold">Billing Gateways</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Payment gateways and fulfillment status for AetherNode checkout automation.</p></div></section>
-    <Panel title="Gateways" items={gateways} empty="No payment gateways returned by the API." />
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Revenue Operations</div><h2 className="font-display text-4xl font-bold">AetherNode Billing Bridge</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Checkout happens on AetherNode.org. AetherPanel receives paid-order fulfillment, creates the client account, provisions the service, and queues the welcome email.</p></div></section>
+    <div className="grid grid-cols-[1fr_0.8fr] gap-5">
+      <div className="command-panel rounded-3xl p-5">
+        <h3 className="mb-4 font-display text-2xl">Payment Gateways</h3>
+        <div className="grid grid-cols-2 gap-4">{gateways.map((gateway) => <article key={gateway.id} className="gateway-card">
+          <div className="mb-4 flex items-center justify-between gap-3"><div><div className="text-xs uppercase tracking-[0.18em] text-cyan">{gateway.mode}</div><h4 className="font-display text-2xl">{gateway.name}</h4></div><span className={`status-pill ${gateway.status === "configured" ? "status-good" : ""}`}>{gateway.status}</span></div>
+          <div className="space-y-2 text-sm text-slate-300"><div className="flex justify-between"><span>Currency</span><strong>{gateway.currency}</strong></div><div className="flex justify-between"><span>Client Panel</span><strong>panel.aethernode.org</strong></div><div className="flex justify-between"><span>Storefront</span><strong>AetherNode.org</strong></div></div>
+        </article>)}</div>
+        {!gateways.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No payment gateways returned by the API.</div>}
+      </div>
+      <div className="command-panel rounded-3xl p-5">
+        <h3 className="mb-4 font-display text-2xl">Fulfillment Endpoint</h3>
+        <div className="rounded-2xl border border-cyan/20 bg-cyan/10 p-4 font-mono text-sm text-cyan">POST /api/v1/billing/fulfillment/payment-completed</div>
+        <div className="mt-4 space-y-3 text-sm text-slate-300">
+          <div className="flex items-center gap-3"><span className="status-pill status-good">1</span> PayPal confirms payment on AetherNode.org</div>
+          <div className="flex items-center gap-3"><span className="status-pill status-good">2</span> AetherPanel creates or reuses the client login</div>
+          <div className="flex items-center gap-3"><span className="status-pill status-good">3</span> The game server is assigned and queued for install</div>
+          <div className="flex items-center gap-3"><span className="status-pill status-good">4</span> Login/server details are written to Mail</div>
+        </div>
+      </div>
+    </div>
     {message && <div className="rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-100">{message}</div>}
   </div>;
 }
@@ -1255,18 +1335,8 @@ function Provisioning() {
   useEffect(() => { load().catch((error) => setMessage(error.message)); }, []);
   return <div className="space-y-5">
     <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10 flex items-center justify-between gap-5"><div><div className="text-sm uppercase tracking-[0.25em] text-cyan">Automation</div><h2 className="font-display text-4xl font-bold">Provisioning Queue</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Install, reinstall, update, and fulfillment jobs submitted by the panel and billing pipeline.</p></div><button className="icon-button" onClick={load}><RotateCcw className="h-4 w-4" /> Refresh</button></div></section>
-    <Panel title="Jobs" items={jobs} empty="No provisioning jobs have been queued yet." />
+    <ConsoleFrame title="Queue Console" logs={jobs.length ? jobs.map((job) => `[${job.updated_at || job.created_at || "pending"}] ${job.status || "queued"} ${job.action || "job"} service=${job.service_id || "unknown"} queue=${job.queue || "memory"} id=${job.id || "n/a"}${job.warning ? ` warning=${job.warning}` : ""}${job.completed_at ? ` completed=${job.completed_at}` : ""}`).join("\n") : "[queue] No provisioning jobs have been queued yet."} />
     {message && <div className="rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-100">{message}</div>}
-  </div>;
-}
-
-function Panel({ title, items, empty }: any) {
-  return <div className="command-panel rounded-3xl p-6">
-    <div className="mb-4 flex items-center justify-between gap-3"><h2 className="font-display text-2xl">{title}</h2><span className="status-pill">{items?.length || 0}</span></div>
-    {items?.length ? <div className="record-grid">{items.map((item: any, index: number) => <article key={item.id || `${title}-${index}`} className="record-card">
-      <div className="mb-3 flex items-center justify-between gap-3"><strong>{item.name || item.action || item.subject || item.id || `Record ${index + 1}`}</strong><span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-xs text-slate-300">{item.status || item.queue || item.provider || "record"}</span></div>
-      <div className="space-y-2">{Object.entries(item).filter(([key]) => !["metadata", "data", "password", "body"].includes(key)).slice(0, 8).map(([key, value]) => <div key={key} className="record-line"><span>{key.replaceAll("_", " ")}</span><strong>{typeof value === "object" ? JSON.stringify(value) : String(value)}</strong></div>)}</div>
-    </article>)}</div> : <div className="rounded-xl border border-dashed border-white/15 p-8 text-center text-slate-400">{empty}</div>}
   </div>;
 }
 
