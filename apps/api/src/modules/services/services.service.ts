@@ -69,7 +69,7 @@ export class ServicesService {
         protocol: port.protocol,
       }))),
       mods: [],
-      startup_variables: payload.startup_variables,
+      startup_variables: this.defaultVariables(template, payload.name, payload.startup_variables),
       network_mappings: [],
       created_at: now,
       updated_at: now,
@@ -82,19 +82,52 @@ export class ServicesService {
     const start = Number(process.env.PORT_POOL_START || 30000);
     const end = Number(process.env.PORT_POOL_END || 60000);
     const bindIp = process.env.NODE_BIND_IP || "0.0.0.0";
-    const used = new Set([...this.data.services.values()].flatMap((service) => service.ports.map((port) => `${port.host}/${port.protocol}`)));
-    let cursor = start;
-    return requested.map((port) => {
-      let host = port.preferred >= start && port.preferred <= end ? port.preferred : cursor;
-      while (used.has(`${host}/${port.protocol}`) || host < start || host > end) {
-        host += 1;
-        if (host > end) host = start;
-        if (host === cursor) throw new BadRequestException("No available ports in the configured port pool");
+    const used = new Set([...this.data.services.values()].flatMap((service) => service.ports.flatMap((port) => this.portKeys(port.host, port.protocol))));
+    const sorted = [...requested].sort((a, b) => a.preferred - b.preferred);
+    const primary = sorted[0]?.preferred || start;
+    const stride = Number(process.env.PORT_INSTANCE_STRIDE || Math.max(10, sorted.length * 2 + 2));
+    const offsets = new Map(sorted.map((port, index) => [port.key, Math.max(0, port.preferred - primary) || index * 2]));
+    let base = start;
+    while (base <= end) {
+      const candidate = requested.map((port) => ({
+        ...port,
+        host: base + (offsets.get(port.key) ?? 0),
+      }));
+      const fits = candidate.every((port) => port.host <= end && this.portKeys(port.host, port.protocol).every((key) => !used.has(key)));
+      if (fits) {
+        for (const port of candidate) for (const key of this.portKeys(port.host, port.protocol)) used.add(key);
+        return candidate.map((port) => ({ key: port.key, host: port.host, container: port.container, protocol: port.protocol, host_ip: bindIp }));
       }
-      cursor = host + 1;
-      used.add(`${host}/${port.protocol}`);
-      return { key: port.key, host, container: port.container, protocol: port.protocol, host_ip: bindIp };
-    });
+      base += stride;
+    }
+    throw new BadRequestException("No available contiguous port block in the configured port pool");
+  }
+
+  private portKeys(port: number, protocol: PortProtocol) {
+    return protocol === "both" ? [`${port}/tcp`, `${port}/udp`] : [`${port}/${protocol}`];
+  }
+
+  private defaultVariables(template: NonNullable<ReturnType<TemplatesService["get"]>>, serviceName: string, overrides: Record<string, string> = {}) {
+    const generated = {
+      ServerGUID: crypto.randomUUID(),
+      SERVER_NAME: serviceName,
+      ServerName: serviceName.replace(/\s+/g, "_"),
+    };
+    const values: Record<string, string> = {};
+    for (const field of template.config_schema.fields) values[field.key] = this.resolveDefaultValue(field.default, generated);
+    for (const variable of template.startup_variables) values[variable.key] = this.resolveDefaultValue(variable.default, generated);
+    return {
+      ...values,
+      SERVER_NAME: values.SERVER_NAME || generated.SERVER_NAME,
+      ServerName: values.ServerName || generated.ServerName,
+      ...overrides,
+    };
+  }
+
+  private resolveDefaultValue(value: string | undefined, generated: Record<string, string>) {
+    if (!value) return "";
+    if (value === "{{newguid()}}") return generated.ServerGUID;
+    return value.replace(/\{\{newguid\(\)\}\}/g, crypto.randomUUID());
   }
 
   private normalizeCreateInput(input: unknown) {
@@ -127,7 +160,7 @@ export class ServicesService {
     await this.data.saveService(service);
     try {
       const installPlan = buildInstallPlan(template, service.id);
-      this.assertInstallReadiness(installPlan, service.startup_variables || {});
+      this.assertInstallReadiness(installPlan);
       await prepareServiceFiles(installPlan, { runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true", variables: service.startup_variables || {} });
       await writeManagedConfigFiles(installPlan, template, service.startup_variables || {});
       const runtime = createDockerRuntime(this.runtimeTargetForService(service));
@@ -359,13 +392,11 @@ export class ServicesService {
     };
   }
 
-  private assertInstallReadiness(installPlan: ReturnType<typeof buildInstallPlan>, variables: Record<string, string>) {
+  private assertInstallReadiness(installPlan: ReturnType<typeof buildInstallPlan>) {
     if (process.env.AETHERPANEL_STRICT_TEMPLATE_READINESS === "false") return;
     const missingEnv = installPlan.readiness.required_env.filter((key) => !process.env[key]);
-    const missingCustomerVariables = installPlan.readiness.required_customer_variables.filter((key) => !variables[key]);
     const blockers = [
       ...missingEnv.map((key) => `Missing environment variable ${key}`),
-      ...missingCustomerVariables.map((key) => `Missing customer variable ${key}`),
       ...installPlan.readiness.operator_actions,
     ];
     if (blockers.length) throw new BadRequestException(`Template is not ready for live provisioning: ${blockers.join("; ")}`);

@@ -282,7 +282,7 @@ export interface RuntimeProvider {
 export const createServiceSchema = z.object({
   name: z.string().min(2).max(80),
   template_id: z.string().min(1),
-  owner_user_id: z.string().min(1),
+  owner_user_id: z.string().min(1).default("usr_superadmin"),
   location_id: z.string().min(1).default("local"),
   node_id: z.string().optional(),
   memory_mb: z.number().int().min(512).default(2048),

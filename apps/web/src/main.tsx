@@ -245,23 +245,16 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
   const [q, setQ] = useState("");
   const [selectedId, setSelectedId] = useState("path-of-titans");
   const [serviceName, setServiceName] = useState("AetherNode Path of Titans Test");
-  const [nodeId, setNodeId] = useState("amp-linux-target");
-  const [memoryMb, setMemoryMb] = useState(8192);
-  const [diskGb, setDiskGb] = useState(25);
-  const [cpuLimit, setCpuLimit] = useState(4);
+  const [nodeId] = useState("amp-linux-target");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [editor, setEditor] = useState<any>({});
-  const [customerVariables, setCustomerVariables] = useState<Record<string, string>>({});
   const filtered = templates.filter((template) => `${template.name} ${template.category} ${template.id}`.toLowerCase().includes(q.toLowerCase()));
   const selected = templates.find((template) => template.id === selectedId) || templates.find((template) => template.id === "path-of-titans") || templates[0];
 
   useEffect(() => {
     if (!selected) return;
     setServiceName((current) => current && current !== "AetherNode Path of Titans Test" ? current : `AetherNode ${selected.name} Test`);
-    setMemoryMb(selected.resources.recommended_ram_mb);
-    setDiskGb(selected.resources.min_disk_gb);
-    setCustomerVariables(Object.fromEntries((selected.startup_variables || []).map((variable) => [variable.key, variable.default || ""])));
     setEditor({
       name: selected.name,
       category: selected.category,
@@ -290,10 +283,6 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
           owner_user_id: "usr_superadmin",
           location_id: "local",
           node_id: nodeId || "local",
-          memory_mb: memoryMb,
-          disk_gb: diskGb,
-          cpu_limit: cpuLimit,
-          startup_variables: customerVariables,
           auto_start: false,
         }),
       });
@@ -340,7 +329,7 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
       <div className="relative z-10">
         <div className="mb-2 flex items-center gap-2 text-sm uppercase tracking-[0.24em] text-cyan"><UploadCloud className="h-4 w-4" /> One Click Deploy</div>
         <h2 className="font-display text-5xl font-bold">Launch a game server</h2>
-        <p className="mt-3 max-w-3xl text-slate-300">Pick a supported title, choose the runtime target and resources, then create and provision the instance. Start with Path of Titans for the first production smoke.</p>
+        <p className="mt-3 max-w-3xl text-slate-300">Pick a supported title, name the instance, and AetherPanel will assign ports, apply template defaults, create managed config files, and provision the runtime.</p>
       </div>
       <div className="relative z-10 grid grid-cols-3 gap-3">
         <MetricPill label="Templates" value={templates.length} />
@@ -388,25 +377,15 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
             <p className="mt-2 text-sm text-slate-300">{selected.summary}</p>
           </div>
           <label className="setting-field"><span>Instance Name</span><input className="field" value={serviceName} onChange={(event) => setServiceName(event.target.value)} /></label>
-          <label className="setting-field"><span>Runtime Target</span><select className="field" value={nodeId} onChange={(event) => setNodeId(event.target.value)}>
-            <option value="amp-linux-target">AMP Linux Target - 10.1.10.48</option>
-            <option value="local">Local Docker Node</option>
-            {nodes.map((node) => <option key={node.id} value={node.id}>{node.name || node.id}</option>)}
-          </select></label>
-          <div className="grid grid-cols-3 gap-3">
-            <label className="setting-field"><span>RAM MB</span><input className="field" type="number" value={memoryMb} onChange={(event) => setMemoryMb(Number(event.target.value))} /></label>
-            <label className="setting-field"><span>Disk GB</span><input className="field" type="number" value={diskGb} onChange={(event) => setDiskGb(Number(event.target.value))} /></label>
-            <label className="setting-field"><span>CPU</span><input className="field" type="number" value={cpuLimit} onChange={(event) => setCpuLimit(Number(event.target.value))} /></label>
-          </div>
-          {(selected.startup_variables || []).filter((variable) => variable.customer_editable).length ? <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-            <div className="mb-3 font-semibold">Customer Required Fields</div>
-            <div className="space-y-3">
-              {(selected.startup_variables || []).filter((variable) => variable.customer_editable).map((variable) => <label key={variable.key} className="setting-field">
-                <span>{variable.label}{variable.required ? " *" : ""}</span>
-                <input className="field" type={variable.sensitive ? "password" : "text"} value={customerVariables[variable.key] || ""} onChange={(event) => setCustomerVariables({ ...customerVariables, [variable.key]: event.target.value })} />
-              </label>)}
+          <div className="rounded-2xl border border-cyan/20 bg-cyan/10 p-4 text-sm text-slate-200">
+            <div className="font-semibold text-white">Automatic provisioning profile</div>
+            <div className="mt-2 grid gap-2">
+              <div className="flex justify-between gap-3"><span className="text-slate-400">Runtime target</span><span className="font-mono text-cyan">{nodeId || "local"}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-slate-400">Memory</span><span>{selected.resources.recommended_ram_mb} MB</span></div>
+              <div className="flex justify-between gap-3"><span className="text-slate-400">Storage</span><span>{selected.resources.min_disk_gb} GB</span></div>
+              <div className="flex justify-between gap-3"><span className="text-slate-400">Config fields</span><span>{(selected as any).config_schema?.fields?.length || selected.startup_variables?.length || 0}</span></div>
             </div>
-          </div> : null}
+          </div>
           <InfoBlock title="Ports" items={selected.ports.map((port) => [port.key, `${port.default}/${port.protocol}`])} />
           <InfoBlock title="Install" items={[["method", selected.id === "path-of-titans" ? "alderon" : selected.source?.type || "template"], ["mods", selected.workshop.enabled ? selected.workshop.providers.join(", ") : "none"]]} />
           <div className={`rounded-2xl border p-4 ${selected.readiness?.customer_ready ? "border-emerald-400/30 bg-emerald-500/10" : "border-amber-400/30 bg-amber-500/10"}`}>
@@ -416,7 +395,7 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
             </div>
             <div className="mt-3 space-y-2 text-sm text-slate-300">
               {(selected.readiness?.missing_env || []).map((item) => <div key={item}>Missing env: <span className="font-mono text-amber-100">{item}</span></div>)}
-              {(selected.readiness?.required_customer_variables || []).map((item) => <div key={item}>Customer must supply: <span className="font-mono text-cyan">{item}</span></div>)}
+              {(selected.readiness?.required_customer_variables || []).map((item) => <div key={item}>Editable after creation: <span className="font-mono text-cyan">{item}</span></div>)}
               {(selected.readiness?.operator_actions || []).map((item) => <div key={item}>{item}</div>)}
               {(selected.readiness?.warnings || []).slice(0, 2).map((item) => <div key={item} className="text-slate-400">{item}</div>)}
               {selected.readiness?.customer_ready && <div className="text-emerald-100">No blocking installer prerequisites detected on this API node.</div>}
