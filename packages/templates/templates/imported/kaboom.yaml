@@ -5,13 +5,18 @@ category: Imported
 summary: Dedicated server for Kaboom! - AMP Exclusive
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '1007'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1574860/LinuxHeadless_Core.x86_64
+  startup: >-
+    1574860/LinuxHeadless_Core.x86_64 +ip {ApplicationIPBinding} +port {ApplicationPort1} +queryport {ApplicationPort2}
+    {FormattedArgs} +amptoken "{AMPToken}"
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,641 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: applicationport1
+    name: Server Port
+    default: 7777
+    protocol: both
     required: true
-config_files: []
+  - key: applicationport2
+    name: Query Port
+    default: 27015
+    protocol: both
+    required: true
+  - key: remoteadminport
+    name: RCON Port
+    default: 40100
+    protocol: both
+    required: true
+config_files:
+  - path: kaboomconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: servername
+      label: Server Name
+      category: Kaboom!
+      subcategory: Server
+      description: Server name as it appears in the server list
+      keywords: ''
+      input_type: text
+      param_field_name: servername
+      default: My Kaboom! Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Description: Server name as it appears in the server list
+        FieldName: servername
+        InputType: text
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: servername
+        IncludeInCommandLine: true
+        DefaultValue: My Kaboom! Server
+    - key: region
+      label: Server Region
+      category: Kaboom!
+      subcategory: Server
+      description: Where in the world the server is located
+      keywords: ''
+      input_type: enum
+      param_field_name: region
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '0': EU West
+        '10': EU Central
+        '20': EU Eastern
+        '30': US West
+        '40': US Central
+        '50': US Eastern
+        '60': Canada
+        '70': South America
+        '80': South East Asia
+        '90': Australia
+        '210': China
+        '220': Russia
+        '999': Other
+      raw:
+        DisplayName: Server Region
+        Description: Where in the world the server is located
+        FieldName: region
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: region
+        IncludeInCommandLine: true
+        InputType: enum
+        EnumValues:
+          '0': EU West
+          '10': EU Central
+          '20': EU Eastern
+          '30': US West
+          '40': US Central
+          '50': US Eastern
+          '60': Canada
+          '70': South America
+          '80': South East Asia
+          '90': Australia
+          '210': China
+          '220': Russia
+          '999': Other
+        DefaultValue: '0'
+    - key: botmode
+      label: Bot Fill Mode
+      category: Kaboom!
+      subcategory: Server
+      description: How should bots be used to manage server population
+      keywords: ''
+      input_type: enum
+      param_field_name: botmode
+      default: NoBots
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        NoBots: No Bots
+        MaintainMinimum: Fill to minimum lobby size
+        FillRemainingSpaces: Fill all remaining spaces
+        ReplaceLeaversOnly: Only replace match leavers
+      raw:
+        DisplayName: Bot Fill Mode
+        Description: How should bots be used to manage server population
+        FieldName: botmode
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: botmode
+        IncludeInCommandLine: true
+        InputType: enum
+        EnumValues:
+          NoBots: No Bots
+          MaintainMinimum: Fill to minimum lobby size
+          FillRemainingSpaces: Fill all remaining spaces
+          ReplaceLeaversOnly: Only replace match leavers
+        DefaultValue: NoBots
+    - key: respawndelay
+      label: Respawn Delay
+      category: Kaboom!
+      subcategory: Server
+      description: How long the server should wait after a player is eliminated before respawning them.
+      keywords: ''
+      input_type: number
+      param_field_name: respawndelay
+      default: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Respawn Delay
+        Description: How long the server should wait after a player is eliminated before respawning them.
+        FieldName: respawndelay
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: respawndelay
+        IncludeInCommandLine: true
+        InputType: number
+        DefaultValue: '5'
+    - key: saferespawntime
+      label: Invulnerability Time
+      category: Kaboom!
+      subcategory: Server
+      description: How long a player is invulnerable for after respawning.
+      keywords: ''
+      input_type: number
+      param_field_name: saferespawntime
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Invulnerability Time
+        Description: How long a player is invulnerable for after respawning.
+        FieldName: saferespawntime
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: saferespawntime
+        IncludeInCommandLine: true
+        InputType: number
+        DefaultValue: '2'
+    - key: autolobby
+      label: Auto Lobby
+      category: Kaboom!
+      subcategory: Server
+      description: Automatic lobbies do not have a lobby leader, and will start automatically once the player requirements are met.
+      keywords: ''
+      input_type: checkbox
+      param_field_name: autolobby
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Auto Lobby
+        Description: >-
+          Automatic lobbies do not have a lobby leader, and will start automatically once the player requirements are
+          met.
+        FieldName: autolobby
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: autolobby
+        IncludeInCommandLine: true
+        InputType: checkbox
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+        DefaultValue: 'False'
+    - key: joinmidmatch
+      label: Allow joining mid-match
+      category: Kaboom!
+      subcategory: Server
+      description: >-
+        If enabled, players will be able to join a match that it is in progress. Otherwise they will spectate until the
+        match is over.
+      keywords: ''
+      input_type: checkbox
+      param_field_name: joinmidmatch
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Allow joining mid-match
+        Description: >-
+          If enabled, players will be able to join a match that it is in progress. Otherwise they will spectate until
+          the match is over.
+        FieldName: joinmidmatch
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: joinmidmatch
+        IncludeInCommandLine: true
+        InputType: checkbox
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+        DefaultValue: 'False'
+    - key: startonfirstjoin
+      label: Start on first join
+      category: Kaboom!
+      subcategory: Server
+      description: If enabled, the match will start automatically once the first player connects. Recommend that bots are enabled.
+      keywords: ''
+      input_type: checkbox
+      param_field_name: startonfirstjoin
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Start on first join
+        Description: >-
+          If enabled, the match will start automatically once the first player connects. Recommend that bots are
+          enabled.
+        FieldName: startonfirstjoin
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: startonfirstjoin
+        IncludeInCommandLine: true
+        InputType: checkbox
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+        DefaultValue: 'False'
+    - key: lobbyminplayers
+      label: Minimum lobby players
+      category: Kaboom!
+      subcategory: Server
+      description: How many players must be present in an auto lobby before a match can be started automatically. Minimum of 2.
+      keywords: ''
+      input_type: number
+      param_field_name: lobbyminplayers
+      default: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 2
+      enum_values: {}
+      raw:
+        DisplayName: Minimum lobby players
+        Description: How many players must be present in an auto lobby before a match can be started automatically. Minimum of 2.
+        FieldName: lobbyminplayers
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: lobbyminplayers
+        IncludeInCommandLine: true
+        InputType: number
+        DefaultValue: '4'
+        MinValue: '2'
+    - key: lobbyholdtime
+      label: Lobby hold time
+      category: Kaboom!
+      subcategory: Server
+      description: >-
+        How long the auto lobby should wait for more players to join once the minimum is reached. This timer restarts
+        whenever a player joins or leaves.
+      keywords: ''
+      input_type: number
+      param_field_name: lobbyholdtime
+      default: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Lobby hold time
+        Description: >-
+          How long the auto lobby should wait for more players to join once the minimum is reached. This timer restarts
+          whenever a player joins or leaves.
+        FieldName: lobbyholdtime
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: lobbyholdtime
+        IncludeInCommandLine: true
+        InputType: number
+        DefaultValue: '20'
+    - key: lobbyfulltime
+      label: Lobby full delay
+      category: Kaboom!
+      subcategory: Server
+      description: After an auto lobby fills up, how long should it wait before starting the game?
+      keywords: ''
+      input_type: number
+      param_field_name: lobbyfulltime
+      default: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Lobby full delay
+        Description: After an auto lobby fills up, how long should it wait before starting the game?
+        FieldName: lobbyfulltime
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: lobbyfulltime
+        IncludeInCommandLine: true
+        InputType: number
+        DefaultValue: '20'
+    - key: lobbyfulltime
+      label: Lobby overtime timeout
+      category: Kaboom!
+      subcategory: Server
+      description: >-
+        The maximum amount of a time an auto lobby that has the minimum number of players can remain in the 'ready'
+        state. If this time is exceeded, players joining/leaving will not reset the lobby timer. This prevents the lobby
+        from remaining in limbo indefinitely due to the countdown timer resetting from players leaving/joining.
+      keywords: ''
+      input_type: number
+      param_field_name: lobbyovertime
+      default: '120'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Lobby overtime timeout
+        Description: >-
+          The maximum amount of a time an auto lobby that has the minimum number of players can remain in the 'ready'
+          state. If this time is exceeded, players joining/leaving will not reset the lobby timer. This prevents the
+          lobby from remaining in limbo indefinitely due to the countdown timer resetting from players leaving/joining.
+        FieldName: lobbyfulltime
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: lobbyovertime
+        IncludeInCommandLine: true
+        InputType: number
+        DefaultValue: '120'
+    - key: matchlength
+      label: Match length (seconds)
+      category: Kaboom!
+      subcategory: Server
+      description: The maximum length of a match in seconds. After this time the match will end regardless of win condition
+      keywords: ''
+      input_type: number
+      param_field_name: matchlength
+      default: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Match length (seconds)
+        Description: The maximum length of a match in seconds. After this time the match will end regardless of win condition
+        FieldName: matchlength
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: matchlength
+        IncludeInCommandLine: true
+        InputType: number
+        DefaultValue: '300'
+    - key: lowmatchtime
+      label: Match time low trigger (seconds)
+      category: Kaboom!
+      subcategory: Server
+      description: >-
+        When the match has this many seconds left, the 'out of time' trigger will fire and the map will change to speed
+        up the match.
+      keywords: ''
+      input_type: number
+      param_field_name: lowmatchtime
+      default: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Match time low trigger (seconds)
+        Description: >-
+          When the match has this many seconds left, the 'out of time' trigger will fire and the map will change to
+          speed up the match.
+        FieldName: lowmatchtime
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: lowmatchtime
+        IncludeInCommandLine: true
+        InputType: number
+        DefaultValue: '60'
+    - key: specialskins
+      label: Allow Special Skins
+      category: Kaboom!
+      subcategory: Server
+      description: >-
+        If enabled, special players such as developers may be given special skins that make them stand out from other
+        players.
+      keywords: ''
+      input_type: checkbox
+      param_field_name: specialskins
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Allow Special Skins
+        Description: >-
+          If enabled, special players such as developers may be given special skins that make them stand out from other
+          players.
+        FieldName: specialskins
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: specialskins
+        IncludeInCommandLine: true
+        InputType: checkbox
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+        DefaultValue: 'True'
+    - key: aigpuacceleration
+      label: Enable GPU accelerated AI
+      category: Kaboom!
+      subcategory: Server
+      description: >-
+        If enabled, the server will accelerate AI for bots using any available nVidia GPU (CUDA support required). Will
+        automatically fall back to CPU driven AI when not available.
+      keywords: ''
+      input_type: checkbox
+      param_field_name: aigpuacceleration
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Enable GPU accelerated AI
+        Description: >-
+          If enabled, the server will accelerate AI for bots using any available nVidia GPU (CUDA support required).
+          Will automatically fall back to CPU driven AI when not available.
+        FieldName: aigpuacceleration
+        Category: Kaboom!:bomb
+        Subcategory: Server:dns:1
+        ParamFieldName: aigpuacceleration
+        IncludeInCommandLine: true
+        InputType: checkbox
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+        DefaultValue: 'False'
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: servername
+    label: Server Name
+    default: My Kaboom! Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: region
+    label: Server Region
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: botmode
+    label: Bot Fill Mode
+    default: NoBots
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: respawndelay
+    label: Respawn Delay
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: saferespawntime
+    label: Invulnerability Time
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autolobby
+    label: Auto Lobby
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: joinmidmatch
+    label: Allow joining mid-match
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: startonfirstjoin
+    label: Start on first join
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lobbyminplayers
+    label: Minimum lobby players
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lobbyholdtime
+    label: Lobby hold time
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lobbyfulltime
+    label: Lobby full delay
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lobbyfulltime
+    label: Lobby overtime timeout
+    default: '120'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: matchlength
+    label: Match length (seconds)
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lowmatchtime
+    label: Match time low trigger (seconds)
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: specialskins
+    label: Allow Special Skins
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: aigpuacceleration
+    label: Enable GPU accelerated AI
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1007'
+  collection_support: true
 backup:
   include:
     - /data

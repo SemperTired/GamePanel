@@ -4,14 +4,16 @@ name: Java App Runner
 category: Imported
 summary: Java App Runner
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: '{{JavaVersion}}'
+  startup: '{JavaVersion} {JavaArgs} -jar {JarName} {JarOptions}'
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +21,603 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Main Port
+    default: 7777
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: java-app-runnerconfig.json
+    type: json
+    editable: true
+  - path: java-app-runnermetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: DownloadType
+      label: App Download Type
+      category: Java App Runner
+      subcategory: Download
+      description: >-
+        Sets how to download the app. Specify the App Download Source and the relevant Git repo or  GitHub release
+        settings accordingly. Update the app after changing this setting
+      keywords: download,type,DownloadType
+      input_type: enum
+      param_field_name: DownloadType
+      default: ''
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': '--Please select--'
+        DownloadURL: Download URL
+        GithubRelease: GitHub release
+        GitRepo: Git repo
+        None: None
+      raw:
+        DisplayName: App Download Type
+        Category: Java App Runner:code
+        Subcategory: Download:download:2
+        Description: >-
+          Sets how to download the app. Specify the App Download Source and the relevant Git repo or  GitHub release
+          settings accordingly. Update the app after changing this setting
+        Keywords: download,type,DownloadType
+        FieldName: DownloadType
+        InputType: enum
+        ParamFieldName: DownloadType
+        DefaultValue: ''
+        Required: true
+        EnumValues:
+          '': '--Please select--'
+          DownloadURL: Download URL
+          GithubRelease: GitHub release
+          GitRepo: Git repo
+          None: None
+    - key: DownloadSource
+      label: App Download Source
+      category: Java App Runner
+      subcategory: Download
+      description: >-
+        Sets the source for the App Download Type. Git repo = URL that ends in .git. GitHub release = User/Repo.
+        Download URL = URL to a file/zip. Update the app after changing this setting
+      keywords: download,source,DownloadSource
+      input_type: text
+      param_field_name: DownloadSource
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Download Source
+        Category: Java App Runner:code
+        Subcategory: Download:download:2
+        Description: >-
+          Sets the source for the App Download Type. Git repo = URL that ends in .git. GitHub release = User/Repo.
+          Download URL = URL to a file/zip. Update the app after changing this setting
+        Keywords: download,source,DownloadSource
+        FieldName: DownloadSource
+        InputType: text
+        ParamFieldName: DownloadSource
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadBranch
+      label: Git Repo Branch
+      category: Java App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the branch if required. Empty = default branch
+      keywords: git,repo,branch,DownloadBranch
+      input_type: text
+      param_field_name: DownloadBranch
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Branch
+        Category: Java App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the branch if required. Empty = default branch
+        Keywords: git,repo,branch,DownloadBranch
+        FieldName: DownloadBranch
+        InputType: text
+        ParamFieldName: DownloadBranch
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadUsername
+      label: Git Repo Username
+      category: Java App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the username if login is required
+      keywords: git,repo,username,DownloadUsername
+      input_type: text
+      param_field_name: DownloadUsername
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Username
+        Category: Java App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the username if login is required
+        Keywords: git,repo,username,DownloadUsername
+        FieldName: DownloadUsername
+        InputType: text
+        ParamFieldName: DownloadUsername
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadPassword
+      label: Git Repo Password/Token
+      category: Java App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the password/token if login is required
+      keywords: git,repo,password,token,DownloadPassword
+      input_type: password
+      param_field_name: DownloadPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Password/Token
+        Category: Java App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the password/token if login is required
+        Keywords: git,repo,password,token,DownloadPassword
+        FieldName: DownloadPassword
+        InputType: password
+        ParamFieldName: DownloadPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadFilename
+      label: GitHub Release Filename
+      category: Java App Runner
+      subcategory: Download
+      description: If "GitHub release" is selected under App Download Type, sets the name of the zip file to download
+      keywords: github,release,filename,DownloadFilename
+      input_type: text
+      param_field_name: DownloadFilename
+      default: ''
+      placeholder: app.zip
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GitHub Release Filename
+        Category: Java App Runner:code
+        Subcategory: Download:download:2
+        Description: If "GitHub release" is selected under App Download Type, sets the name of the zip file to download
+        Keywords: github,release,filename,DownloadFilename
+        FieldName: DownloadFilename
+        InputType: text
+        ParamFieldName: DownloadFilename
+        DefaultValue: ''
+        Placeholder: app.zip
+        EnumValues: {}
+    - key: DownloadVersion
+      label: GitHub Release Version
+      category: Java App Runner
+      subcategory: Download
+      description: If "GitHub release" is selected under App Download Type, sets the release version to download. Empty = latest
+      keywords: github,release,version,DownloadVersion
+      input_type: text
+      param_field_name: DownloadVersion
+      default: ''
+      placeholder: 1.0.0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GitHub Release Version
+        Category: Java App Runner:code
+        Subcategory: Download:download:2
+        Description: If "GitHub release" is selected under App Download Type, sets the release version to download. Empty = latest
+        Keywords: github,release,version,DownloadVersion
+        FieldName: DownloadVersion
+        InputType: text
+        ParamFieldName: DownloadVersion
+        DefaultValue: ''
+        Placeholder: 1.0.0
+        EnumValues: {}
+    - key: JavaVersion
+      label: Java Version
+      category: Java App Runner
+      subcategory: App
+      description: >-
+        Sets the Java version to run the app with. The version must be accessible to AMP. For "Specific system version",
+        also set Specific System Java Version. For "Specific instance version", also set Specific Instance Java Version.
+        Ensure the version is compatible with the app
+      keywords: java,version,JavaVersion
+      input_type: enum
+      param_field_name: JavaVersion
+      default: '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}': System default
+        '{{SpecificJavaVersion}}': Specific system version
+        '{{Windows:java\bin\java.exe}}{{Linux:java/bin/java}}': Specific instance version
+      raw:
+        DisplayName: Java Version
+        Category: Java App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the Java version to run the app with. The version must be accessible to AMP. For "Specific system
+          version", also set Specific System Java Version. For "Specific instance version", also set Specific Instance
+          Java Version. Ensure the version is compatible with the app
+        Keywords: java,version,JavaVersion
+        FieldName: JavaVersion
+        InputType: enum
+        ParamFieldName: JavaVersion
+        DefaultValue: '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}'
+        EnumValues:
+          '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}': System default
+          '{{SpecificJavaVersion}}': Specific system version
+          '{{Windows:java\bin\java.exe}}{{Linux:java/bin/java}}': Specific instance version
+    - key: SpecificJavaVersion
+      label: Specific System Java Version
+      category: Java App Runner
+      subcategory: App
+      description: >-
+        Sets the full path to the Java executable on the system, if "Specific system version" is selected under Java
+        Version
+      keywords: java,version,system,SpecificJavaVersion
+      input_type: text
+      param_field_name: SpecificJavaVersion
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Specific System Java Version
+        Category: Java App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the full path to the Java executable on the system, if "Specific system version" is selected under Java
+          Version
+        Keywords: java,version,system,SpecificJavaVersion
+        FieldName: SpecificJavaVersion
+        InputType: text
+        ParamFieldName: SpecificJavaVersion
+        DefaultValue: ''
+        EnumValues: {}
+    - key: SpecificInstanceJavaVersion
+      label: Specific Instance Java Version
+      category: Java App Runner
+      subcategory: App
+      description: >-
+        Sets the Eclipse Temurin Java version to install in the instance to run the app with, if "Specific instance
+        version" is selected under Java Version. Useful for using a Java version that is not installed on the system or
+        in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+      keywords: java,version,instance,SpecificInstanceJavaVersion
+      input_type: enum
+      param_field_name: SpecificInstanceJavaVersion
+      default: '21'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '8': 8 - LTS
+        '11': 11 - LTS
+        '16': '16'
+        '17': 17 - LTS
+        '18': '18'
+        '19': '19'
+        '20': '20'
+        '21': 21 - LTS (default)
+        '22': '22'
+        '23': '23'
+        '24': '24'
+        '25': 25 - LTS
+      raw:
+        DisplayName: Specific Instance Java Version
+        Category: Java App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the Eclipse Temurin Java version to install in the instance to run the app with, if "Specific instance
+          version" is selected under Java Version. Useful for using a Java version that is not installed on the system
+          or in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+        Keywords: java,version,instance,SpecificInstanceJavaVersion
+        FieldName: SpecificInstanceJavaVersion
+        InputType: enum
+        ParamFieldName: SpecificInstanceJavaVersion
+        IncludeInCommandLine: false
+        DefaultValue: '21'
+        EnumValues:
+          '8': 8 - LTS
+          '11': 11 - LTS
+          '16': '16'
+          '17': 17 - LTS
+          '18': '18'
+          '19': '19'
+          '20': '20'
+          '21': 21 - LTS (default)
+          '22': '22'
+          '23': '23'
+          '24': '24'
+          '25': 25 - LTS
+    - key: JavaArgs
+      label: Java Arguments
+      category: Java App Runner
+      subcategory: App
+      description: Specifies any command line arguments to run Java with (NOT options passed to the jar)
+      keywords: command,line,arguments,args,java,JavaArgs
+      input_type: text
+      param_field_name: JavaArgs
+      default: ''
+      placeholder: '-Xmx1024M -Xms1024M'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Java Arguments
+        Category: Java App Runner:code
+        Subcategory: App:settings:1
+        Description: Specifies any command line arguments to run Java with (NOT options passed to the jar)
+        Keywords: command,line,arguments,args,java,JavaArgs
+        FieldName: JavaArgs
+        InputType: text
+        ParamFieldName: JavaArgs
+        DefaultValue: ''
+        Placeholder: '-Xmx1024M -Xms1024M'
+        EnumValues: {}
+    - key: JarName
+      label: Jar Name
+      category: Java App Runner
+      subcategory: App
+      description: >-
+        Sets the jar name to run. Also set App Subdirectory as needed, or include the jar path under the root directory
+        here if App Subdirectory is not otherwise appropriate
+      keywords: jar,name,JarName
+      input_type: text
+      param_field_name: JarName
+      default: ''
+      placeholder: myapp.jar
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Jar Name
+        Category: Java App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the jar name to run. Also set App Subdirectory as needed, or include the jar path under the root
+          directory here if App Subdirectory is not otherwise appropriate
+        Keywords: jar,name,JarName
+        FieldName: JarName
+        InputType: text
+        ParamFieldName: JarName
+        DefaultValue: ''
+        Placeholder: myapp.jar
+        EnumValues: {}
+    - key: AppDir
+      label: App Subdirectory
+      category: Java App Runner
+      subcategory: App
+      description: >-
+        Sets any applicable subdirectory path under the root directory that the app is installed in. This will set the
+        working directory for running the app accordingly
+      keywords: app,directory,subdirectory,path,AppDir
+      input_type: text
+      param_field_name: AppDir
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Subdirectory
+        Category: Java App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets any applicable subdirectory path under the root directory that the app is installed in. This will set the
+          working directory for running the app accordingly
+        Keywords: app,directory,subdirectory,path,AppDir
+        FieldName: AppDir
+        InputType: text
+        ParamFieldName: AppDir
+        DefaultValue: ''
+        EnumValues: {}
+    - key: JarOptions
+      label: Jar Options
+      category: Java App Runner
+      subcategory: App
+      description: Specifies any command line options to pass to the jar (NOT arguments to run Java wth)
+      keywords: command,line,options,jar,JarOptions
+      input_type: text
+      param_field_name: JarOptions
+      default: ''
+      placeholder: nogui
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Jar Options
+        Category: Java App Runner:code
+        Subcategory: App:settings:1
+        Description: Specifies any command line options to pass to the jar (NOT arguments to run Java wth)
+        Keywords: command,line,options,jar,JarOptions
+        FieldName: JarOptions
+        InputType: text
+        ParamFieldName: JarOptions
+        DefaultValue: ''
+        Placeholder: nogui
+        EnumValues: {}
+    - key: EnvVars
+      label: App Environment Variables
+      category: Java App Runner
+      subcategory: App
+      description: >-
+        To set a list of environment variables to run the app with, use a relevant config file in the working directory,
+        such as a '.env' file. For example, this may include a [Discord bot
+        token](https://discord.com/developers/applications/). Consult any example config file included with the app for
+        relevant variables to specify
+      keywords: environment,variables,EnvVars
+      input_type: hidden
+      param_field_name: EnvVars
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Environment Variables
+        Category: Java App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          To set a list of environment variables to run the app with, use a relevant config file in the working
+          directory, such as a '.env' file. For example, this may include a [Discord bot
+          token](https://discord.com/developers/applications/). Consult any example config file included with the app
+          for relevant variables to specify
+        Keywords: environment,variables,EnvVars
+        FieldName: EnvVars
+        InputType: hidden
+        ParamFieldName: EnvVars
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: DownloadType
+    label: App Download Type
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: DownloadSource
+    label: App Download Source
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadBranch
+    label: Git Repo Branch
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadUsername
+    label: Git Repo Username
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadPassword
+    label: Git Repo Password/Token
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: DownloadFilename
+    label: GitHub Release Filename
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadVersion
+    label: GitHub Release Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JavaVersion
+    label: Java Version
+    default: '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificJavaVersion
+    label: Specific System Java Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificInstanceJavaVersion
+    label: Specific Instance Java Version
+    default: '21'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JavaArgs
+    label: Java Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JarName
+    label: Jar Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AppDir
+    label: App Subdirectory
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JarOptions
+    label: Jar Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

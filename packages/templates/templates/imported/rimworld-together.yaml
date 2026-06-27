@@ -4,14 +4,16 @@ name: Rimworld Together - RimWorld Server
 category: Imported
 summary: Rimworld Together - a free multiplayer mod for RimWorld
 install:
-  method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  method: direct_archive
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: GameServer
+  startup: GameServer {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +21,2154 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 25555
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: Configs/ServerConfig.json
+    type: json
+    editable: true
+  - path: Configs/WhitelistConfig.json
+    type: json
+    editable: true
+  - path: Configs/ServerBrowserConfig.json
+    type: json
+    editable: true
+  - path: Configs/ChatConfig.json
+    type: json
+    editable: true
+  - path: Configs/BackupConfig.json
+    type: json
+    editable: true
+  - path: Configs/ActionConfig.json
+    type: json
+    editable: true
+  - path: Configs/RoadConfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Server Port
+      category: Rimworld Together
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.Port
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Server IP Binding
+      category: Rimworld Together
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.IP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server IP Binding
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.IP
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: Name
+      label: Server Name
+      category: Rimworld Together
+      subcategory: Server
+      description: Sets the name of the server. Maximum 40 characters
+      keywords: server,name
+      input_type: text
+      param_field_name: $.Name
+      default: AMP Powered Rimworld Together Server
+      placeholder: AMP Powered Rimworld Together Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server. Maximum 40 characters
+        Keywords: server,name
+        FieldName: Name
+        InputType: text
+        ParamFieldName: $.Name
+        DefaultValue: AMP Powered Rimworld Together Server
+        Placeholder: AMP Powered Rimworld Together Server
+        EnumValues: {}
+    - key: Description
+      label: Server Description
+      category: Rimworld Together
+      subcategory: Server
+      description: Sets the description of the server. Maximum 200 characters
+      keywords: server,description
+      input_type: text
+      param_field_name: $.Description
+      default: Welcome to my Rimworld Together server!
+      placeholder: Welcome to my Rimworld Together server!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Description
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the description of the server. Maximum 200 characters
+        Keywords: server,description
+        FieldName: Description
+        InputType: text
+        ParamFieldName: $.Description
+        DefaultValue: Welcome to my Rimworld Together server!
+        Placeholder: Welcome to my Rimworld Together server!
+        EnumValues: {}
+    - key: EnableServerBrowser
+      label: Show In Server Browser
+      category: Rimworld Together
+      subcategory: Server
+      description: If enabled, the server will be visible in the public server browser
+      keywords: server,browser,enable,EnableServerBrowser
+      input_type: checkbox
+      param_field_name: $.EnableServerBrowser
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Show In Server Browser
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will be visible in the public server browser
+        Keywords: server,browser,enable,EnableServerBrowser
+        FieldName: EnableServerBrowser
+        InputType: checkbox
+        ParamFieldName: $.EnableServerBrowser
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PublicEndPoint
+      label: Public Endpoint Address Selection Mode
+      category: Rimworld Together
+      subcategory: Server
+      description: >-
+        Sets whether and how the public endpoint address (IP or domain) for the server, as used by the server browser,
+        is set. If 'Address manually set' is selected, specify the desired public endpoint address under Manual Public
+        Endpoint Address
+      keywords: public,ip,endpoint,address,PublicEndPoint
+      input_type: enum
+      param_field_name: $.PublicEndPoint
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': IP automatically set by Rimworld Together (default)
+        '{{$ExternalIP}}': IP automatically set by AMP
+        '{{ManualPublicEndPoint}}': Address manually set
+      raw:
+        DisplayName: Public Endpoint Address Selection Mode
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether and how the public endpoint address (IP or domain) for the server, as used by the server browser,
+          is set. If 'Address manually set' is selected, specify the desired public endpoint address under Manual Public
+          Endpoint Address
+        Keywords: public,ip,endpoint,address,PublicEndPoint
+        FieldName: PublicEndPoint
+        InputType: enum
+        ParamFieldName: $.PublicEndPoint
+        DefaultValue: ''
+        EnumValues:
+          '': IP automatically set by Rimworld Together (default)
+          '{{$ExternalIP}}': IP automatically set by AMP
+          '{{ManualPublicEndPoint}}': Address manually set
+    - key: ManualPublicEndPoint
+      label: Manual Public Endpoint Address
+      category: Rimworld Together
+      subcategory: Server
+      description: >-
+        Sets the public endpoint address (IP or domain) for the server, if 'Address manually set' is selected as the
+        Public Endpoint Address Selection Mode
+      keywords: manual,public,ip,endpoint,address,PublicEndPoint
+      input_type: text
+      param_field_name: ManualPublicEndPoint
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Manual Public Endpoint Address
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public endpoint address (IP or domain) for the server, if 'Address manually set' is selected as the
+          Public Endpoint Address Selection Mode
+        Keywords: manual,public,ip,endpoint,address,PublicEndPoint
+        FieldName: ManualPublicEndPoint
+        InputType: text
+        ParamFieldName: ManualPublicEndPoint
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Rimworld Together
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,max,players,limit,MaxPlayers
+      input_type: number
+      param_field_name: $.MaxPlayers
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,max,players,limit,MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: $.MaxPlayers
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: players
+        EnumValues: {}
+    - key: UseWhitelist
+      label: Enable Whitelist
+      category: Rimworld Together
+      subcategory: Server
+      description: If set, allows only the usernames listed under Whitelisted Players to join the server
+      keywords: whitelist,players,UseWhitelist
+      input_type: checkbox
+      param_field_name: $.UseWhitelist
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Whitelist
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, allows only the usernames listed under Whitelisted Players to join the server
+        Keywords: whitelist,players,UseWhitelist
+        FieldName: UseWhitelist
+        InputType: checkbox
+        ParamFieldName: $.UseWhitelist
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: WhitelistedUsers
+      label: Whitelisted Players
+      category: Rimworld Together
+      subcategory: Server
+      description: Sets a list of in-game usernames for whitelisted players. Requires Enable Whitelist to be set
+      keywords: whitelist,whitelisted,users,players,WhitelistedUsers
+      input_type: list
+      param_field_name: $.WhitelistedUsers
+      default: '[]'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: array:text
+      raw:
+        DisplayName: Whitelisted Players
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a list of in-game usernames for whitelisted players. Requires Enable Whitelist to be set
+        Keywords: whitelist,whitelisted,users,players,WhitelistedUsers
+        FieldName: WhitelistedUsers
+        InputType: list
+        ParamFieldName: $.WhitelistedUsers
+        DefaultValue: '[]'
+        Special: array:text
+        EnumValues: {}
+    - key: verboseLogs
+      label: Enable Verbose Logging
+      category: Rimworld Together
+      subcategory: Server
+      description: >-
+        If set, the server console will include additional logging output for developer or debugging purposes. Not
+        recommended for normal use
+      keywords: verbose,logs,logging,VerboseLogs
+      input_type: checkbox
+      param_field_name: $.VerboseLogs
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Verbose Logging
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server console will include additional logging output for developer or debugging purposes. Not
+          recommended for normal use
+        Keywords: verbose,logs,logging,VerboseLogs
+        FieldName: verboseLogs
+        InputType: checkbox
+        ParamFieldName: $.VerboseLogs
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ExtremeVerboseLogs
+      label: Enable Extreme Verbose Logging
+      category: Rimworld Together
+      subcategory: Server
+      description: If set, the server console will include much more verbose logging
+      keywords: extreme,verbose,logs,logging,ExtremeVerboseLogs
+      input_type: checkbox
+      param_field_name: $.ExtremeVerboseLogs
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Extreme Verbose Logging
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server console will include much more verbose logging
+        Keywords: extreme,verbose,logs,logging,ExtremeVerboseLogs
+        FieldName: ExtremeVerboseLogs
+        InputType: checkbox
+        ParamFieldName: $.ExtremeVerboseLogs
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: DisplayChatInConsole
+      label: Display Chat In Console
+      category: Rimworld Together
+      subcategory: Server
+      description: If set, player chat will be displayed in the server console
+      keywords: chat,console,display,DisplayChatInConsole
+      input_type: checkbox
+      param_field_name: $.DisplayChatInConsole
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Display Chat In Console
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, player chat will be displayed in the server console
+        Keywords: chat,console,display,DisplayChatInConsole
+        FieldName: DisplayChatInConsole
+        InputType: checkbox
+        ParamFieldName: $.DisplayChatInConsole
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: UseUPnP
+      label: Use UPnP
+      category: Rimworld Together
+      subcategory: Server
+      description: If set, UPnP will be used to automatically configure port forwarding on compatible routers
+      keywords: upnp,UseUPnP
+      input_type: checkbox
+      param_field_name: $.UseUPnP
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use UPnP
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, UPnP will be used to automatically configure port forwarding on compatible routers
+        Keywords: upnp,UseUPnP
+        FieldName: UseUPnP
+        InputType: checkbox
+        ParamFieldName: $.UseUPnP
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: SyncLocalSave
+      label: Sync Local Save
+      category: Rimworld Together
+      subcategory: Server
+      description: If set, local save syncing will be enabled
+      keywords: sync,local,save,SyncLocalSave
+      input_type: checkbox
+      param_field_name: $.SyncLocalSave
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Sync Local Save
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, local save syncing will be enabled
+        Keywords: sync,local,save,SyncLocalSave
+        FieldName: SyncLocalSave
+        InputType: checkbox
+        ParamFieldName: $.SyncLocalSave
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: TemporalActivityProtection
+      label: Enable Temporal Activity Protection
+      category: Rimworld Together
+      subcategory: Server
+      description: If set, temporal activity protection will be enabled
+      keywords: temporal,activity,protection,TemporalActivityProtection
+      input_type: checkbox
+      param_field_name: $.TemporalActivityProtection
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Temporal Activity Protection
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, temporal activity protection will be enabled
+        Keywords: temporal,activity,protection,TemporalActivityProtection
+        FieldName: TemporalActivityProtection
+        InputType: checkbox
+        ParamFieldName: $.TemporalActivityProtection
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: TemporalActivityProtectionTime
+      label: Temporal Activity Protection Time
+      category: Rimworld Together
+      subcategory: Server
+      description: Sets the cooldown between receiving activity requests. Temporal Activity Protection must be enabled
+      keywords: temporal,activity,protection,time,cooldown,TemporalActivityProtectionTime
+      input_type: number
+      param_field_name: $.TemporalActivityProtectionTime
+      default: '3600'
+      placeholder: '3600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Temporal Activity Protection Time
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the cooldown between receiving activity requests. Temporal Activity Protection must be enabled
+        Keywords: temporal,activity,protection,time,cooldown,TemporalActivityProtectionTime
+        FieldName: TemporalActivityProtectionTime
+        InputType: number
+        ParamFieldName: $.TemporalActivityProtectionTime
+        DefaultValue: '3600'
+        Placeholder: '3600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: TemporalEventProtection
+      label: Enable Temporal Event Protection
+      category: Rimworld Together
+      subcategory: Server
+      description: If set, temporal event protection will be enabled
+      keywords: temporal,event,protection,TemporalEventProtection
+      input_type: checkbox
+      param_field_name: $.TemporalEventProtection
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Temporal Event Protection
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, temporal event protection will be enabled
+        Keywords: temporal,event,protection,TemporalEventProtection
+        FieldName: TemporalEventProtection
+        InputType: checkbox
+        ParamFieldName: $.TemporalEventProtection
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: TemporalEventProtectionTime
+      label: Temporal Event Protection Time
+      category: Rimworld Together
+      subcategory: Server
+      description: Sets the cooldown between receiving player-sent events. Temporal Event Protection must be enabled
+      keywords: temporal,event,protection,time,cooldown,TemporalEventProtectionTime
+      input_type: number
+      param_field_name: $.TemporalEventProtectionTime
+      default: '3600'
+      placeholder: '3600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Temporal Event Protection Time
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the cooldown between receiving player-sent events. Temporal Event Protection must be enabled
+        Keywords: temporal,event,protection,time,cooldown,TemporalEventProtectionTime
+        FieldName: TemporalEventProtectionTime
+        InputType: number
+        ParamFieldName: $.TemporalEventProtectionTime
+        DefaultValue: '3600'
+        Placeholder: '3600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: TemporalAidProtection
+      label: Enable Temporal Aid Protection
+      category: Rimworld Together
+      subcategory: Server
+      description: If set, temporal aid protection will be enabled
+      keywords: temporal,aid,protection,TemporalAidProtection
+      input_type: checkbox
+      param_field_name: $.TemporalAidProtection
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Temporal Aid Protection
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, temporal aid protection will be enabled
+        Keywords: temporal,aid,protection,TemporalAidProtection
+        FieldName: TemporalAidProtection
+        InputType: checkbox
+        ParamFieldName: $.TemporalAidProtection
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: TemporalAidProtectionTime
+      label: Temporal Aid Protection Time
+      category: Rimworld Together
+      subcategory: Server
+      description: Sets the cooldown between receiving player-sent aid. Temporal Aid Protection must be enabled
+      keywords: temporal,aid,protection,time,cooldown,TemporalAidProtectionTime
+      input_type: number
+      param_field_name: $.TemporalAidProtectionTime
+      default: '3600'
+      placeholder: '3600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Temporal Aid Protection Time
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the cooldown between receiving player-sent aid. Temporal Aid Protection must be enabled
+        Keywords: temporal,aid,protection,time,cooldown,TemporalAidProtectionTime
+        FieldName: TemporalAidProtectionTime
+        InputType: number
+        ParamFieldName: $.TemporalAidProtectionTime
+        DefaultValue: '3600'
+        Placeholder: '3600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: TemporalSpyProtection
+      label: Enable Temporal Spy Protection
+      category: Rimworld Together
+      subcategory: Server
+      description: If set, temporal spy protection will be enabled
+      keywords: temporal,spy,protection,TemporalSpyProtection
+      input_type: checkbox
+      param_field_name: $.TemporalSpyProtection
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Temporal Spy Protection
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, temporal spy protection will be enabled
+        Keywords: temporal,spy,protection,TemporalSpyProtection
+        FieldName: TemporalSpyProtection
+        InputType: checkbox
+        ParamFieldName: $.TemporalSpyProtection
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: TemporalSpyProtectionTime
+      label: Temporal Spy Protection Time
+      category: Rimworld Together
+      subcategory: Server
+      description: Sets the cooldown between spying attempts. Temporal Spy Protection must be enabled
+      keywords: temporal,spy,protection,time,cooldown,TemporalSpyProtectionTime
+      input_type: number
+      param_field_name: $.TemporalSpyProtectionTime
+      default: '3600'
+      placeholder: '3600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Temporal Spy Protection Time
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the cooldown between spying attempts. Temporal Spy Protection must be enabled
+        Keywords: temporal,spy,protection,time,cooldown,TemporalSpyProtectionTime
+        FieldName: TemporalSpyProtectionTime
+        InputType: number
+        ParamFieldName: $.TemporalSpyProtectionTime
+        DefaultValue: '3600'
+        Placeholder: '3600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: EnableMoTD
+      label: Enable Server MOTD
+      category: Rimworld Together
+      subcategory: Server
+      description: If enabled, sends a welcome message to all players that log in
+      keywords: motd,message,day,EnableMoTD
+      input_type: checkbox
+      param_field_name: $.EnableMoTD
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Server MOTD
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, sends a welcome message to all players that log in
+        Keywords: motd,message,day,EnableMoTD
+        FieldName: EnableMoTD
+        InputType: checkbox
+        ParamFieldName: $.EnableMoTD
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: MessageOfTheDay
+      label: Server MOTD
+      category: Rimworld Together
+      subcategory: Server
+      description: Sets message sent to players when they log in. Enable Server MOTD must be set
+      keywords: motd,message,day,MessageOfTheDay
+      input_type: text
+      param_field_name: $.MessageOfTheDay
+      default: ''
+      placeholder: Welcome to the server!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server MOTD
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets message sent to players when they log in. Enable Server MOTD must be set
+        Keywords: motd,message,day,MessageOfTheDay
+        FieldName: MessageOfTheDay
+        InputType: text
+        ParamFieldName: $.MessageOfTheDay
+        DefaultValue: ''
+        Placeholder: Welcome to the server!
+        EnumValues: {}
+    - key: LoginNotifications
+      label: Login Notifications
+      category: Rimworld Together
+      subcategory: Server
+      description: If enabled, sends a message when a user logs in
+      keywords: login,notifications,LoginNotifications
+      input_type: checkbox
+      param_field_name: $.LoginNotifications
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Login Notifications
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, sends a message when a user logs in
+        Keywords: login,notifications,LoginNotifications
+        FieldName: LoginNotifications
+        InputType: checkbox
+        ParamFieldName: $.LoginNotifications
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: DisconnectNotifications
+      label: Disconnect Notifications
+      category: Rimworld Together
+      subcategory: Server
+      description: If enabled, sends a message when a user logs off
+      keywords: disconnect,notifications,DisconnectNotifications
+      input_type: checkbox
+      param_field_name: $.DisconnectNotifications
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disconnect Notifications
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, sends a message when a user logs off
+        Keywords: disconnect,notifications,DisconnectNotifications
+        FieldName: DisconnectNotifications
+        InputType: checkbox
+        ParamFieldName: $.DisconnectNotifications
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AutomaticBackups
+      label: Enable Automatic Backups
+      category: Rimworld Together
+      subcategory: Server
+      description: If enabled, the server will automatically create backups at regular intervals
+      keywords: automatic,backups,enable,AutomaticBackups
+      input_type: checkbox
+      param_field_name: $.AutomaticBackups
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Automatic Backups
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will automatically create backups at regular intervals
+        Keywords: automatic,backups,enable,AutomaticBackups
+        FieldName: AutomaticBackups
+        InputType: checkbox
+        ParamFieldName: $.AutomaticBackups
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: IntervalHours
+      label: Backup Interval
+      category: Rimworld Together
+      subcategory: Server
+      description: Sets the interval between automatic backups. A backup is also created when the server is started
+      keywords: backup,interval,hours,IntervalHours
+      input_type: number
+      param_field_name: $.IntervalHours
+      default: '24.0'
+      placeholder: '24.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: hours
+      enum_values: {}
+      raw:
+        DisplayName: Backup Interval
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the interval between automatic backups. A backup is also created when the server is started
+        Keywords: backup,interval,hours,IntervalHours
+        FieldName: IntervalHours
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.IntervalHours
+        DefaultValue: '24.0'
+        Placeholder: '24.0'
+        Suffix: hours
+        EnumValues: {}
+    - key: AutomaticDeletion
+      label: Enable Automatic Backup Deletion
+      category: Rimworld Together
+      subcategory: Server
+      description: If enabled, old backups will be automatically deleted, based on the Backup Retention Amount
+      keywords: automatic,backup,deletion,AutomaticDeletion
+      input_type: checkbox
+      param_field_name: $.AutomaticDeletion
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Automatic Backup Deletion
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, old backups will be automatically deleted, based on the Backup Retention Amount
+        Keywords: automatic,backup,deletion,AutomaticDeletion
+        FieldName: AutomaticDeletion
+        InputType: checkbox
+        ParamFieldName: $.AutomaticDeletion
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: Amount
+      label: Backup Retention Amount
+      category: Rimworld Together
+      subcategory: Server
+      description: Sets the number of backups to keep before older backups are deleted, if Automatic Backup Deletion is enabled
+      keywords: backup,amount,keep,retention
+      input_type: number
+      param_field_name: $.Amount
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Backup Retention Amount
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of backups to keep before older backups are deleted, if Automatic Backup Deletion is enabled
+        Keywords: backup,amount,keep,retention
+        FieldName: Amount
+        InputType: number
+        ParamFieldName: $.Amount
+        DefaultValue: '3'
+        Placeholder: '3'
+        EnumValues: {}
+    - key: EnableActivities
+      label: Enable Offline Activities
+      category: Rimworld Together
+      subcategory: Actions
+      description: If set, offline visting and raiding will be enabled
+      keywords: enable,offline,activities,EnableActivities
+      input_type: checkbox
+      param_field_name: $.EnableActivities
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Offline Activities
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: If set, offline visting and raiding will be enabled
+        Keywords: enable,offline,activities,EnableActivities
+        FieldName: EnableActivities
+        InputType: checkbox
+        ParamFieldName: $.EnableActivities
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnableEvents
+      label: Enable Events
+      category: Rimworld Together
+      subcategory: Actions
+      description: If set, events will be enabled
+      keywords: enable,events,EnableEvents
+      input_type: checkbox
+      param_field_name: $.EnableEvents
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Events
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: If set, events will be enabled
+        Keywords: enable,events,EnableEvents
+        FieldName: EnableEvents
+        InputType: checkbox
+        ParamFieldName: $.EnableEvents
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnableSites
+      label: Enable Sites
+      category: Rimworld Together
+      subcategory: Actions
+      description: If set, creation of sites will be enabled
+      keywords: enable,sites,EnableSites
+      input_type: checkbox
+      param_field_name: $.EnableSites
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Sites
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: If set, creation of sites will be enabled
+        Keywords: enable,sites,EnableSites
+        FieldName: EnableSites
+        InputType: checkbox
+        ParamFieldName: $.EnableSites
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnableRoads
+      label: Enable Roads
+      category: Rimworld Together
+      subcategory: Actions
+      description: If set, creation of user-built roads will be enabled
+      keywords: enable,roads,EnableRoads
+      input_type: checkbox
+      param_field_name: $.EnableRoads
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Roads
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: If set, creation of user-built roads will be enabled
+        Keywords: enable,roads,EnableRoads
+        FieldName: EnableRoads
+        InputType: checkbox
+        ParamFieldName: $.EnableRoads
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnableFactions
+      label: Enable Factions
+      category: Rimworld Together
+      subcategory: Actions
+      description: If set, creation of user-made factions will be enabled
+      keywords: enable,factions,EnableFactions
+      input_type: checkbox
+      param_field_name: $.EnableFactions
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Factions
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: If set, creation of user-made factions will be enabled
+        Keywords: enable,factions,EnableFactions
+        FieldName: EnableFactions
+        InputType: checkbox
+        ParamFieldName: $.EnableFactions
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnableAids
+      label: Enable Aids
+      category: Rimworld Together
+      subcategory: Actions
+      description: If set, transfer of pawns will be enabled
+      keywords: enable,aids,EnableAids
+      input_type: checkbox
+      param_field_name: $.EnableAids
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Aids
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: If set, transfer of pawns will be enabled
+        Keywords: enable,aids,EnableAids
+        FieldName: EnableAids
+        InputType: checkbox
+        ParamFieldName: $.EnableAids
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnableTrading
+      label: Enable Trading
+      category: Rimworld Together
+      subcategory: Actions
+      description: If set, transfer of items will be enabled
+      keywords: enable,trading,EnableTrading
+      input_type: checkbox
+      param_field_name: $.EnableTrading
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Trading
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: If set, transfer of items will be enabled
+        Keywords: enable,trading,EnableTrading
+        FieldName: EnableTrading
+        InputType: checkbox
+        ParamFieldName: $.EnableTrading
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnableSpying
+      label: Enable Spying
+      category: Rimworld Together
+      subcategory: Actions
+      description: If set, spying on offline will be enabled
+      keywords: enable,spying,offline,EnableSpying
+      input_type: checkbox
+      param_field_name: $.EnableSpying
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Spying
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: If set, spying on offline will be enabled
+        Keywords: enable,spying,offline,EnableSpying
+        FieldName: EnableSpying
+        InputType: checkbox
+        ParamFieldName: $.EnableSpying
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnableCustomScenarios
+      label: Enable Custom Scenarios
+      category: Rimworld Together
+      subcategory: Actions
+      description: If set, selection by users of custom scenarios will be allowed
+      keywords: enable,custom,scenarios,EnableCustomScenarios
+      input_type: checkbox
+      param_field_name: $.EnableCustomScenarios
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Custom Scenarios
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: If set, selection by users of custom scenarios will be allowed
+        Keywords: enable,custom,scenarios,EnableCustomScenarios
+        FieldName: EnableCustomScenarios
+        InputType: checkbox
+        ParamFieldName: $.EnableCustomScenarios
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnableNPCDestruction
+      label: Enable NPC Destruction
+      category: Rimworld Together
+      subcategory: Actions
+      description: If set, permanent destruction of NPC settlements by users will be allowed
+      keywords: enable,npc,destruction,EnableNPCDestruction
+      input_type: checkbox
+      param_field_name: $.EnableNPCDestruction
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable NPC Destruction
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: If set, permanent destruction of NPC settlements by users will be allowed
+        Keywords: enable,npc,destruction,EnableNPCDestruction
+        FieldName: EnableNPCDestruction
+        InputType: checkbox
+        ParamFieldName: $.EnableNPCDestruction
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnablePollutionSpread
+      label: Enable Pollution Spread
+      category: Rimworld Together
+      subcategory: Actions
+      description: If set, users with Biotech will be allowed to spread pollution to world tiles, including other players
+      keywords: enable,pollution,spread,EnablePollutionSpread
+      input_type: checkbox
+      param_field_name: $.EnablePollutionSpread
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Pollution Spread
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: If set, users with Biotech will be allowed to spread pollution to world tiles, including other players
+        Keywords: enable,pollution,spread,EnablePollutionSpread
+        FieldName: EnablePollutionSpread
+        InputType: checkbox
+        ParamFieldName: $.EnablePollutionSpread
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnforcedGameSpeed
+      label: Enforced Game Speed
+      category: Rimworld Together
+      subcategory: Actions
+      description: Sets the game speed the server will be running at. 0 = no restriction
+      keywords: enforced,game,speed,EnforcedGameSpeed
+      input_type: number
+      param_field_name: $.EnforcedGameSpeed
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Enforced Game Speed
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: Sets the game speed the server will be running at. 0 = no restriction
+        Keywords: enforced,game,speed,EnforcedGameSpeed
+        FieldName: EnforcedGameSpeed
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.EnforcedGameSpeed
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: SpyCost
+      label: Spy Cost
+      category: Rimworld Together
+      subcategory: Actions
+      description: Sets the cost of spying on a player
+      keywords: spy,cost,SpyCost
+      input_type: number
+      param_field_name: $.SpyCost
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Spy Cost
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Actions:play_arrow:2
+        Description: Sets the cost of spying on a player
+        Keywords: spy,cost,SpyCost
+        FieldName: SpyCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.SpyCost
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: silver
+        EnumValues: {}
+    - key: AllowDirtPath
+      label: Allow Dirt Path
+      category: Rimworld Together
+      subcategory: Roads
+      description: If set, user-built dirt paths will be allowed
+      keywords: allow,dirt,path,AllowDirtPath
+      input_type: checkbox
+      param_field_name: $.AllowDirtPath
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Dirt Path
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Roads:road:3
+        Description: If set, user-built dirt paths will be allowed
+        Keywords: allow,dirt,path,AllowDirtPath
+        FieldName: AllowDirtPath
+        InputType: checkbox
+        ParamFieldName: $.AllowDirtPath
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowDirtRoad
+      label: Allow Dirt Road
+      category: Rimworld Together
+      subcategory: Roads
+      description: If set, user-built dirt roads will be allowed
+      keywords: allow,dirt,road,AllowDirtRoad
+      input_type: checkbox
+      param_field_name: $.AllowDirtRoad
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Dirt Road
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Roads:road:3
+        Description: If set, user-built dirt roads will be allowed
+        Keywords: allow,dirt,road,AllowDirtRoad
+        FieldName: AllowDirtRoad
+        InputType: checkbox
+        ParamFieldName: $.AllowDirtRoad
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowStoneRoad
+      label: Allow Stone Road
+      category: Rimworld Together
+      subcategory: Roads
+      description: If set, user-built stone roads will be allowed
+      keywords: allow,stone,road,AllowStoneRoad
+      input_type: checkbox
+      param_field_name: $.AllowStoneRoad
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Stone Road
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Roads:road:3
+        Description: If set, user-built stone roads will be allowed
+        Keywords: allow,stone,road,AllowStoneRoad
+        FieldName: AllowStoneRoad
+        InputType: checkbox
+        ParamFieldName: $.AllowStoneRoad
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowAsphaltPath
+      label: Allow Asphalt Path
+      category: Rimworld Together
+      subcategory: Roads
+      description: If set, user-built asphalt paths will be allowed
+      keywords: allow,asphalt,path,AllowAsphaltPath
+      input_type: checkbox
+      param_field_name: $.AllowAsphaltPath
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Asphalt Path
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Roads:road:3
+        Description: If set, user-built asphalt paths will be allowed
+        Keywords: allow,asphalt,path,AllowAsphaltPath
+        FieldName: AllowAsphaltPath
+        InputType: checkbox
+        ParamFieldName: $.AllowAsphaltPath
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowAsphaltHighway
+      label: Allow Asphalt Highway
+      category: Rimworld Together
+      subcategory: Roads
+      description: If set, user-built asphalt highways will be allowed
+      keywords: allow,asphalt,highway,AllowAsphaltHighway
+      input_type: checkbox
+      param_field_name: $.AllowAsphaltHighway
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Asphalt Highway
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Roads:road:3
+        Description: If set, user-built asphalt highways will be allowed
+        Keywords: allow,asphalt,highway,AllowAsphaltHighway
+        FieldName: AllowAsphaltHighway
+        InputType: checkbox
+        ParamFieldName: $.AllowAsphaltHighway
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: DirtPathCost
+      label: Dirt Path Cost
+      category: Rimworld Together
+      subcategory: Roads
+      description: Sets the cost of building a dirt path
+      keywords: dirt,path,cost,DirtPathCost
+      input_type: number
+      param_field_name: $.DirtPathCost
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Dirt Path Cost
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Roads:road:3
+        Description: Sets the cost of building a dirt path
+        Keywords: dirt,path,cost,DirtPathCost
+        FieldName: DirtPathCost
+        InputType: number
+        ParamFieldName: $.DirtPathCost
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: silver
+        EnumValues: {}
+    - key: DirtRoadCost
+      label: Dirt Road Cost
+      category: Rimworld Together
+      subcategory: Roads
+      description: Sets the cost of building a dirt road
+      keywords: dirt,road,cost,DirtRoadCost
+      input_type: number
+      param_field_name: $.DirtRoadCost
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Dirt Road Cost
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Roads:road:3
+        Description: Sets the cost of building a dirt road
+        Keywords: dirt,road,cost,DirtRoadCost
+        FieldName: DirtRoadCost
+        InputType: number
+        ParamFieldName: $.DirtRoadCost
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: silver
+        EnumValues: {}
+    - key: StoneRoadCost
+      label: Stone Road Cost
+      category: Rimworld Together
+      subcategory: Roads
+      description: Sets the cost of building a stone road
+      keywords: stone,road,cost,StoneRoadCost
+      input_type: number
+      param_field_name: $.StoneRoadCost
+      default: '25'
+      placeholder: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Stone Road Cost
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Roads:road:3
+        Description: Sets the cost of building a stone road
+        Keywords: stone,road,cost,StoneRoadCost
+        FieldName: StoneRoadCost
+        InputType: number
+        ParamFieldName: $.StoneRoadCost
+        DefaultValue: '25'
+        Placeholder: '25'
+        Suffix: silver
+        EnumValues: {}
+    - key: AsphaltPathCost
+      label: Asphalt Path Cost
+      category: Rimworld Together
+      subcategory: Roads
+      description: Sets the cost of building an asphalt path
+      keywords: asphalt,path,cost,AsphaltPathCost
+      input_type: number
+      param_field_name: $.AsphaltPathCost
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Asphalt Path Cost
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Roads:road:3
+        Description: Sets the cost of building an asphalt path
+        Keywords: asphalt,path,cost,AsphaltPathCost
+        FieldName: AsphaltPathCost
+        InputType: number
+        ParamFieldName: $.AsphaltPathCost
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: silver
+        EnumValues: {}
+    - key: AsphaltHighwayCost
+      label: Asphalt Highway Cost
+      category: Rimworld Together
+      subcategory: Roads
+      description: Sets the cost of building an asphalt highway
+      keywords: asphalt,highway,cost,AsphaltHighwayCost
+      input_type: number
+      param_field_name: $.AsphaltHighwayCost
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Asphalt Highway Cost
+        Category: Rimworld Together:stadia_controller
+        Subcategory: Roads:road:3
+        Description: Sets the cost of building an asphalt highway
+        Keywords: asphalt,highway,cost,AsphaltHighwayCost
+        FieldName: AsphaltHighwayCost
+        InputType: number
+        ParamFieldName: $.AsphaltHighwayCost
+        DefaultValue: '50'
+        Placeholder: '50'
+        Suffix: silver
+        EnumValues: {}
+    - key: ReleaseVersion
+      label: Server Release Version
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [server release version](https://github.com/RimworldTogether/Rimworld-Together/releases) to install.
+        Empty = latest. Minimum version 1.4.0. Note that AMP's settings may not work with older versions. Update the
+        server after changing this setting
+      keywords: server,release,version
+      input_type: text
+      param_field_name: ReleaseVersion
+      default: ''
+      placeholder: 25.7.11.1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Release Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [server release version](https://github.com/RimworldTogether/Rimworld-Together/releases) to install.
+          Empty = latest. Minimum version 1.4.0. Note that AMP's settings may not work with older versions. Update the
+          server after changing this setting
+        Keywords: server,release,version
+        FieldName: ReleaseVersion
+        InputType: text
+        ParamFieldName: ReleaseVersion
+        DefaultValue: ''
+        Placeholder: 25.7.11.1
+        EnumValues: {}
+    - key: DotnetVersion
+      label: Dotnet Version
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [ASP.NET Core Runtime 7.0 version](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) to install.
+        Empty = latest. Update the server after changing this setting
+      keywords: dotnet,version
+      input_type: text
+      param_field_name: DotnetVersion
+      default: ''
+      placeholder: 7.0.14
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Dotnet Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [ASP.NET Core Runtime 7.0 version](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) to
+          install. Empty = latest. Update the server after changing this setting
+        Keywords: dotnet,version
+        FieldName: DotnetVersion
+        InputType: text
+        ParamFieldName: DotnetVersion
+        DefaultValue: ''
+        Placeholder: 7.0.14
+        EnumValues: {}
+  files:
+    - path: Configs/ServerConfig.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Configs/ServerConfig.json
+        AutoMap: true
+        ConfigType: json
+    - path: Configs/WhitelistConfig.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Configs/WhitelistConfig.json
+        AutoMap: true
+        ConfigType: json
+    - path: Configs/ServerBrowserConfig.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Configs/ServerBrowserConfig.json
+        AutoMap: true
+        ConfigType: json
+    - path: Configs/ChatConfig.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Configs/ChatConfig.json
+        AutoMap: true
+        ConfigType: json
+    - path: Configs/BackupConfig.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Configs/BackupConfig.json
+        AutoMap: true
+        ConfigType: json
+    - path: Configs/ActionConfig.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Configs/ActionConfig.json
+        AutoMap: true
+        ConfigType: json
+    - path: Configs/RoadConfig.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Configs/RoadConfig.json
+        AutoMap: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: Name
+    label: Server Name
+    default: AMP Powered Rimworld Together Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Description
+    label: Server Description
+    default: Welcome to my Rimworld Together server!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableServerBrowser
+    label: Show In Server Browser
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PublicEndPoint
+    label: Public Endpoint Address Selection Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualPublicEndPoint
+    label: Manual Public Endpoint Address
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseWhitelist
+    label: Enable Whitelist
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WhitelistedUsers
+    label: Whitelisted Players
+    default: '[]'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: verboseLogs
+    label: Enable Verbose Logging
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ExtremeVerboseLogs
+    label: Enable Extreme Verbose Logging
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisplayChatInConsole
+    label: Display Chat In Console
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseUPnP
+    label: Use UPnP
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SyncLocalSave
+    label: Sync Local Save
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TemporalActivityProtection
+    label: Enable Temporal Activity Protection
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TemporalActivityProtectionTime
+    label: Temporal Activity Protection Time
+    default: '3600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TemporalEventProtection
+    label: Enable Temporal Event Protection
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TemporalEventProtectionTime
+    label: Temporal Event Protection Time
+    default: '3600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TemporalAidProtection
+    label: Enable Temporal Aid Protection
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TemporalAidProtectionTime
+    label: Temporal Aid Protection Time
+    default: '3600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TemporalSpyProtection
+    label: Enable Temporal Spy Protection
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TemporalSpyProtectionTime
+    label: Temporal Spy Protection Time
+    default: '3600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableMoTD
+    label: Enable Server MOTD
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MessageOfTheDay
+    label: Server MOTD
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LoginNotifications
+    label: Login Notifications
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisconnectNotifications
+    label: Disconnect Notifications
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutomaticBackups
+    label: Enable Automatic Backups
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IntervalHours
+    label: Backup Interval
+    default: '24.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutomaticDeletion
+    label: Enable Automatic Backup Deletion
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Amount
+    label: Backup Retention Amount
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableActivities
+    label: Enable Offline Activities
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableEvents
+    label: Enable Events
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableSites
+    label: Enable Sites
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableRoads
+    label: Enable Roads
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableFactions
+    label: Enable Factions
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableAids
+    label: Enable Aids
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableTrading
+    label: Enable Trading
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableSpying
+    label: Enable Spying
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableCustomScenarios
+    label: Enable Custom Scenarios
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableNPCDestruction
+    label: Enable NPC Destruction
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnablePollutionSpread
+    label: Enable Pollution Spread
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnforcedGameSpeed
+    label: Enforced Game Speed
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpyCost
+    label: Spy Cost
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowDirtPath
+    label: Allow Dirt Path
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowDirtRoad
+    label: Allow Dirt Road
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowStoneRoad
+    label: Allow Stone Road
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowAsphaltPath
+    label: Allow Asphalt Path
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowAsphaltHighway
+    label: Allow Asphalt Highway
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DirtPathCost
+    label: Dirt Path Cost
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DirtRoadCost
+    label: Dirt Road Cost
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: StoneRoadCost
+    label: Stone Road Cost
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AsphaltPathCost
+    label: Asphalt Path Cost
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AsphaltHighwayCost
+    label: Asphalt Highway Cost
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ReleaseVersion
+    label: Server Release Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DotnetVersion
+    label: Dotnet Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '294100'
+  collection_support: true
 backup:
   include:
     - /data

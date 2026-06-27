@@ -5,13 +5,18 @@ category: Imported
 summary: HumanitZ Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2728330'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 2728330/HumanitZServer/Binaries/Linux/HumanitZServer-Linux-Shipping
+  startup: >-
+    2728330/HumanitZServer/Binaries/Linux/HumanitZServer-Linux-Shipping HumanitZServer -Port={GamePort}
+    -QueryPort={QueryPort} -SteamServerName="{ServerName}" {FormattedArgs} -stdout {PlatformArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,1678 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 7777
+    protocol: both
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+  - key: rconport
+    name: RCON Port
+    default: 8888
+    protocol: tcp
+    required: true
+config_files:
+  - path: HumanitZServer/GameServerSettings.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: RCONEnabled
+      label: Enable RCON
+      category: HumanitZ
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Host Settings.RCONEnabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable RCON
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: RCONEnabled
+        InputType: text
+        Hidden: true
+        ParamFieldName: Host Settings.RCONEnabled
+        DefaultValue: 'true'
+        EnumValues: {}
+    - key: $RCONPort
+      label: RCON Port
+      category: HumanitZ
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: Host Settings.RConPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Port
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RCONPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: Host Settings.RConPort
+        EnumValues: {}
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: HumanitZ
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Host Settings.RCONPass
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RemoteAdminPassword
+        InputType: text
+        Hidden: true
+        ParamFieldName: Host Settings.RCONPass
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the name of the server to be displayed publicly
+      keywords: name,servername
+      input_type: text
+      param_field_name: Host Settings.ServerName
+      default: AMP Powered HumanitZ Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server to be displayed publicly
+        Keywords: name,servername
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: Host Settings.ServerName
+        DefaultValue: AMP Powered HumanitZ Server
+        EnumValues: {}
+    - key: SaveName
+      label: Save Name
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the name of the server save file
+      keywords: save,file,savename
+      input_type: text
+      param_field_name: Host Settings.SaveName
+      default: DedicatedSaveMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Save Name
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server save file
+        Keywords: save,file,savename
+        FieldName: SaveName
+        InputType: text
+        ParamFieldName: Host Settings.SaveName
+        DefaultValue: DedicatedSaveMP
+        EnumValues: {}
+    - key: Password
+      label: Server Password
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the password required for players to join the server. Default is no password
+      keywords: password,server
+      input_type: password
+      param_field_name: Host Settings.Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for players to join the server. Default is no password
+        Keywords: password,server
+        FieldName: Password
+        InputType: password
+        ParamFieldName: Host Settings.Password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: AdminPass
+      label: Admin Password
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the password for server admins. Default is no password
+      keywords: password,admin,adminpass
+      input_type: password
+      param_field_name: Host Settings.AdminPass
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for server admins. Default is no password
+        Keywords: password,admin,adminpass
+        FieldName: AdminPass
+        InputType: password
+        ParamFieldName: Host Settings.AdminPass
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,slots,limit,maxplayers
+      input_type: number
+      param_field_name: Host Settings.MaxPlayers
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 24
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,slots,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '24'
+        ParamFieldName: Host Settings.MaxPlayers
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: players
+        EnumValues: {}
+    - key: OnlyAllowedPlayers
+      label: Enable Whitelist
+      category: HumanitZ
+      subcategory: Server
+      description: If enabled, only whitelisted players will be allowed to join the server. May not work
+      keywords: whitelist,onlyallowedplayers
+      input_type: checkbox
+      param_field_name: Host Settings.OnlyAllowedPlayers
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Whitelist
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, only whitelisted players will be allowed to join the server. May not work
+        Keywords: whitelist,onlyallowedplayers
+        FieldName: OnlyAllowedPlayers
+        InputType: checkbox
+        ParamFieldName: Host Settings.OnlyAllowedPlayers
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: SaveIntervalSec
+      label: Autosave Interval
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the server's automatic save interval. 0 = disabled
+      keywords: save,interval,saveintervalsec
+      input_type: number
+      param_field_name: World Settings.SaveIntervalSec
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Autosave Interval
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server's automatic save interval. 0 = disabled
+        Keywords: save,interval,saveintervalsec
+        FieldName: SaveIntervalSec
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: World Settings.SaveIntervalSec
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: NoDeathFeedback
+      label: Disable Death Notifications
+      category: HumanitZ
+      subcategory: Server
+      description: If set, player deaths will not be notified in the in-game chat
+      keywords: disable,death,notification,chat,feedback,NoDeathFeedback
+      input_type: checkbox
+      param_field_name: World Settings.NoDeathFeedback
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Death Notifications
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, player deaths will not be notified in the in-game chat
+        Keywords: disable,death,notification,chat,feedback,NoDeathFeedback
+        FieldName: NoDeathFeedback
+        InputType: checkbox
+        ParamFieldName: World Settings.NoDeathFeedback
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: PermaDeath
+      label: Perma Death
+      category: HumanitZ
+      subcategory: Server
+      description: Sets what save data is deleted when a player dies
+      keywords: perma,death,delete,save,data,player,die,permadeath
+      input_type: enum
+      param_field_name: World Settings.PermaDeath
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Off (default)
+        '1': Individual
+        '2': All
+      raw:
+        DisplayName: Perma Death
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets what save data is deleted when a player dies
+        Keywords: perma,death,delete,save,data,player,die,permadeath
+        FieldName: PermaDeath
+        InputType: enum
+        ParamFieldName: World Settings.PermaDeath
+        DefaultValue: '0'
+        EnumValues:
+          '0': Off (default)
+          '1': Individual
+          '2': All
+    - key: OnDeath
+      label: On Death Drop
+      category: HumanitZ
+      subcategory: Server
+      description: Sets what will be dropped when a player dies
+      keywords: death,drop,backpack,weapon,equipment,inventory,everything,ondeath
+      input_type: enum
+      param_field_name: World Settings.OnDeath
+      default: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Lose nothing
+        '1': Only lose backpack and weapon in hand
+        '2': Lose all previous + pocket and backpack
+        '3': Lose all previous + equipment (default)
+      raw:
+        DisplayName: On Death Drop
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets what will be dropped when a player dies
+        Keywords: death,drop,backpack,weapon,equipment,inventory,everything,ondeath
+        FieldName: OnDeath
+        InputType: enum
+        ParamFieldName: World Settings.OnDeath
+        DefaultValue: '3'
+        EnumValues:
+          '0': Lose nothing
+          '1': Only lose backpack and weapon in hand
+          '2': Lose all previous + pocket and backpack
+          '3': Lose all previous + equipment (default)
+    - key: PVP
+      label: Enable PvP
+      category: HumanitZ
+      subcategory: Server
+      description: If enabled, players will be able to deal damage to each other (PvP)
+      keywords: pvp,attack,player,damage
+      input_type: checkbox
+      param_field_name: World Settings.PVP
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable PvP
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, players will be able to deal damage to each other (PvP)
+        Keywords: pvp,attack,player,damage
+        FieldName: PVP
+        InputType: checkbox
+        ParamFieldName: World Settings.PVP
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: ClearInfection
+      label: Clear Infection On Death
+      category: HumanitZ
+      subcategory: Server
+      description: If enabled, a player's infection will be cleared when the player dies and respawns
+      keywords: clear,infection,death,respawn,clearinfection
+      input_type: checkbox
+      param_field_name: World Settings.ClearInfection
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Clear Infection On Death
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, a player's infection will be cleared when the player dies and respawns
+        Keywords: clear,infection,death,respawn,clearinfection
+        FieldName: ClearInfection
+        InputType: checkbox
+        ParamFieldName: World Settings.ClearInfection
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: EagleEye
+      label: Enable Eagle Eye Purchase
+      category: HumanitZ
+      subcategory: Server
+      description: >-
+        If enabled, players can purchase the eagle eye skill, which shows the location of other players on the map
+        screen
+      keywords: enable,eagle,eye,skill,location,players,map,eagleeye
+      input_type: checkbox
+      param_field_name: World Settings.EagleEye
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Eagle Eye Purchase
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, players can purchase the eagle eye skill, which shows the location of other players on the map
+          screen
+        Keywords: enable,eagle,eye,skill,location,players,map,eagleeye
+        FieldName: EagleEye
+        InputType: checkbox
+        ParamFieldName: World Settings.EagleEye
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: AirDrop
+      label: Enable Air Drops
+      category: HumanitZ
+      subcategory: Server
+      description: If set, air drop events will be enabled
+      keywords: air,drop,supply,enable,disable,airdrop
+      input_type: checkbox
+      param_field_name: World Settings.AirDrop
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Air Drops
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, air drop events will be enabled
+        Keywords: air,drop,supply,enable,disable,airdrop
+        FieldName: AirDrop
+        InputType: checkbox
+        ParamFieldName: World Settings.AirDrop
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: WeaponBreak
+      label: Enable Weapon Break
+      category: HumanitZ
+      subcategory: Server
+      description: >-
+        If enabled, weapons (except crowbars) will break when durability reaches 0%. Otherwise, only improvised weapons
+        will break
+      keywords: weapon,break,handheld,tools,durability,lost,weaponbreak
+      input_type: checkbox
+      param_field_name: World Settings.WeaponBreak
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Weapon Break
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, weapons (except crowbars) will break when durability reaches 0%. Otherwise, only improvised
+          weapons will break
+        Keywords: weapon,break,handheld,tools,durability,lost,weaponbreak
+        FieldName: WeaponBreak
+        InputType: checkbox
+        ParamFieldName: World Settings.WeaponBreak
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: MultiplayerSleep
+      label: Enable Sleep Mode
+      category: HumanitZ
+      subcategory: Server
+      description: If enabled, time passes if all players perform the sleep emote at the same time. Otherwise, time stops
+      keywords: enable,sleep,multiplayersleep
+      input_type: checkbox
+      param_field_name: World Settings.MultiplayerSleep
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Sleep Mode
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, time passes if all players perform the sleep emote at the same time. Otherwise, time stops
+        Keywords: enable,sleep,multiplayersleep
+        FieldName: MultiplayerSleep
+        InputType: checkbox
+        ParamFieldName: World Settings.MultiplayerSleep
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: LootRespawn
+      label: Enable Loot Respawn
+      category: HumanitZ
+      subcategory: Server
+      description: If enabled, loot will respawn
+      keywords: respawn,loot,item,lootrespawn
+      input_type: checkbox
+      param_field_name: World Settings.LootRespawn
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Loot Respawn
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, loot will respawn
+        Keywords: respawn,loot,item,lootrespawn
+        FieldName: LootRespawn
+        InputType: checkbox
+        ParamFieldName: World Settings.LootRespawn
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: LootRespawnTimer
+      label: Loot Respawn Timer
+      category: HumanitZ
+      subcategory: Server
+      description: Sets how long loot takes to respawn, if Loot Respawn is enabled
+      keywords: loot,respawn,timer,time,lootrespawntimer
+      input_type: number
+      param_field_name: World Settings.LootRespawnTimer
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Loot Respawn Timer
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how long loot takes to respawn, if Loot Respawn is enabled
+        Keywords: loot,respawn,timer,time,lootrespawntimer
+        FieldName: LootRespawnTimer
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: World Settings.LootRespawnTimer
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: minutes
+        EnumValues: {}
+    - key: LootRarity
+      label: Loot Rarity
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the rarity of items to be spawned
+      keywords: loot,rarity,items,spawn,lootrarity
+      input_type: enum
+      param_field_name: World Settings.LootRarity
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Scarce
+        '1': Low
+        '2': Default
+        '3': Plentiful
+        '4': Abundant
+      raw:
+        DisplayName: Loot Rarity
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the rarity of items to be spawned
+        Keywords: loot,rarity,items,spawn,lootrarity
+        FieldName: LootRarity
+        InputType: enum
+        ParamFieldName: World Settings.LootRarity
+        DefaultValue: '2'
+        EnumValues:
+          '0': Scarce
+          '1': Low
+          '2': Default
+          '3': Plentiful
+          '4': Abundant
+    - key: AirDropInterval
+      label: Air Drop Interval
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the number of days between air drops events
+      keywords: air,drop,interval,supply,cycle,airdropinterval
+      input_type: number
+      param_field_name: World Settings.AirDropInterval
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 30
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Air Drop Interval
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of days between air drops events
+        Keywords: air,drop,interval,supply,cycle,airdropinterval
+        FieldName: AirDropInterval
+        InputType: number
+        MinValue: '1'
+        MaxValue: '30'
+        ParamFieldName: World Settings.AirDropInterval
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: days
+        EnumValues: {}
+    - key: ZombieDiffHealth
+      label: Zombie Difficulty Level
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the difficulty level for the health of zombies (zeeks)
+      keywords: zombie,difficulty,health,ZombieDiffHealth
+      input_type: enum
+      param_field_name: World Settings.ZombieDiffHealth
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Very Easy
+        '1': Easy
+        '2': Default
+        '3': Hard
+        '4': Very Hard
+        '5': Nightmare
+      raw:
+        DisplayName: Zombie Difficulty Level
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the difficulty level for the health of zombies (zeeks)
+        Keywords: zombie,difficulty,health,ZombieDiffHealth
+        FieldName: ZombieDiffHealth
+        InputType: enum
+        ParamFieldName: World Settings.ZombieDiffHealth
+        DefaultValue: '1'
+        EnumValues:
+          '0': Very Easy
+          '1': Easy
+          '2': Default
+          '3': Hard
+          '4': Very Hard
+          '5': Nightmare
+    - key: ZombieDiffSpeed
+      label: Zombie Speed Level
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the difficulty level for the speed of zombies
+      keywords: zombie,speed,ZombieDiffSpeed
+      input_type: enum
+      param_field_name: World Settings.ZombieDiffSpeed
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Very Easy
+        '1': Easy
+        '2': Default
+        '3': Hard
+        '4': Very Hard
+        '5': Nightmare
+      raw:
+        DisplayName: Zombie Speed Level
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the difficulty level for the speed of zombies
+        Keywords: zombie,speed,ZombieDiffSpeed
+        FieldName: ZombieDiffSpeed
+        InputType: enum
+        ParamFieldName: World Settings.ZombieDiffSpeed
+        DefaultValue: '2'
+        EnumValues:
+          '0': Very Easy
+          '1': Easy
+          '2': Default
+          '3': Hard
+          '4': Very Hard
+          '5': Nightmare
+    - key: ZombieDiffDamage
+      label: Zombie Damage Level
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the difficulty level for damage by zombies
+      keywords: zombie,damage,level,ZombieDiffDamage
+      input_type: enum
+      param_field_name: World Settings.ZombieDiffDamage
+      default: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Very Easy
+        '1': Easy
+        '2': Default
+        '3': Hard
+        '4': Very Hard
+        '5': Nightmare
+      raw:
+        DisplayName: Zombie Damage Level
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the difficulty level for damage by zombies
+        Keywords: zombie,damage,level,ZombieDiffDamage
+        FieldName: ZombieDiffDamage
+        InputType: enum
+        ParamFieldName: World Settings.ZombieDiffDamage
+        DefaultValue: '3'
+        EnumValues:
+          '0': Very Easy
+          '1': Easy
+          '2': Default
+          '3': Hard
+          '4': Very Hard
+          '5': Nightmare
+    - key: HumanDifficulty
+      label: Hostile Human Difficulty
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the difficulty level for hostile human AI
+      keywords: hostile,human,difficulty,ai,HumanDifficulty
+      input_type: enum
+      param_field_name: World Settings.HumanDifficulty
+      default: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Very Easy
+        '1': Easy
+        '2': Default
+        '3': Hard
+        '4': Very Hard
+        '5': Nightmare
+      raw:
+        DisplayName: Hostile Human Difficulty
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the difficulty level for hostile human AI
+        Keywords: hostile,human,difficulty,ai,HumanDifficulty
+        FieldName: HumanDifficulty
+        InputType: enum
+        ParamFieldName: World Settings.HumanDifficulty
+        DefaultValue: '3'
+        EnumValues:
+          '0': Very Easy
+          '1': Easy
+          '2': Default
+          '3': Hard
+          '4': Very Hard
+          '5': Nightmare
+    - key: ZombieAmountMulti
+      label: Zombie Amount Multiplier
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the multiplier for the level of zombies spawn
+      keywords: zombie,amount,multiplier,spawn,ZombieAmountMulti
+      input_type: number
+      param_field_name: World Settings.ZombieAmountMulti
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Zombie Amount Multiplier
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the multiplier for the level of zombies spawn
+        Keywords: zombie,amount,multiplier,spawn,ZombieAmountMulti
+        FieldName: ZombieAmountMulti
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: World Settings.ZombieAmountMulti
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: HumanAmountMulti
+      label: Human Amount Multiplier
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the multiplier for the level of hostile humans spawn
+      keywords: human,amount,multiplier,spawn,HumanAmountMulti
+      input_type: number
+      param_field_name: World Settings.HumanAmountMulti
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Human Amount Multiplier
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the multiplier for the level of hostile humans spawn
+        Keywords: human,amount,multiplier,spawn,HumanAmountMulti
+        FieldName: HumanAmountMulti
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: World Settings.HumanAmountMulti
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: ZombieDogMulti
+      label: Zombie Dog Multiplier
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the multiplier for the level of zombie dogs spawn
+      keywords: zombie,dog,multiplier,spawn,ZombieDogMulti
+      input_type: number
+      param_field_name: World Settings.ZombieDogMulti
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Zombie Dog Multiplier
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the multiplier for the level of zombie dogs spawn
+        Keywords: zombie,dog,multiplier,spawn,ZombieDogMulti
+        FieldName: ZombieDogMulti
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: World Settings.ZombieDogMulti
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: ZombieRespawnTimer
+      label: Zombie Respawn Timer
+      category: HumanitZ
+      subcategory: Server
+      description: Set the time period for respawn of zombies
+      keywords: zombie,respawn,timer,cycle,ZombieRespawnTimer
+      input_type: number
+      param_field_name: World Settings.ZombieRespawnTimer
+      default: '90'
+      placeholder: '90'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Zombie Respawn Timer
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set the time period for respawn of zombies
+        Keywords: zombie,respawn,timer,cycle,ZombieRespawnTimer
+        FieldName: ZombieRespawnTimer
+        InputType: number
+        ParamFieldName: World Settings.ZombieRespawnTimer
+        DefaultValue: '90'
+        Placeholder: '90'
+        Suffix: minutes
+        EnumValues: {}
+    - key: HumanRespawnTimer
+      label: Human Respawn Timer
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the time period for respawn of humans
+      keywords: human,respawn,timer,cycle,HumanRespawnTimer
+      input_type: number
+      param_field_name: World Settings.HumanRespawnTimer
+      default: '90'
+      placeholder: '90'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Human Respawn Timer
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time period for respawn of humans
+        Keywords: human,respawn,timer,cycle,HumanRespawnTimer
+        FieldName: HumanRespawnTimer
+        InputType: number
+        ParamFieldName: World Settings.HumanRespawnTimer
+        DefaultValue: '90'
+        Placeholder: '90'
+        Suffix: minutes
+        EnumValues: {}
+    - key: AnimalRespawnTimer
+      label: Animal Respawn Timer
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the time period for respawn of animals
+      keywords: animal,respawn,timer,cycle,AnimalRespawnTimer
+      input_type: number
+      param_field_name: World Settings.AnimalRespawnTimer
+      default: '90'
+      placeholder: '90'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Animal Respawn Timer
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time period for respawn of animals
+        Keywords: animal,respawn,timer,cycle,AnimalRespawnTimer
+        FieldName: AnimalRespawnTimer
+        InputType: number
+        ParamFieldName: World Settings.AnimalRespawnTimer
+        DefaultValue: '90'
+        Placeholder: '90'
+        Suffix: minutes
+        EnumValues: {}
+    - key: StartingSeason
+      label: Starting Season
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the starting season for the game
+      keywords: starting,season,startingseason
+      input_type: enum
+      param_field_name: World Settings.StartingSeason
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Summer
+        '1': Autumn (default)
+        '2': Winter
+        '3': Spring
+      raw:
+        DisplayName: Starting Season
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the starting season for the game
+        Keywords: starting,season,startingseason
+        FieldName: StartingSeason
+        InputType: enum
+        ParamFieldName: World Settings.StartingSeason
+        DefaultValue: '1'
+        EnumValues:
+          '0': Summer
+          '1': Autumn (default)
+          '2': Winter
+          '3': Spring
+    - key: DaysPerSeason
+      label: Days Per Season
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the number of days per season
+      keywords: days,per,season,number,DaysPerSeason
+      input_type: number
+      param_field_name: World Settings.DaysPerSeason
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Days Per Season
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of days per season
+        Keywords: days,per,season,number,DaysPerSeason
+        FieldName: DaysPerSeason
+        InputType: number
+        ParamFieldName: World Settings.DaysPerSeason
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: days
+        EnumValues: {}
+    - key: DayDur
+      label: Day Duration
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the in-game day duration
+      keywords: day,duration,daydur
+      input_type: number
+      param_field_name: World Settings.DayDur
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Day Duration
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the in-game day duration
+        Keywords: day,duration,daydur
+        FieldName: DayDur
+        InputType: number
+        ParamFieldName: World Settings.DayDur
+        DefaultValue: '40'
+        Placeholder: '40'
+        Suffix: minutes
+        EnumValues: {}
+    - key: NightDur
+      label: Night Duration
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the in-game night duration
+      keywords: night,duration,nightdur
+      input_type: number
+      param_field_name: World Settings.NightDur
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Night Duration
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the in-game night duration
+        Keywords: night,duration,nightdur
+        FieldName: NightDur
+        InputType: number
+        ParamFieldName: World Settings.NightDur
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: minutes
+        EnumValues: {}
+    - key: VitalDrain
+      label: Vitals Drain Speed
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the drain speed for vitals (hunger, thirst and stamina)
+      keywords: vital,drain,hunger,thirst,stamina,speed,VitalDrain
+      input_type: enum
+      param_field_name: World Settings.VitalDrain
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Slow
+        '1': Normal
+        '2': Fast
+      raw:
+        DisplayName: Vitals Drain Speed
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the drain speed for vitals (hunger, thirst and stamina)
+        Keywords: vital,drain,hunger,thirst,stamina,speed,VitalDrain
+        FieldName: VitalDrain
+        InputType: enum
+        ParamFieldName: World Settings.VitalDrain
+        DefaultValue: '1'
+        EnumValues:
+          '0': Slow
+          '1': Normal
+          '2': Fast
+    - key: DogEnabled
+      label: Enable Dog Companions
+      category: HumanitZ
+      subcategory: Server
+      description: If enabled, players can find dog companions to recruit
+      keywords: enable,dog,companion,recruit,DogEnabled
+      input_type: checkbox
+      param_field_name: World Settings.DogEnabled
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Dog Companions
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, players can find dog companions to recruit
+        Keywords: enable,dog,companion,recruit,DogEnabled
+        FieldName: DogEnabled
+        InputType: checkbox
+        ParamFieldName: World Settings.DogEnabled
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: DogNum
+      label: Dog Companion Number
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the number of dog companions that can spawn randomly
+      keywords: dog,companion,number,spawn,DogNum
+      input_type: number
+      param_field_name: World Settings.DogNum
+      default: '8'
+      placeholder: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: dogs
+      enum_values: {}
+      raw:
+        DisplayName: Dog Companion Number
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of dog companions that can spawn randomly
+        Keywords: dog,companion,number,spawn,DogNum
+        FieldName: DogNum
+        InputType: number
+        ParamFieldName: World Settings.DogNum
+        DefaultValue: '8'
+        Placeholder: '8'
+        Suffix: dogs
+        EnumValues: {}
+    - key: CompanionHealth
+      label: Companion Health Level
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the health level of dog companions
+      keywords: companion,health,dog,CompanionHealth
+      input_type: enum
+      param_field_name: World Settings.CompanionHealth
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Low
+        '1': Default
+        '2': High
+      raw:
+        DisplayName: Companion Health Level
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the health level of dog companions
+        Keywords: companion,health,dog,CompanionHealth
+        FieldName: CompanionHealth
+        InputType: enum
+        ParamFieldName: World Settings.CompanionHealth
+        DefaultValue: '1'
+        EnumValues:
+          '0': Low
+          '1': Default
+          '2': High
+    - key: CompanionDmg
+      label: Companion Damage Level
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the damage level of dog companions
+      keywords: companion,damage,dogCompanionDmg
+      input_type: enum
+      param_field_name: World Settings.CompanionDmg
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Low
+        '1': Default
+        '2': High
+      raw:
+        DisplayName: Companion Damage Level
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the damage level of dog companions
+        Keywords: companion,damage,dogCompanionDmg
+        FieldName: CompanionDmg
+        InputType: enum
+        ParamFieldName: World Settings.CompanionDmg
+        DefaultValue: '1'
+        EnumValues:
+          '0': Low
+          '1': Default
+          '2': High
+    - key: BuildingHealth
+      label: Building Health Multiplier
+      category: HumanitZ
+      subcategory: Server
+      description: Sets the health multiplier for player-placed buildings
+      keywords: building,health,multiplier,BuildingHealth
+      input_type: number
+      param_field_name: World Settings.BuildingHealth
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Building Health Multiplier
+        Category: HumanitZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the health multiplier for player-placed buildings
+        Keywords: building,health,multiplier,BuildingHealth
+        FieldName: BuildingHealth
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: World Settings.BuildingHealth
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+  files:
+    - path: HumanitZServer/GameServerSettings.ini
+      type: ini
+      format: '{0}="{1}"'
+      subsections: []
+      raw:
+        ConfigFile: HumanitZServer/GameServerSettings.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0}="{1}"'
+        ConfigFormatRegex: ^(?<key>.+?)="(?<value>.*?)"$
+    - path: HumanitZServer/GameServerSettings.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: HumanitZServer/GameServerSettings.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>[^"]*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: RCONEnabled
+    label: Enable RCON
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered HumanitZ Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SaveName
+    label: Save Name
+    default: DedicatedSaveMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AdminPass
+    label: Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: OnlyAllowedPlayers
+    label: Enable Whitelist
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SaveIntervalSec
+    label: Autosave Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoDeathFeedback
+    label: Disable Death Notifications
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PermaDeath
+    label: Perma Death
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OnDeath
+    label: On Death Drop
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PVP
+    label: Enable PvP
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ClearInfection
+    label: Clear Infection On Death
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EagleEye
+    label: Enable Eagle Eye Purchase
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AirDrop
+    label: Enable Air Drops
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WeaponBreak
+    label: Enable Weapon Break
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MultiplayerSleep
+    label: Enable Sleep Mode
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LootRespawn
+    label: Enable Loot Respawn
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LootRespawnTimer
+    label: Loot Respawn Timer
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LootRarity
+    label: Loot Rarity
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AirDropInterval
+    label: Air Drop Interval
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieDiffHealth
+    label: Zombie Difficulty Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieDiffSpeed
+    label: Zombie Speed Level
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieDiffDamage
+    label: Zombie Damage Level
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HumanDifficulty
+    label: Hostile Human Difficulty
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieAmountMulti
+    label: Zombie Amount Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HumanAmountMulti
+    label: Human Amount Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieDogMulti
+    label: Zombie Dog Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieRespawnTimer
+    label: Zombie Respawn Timer
+    default: '90'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HumanRespawnTimer
+    label: Human Respawn Timer
+    default: '90'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AnimalRespawnTimer
+    label: Animal Respawn Timer
+    default: '90'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: StartingSeason
+    label: Starting Season
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DaysPerSeason
+    label: Days Per Season
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DayDur
+    label: Day Duration
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NightDur
+    label: Night Duration
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VitalDrain
+    label: Vitals Drain Speed
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DogEnabled
+    label: Enable Dog Companions
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DogNum
+    label: Dog Companion Number
+    default: '8'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CompanionHealth
+    label: Companion Health Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CompanionDmg
+    label: Companion Damage Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BuildingHealth
+    label: Building Health Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1766060'
+  collection_support: true
 backup:
   include:
     - /data

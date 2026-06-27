@@ -5,13 +5,18 @@ category: Imported
 summary: Wreckfest Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '361580'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: >-
+    /usr/bin/xvfb-run {PlatformArgs} -s server_config=server_config.cfg --save-dir={FullBaseDir}saved -server_set
+    game_port={GamePort} steam_port={SteamPort} query_port={QueryPort} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,1597 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 33540
     protocol: udp
     required: true
-config_files: []
+  - key: steamport
+    name: Steam Port
+    default: 27015
+    protocol: both
+    required: true
+  - key: queryport
+    name: Query Port
+    default: 27016
+    protocol: udp
+    required: true
+config_files:
+  - path: server_config.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Wreckfest
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: game_port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: game_port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $SteamPort
+      label: Steam Port
+      category: Wreckfest
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: steam_port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Steam Port
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $SteamPort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: steam_port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $QueryPort
+      label: Query Port
+      category: Wreckfest
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: query_port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Port
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: query_port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: log
+      label: Log File
+      category: Wreckfest
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: log
+      default: log.txt
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Log File
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: log
+        InputType: text
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: log
+        IncludeInCommandLine: false
+        DefaultValue: log.txt
+        EnumValues: {}
+    - key: server_name
+      label: Server Name
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the name of the server shown publicly (63 character limit)
+      keywords: server,name
+      input_type: text
+      param_field_name: server_name
+      default: Wreckfest Server - Powered by AMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server shown publicly (63 character limit)
+        Keywords: server,name
+        FieldName: server_name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: server_name
+        IncludeInCommandLine: false
+        DefaultValue: Wreckfest Server - Powered by AMP
+        EnumValues: {}
+    - key: password
+      label: Server Password
+      category: Wreckfest
+      subcategory: Server
+      description: >-
+        Sets the password required to connect to the server (31 character limit). You should change this after first
+        installing the server
+      keywords: server,password
+      input_type: password
+      param_field_name: password
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password required to connect to the server (31 character limit). You should change this after first
+          installing the server
+        Keywords: server,password
+        FieldName: password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: password
+        IncludeInCommandLine: false
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: welcome_message
+      label: Welcome Message
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the player welcome message or MOTD (254 character limit)
+      keywords: welcome,message,motd,welcome_message
+      input_type: text
+      param_field_name: welcome_message
+      default: Welcome to Wreckfest. Hosted using AMP by CubeCoders
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Welcome Message
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the player welcome message or MOTD (254 character limit)
+        Keywords: welcome,message,motd,welcome_message
+        FieldName: welcome_message
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: welcome_message
+        IncludeInCommandLine: false
+        DefaultValue: Welcome to Wreckfest. Hosted using AMP by CubeCoders
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: players,limit,max_players
+      input_type: number
+      param_field_name: max_players
+      default: '24'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: players,limit,max_players
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: max_players
+        IncludeInCommandLine: false
+        DefaultValue: '24'
+        Suffix: players
+        EnumValues: {}
+    - key: exclude_from_quickplay
+      label: Exclude Quick Match Users
+      category: Wreckfest
+      subcategory: Server
+      description: When enabled, users entering Quick Match cannot join the server
+      keywords: quick,match,exclude,exclude_from_quickplay
+      input_type: checkbox
+      param_field_name: exclude_from_quickplay
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Exclude Quick Match Users
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: When enabled, users entering Quick Match cannot join the server
+        Keywords: quick,match,exclude,exclude_from_quickplay
+        FieldName: exclude_from_quickplay
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: exclude_from_quickplay
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: clear_users
+      label: Clear User Privileges On Launch
+      category: Wreckfest
+      subcategory: Server
+      description: When enabled, clears previous user privileges when launching the server
+      keywords: user,privileges,clear_users
+      input_type: checkbox
+      param_field_name: clear_users
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Clear User Privileges On Launch
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: When enabled, clears previous user privileges when launching the server
+        Keywords: user,privileges,clear_users
+        FieldName: clear_users
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: clear_users
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: owner_disabled
+      label: No Owner Privileges For First User
+      category: Wreckfest
+      subcategory: Server
+      description: When set, owner privileges are not given to the first user who joins
+      keywords: first,owner,privileges,owner_disabled
+      input_type: checkbox
+      param_field_name: owner_disabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: No Owner Privileges For First User
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: When set, owner privileges are not given to the first user who joins
+        Keywords: first,owner,privileges,owner_disabled
+        FieldName: owner_disabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: owner_disabled
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: admin_control
+      label: Admin Controls Countdown
+      category: Wreckfest
+      subcategory: Server
+      description: When enabled, admin starts the countdown by setting themselves ready. Otherwise the countdown is automatic
+      keywords: admin,control,countdown,admin_control
+      input_type: checkbox
+      param_field_name: admin_control
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Admin Controls Countdown
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: When enabled, admin starts the countdown by setting themselves ready. Otherwise the countdown is automatic
+        Keywords: admin,control,countdown,admin_control
+        FieldName: admin_control
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: admin_control
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: lobby_countdown
+      label: Countdown Duration
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the duration of the countdown
+      keywords: countdown,duration,lobby_countdown
+      input_type: number
+      param_field_name: lobby_countdown
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 30
+      max: 127
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Countdown Duration
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the duration of the countdown
+        Keywords: countdown,duration,lobby_countdown
+        FieldName: lobby_countdown
+        InputType: number
+        MinValue: '30'
+        MaxValue: '127'
+        IsFlagArgument: false
+        ParamFieldName: lobby_countdown
+        IncludeInCommandLine: false
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: seconds
+        EnumValues: {}
+    - key: ready_players_required
+      label: Required Players for Automatic Countdown
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the percentage of players required to be ready to initiate automatic countdown, if enabled
+      keywords: players,countdown,ready_players_required
+      input_type: number
+      param_field_name: ready_players_required
+      default: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Required Players for Automatic Countdown
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the percentage of players required to be ready to initiate automatic countdown, if enabled
+        Keywords: players,countdown,ready_players_required
+        FieldName: ready_players_required
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: ready_players_required
+        IncludeInCommandLine: false
+        DefaultValue: '50'
+        Suffix: '%'
+        EnumValues: {}
+    - key: admin_steam_ids
+      label: Admins
+      category: Wreckfest
+      subcategory: Server
+      description: Comma separated list of [Steam64 IDs](https://steamid.io/) of players automatically granted admin privileges
+      keywords: admin,privileges,automatic,admin_steam_ids
+      input_type: text
+      param_field_name: admin_steam_ids
+      default: ''
+      placeholder: 76561198035765683,68475837697026445
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admins
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Comma separated list of [Steam64 IDs](https://steamid.io/) of players automatically granted admin privileges
+        Keywords: admin,privileges,automatic,admin_steam_ids
+        FieldName: admin_steam_ids
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: admin_steam_ids
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: 76561198035765683,68475837697026445
+        EnumValues: {}
+    - key: op_steam_ids
+      label: Moderators
+      category: Wreckfest
+      subcategory: Server
+      description: Comma separated list of [Steam64 IDs](https://steamid.io/) of players automatically granted moderator privileges
+      keywords: moderator,privileges,automatic,op_steam_ids
+      input_type: text
+      param_field_name: op_steam_ids
+      default: ''
+      placeholder: 76561198035765683,68475837697026445
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Moderators
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma separated list of [Steam64 IDs](https://steamid.io/) of players automatically granted moderator
+          privileges
+        Keywords: moderator,privileges,automatic,op_steam_ids
+        FieldName: op_steam_ids
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: op_steam_ids
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: 76561198035765683,68475837697026445
+        EnumValues: {}
+    - key: session_mode
+      label: Session Mode
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the session mode for server side point counting across multiple events
+      keywords: session,mode,session_mode
+      input_type: enum
+      param_field_name: session_mode
+      default: normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        normal: Normal (single event, no cup mode) (default)
+        qualify-sprint: Qualifying sprint (finishing positions determine - needs "Qualifying session" grid order)
+        qualify-lap: Qualifying lap (lap times determine - needs "Qualifying session" grid order)
+        30p-aggr: Winner 30 (then 27, 25, 23, 20, followed by 1 point less per position)
+        25p-aggr: Winner 25 (then 18, 15, 12, 10, 8, 6, 4, 2, 1, followed by no points)
+        25p-mod: Winner 25 (then 20, 16, 11, followed by 1 point less per position up to position 15)
+        24p-lin: Winner 24 (then 1 point less per position)
+        16p-lin: Winner 16 (then 1 point less per position for next 15 positions)
+        10p-double: Winner 20 (then 2 points less per position for next 10 positions)
+        10p-lin: Winner 10 (then 1 point less per position for next 9 positions)
+        35p-folk: Winner 35 (then 30, 25, 20, 18, 16, followed by one 1 point less per position up to position 21)
+        f1-1991: Winner 10 (then 6, 4, 3, 2, 1, followed by no points)
+        f1-2003: Winner 10 (then 8, 6, 5, 4, 3, 2, 1, followed by no points)
+        f1-2010: Winner 25 (then 18, 15, 12, 10, 8, 6, 4, 2, 1, followed by no points)
+        player_count_1: Winner [player count] (then 1 less point per position)
+      raw:
+        DisplayName: Session Mode
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the session mode for server side point counting across multiple events
+        Keywords: session,mode,session_mode
+        FieldName: session_mode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: session_mode
+        IncludeInCommandLine: false
+        DefaultValue: normal
+        EnumValues:
+          normal: Normal (single event, no cup mode) (default)
+          qualify-sprint: Qualifying sprint (finishing positions determine - needs "Qualifying session" grid order)
+          qualify-lap: Qualifying lap (lap times determine - needs "Qualifying session" grid order)
+          30p-aggr: Winner 30 (then 27, 25, 23, 20, followed by 1 point less per position)
+          25p-aggr: Winner 25 (then 18, 15, 12, 10, 8, 6, 4, 2, 1, followed by no points)
+          25p-mod: Winner 25 (then 20, 16, 11, followed by 1 point less per position up to position 15)
+          24p-lin: Winner 24 (then 1 point less per position)
+          16p-lin: Winner 16 (then 1 point less per position for next 15 positions)
+          10p-double: Winner 20 (then 2 points less per position for next 10 positions)
+          10p-lin: Winner 10 (then 1 point less per position for next 9 positions)
+          35p-folk: Winner 35 (then 30, 25, 20, 18, 16, followed by one 1 point less per position up to position 21)
+          f1-1991: Winner 10 (then 6, 4, 3, 2, 1, followed by no points)
+          f1-2003: Winner 10 (then 8, 6, 5, 4, 3, 2, 1, followed by no points)
+          f1-2010: Winner 25 (then 18, 15, 12, 10, 8, 6, 4, 2, 1, followed by no points)
+          player_count_1: Winner [player count] (then 1 less point per position)
+    - key: grid_order
+      label: Grid Order
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the method for sorting the grid order
+      keywords: grid,order,grid_order
+      input_type: enum
+      param_field_name: grid_order
+      default: perf_normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        random: Random
+        perf_normal: Performance points (fastest at front) (default)
+        perf_reverse: Performance points (fastest at back)
+        qualifying: Qualifying session
+        cup_normal: Cup points (highest at front)
+        cup_reverse: Cup points (highest at back)
+      raw:
+        DisplayName: Grid Order
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the method for sorting the grid order
+        Keywords: grid,order,grid_order
+        FieldName: grid_order
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: grid_order
+        IncludeInCommandLine: false
+        DefaultValue: perf_normal
+        EnumValues:
+          random: Random
+          perf_normal: Performance points (fastest at front) (default)
+          perf_reverse: Performance points (fastest at back)
+          qualifying: Qualifying session
+          cup_normal: Cup points (highest at front)
+          cup_reverse: Cup points (highest at back)
+    - key: eventloop
+      label: Event Rotation
+      category: Wreckfest
+      subcategory: Server
+      description: >-
+        Event rotation (or event loop) settings must be configured in server_config.cfg. Use the command "/eventloop" to
+        enable/disable event rotation while in the server lobby
+      keywords: event,rotation,eventloop
+      input_type: hidden
+      param_field_name: eventloop
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Event Rotation
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Event rotation (or event loop) settings must be configured in server_config.cfg. Use the command "/eventloop"
+          to enable/disable event rotation while in the server lobby
+        Keywords: event,rotation,eventloop
+        FieldName: eventloop
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: eventloop
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: enable_track_vote
+      label: Enable Player Voting
+      category: Wreckfest
+      subcategory: Server
+      description: >-
+        When enabled, players will vote for the next event after previous event has ended (event rotation needs to be
+        configured and enabled). Can be triggered by command "startvote" when players in unlocked lobby
+      keywords: event,voting,enable_track_vote
+      input_type: checkbox
+      param_field_name: enable_track_vote
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Player Voting
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          When enabled, players will vote for the next event after previous event has ended (event rotation needs to be
+          configured and enabled). Can be triggered by command "startvote" when players in unlocked lobby
+        Keywords: event,voting,enable_track_vote
+        FieldName: enable_track_vote
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: enable_track_vote
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: disable_idle_kick
+      label: Don't Kick Idling Players
+      category: Wreckfest
+      subcategory: Server
+      description: When enabled, idling players will not be kicked while an event is in progress
+      keywords: kick,idle,idling,disable_idle_kick
+      input_type: checkbox
+      param_field_name: disable_idle_kick
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Don't Kick Idling Players
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: When enabled, idling players will not be kicked while an event is in progress
+        Keywords: kick,idle,idling,disable_idle_kick
+        FieldName: disable_idle_kick
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: disable_idle_kick
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: track
+      label: Track
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the track. List available track names with the command "tracks"
+      keywords: track
+      input_type: text
+      param_field_name: track
+      default: speedway2_demolition_arena
+      placeholder: speedway2_demolition_arena
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Track
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the track. List available track names with the command "tracks"
+        Keywords: track
+        FieldName: track
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: track
+        IncludeInCommandLine: false
+        DefaultValue: speedway2_demolition_arena
+        Placeholder: speedway2_demolition_arena
+        EnumValues: {}
+    - key: gamemode
+      label: Game Mode
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the game mode
+      keywords: game,mode,gamemode
+      input_type: enum
+      param_field_name: gamemode
+      default: derby deathmatch
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        racing: Racing
+        derby: Derby
+        derby deathmatch: Derby deathmatch (default)
+        team derby: Team derby
+        team race: Team race
+        elimination race: Elimination race
+      raw:
+        DisplayName: Game Mode
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the game mode
+        Keywords: game,mode,gamemode
+        FieldName: gamemode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: gamemode
+        IncludeInCommandLine: false
+        DefaultValue: derby deathmatch
+        EnumValues:
+          racing: Racing
+          derby: Derby
+          derby deathmatch: Derby deathmatch (default)
+          team derby: Team derby
+          team race: Team race
+          elimination race: Elimination race
+    - key: bots
+      label: Bot Quantity
+      category: Wreckfest
+      subcategory: Server
+      description: Pre-populates the server with the set number of AI bots
+      keywords: ai,bots
+      input_type: number
+      param_field_name: bots
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 24
+      suffix: bots
+      enum_values: {}
+      raw:
+        DisplayName: Bot Quantity
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Pre-populates the server with the set number of AI bots
+        Keywords: ai,bots
+        FieldName: bots
+        InputType: number
+        MinValue: '0'
+        MaxValue: '24'
+        IsFlagArgument: false
+        ParamFieldName: bots
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: bots
+        EnumValues: {}
+    - key: ai_difficulty
+      label: AI Difficulty
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the  difficulty setting of AI bots
+      keywords: ai,difficulty,ai_difficulty
+      input_type: enum
+      param_field_name: ai_difficulty
+      default: amateur
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        novice: Novice
+        amateur: Amateur (default)
+        expert: Expert
+      raw:
+        DisplayName: AI Difficulty
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the  difficulty setting of AI bots
+        Keywords: ai,difficulty,ai_difficulty
+        FieldName: ai_difficulty
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ai_difficulty
+        IncludeInCommandLine: false
+        DefaultValue: amateur
+        EnumValues:
+          novice: Novice
+          amateur: Amateur (default)
+          expert: Expert
+    - key: num_teams
+      label: Team Number
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the number of teams in team racing and team deathmatch game modes
+      keywords: team,number
+      input_type: enum
+      param_field_name: num_teams
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '2': 2 (default)
+        '3': '3'
+        '4': '4'
+      raw:
+        DisplayName: Team Number
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of teams in team racing and team deathmatch game modes
+        Keywords: team,number
+        FieldName: num_teams
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: num_teams
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues:
+          '2': 2 (default)
+          '3': '3'
+          '4': '4'
+    - key: laps
+      label: Lap Number
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the number of laps in race game modes
+      keywords: laps
+      input_type: number
+      param_field_name: laps
+      default: '3'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 60
+      suffix: laps
+      enum_values: {}
+      raw:
+        DisplayName: Lap Number
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of laps in race game modes
+        Keywords: laps
+        FieldName: laps
+        InputType: number
+        MinValue: '1'
+        MaxValue: '60'
+        IsFlagArgument: false
+        ParamFieldName: laps
+        IncludeInCommandLine: false
+        DefaultValue: '3'
+        Placeholder: '1'
+        Suffix: laps
+        EnumValues: {}
+    - key: time_limit
+      label: Deathmatch Time Limit
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the deathmatch game mode time limit
+      keywords: deathmatch,time,limit,time_limit
+      input_type: number
+      param_field_name: time_limit
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Deathmatch Time Limit
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the deathmatch game mode time limit
+        Keywords: deathmatch,time,limit,time_limit
+        FieldName: time_limit
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: time_limit
+        IncludeInCommandLine: false
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: minutes
+        EnumValues: {}
+    - key: elimination_interval
+      label: Elimination Interval Time
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the elimination interval time for elimination races
+      keywords: elimination,interval,time,elimination_interval
+      input_type: enum
+      param_field_name: elimination_interval
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Each lap (default)
+        '20': '20'
+        '30': '30'
+        '45': '45'
+        '60': '60'
+        '90': '90'
+        '120': '120'
+      raw:
+        DisplayName: Elimination Interval Time
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the elimination interval time for elimination races
+        Keywords: elimination,interval,time,elimination_interval
+        FieldName: elimination_interval
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: elimination_interval
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Each lap (default)
+          '20': '20'
+          '30': '30'
+          '45': '45'
+          '60': '60'
+          '90': '90'
+          '120': '120'
+    - key: vehicle_damage
+      label: Vehicle Damage Level
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the vehicle damage level
+      keywords: vehicle,damage,vehicle_damage
+      input_type: enum
+      param_field_name: vehicle_damage
+      default: normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        normal: Normal (default)
+        intense: Intense
+        realistic: Realistic
+        extreme: Extreme
+      raw:
+        DisplayName: Vehicle Damage Level
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the vehicle damage level
+        Keywords: vehicle,damage,vehicle_damage
+        FieldName: vehicle_damage
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: vehicle_damage
+        IncludeInCommandLine: false
+        DefaultValue: normal
+        EnumValues:
+          normal: Normal (default)
+          intense: Intense
+          realistic: Realistic
+          extreme: Extreme
+    - key: car_class_restriction
+      label: Maximum Vehicle Class
+      category: Wreckfest
+      subcategory: Server
+      description: Allows only vehicles up to the class set
+      keywords: vehicle,class,car_class_restriction
+      input_type: enum
+      param_field_name: car_class_restriction
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': No restriction (default)
+        a: Class A
+        b: Class B
+        c: Class C
+      raw:
+        DisplayName: Maximum Vehicle Class
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Allows only vehicles up to the class set
+        Keywords: vehicle,class,car_class_restriction
+        FieldName: car_class_restriction
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: car_class_restriction
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          '': No restriction (default)
+          a: Class A
+          b: Class B
+          c: Class C
+    - key: car_restriction
+      label: Specific Car Allowed
+      category: Wreckfest
+      subcategory: Server
+      description: >-
+        If enabled, allows only the specific car listed. Empty = no restriction. List available cars with the command
+        "cars"
+      keywords: car,allowed,car_restriction
+      input_type: text
+      param_field_name: car_restriction
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Specific Car Allowed
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, allows only the specific car listed. Empty = no restriction. List available cars with the command
+          "cars"
+        Keywords: car,allowed,car_restriction
+        FieldName: car_restriction
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: car_restriction
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: special_vehicles_disabled
+      label: Disallow Special Vehicles
+      category: Wreckfest
+      subcategory: Server
+      description: If set, disallows use of special vehicles
+      keywords: disallow,special,vehicles,special_vehicles_disabled
+      input_type: checkbox
+      param_field_name: special_vehicles_disabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disallow Special Vehicles
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, disallows use of special vehicles
+        Keywords: disallow,special,vehicles,special_vehicles_disabled
+        FieldName: special_vehicles_disabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: special_vehicles_disabled
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: car_reset_disabled
+      label: Disallow Car Reset
+      category: Wreckfest
+      subcategory: Server
+      description: If set, disallows car reset
+      keywords: disallow,car,reset,car_reset_disabled
+      input_type: checkbox
+      param_field_name: car_reset_disabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disallow Car Reset
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, disallows car reset
+        Keywords: disallow,car,reset,car_reset_disabled
+        FieldName: car_reset_disabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: car_reset_disabled
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: car_reset_delay
+      label: Car Reset Delay
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the car reset delay
+      keywords: car,reset,delay,car_reset_delay
+      input_type: number
+      param_field_name: car_reset_delay
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 20
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Car Reset Delay
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the car reset delay
+        Keywords: car,reset,delay,car_reset_delay
+        FieldName: car_reset_delay
+        InputType: number
+        MinValue: '0'
+        MaxValue: '20'
+        IsFlagArgument: false
+        ParamFieldName: car_reset_delay
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: seconds
+        EnumValues: {}
+    - key: wrong_way_limiter_disabled
+      label: Disable Speed Limiter
+      category: Wreckfest
+      subcategory: Server
+      description: If set, disables the speed limiter for players that drive the wrong way
+      keywords: disallow,speed,limiter,wrong_way_limiter_disabled
+      input_type: checkbox
+      param_field_name: wrong_way_limiter_disabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Speed Limiter
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, disables the speed limiter for players that drive the wrong way
+        Keywords: disallow,speed,limiter,wrong_way_limiter_disabled
+        FieldName: wrong_way_limiter_disabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: wrong_way_limiter_disabled
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: weather
+      label: Weather
+      category: Wreckfest
+      subcategory: Server
+      description: Sets the event weather. Empty = random weather. List available weather names with the command "weathers"
+      keywords: weather
+      input_type: text
+      param_field_name: weather
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Weather
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the event weather. Empty = random weather. List available weather names with the command "weathers"
+        Keywords: weather
+        FieldName: weather
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: weather
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: frequency
+      label: Server Update Frequency
+      category: Wreckfest
+      subcategory: Server
+      description: >-
+        Sets the frequency for the server updating clients. Low = reduced bandwidth used, but clients use more CPU for
+        prediction. High = higher bandwidth, lower client CPU
+      keywords: update,frequency
+      input_type: enum
+      param_field_name: frequency
+      default: high
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        low: Low
+        high: High
+      raw:
+        DisplayName: Server Update Frequency
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the frequency for the server updating clients. Low = reduced bandwidth used, but clients use more CPU for
+          prediction. High = higher bandwidth, lower client CPU
+        Keywords: update,frequency
+        FieldName: frequency
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: frequency
+        IncludeInCommandLine: false
+        DefaultValue: high
+        EnumValues:
+          low: Low
+          high: High
+    - key: mods
+      label: Enabled Mods
+      category: Wreckfest
+      subcategory: Server
+      description: >-
+        Comma separated list of mod directories to enable on the server. Specify simply the mod ID for any mods
+        downloaded under the Updates menu. All mod directories need to be in the server's "mods" folder
+      keywords: mods
+      input_type: text
+      param_field_name: mods
+      default: ''
+      placeholder: 764432700,1462061824
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enabled Mods
+        Category: Wreckfest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma separated list of mod directories to enable on the server. Specify simply the mod ID for any mods
+          downloaded under the Updates menu. All mod directories need to be in the server's "mods" folder
+        Keywords: mods
+        FieldName: mods
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: mods
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: 764432700,1462061824
+        EnumValues: {}
+  files:
+    - path: server_config.cfg
+      type: kvp
+      subsections: []
+      raw:
+        ConfigFile: server_config.cfg
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormatRegex: ^#?(?<key>[^\s]+?)=(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: log
+    label: Log File
+    default: log.txt
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_name
+    label: Server Name
+    default: Wreckfest Server - Powered by AMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: welcome_message
+    label: Welcome Message
+    default: Welcome to Wreckfest. Hosted using AMP by CubeCoders
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: exclude_from_quickplay
+    label: Exclude Quick Match Users
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: clear_users
+    label: Clear User Privileges On Launch
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: owner_disabled
+    label: No Owner Privileges For First User
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: admin_control
+    label: Admin Controls Countdown
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lobby_countdown
+    label: Countdown Duration
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ready_players_required
+    label: Required Players for Automatic Countdown
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: admin_steam_ids
+    label: Admins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: op_steam_ids
+    label: Moderators
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: session_mode
+    label: Session Mode
+    default: normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: grid_order
+    label: Grid Order
+    default: perf_normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enable_track_vote
+    label: Enable Player Voting
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disable_idle_kick
+    label: Don't Kick Idling Players
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: track
+    label: Track
+    default: speedway2_demolition_arena
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gamemode
+    label: Game Mode
+    default: derby deathmatch
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bots
+    label: Bot Quantity
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ai_difficulty
+    label: AI Difficulty
+    default: amateur
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: num_teams
+    label: Team Number
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: laps
+    label: Lap Number
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: time_limit
+    label: Deathmatch Time Limit
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: elimination_interval
+    label: Elimination Interval Time
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: vehicle_damage
+    label: Vehicle Damage Level
+    default: normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: car_class_restriction
+    label: Maximum Vehicle Class
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: car_restriction
+    label: Specific Car Allowed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: special_vehicles_disabled
+    label: Disallow Special Vehicles
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: car_reset_disabled
+    label: Disallow Car Reset
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: car_reset_delay
+    label: Car Reset Delay
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: wrong_way_limiter_disabled
+    label: Disable Speed Limiter
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: weather
+    label: Weather
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: frequency
+    label: Server Update Frequency
+    default: high
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mods
+    label: Enabled Mods
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '228380'
+  collection_support: true
 backup:
   include:
     - /data

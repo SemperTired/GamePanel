@@ -4,14 +4,18 @@ name: OpenRA - Dune 2000
 category: Imported
 summary: OpenRA Dedicated Server for Dune 2000
 install:
-  method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  method: custom
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/OpenRA.Server
+  startup: >-
+    server/OpenRA.Server {PlatformArgs} Engine.EngineDir="." Engine.SupportDir="{FullBaseDir}Support"
+    Server.ListenPort="{ServerPort}" Game.Mod="d2k" {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +23,968 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 1234
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: Support/motd.txt
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: Server.Name
+      label: Server Name
+      category: OpenRA
+      subcategory: Server
+      description: Sets the name of the server as shown publicly
+      keywords: server,name,Server.Name
+      input_type: text
+      param_field_name: Server.Name
+      default: AMP Powered OpenRA Server
+      placeholder: AMP Powered OpenRA Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as shown publicly
+        Keywords: server,name,Server.Name
+        FieldName: Server.Name
+        InputType: text
+        ParamFieldName: Server.Name
+        IncludeInCommandLine: true
+        DefaultValue: AMP Powered OpenRA Server
+        Placeholder: AMP Powered OpenRA Server
+        EnumValues: {}
+    - key: motd
+      label: MOTD
+      category: OpenRA
+      subcategory: Server
+      description: Sets the player welcome message (MOTD)
+      keywords: motd,welcome,message,motd
+      input_type: Textarea
+      param_field_name: motd
+      default: Welcome to my server!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: MOTD
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the player welcome message (MOTD)
+        Keywords: motd,welcome,message,motd
+        FieldName: motd
+        InputType: Textarea
+        ParamFieldName: motd
+        DefaultValue: Welcome to my server!
+        EnumValues: {}
+    - key: Server.Map
+      label: Default Map
+      category: OpenRA
+      subcategory: Server
+      description: >-
+        Sets the default map to start the server with. Input as a hash that can be obtained by the utility. Empty =
+        random map
+      keywords: server,map,Server.Map
+      input_type: text
+      param_field_name: Server.Map
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Default Map
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the default map to start the server with. Input as a hash that can be obtained by the utility. Empty =
+          random map
+        Keywords: server,map,Server.Map
+        FieldName: Server.Map
+        InputType: text
+        ParamFieldName: Server.Map
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Server.Password
+      label: Server Password
+      category: OpenRA
+      subcategory: Server
+      description: Sets the password for players to join the server. Default is no password
+      keywords: server,password,Server.Password
+      input_type: password
+      param_field_name: Server.Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for players to join the server. Default is no password
+        Keywords: server,password,Server.Password
+        FieldName: Server.Password
+        InputType: password
+        ParamFieldName: Server.Password
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Server.AdvertiseOnline
+      label: Advertise Online
+      category: OpenRA
+      subcategory: Server
+      description: If enabled, the server will be able to be advertised to the master server list
+      keywords: advertise,advertising,public,online,server,list,Server.AdvertiseOnline
+      input_type: checkbox
+      param_field_name: Server.AdvertiseOnline
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Advertise Online
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will be able to be advertised to the master server list
+        Keywords: advertise,advertising,public,online,server,list,Server.AdvertiseOnline
+        FieldName: Server.AdvertiseOnline
+        InputType: checkbox
+        ParamFieldName: Server.AdvertiseOnline
+        IncludeInCommandLine: true
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server.Ban
+      label: IP Ban List
+      category: OpenRA
+      subcategory: Server
+      description: Comma-separated list of IP addresses that are not allowed to join the server
+      keywords: banlist,ips,Server.Ban
+      input_type: text
+      param_field_name: Server.Ban
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: IP Ban List
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Comma-separated list of IP addresses that are not allowed to join the server
+        Keywords: banlist,ips,Server.Ban
+        FieldName: Server.Ban
+        InputType: text
+        ParamFieldName: Server.Ban
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Server.RequireAuthentication
+      label: Require Authentication
+      category: OpenRA
+      subcategory: Server
+      description: If enabled, anonymous clients will not be allowed to join the server
+      keywords: require,authentication,Server.RequireAuthentication
+      input_type: checkbox
+      param_field_name: Server.RequireAuthentication
+      default: 'False'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Require Authentication
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, anonymous clients will not be allowed to join the server
+        Keywords: require,authentication,Server.RequireAuthentication
+        FieldName: Server.RequireAuthentication
+        InputType: checkbox
+        ParamFieldName: Server.RequireAuthentication
+        IncludeInCommandLine: true
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server.ProfileIDWhitelist
+      label: Profile ID Whitelist
+      category: OpenRA
+      subcategory: Server
+      description: >-
+        Sets a list of profile IDs for authenticated players who are allowed to join the server. Assumes Require
+        Authentication is enabled
+      keywords: profile,id,whitelist,Server.ProfileIDWhitelist
+      input_type: text
+      param_field_name: Server.ProfileIDWhitelist
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Profile ID Whitelist
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a list of profile IDs for authenticated players who are allowed to join the server. Assumes Require
+          Authentication is enabled
+        Keywords: profile,id,whitelist,Server.ProfileIDWhitelist
+        FieldName: Server.ProfileIDWhitelist
+        InputType: text
+        ParamFieldName: Server.ProfileIDWhitelist
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Server.ProfileIDBlacklist
+      label: Profile ID Blacklist
+      category: OpenRA
+      subcategory: Server
+      description: >-
+        Sets a list of profile IDs for authenticated players who will be rejected from joining the server. Assumes
+        Require Authentication is enabled
+      keywords: profile,id,blacklist,Server.ProfileIDBlacklist
+      input_type: text
+      param_field_name: Server.ProfileIDBlacklist
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Profile ID Blacklist
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a list of profile IDs for authenticated players who will be rejected from joining the server. Assumes
+          Require Authentication is enabled
+        Keywords: profile,id,blacklist,Server.ProfileIDBlacklist
+        FieldName: Server.ProfileIDBlacklist
+        InputType: text
+        ParamFieldName: Server.ProfileIDBlacklist
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Server.EnableSingleplayer
+      label: Enable Singleplayer Mode
+      category: OpenRA
+      subcategory: Server
+      description: If enabled, a game can be started with just one human player in the lobby
+      keywords: single,player,singleplayer,Server.EnableSingleplayer
+      input_type: checkbox
+      param_field_name: Server.EnableSingleplayer
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Singleplayer Mode
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, a game can be started with just one human player in the lobby
+        Keywords: single,player,singleplayer,Server.EnableSingleplayer
+        FieldName: Server.EnableSingleplayer
+        InputType: checkbox
+        ParamFieldName: Server.EnableSingleplayer
+        IncludeInCommandLine: true
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: $MaxUsers
+      label: Player Limit
+      category: OpenRA
+      subcategory: Server
+      description: >-
+        Sets the maximum number of players at one time to display in the AMP status tab. This is visual only - the
+        actual maximum is determined by the map being played
+      keywords: maximum,players,clients,limit,maxplayers
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '12'
+      placeholder: '12'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of players at one time to display in the AMP status tab. This is visual only - the
+          actual maximum is determined by the map being played
+        Keywords: maximum,players,clients,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: MaxPlayers
+        DefaultValue: '12'
+        Placeholder: '12'
+        Suffix: players
+        EnumValues: {}
+    - key: Server.QueryMapRepository
+      label: Query Map Repository
+      category: OpenRA
+      subcategory: Server
+      description: If set, the server will query map information from the Resource Center if they are not available locally
+      keywords: query,map,repository,resource,center,Server.QueryMapRepository
+      input_type: checkbox
+      param_field_name: Server.QueryMapRepository
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Query Map Repository
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will query map information from the Resource Center if they are not available locally
+        Keywords: query,map,repository,resource,center,Server.QueryMapRepository
+        FieldName: Server.QueryMapRepository
+        InputType: checkbox
+        ParamFieldName: Server.QueryMapRepository
+        IncludeInCommandLine: true
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server.EnableSyncReports
+      label: Enable Sync Reports
+      category: OpenRA
+      subcategory: Server
+      description: If set, client-side report generation will be enabled to help debug desync errors
+      keywords: sync,reports,Server.EnableSyncReports
+      input_type: checkbox
+      param_field_name: Server.EnableSyncReports
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Sync Reports
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, client-side report generation will be enabled to help debug desync errors
+        Keywords: sync,reports,Server.EnableSyncReports
+        FieldName: Server.EnableSyncReports
+        InputType: checkbox
+        ParamFieldName: Server.EnableSyncReports
+        IncludeInCommandLine: true
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server.TimestampFormat
+      label: Timestamp Format
+      category: OpenRA
+      subcategory: Server
+      description: >-
+        Sets the timestamp format. Default is the [ISO 8601
+        standard](https://www.iso.org/iso-8601-date-and-time-format.html)
+      keywords: timestamp,format,Server.TimestampFormat
+      input_type: text
+      param_field_name: Server.TimestampFormat
+      default: yyyy-MM-ddTHH:mm:ss
+      placeholder: yyyy-MM-ddTHH:mm:ss
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Timestamp Format
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the timestamp format. Default is the [ISO 8601
+          standard](https://www.iso.org/iso-8601-date-and-time-format.html)
+        Keywords: timestamp,format,Server.TimestampFormat
+        FieldName: Server.TimestampFormat
+        InputType: text
+        ParamFieldName: Server.TimestampFormat
+        IncludeInCommandLine: true
+        DefaultValue: yyyy-MM-ddTHH:mm:ss
+        Placeholder: yyyy-MM-ddTHH:mm:ss
+        EnumValues: {}
+    - key: Server.ShareAnonymizedIPs
+      label: Share Anonymised IPs
+      category: OpenRA
+      subcategory: Server
+      description: If set, clients will be allowed to see anonymised IPs for other clients
+      keywords: share,anonymised,anonymized,IPs,Server.ShareAnonymizedIPs
+      input_type: checkbox
+      param_field_name: Server.ShareAnonymizedIPs
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Share Anonymised IPs
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be allowed to see anonymised IPs for other clients
+        Keywords: share,anonymised,anonymized,IPs,Server.ShareAnonymizedIPs
+        FieldName: Server.ShareAnonymizedIPs
+        InputType: checkbox
+        ParamFieldName: Server.ShareAnonymizedIPs
+        IncludeInCommandLine: true
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server.EnableGeoIP
+      label: Enable Geo IP
+      category: OpenRA
+      subcategory: Server
+      description: If set, clients will be allowed to see the country of other clients
+      keywords: enable,geoip,country,Server.EnableGeoIP
+      input_type: checkbox
+      param_field_name: Server.EnableGeoIP
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Geo IP
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be allowed to see the country of other clients
+        Keywords: enable,geoip,country,Server.EnableGeoIP
+        FieldName: Server.EnableGeoIP
+        InputType: checkbox
+        ParamFieldName: Server.EnableGeoIP
+        IncludeInCommandLine: true
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server.RecordReplays
+      label: Record Replays
+      category: OpenRA
+      subcategory: Server
+      description: If set, the server will save replays for all games played
+      keywords: record,replays,Server.RecordReplays
+      input_type: checkbox
+      param_field_name: Server.RecordReplays
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Record Replays
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will save replays for all games played
+        Keywords: record,replays,Server.RecordReplays
+        FieldName: Server.RecordReplays
+        InputType: checkbox
+        ParamFieldName: Server.RecordReplays
+        IncludeInCommandLine: true
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server.EnableLintChecks
+      label: Enable Lint Checks
+      category: OpenRA
+      subcategory: Server
+      description: If set, the server treat maps that fail the lint checks as invalid
+      keywords: lint,checks,Server.EnableLintChecks
+      input_type: checkbox
+      param_field_name: Server.EnableLintChecks
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Lint Checks
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server treat maps that fail the lint checks as invalid
+        Keywords: lint,checks,Server.EnableLintChecks
+        FieldName: Server.EnableLintChecks
+        InputType: checkbox
+        ParamFieldName: Server.EnableLintChecks
+        IncludeInCommandLine: true
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server.FloodLimitJoinCooldown
+      label: Flood Limit Join Cooldown
+      category: OpenRA
+      subcategory: Server
+      description: Sets the delay before newly joined players can send chat messages
+      keywords: flood,limit,join,cooldown,chat,messages,Server.FloodLimitJoinCooldown
+      input_type: number
+      param_field_name: Server.FloodLimitJoinCooldown
+      default: '5000'
+      placeholder: '5000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Flood Limit Join Cooldown
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the delay before newly joined players can send chat messages
+        Keywords: flood,limit,join,cooldown,chat,messages,Server.FloodLimitJoinCooldown
+        FieldName: Server.FloodLimitJoinCooldown
+        InputType: number
+        ParamFieldName: Server.FloodLimitJoinCooldown
+        IncludeInCommandLine: true
+        DefaultValue: '5000'
+        Placeholder: '5000'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: Server.FloodLimitInterval
+      label: Flood Limit Interval
+      category: OpenRA
+      subcategory: Server
+      description: Sets the time period that player chat messages are tracked for
+      keywords: flood,limit,interval,chat,messages,Server.FloodLimitInterval
+      input_type: number
+      param_field_name: Server.FloodLimitInterval
+      default: '5000'
+      placeholder: '5000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Flood Limit Interval
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time period that player chat messages are tracked for
+        Keywords: flood,limit,interval,chat,messages,Server.FloodLimitInterval
+        FieldName: Server.FloodLimitInterval
+        InputType: number
+        ParamFieldName: Server.FloodLimitInterval
+        IncludeInCommandLine: true
+        DefaultValue: '5000'
+        Placeholder: '5000'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: Server.FloodLimitMessageCount
+      label: Flood Limit Message Count
+      category: OpenRA
+      subcategory: Server
+      description: Sets the number of chat messages per Flood Limit Interval that a player can send before flood is detected
+      keywords: flood,limit,chat,message,count,Server.FloodLimitMessageCount
+      input_type: number
+      param_field_name: Server.FloodLimitMessageCount
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Flood Limit Message Count
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of chat messages per Flood Limit Interval that a player can send before flood is detected
+        Keywords: flood,limit,chat,message,count,Server.FloodLimitMessageCount
+        FieldName: Server.FloodLimitMessageCount
+        InputType: number
+        ParamFieldName: Server.FloodLimitMessageCount
+        IncludeInCommandLine: true
+        DefaultValue: '5'
+        Placeholder: '5'
+        EnumValues: {}
+    - key: Server.FloodLimitCooldown
+      label: Flood Limit Cooldown
+      category: OpenRA
+      subcategory: Server
+      description: Sets the delay before players can send chat messages after flood was detected
+      keywords: flood,limit,cooldown,chat,messages.Server.FloodLimitCooldown
+      input_type: number
+      param_field_name: Server.FloodLimitCooldown
+      default: '15000'
+      placeholder: '15000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Flood Limit Cooldown
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the delay before players can send chat messages after flood was detected
+        Keywords: flood,limit,cooldown,chat,messages.Server.FloodLimitCooldown
+        FieldName: Server.FloodLimitCooldown
+        InputType: number
+        ParamFieldName: Server.FloodLimitCooldown
+        IncludeInCommandLine: true
+        DefaultValue: '15000'
+        Placeholder: '15000'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: Server.DiscoverNatDevices
+      label: Enable UPnP
+      category: OpenRA
+      subcategory: Server
+      description: If set, UPnP/NAT-PMP enabled devices will be searched for automatic port forwarding
+      keywords: discover,upnp,nat-pmp,Server.DiscoverNatDevices
+      input_type: checkbox
+      param_field_name: Server.DiscoverNatDevices
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable UPnP
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, UPnP/NAT-PMP enabled devices will be searched for automatic port forwarding
+        Keywords: discover,upnp,nat-pmp,Server.DiscoverNatDevices
+        FieldName: Server.DiscoverNatDevices
+        InputType: checkbox
+        ParamFieldName: Server.DiscoverNatDevices
+        IncludeInCommandLine: true
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server.NatPortMappingLifetime
+      label: UPnP Port Mapping Lifetime
+      category: OpenRA
+      subcategory: Server
+      description: Sets the time period for UPnP/NAT-PMP mappings to last
+      keywords: nat,port,mapping,lifetime,Server.NatPortMappingLifetime
+      input_type: number
+      param_field_name: Server.NatPortMappingLifetime
+      default: '36000'
+      placeholder: '36000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: UPnP Port Mapping Lifetime
+        Category: OpenRA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time period for UPnP/NAT-PMP mappings to last
+        Keywords: nat,port,mapping,lifetime,Server.NatPortMappingLifetime
+        FieldName: Server.NatPortMappingLifetime
+        InputType: number
+        ParamFieldName: Server.NatPortMappingLifetime
+        IncludeInCommandLine: true
+        DefaultValue: '36000'
+        Placeholder: '36000'
+        Suffix: seconds
+        EnumValues: {}
+    - key: ServerBuild
+      label: Server Build
+      category: Updates
+      subcategory: Server Updates
+      description: Sets the server build to install. Update the server after changing this setting
+      keywords: server,build,release,playtest,ServerBuild
+      input_type: enum
+      param_field_name: ServerBuild
+      default: release
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        release: Latest stable release (default)
+        playtest: Latest playtest
+      raw:
+        DisplayName: Server Build
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: Sets the server build to install. Update the server after changing this setting
+        Keywords: server,build,release,playtest,ServerBuild
+        FieldName: ServerBuild
+        InputType: enum
+        ParamFieldName: ServerBuild
+        DefaultValue: release
+        EnumValues:
+          release: Latest stable release (default)
+          playtest: Latest playtest
+  files:
+    - path: Support/motd.txt
+      type: kvp
+      format: '{0}{1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            '': motd
+      raw:
+        ConfigFile: Support/motd.txt
+        ConfigType: kvp
+        ConfigFormat: '{0}{1}'
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              '': motd
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: Server.Name
+    label: Server Name
+    default: AMP Powered OpenRA Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: motd
+    label: MOTD
+    default: Welcome to my server!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.Map
+    label: Default Map
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Server.AdvertiseOnline
+    label: Advertise Online
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.Ban
+    label: IP Ban List
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.RequireAuthentication
+    label: Require Authentication
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Server.ProfileIDWhitelist
+    label: Profile ID Whitelist
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.ProfileIDBlacklist
+    label: Profile ID Blacklist
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.EnableSingleplayer
+    label: Enable Singleplayer Mode
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.QueryMapRepository
+    label: Query Map Repository
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.EnableSyncReports
+    label: Enable Sync Reports
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.TimestampFormat
+    label: Timestamp Format
+    default: yyyy-MM-ddTHH:mm:ss
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.ShareAnonymizedIPs
+    label: Share Anonymised IPs
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.EnableGeoIP
+    label: Enable Geo IP
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.RecordReplays
+    label: Record Replays
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.EnableLintChecks
+    label: Enable Lint Checks
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.FloodLimitJoinCooldown
+    label: Flood Limit Join Cooldown
+    default: '5000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.FloodLimitInterval
+    label: Flood Limit Interval
+    default: '5000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.FloodLimitMessageCount
+    label: Flood Limit Message Count
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.FloodLimitCooldown
+    label: Flood Limit Cooldown
+    default: '15000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.DiscoverNatDevices
+    label: Enable UPnP
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.NatPortMappingLifetime
+    label: UPnP Port Mapping Lifetime
+    default: '36000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBuild
+    label: Server Build
+    default: release
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

@@ -4,14 +4,19 @@ name: Nukkit
 category: Imported
 summary: Cloudburst Nukkit Server for Minecraft Bedrock
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://repo.opencollab.dev/api/maven/latest/file/maven-snapshots/cn/nukkit/nukkit/1.0-SNAPSHOT?extension=jar
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: '{{JavaVersion}}'
+  startup: >-
+    {JavaVersion} -Xms{MinMemory}M -Xmx{MaxMemory}M -Dfile.encoding=UTF-8 {AdditionalJavaArgs} -jar nukkit.jar
+    {JarOptions}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +24,1547 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 19132
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: server.properties
+    type: text
+    editable: true
+  - path: nukkit.yml
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: motd
+      label: Server Name
+      category: Nukkit
+      subcategory: Server
+      description: Sets the name of the server that is shown in the in-game server list. No semi-colons allowed
+      keywords: motd,server,name
+      input_type: text
+      param_field_name: motd
+      default: AMP Powered Nukkit Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that is shown in the in-game server list. No semi-colons allowed
+        Keywords: motd,server,name
+        FieldName: motd
+        InputType: text
+        ParamFieldName: motd
+        DefaultValue: AMP Powered Nukkit Server
+        EnumValues: {}
+    - key: sub-motd
+      label: Server Sub MOTD
+      category: Nukkit
+      subcategory: Server
+      description: Sets the second line of the MOTD for the server, shown only in LAN
+      keywords: sub-motd,server,message
+      input_type: text
+      param_field_name: sub-motd
+      default: Made with Nukkit
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Sub MOTD
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the second line of the MOTD for the server, shown only in LAN
+        Keywords: sub-motd,server,message
+        FieldName: sub-motd
+        InputType: text
+        ParamFieldName: sub-motd
+        DefaultValue: Made with Nukkit
+        EnumValues: {}
+    - key: generator-settings
+      label: Generator Settings
+      category: Nukkit
+      subcategory: Server
+      description: Sets settings to customise the world generation process
+      keywords: generator,settings,generator-settings
+      input_type: text
+      param_field_name: generator-settings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Generator Settings
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets settings to customise the world generation process
+        Keywords: generator,settings,generator-settings
+        FieldName: generator-settings
+        InputType: text
+        ParamFieldName: generator-settings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: level-name
+      label: Level Name
+      category: Nukkit
+      subcategory: Server
+      description: >-
+        Sets the name of the level (world) to load, or create if it does not exist. No semi-colons allowed, nor any
+        symbols that are illegal for file names. Levels are stored in the 'worlds' directory
+      keywords: level,world,name,level-name
+      input_type: text
+      param_field_name: level-name
+      default: world
+      placeholder: world
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Level Name
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the level (world) to load, or create if it does not exist. No semi-colons allowed, nor any
+          symbols that are illegal for file names. Levels are stored in the 'worlds' directory
+        Keywords: level,world,name,level-name
+        FieldName: level-name
+        InputType: text
+        ParamFieldName: level-name
+        DefaultValue: world
+        Placeholder: world
+        EnumValues: {}
+    - key: level-seed
+      label: Level Seed
+      category: Nukkit
+      subcategory: Server
+      description: Sets the seed to randomise the generation of a new world. Empty = random seed
+      keywords: level,seed,level-seed
+      input_type: text
+      param_field_name: level-seed
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Level Seed
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the seed to randomise the generation of a new world. Empty = random seed
+        Keywords: level,seed,level-seed
+        FieldName: level-seed
+        InputType: text
+        ParamFieldName: level-seed
+        DefaultValue: ''
+        EnumValues: {}
+    - key: level-type
+      label: Level Type
+      category: Nukkit
+      subcategory: Server
+      description: Sets the type of map that is generated for a new world
+      keywords: level,type,level-type
+      input_type: enum
+      param_field_name: level-type
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        default: Default
+        normal: Normal
+        flat: Flat
+        nether: Nether
+        the_end: The End
+        void: Void
+      raw:
+        DisplayName: Level Type
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the type of map that is generated for a new world
+        Keywords: level,type,level-type
+        FieldName: level-type
+        InputType: enum
+        ParamFieldName: level-type
+        DefaultValue: default
+        EnumValues:
+          default: Default
+          normal: Normal
+          flat: Flat
+          nether: Nether
+          the_end: The End
+          void: Void
+    - key: $MaxUsers
+      label: Player Limit
+      category: Nukkit
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,limit,max-players
+      input_type: number
+      param_field_name: max-players
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,limit,max-players
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: max-players
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: players
+        EnumValues: {}
+    - key: white-list
+      label: Enable White List
+      category: Nukkit
+      subcategory: Server
+      description: If set, all connected players must be listed in 'white-list.txt'
+      keywords: white-list,whitelist
+      input_type: checkbox
+      param_field_name: white-list
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable White List
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, all connected players must be listed in 'white-list.txt'
+        Keywords: white-list,whitelist
+        FieldName: white-list
+        InputType: checkbox
+        ParamFieldName: white-list
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: enable-rcon
+      label: Enable RCON
+      category: Nukkit
+      subcategory: Server
+      description: If set, RCON will be enabled
+      keywords: rcon,enable,enable-rcon
+      input_type: checkbox
+      param_field_name: enable-rcon
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable RCON
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, RCON will be enabled
+        Keywords: rcon,enable,enable-rcon
+        FieldName: enable-rcon
+        InputType: checkbox
+        ParamFieldName: enable-rcon
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: rcon-password
+      label: RCON Password
+      category: Nukkit
+      subcategory: Server
+      description: Sets the RCON password. Default is a strong random password
+      keywords: rcon,password,rcon-password
+      input_type: password
+      param_field_name: rcon-password
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the RCON password. Default is a strong random password
+        Keywords: rcon,password,rcon-password
+        FieldName: rcon-password
+        InputType: password
+        ParamFieldName: rcon-password
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: language
+      label: Language
+      category: Nukkit
+      subcategory: Server
+      description: Sets the language for the server
+      keywords: language
+      input_type: enum
+      param_field_name: language
+      default: eng
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        eng: English
+        chs: 简体中文
+        cht: 繁體中文
+        jpn: 日本語
+        rus: Русский
+        spa: Español
+        pol: Polski
+        bra: Português-Brasil
+        kor: 한국어
+        ukr: Українська
+        deu: Deutsch
+        ltu: Lietuviškai
+        idn: Bahasa Indonesia
+        cze: Čeština
+        tur: Türkçe
+        fin: Suomi
+        ara: العربية
+      raw:
+        DisplayName: Language
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the language for the server
+        Keywords: language
+        FieldName: language
+        InputType: enum
+        ParamFieldName: language
+        DefaultValue: eng
+        EnumValues:
+          eng: English
+          chs: 简体中文
+          cht: 繁體中文
+          jpn: 日本語
+          rus: Русский
+          spa: Español
+          pol: Polski
+          bra: Português-Brasil
+          kor: 한국어
+          ukr: Українська
+          deu: Deutsch
+          ltu: Lietuviškai
+          idn: Bahasa Indonesia
+          cze: Čeština
+          tur: Türkçe
+          fin: Suomi
+          ara: العربية
+    - key: force-language
+      label: Force Language
+      category: Nukkit
+      subcategory: Server
+      description: If set, server side translations will be forced. Enable only if you have a plugin to implement those
+      keywords: force,language,force-language
+      input_type: checkbox
+      param_field_name: force-language
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Force Language
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, server side translations will be forced. Enable only if you have a plugin to implement those
+        Keywords: force,language,force-language
+        FieldName: force-language
+        InputType: checkbox
+        ParamFieldName: force-language
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: enable-query
+      label: Enable Query
+      category: Nukkit
+      subcategory: Server
+      description: >-
+        If set, server query will be enabled (the GameSpy4 protocol server listener will be enabled). Used to get
+        information about the server
+      keywords: query,enable,enable-query
+      input_type: checkbox
+      param_field_name: enable-query
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable Query
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, server query will be enabled (the GameSpy4 protocol server listener will be enabled). Used to get
+          information about the server
+        Keywords: query,enable,enable-query
+        FieldName: enable-query
+        InputType: checkbox
+        ParamFieldName: enable-query
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: auto-save
+      label: Enable Auto Save
+      category: Nukkit
+      subcategory: Server
+      description: If set, auto save will be enabled
+      keywords: auto,save,auto-save
+      input_type: checkbox
+      param_field_name: auto-save
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable Auto Save
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, auto save will be enabled
+        Keywords: auto,save,auto-save
+        FieldName: auto-save
+        InputType: checkbox
+        ParamFieldName: auto-save
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: xbox-auth
+      label: Enable Xbox Authentication
+      category: Nukkit
+      subcategory: Server
+      description: If set, Xbox authentication will be enabled, requiring an Xbox account to join the server
+      keywords: xbox,auth,xbox-auth
+      input_type: checkbox
+      param_field_name: xbox-auth
+      default: 'on'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable Xbox Authentication
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, Xbox authentication will be enabled, requiring an Xbox account to join the server
+        Keywords: xbox,auth,xbox-auth
+        FieldName: xbox-auth
+        InputType: checkbox
+        ParamFieldName: xbox-auth
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: UserSettings
+      label: Additional Server Settings
+      category: Nukkit
+      subcategory: Server
+      description: >-
+        Specifies additional settings to include in 'server.properties' that are not otherwise set by AMP. One setting
+        per line. Useful for new settings in beta server builds
+      keywords: additional,settings,custom
+      input_type: Textarea
+      param_field_name: UserSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Settings
+        Category: Nukkit:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional settings to include in 'server.properties' that are not otherwise set by AMP. One setting
+          per line. Useful for new settings in beta server builds
+        Keywords: additional,settings,custom
+        FieldName: UserSettings
+        InputType: Textarea
+        ParamFieldName: UserSettings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: gamemode
+      label: Game Mode
+      category: Nukkit
+      subcategory: Gameplay
+      description: Sets the game mode for new players
+      keywords: game,mode,gamemode
+      input_type: enum
+      param_field_name: gamemode
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Survival (default)
+        '1': Creative
+        '2': Adventure
+        '3': Spectator
+      raw:
+        DisplayName: Game Mode
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the game mode for new players
+        Keywords: game,mode,gamemode
+        FieldName: gamemode
+        InputType: enum
+        ParamFieldName: gamemode
+        DefaultValue: '0'
+        EnumValues:
+          '0': Survival (default)
+          '1': Creative
+          '2': Adventure
+          '3': Spectator
+    - key: force-gamemode
+      label: Force Game Mode
+      category: Nukkit
+      subcategory: Gameplay
+      description: If set, the server will set the player gamemode to the default gamemode on every join
+      keywords: force,gamemode,force-gamemode
+      input_type: checkbox
+      param_field_name: force-gamemode
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Force Game Mode
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the server will set the player gamemode to the default gamemode on every join
+        Keywords: force,gamemode,force-gamemode
+        FieldName: force-gamemode
+        InputType: checkbox
+        ParamFieldName: force-gamemode
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: difficulty
+      label: Difficulty Level
+      category: Nukkit
+      subcategory: Gameplay
+      description: Sets the difficulty level of the world
+      keywords: difficulty,level
+      input_type: enum
+      param_field_name: difficulty
+      default: normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Peaceful
+        '1': Easy
+        '2': Normal (default)
+        '3': Hard
+      raw:
+        DisplayName: Difficulty Level
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the difficulty level of the world
+        Keywords: difficulty,level
+        FieldName: difficulty
+        InputType: enum
+        ParamFieldName: difficulty
+        DefaultValue: normal
+        EnumValues:
+          '0': Peaceful
+          '1': Easy
+          '2': Normal (default)
+          '3': Hard
+    - key: hardcore
+      label: Enable Hardcore Mode
+      category: Nukkit
+      subcategory: Gameplay
+      description: >-
+        If set, hardcode mode will be enabled. Difficulty Level is ignored and set to hard, and players are banned when
+        they die
+      keywords: hardcore
+      input_type: checkbox
+      param_field_name: hardcore
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable Hardcore Mode
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, hardcode mode will be enabled. Difficulty Level is ignored and set to hard, and players are banned
+          when they die
+        Keywords: hardcore
+        FieldName: hardcore
+        InputType: checkbox
+        ParamFieldName: hardcore
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: pvp
+      label: Enable PvP
+      category: Nukkit
+      subcategory: Gameplay
+      description: If set, player versus player combat will be allowed
+      keywords: pvp
+      input_type: checkbox
+      param_field_name: pvp
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable PvP
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, player versus player combat will be allowed
+        Keywords: pvp
+        FieldName: pvp
+        InputType: checkbox
+        ParamFieldName: pvp
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: view-distance
+      label: View Distance
+      category: Nukkit
+      subcategory: Gameplay
+      description: Sets the maximum allowed view distance. Higher values have performance impact
+      keywords: view,distance,view-distance
+      input_type: number
+      param_field_name: view-distance
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 5
+      suffix: chunks
+      enum_values: {}
+      raw:
+        DisplayName: View Distance
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum allowed view distance. Higher values have performance impact
+        Keywords: view,distance,view-distance
+        FieldName: view-distance
+        InputType: number
+        MinValue: '5'
+        ParamFieldName: view-distance
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: chunks
+        EnumValues: {}
+    - key: achievements
+      label: Enable Achievements
+      category: Nukkit
+      subcategory: Gameplay
+      description: If set, achievements will be enabled
+      keywords: achievements
+      input_type: checkbox
+      param_field_name: achievements
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable Achievements
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, achievements will be enabled
+        Keywords: achievements
+        FieldName: achievements
+        InputType: checkbox
+        ParamFieldName: achievements
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: announce-player-achievements
+      label: Announce Player Achievements
+      category: Nukkit
+      subcategory: Gameplay
+      description: If set, player achievements will be broadcast to all players
+      keywords: announce,player,achievements,announce-player-achievements
+      input_type: checkbox
+      param_field_name: announce-player-achievements
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Announce Player Achievements
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, player achievements will be broadcast to all players
+        Keywords: announce,player,achievements,announce-player-achievements
+        FieldName: announce-player-achievements
+        InputType: checkbox
+        ParamFieldName: announce-player-achievements
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: spawn-protection
+      label: Spawn Protection
+      category: Nukkit
+      subcategory: Gameplay
+      description: Sets the spawn protection radius
+      keywords: spawn,protection,spawn-protection
+      input_type: number
+      param_field_name: spawn-protection
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: blocks
+      enum_values: {}
+      raw:
+        DisplayName: Spawn Protection
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the spawn protection radius
+        Keywords: spawn,protection,spawn-protection
+        FieldName: spawn-protection
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: spawn-protection
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: blocks
+        EnumValues: {}
+    - key: force-resources
+      label: Force Resources
+      category: Nukkit
+      subcategory: Gameplay
+      description: If set, players will be forced to download the server's resource pack if they want to join
+      keywords: force,resources,force-resources
+      input_type: checkbox
+      param_field_name: force-resources
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Force Resources
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will be forced to download the server's resource pack if they want to join
+        Keywords: force,resources,force-resources
+        FieldName: force-resources
+        InputType: checkbox
+        ParamFieldName: force-resources
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: force-resources-allow-client-packs
+      label: Allow Client Packs When Forcing Resources
+      category: Nukkit
+      subcategory: Gameplay
+      description: If set, client packs will still be allowed when Force Resources is enabled
+      keywords: force,resources,allow,client,packs,force-resources-allow-client-packs
+      input_type: checkbox
+      param_field_name: force-resources-allow-client-packs
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Allow Client Packs When Forcing Resources
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, client packs will still be allowed when Force Resources is enabled
+        Keywords: force,resources,allow,client,packs,force-resources-allow-client-packs
+        FieldName: force-resources-allow-client-packs
+        InputType: checkbox
+        ParamFieldName: force-resources-allow-client-packs
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: allow-flight
+      label: Allow Flight
+      category: Nukkit
+      subcategory: Gameplay
+      description: If set, flight will be allowed
+      keywords: allow,flight,allow-flight
+      input_type: checkbox
+      param_field_name: allow-flight
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Allow Flight
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, flight will be allowed
+        Keywords: allow,flight,allow-flight
+        FieldName: allow-flight
+        InputType: checkbox
+        ParamFieldName: allow-flight
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: allow-nether
+      label: Allow Nether
+      category: Nukkit
+      subcategory: Gameplay
+      description: If set, the Nether will be enabled
+      keywords: allow,nether,allow-nether
+      input_type: checkbox
+      param_field_name: allow-nether
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Allow Nether
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the Nether will be enabled
+        Keywords: allow,nether,allow-nether
+        FieldName: allow-nether
+        InputType: checkbox
+        ParamFieldName: allow-nether
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: allow-the-end
+      label: Allow The End
+      category: Nukkit
+      subcategory: Gameplay
+      description: If set, The End will be enabled
+      keywords: allow,the,end,allow-the-end
+      input_type: checkbox
+      param_field_name: allow-the-end
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Allow The End
+        Category: Nukkit:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, The End will be enabled
+        Keywords: allow,the,end,allow-the-end
+        FieldName: allow-the-end
+        InputType: checkbox
+        ParamFieldName: allow-the-end
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: JavaVersion
+      label: Java Version
+      category: Nukkit
+      subcategory: Java
+      description: >-
+        Sets the Java version to run Nukkit with. The version must be accessible to AMP. For "Specific system version",
+        also set Specific System Java Version. For "Specific instance version", also set Specific Instance Java Version.
+        Note that later Java versions may not be compatible with some plugins
+      keywords: java,version,JavaVersion
+      input_type: enum
+      param_field_name: JavaVersion
+      default: '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}': System default
+        '{{SpecificJavaVersion}}': Specific system version
+        '{{Windows:java\bin\java.exe}}{{Linux:java/bin/java}}': Specific instance version
+      raw:
+        DisplayName: Java Version
+        Category: Nukkit:stadia_controller
+        Subcategory: Java:local_cafe:2
+        Description: >-
+          Sets the Java version to run Nukkit with. The version must be accessible to AMP. For "Specific system
+          version", also set Specific System Java Version. For "Specific instance version", also set Specific Instance
+          Java Version. Note that later Java versions may not be compatible with some plugins
+        Keywords: java,version,JavaVersion
+        FieldName: JavaVersion
+        InputType: enum
+        ParamFieldName: JavaVersion
+        DefaultValue: '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}'
+        EnumValues:
+          '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}': System default
+          '{{SpecificJavaVersion}}': Specific system version
+          '{{Windows:java\bin\java.exe}}{{Linux:java/bin/java}}': Specific instance version
+    - key: SpecificJavaVersion
+      label: Specific System Java Version
+      category: Nukkit
+      subcategory: Java
+      description: >-
+        Sets the full path to the Java executable on the system, if "Specific system version" is selected under Java
+        Version
+      keywords: java,version,system,SpecificJavaVersion
+      input_type: text
+      param_field_name: SpecificJavaVersion
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Specific System Java Version
+        Category: Nukkit:stadia_controller
+        Subcategory: Java:local_cafe:2
+        Description: >-
+          Sets the full path to the Java executable on the system, if "Specific system version" is selected under Java
+          Version
+        Keywords: java,version,system,SpecificJavaVersion
+        FieldName: SpecificJavaVersion
+        InputType: text
+        ParamFieldName: SpecificJavaVersion
+        DefaultValue: ''
+        EnumValues: {}
+    - key: SpecificInstanceJavaVersion
+      label: Specific Instance Java Version
+      category: Nukkit
+      subcategory: Java
+      description: >-
+        Sets the Eclipse Temurin Java version to install in the instance to run Nukkit with, if "Specific instance
+        version" is selected under Java Version. Useful for using a Java version that is not installed on the system or
+        in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+      keywords: java,version,instance,SpecificInstanceJavaVersion
+      input_type: enum
+      param_field_name: SpecificInstanceJavaVersion
+      default: '21'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '8': 8 - LTS
+        '11': 11 - LTS
+        '16': '16'
+        '17': 17 - LTS
+        '18': '18'
+        '19': '19'
+        '20': '20'
+        '21': 21 - LTS (default)
+        '22': '22'
+        '23': '23'
+        '24': '24'
+        '25': 25 - LTS
+      raw:
+        DisplayName: Specific Instance Java Version
+        Category: Nukkit:stadia_controller
+        Subcategory: Java:local_cafe:2
+        Description: >-
+          Sets the Eclipse Temurin Java version to install in the instance to run Nukkit with, if "Specific instance
+          version" is selected under Java Version. Useful for using a Java version that is not installed on the system
+          or in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+        Keywords: java,version,instance,SpecificInstanceJavaVersion
+        FieldName: SpecificInstanceJavaVersion
+        InputType: enum
+        ParamFieldName: SpecificInstanceJavaVersion
+        IncludeInCommandLine: false
+        DefaultValue: '21'
+        EnumValues:
+          '8': 8 - LTS
+          '11': 11 - LTS
+          '16': '16'
+          '17': 17 - LTS
+          '18': '18'
+          '19': '19'
+          '20': '20'
+          '21': 21 - LTS (default)
+          '22': '22'
+          '23': '23'
+          '24': '24'
+          '25': 25 - LTS
+    - key: MinMemory
+      label: Minimum Memory
+      category: Nukkit
+      subcategory: Java
+      description: Sets Java's minimum heap size
+      keywords: minimum,memory,heap,MinMemory
+      input_type: number
+      param_field_name: MinMemory
+      default: '128'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: MB
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Memory
+        Category: Nukkit:stadia_controller
+        Subcategory: Java:local_cafe:2
+        Description: Sets Java's minimum heap size
+        Keywords: minimum,memory,heap,MinMemory
+        FieldName: MinMemory
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: MinMemory
+        DefaultValue: '128'
+        Suffix: MB
+        EnumValues: {}
+    - key: MaxMemory
+      label: Maximum Memory
+      category: Nukkit
+      subcategory: Java
+      description: Sets Java's maximum heap size
+      keywords: maximum,memory,heap,MaxMemory
+      input_type: number
+      param_field_name: MaxMemory
+      default: '1024'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: MB
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Memory
+        Category: Nukkit:stadia_controller
+        Subcategory: Java:local_cafe:2
+        Description: Sets Java's maximum heap size
+        Keywords: maximum,memory,heap,MaxMemory
+        FieldName: MaxMemory
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: MaxMemory
+        DefaultValue: '1024'
+        Suffix: MB
+        EnumValues: {}
+    - key: AdditionalJavaArgs
+      label: Additional Java Arguments
+      category: Nukkit
+      subcategory: Java
+      description: Specifies any additional command line arguments to run Java with (NOT options passed to the Nukkit jar)
+      keywords: command,line,arguments,args,java,AdditionalJavaArgs
+      input_type: text
+      param_field_name: AdditionalJavaArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Java Arguments
+        Category: Nukkit:stadia_controller
+        Subcategory: Java:local_cafe:2
+        Description: Specifies any additional command line arguments to run Java with (NOT options passed to the Nukkit jar)
+        Keywords: command,line,arguments,args,java,AdditionalJavaArgs
+        FieldName: AdditionalJavaArgs
+        InputType: text
+        ParamFieldName: AdditionalJavaArgs
+        DefaultValue: ''
+        Placeholder: ''
+        EnumValues: {}
+    - key: JarOptions
+      label: Jar Options
+      category: Nukkit
+      subcategory: Java
+      description: Specifies any command line options to pass to the Nukkit jar (NOT arguments to run Java wth)
+      keywords: command,line,options,jar,JarOptions
+      input_type: text
+      param_field_name: JarOptions
+      default: ''
+      placeholder: nogui
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Jar Options
+        Category: Nukkit:stadia_controller
+        Subcategory: Java:local_cafe:2
+        Description: Specifies any command line options to pass to the Nukkit jar (NOT arguments to run Java wth)
+        Keywords: command,line,options,jar,JarOptions
+        FieldName: JarOptions
+        InputType: text
+        ParamFieldName: JarOptions
+        DefaultValue: ''
+        Placeholder: nogui
+        EnumValues: {}
+  files:
+    - path: server.properties
+      type: kvp
+      format: '{0}{1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            motd=: motd
+            sub-motd=: sub-motd
+            server-port=: $ServerPort
+            server-ip=: $ApplicationIPBinding
+            view-distance=: view-distance
+            achievements=: achievements
+            announce-player-achievements=: announce-player-achievements
+            spawn-protection=: spawn-protection
+            max-players=: $MaxUsers
+            gamemode=: gamemode
+            force-gamemode=: force-gamemode
+            difficulty=: difficulty
+            hardcore=: hardcore
+            pvp=: pvp
+            white-list=: white-list
+            generator-settings=: generator-settings
+            level-name=: level-name
+            level-seed=: level-seed
+            level-type=: level-type
+            enable-rcon=: enable-rcon
+            rcon.password=: rcon.password
+            force-resources=: force-resources
+            force-resources-allow-client-packs=: force-resources-allow-client-packs
+            xbox-auth=: xbox-auth
+            auto-save=: auto-save
+            force-language=: force-language
+            enable-query=: enable-query
+            allow-flight=: allow-flight
+            allow-nether=: allow-nether
+            allow-the-end=: allow-the-end
+            '': UserSettings
+      raw:
+        ConfigFile: server.properties
+        ConfigType: kvp
+        ConfigFormat: '{0}{1}'
+        Importable: true
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              motd=: motd
+              sub-motd=: sub-motd
+              server-port=: $ServerPort
+              server-ip=: $ApplicationIPBinding
+              view-distance=: view-distance
+              achievements=: achievements
+              announce-player-achievements=: announce-player-achievements
+              spawn-protection=: spawn-protection
+              max-players=: $MaxUsers
+              gamemode=: gamemode
+              force-gamemode=: force-gamemode
+              difficulty=: difficulty
+              hardcore=: hardcore
+              pvp=: pvp
+              white-list=: white-list
+              generator-settings=: generator-settings
+              level-name=: level-name
+              level-seed=: level-seed
+              level-type=: level-type
+              enable-rcon=: enable-rcon
+              rcon.password=: rcon.password
+              force-resources=: force-resources
+              force-resources-allow-client-packs=: force-resources-allow-client-packs
+              xbox-auth=: xbox-auth
+              auto-save=: auto-save
+              force-language=: force-language
+              enable-query=: enable-query
+              allow-flight=: allow-flight
+              allow-nether=: allow-nether
+              allow-the-end=: allow-the-end
+              '': UserSettings
+    - path: nukkit.yml
+      type: kvp
+      format: ' {0}: "{1}"'
+      subsections: []
+      raw:
+        ConfigFile: nukkit.yml
+        ConfigType: kvp
+        AutoMap: true
+        Importable: true
+        ConfigFormat: ' {0}: "{1}"'
+        ConfigFormatRegex: ^ (?<key>.+?):\s*"(?<value>.*?)"$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: motd
+    label: Server Name
+    default: AMP Powered Nukkit Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sub-motd
+    label: Server Sub MOTD
+    default: Made with Nukkit
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: generator-settings
+    label: Generator Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: level-name
+    label: Level Name
+    default: world
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: level-seed
+    label: Level Seed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: level-type
+    label: Level Type
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: white-list
+    label: Enable White List
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enable-rcon
+    label: Enable RCON
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rcon-password
+    label: RCON Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: language
+    label: Language
+    default: eng
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: force-language
+    label: Force Language
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enable-query
+    label: Enable Query
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: auto-save
+    label: Enable Auto Save
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: xbox-auth
+    label: Enable Xbox Authentication
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: UserSettings
+    label: Additional Server Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gamemode
+    label: Game Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: force-gamemode
+    label: Force Game Mode
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: difficulty
+    label: Difficulty Level
+    default: normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hardcore
+    label: Enable Hardcore Mode
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pvp
+    label: Enable PvP
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: view-distance
+    label: View Distance
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: achievements
+    label: Enable Achievements
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: announce-player-achievements
+    label: Announce Player Achievements
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: spawn-protection
+    label: Spawn Protection
+    default: '16'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: force-resources
+    label: Force Resources
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: force-resources-allow-client-packs
+    label: Allow Client Packs When Forcing Resources
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow-flight
+    label: Allow Flight
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow-nether
+    label: Allow Nether
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow-the-end
+    label: Allow The End
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JavaVersion
+    label: Java Version
+    default: '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificJavaVersion
+    label: Specific System Java Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificInstanceJavaVersion
+    label: Specific Instance Java Version
+    default: '21'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MinMemory
+    label: Minimum Memory
+    default: '128'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxMemory
+    label: Maximum Memory
+    default: '1024'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AdditionalJavaArgs
+    label: Additional Java Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JarOptions
+    label: Jar Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

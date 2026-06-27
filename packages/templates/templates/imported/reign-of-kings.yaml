@@ -5,13 +5,16 @@ category: Imported
 summary: Reign Of Kings Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '381690'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: /usr/bin/xvfb-run {PlatformArgs} -batchmode -nographics -silent-crashes {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1252 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Game and Ping Port
+    default: 7350
+    protocol: both
     required: true
-config_files: []
+  - key: authport
+    name: Auth and RCON Port
+    default: 27015
+    protocol: both
+    required: true
+config_files:
+  - path: Configuration/ServerSettings.cfg
+    type: text
+    editable: true
+  - path: Configuration/ConsoleSettings.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Game Port
+      category: Reign Of Kings
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: portNumber
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: portNumber
+        EnumValues: {}
+    - key: $AuthPort
+      label: Auth Port
+      category: Reign Of Kings
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: steamAuthPort
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auth Port
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $AuthPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: steamAuthPort
+        EnumValues: {}
+    - key: $ServerPort
+      label: Ping Port
+      category: Reign Of Kings
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: pingPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Ping Port
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: pingPort
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Server Binding
+      category: Reign Of Kings
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: bindIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Binding
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        ParamFieldName: bindIP
+        EnumValues: {}
+    - key: saveLocation
+      label: Saves Location
+      category: Reign Of Kings
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: saveLocation
+      default: Saves/
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Saves Location
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: saveLocation
+        InputType: text
+        Hidden: true
+        ParamFieldName: saveLocation
+        DefaultValue: Saves/
+        EnumValues: {}
+    - key: serverName
+      label: Server Name
+      category: Reign Of Kings
+      subcategory: Server
+      description: Sets the name of the server
+      keywords: server,name,servername
+      input_type: text
+      param_field_name: serverName
+      default: AMP Powered Reign Of Kings Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server
+        Keywords: server,name,servername
+        FieldName: serverName
+        InputType: text
+        ParamFieldName: serverName
+        DefaultValue: AMP Powered Reign Of Kings Server
+        EnumValues: {}
+    - key: isPrivate
+      label: Hide Server
+      category: Reign Of Kings
+      subcategory: Server
+      description: If enabled, the server will be hidden from the lobby
+      keywords: hide,lobby,isprivate
+      input_type: checkbox
+      param_field_name: isPrivate
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Hide Server
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will be hidden from the lobby
+        Keywords: hide,lobby,isprivate
+        FieldName: isPrivate
+        InputType: checkbox
+        ParamFieldName: isPrivate
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: greeting
+      label: Server Greeting
+      category: Reign Of Kings
+      subcategory: Server
+      description: >-
+        Sets the greeting displayed to players when they join. Empty = disabled. %user% = User who joined, %server% =
+        Name of server
+      keywords: greeting,motd,welcome,message
+      input_type: text
+      param_field_name: greeting
+      default: ''
+      placeholder: Welcome, %user%, to %server%. Have fun!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Greeting
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the greeting displayed to players when they join. Empty = disabled. %user% = User who joined, %server% =
+          Name of server
+        Keywords: greeting,motd,welcome,message
+        FieldName: greeting
+        InputType: text
+        ParamFieldName: greeting
+        DefaultValue: ''
+        Placeholder: Welcome, %user%, to %server%. Have fun!
+        EnumValues: {}
+    - key: worldSlot
+      label: World Slot
+      category: Reign Of Kings
+      subcategory: Server
+      description: Sets the world slot. -1 = create a new world
+      keywords: world,slot,worldSlot
+      input_type: number
+      param_field_name: worldSlot
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      enum_values: {}
+      raw:
+        DisplayName: World Slot
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the world slot. -1 = create a new world
+        Keywords: world,slot,worldSlot
+        FieldName: worldSlot
+        InputType: number
+        MinValue: '-1'
+        ParamFieldName: worldSlot
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: levelName
+      label: Level Name
+      category: Reign Of Kings
+      subcategory: Server
+      description: Sets the level name
+      keywords: level,name,levelname,CrownLand,StormWall
+      input_type: enum
+      param_field_name: levelName
+      default: CrownLand
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        CrownLand: CrownLand (default)
+        StormWall: StormWall
+      raw:
+        DisplayName: Level Name
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the level name
+        Keywords: level,name,levelname,CrownLand,StormWall
+        FieldName: levelName
+        InputType: enum
+        ParamFieldName: levelName
+        DefaultValue: CrownLand
+        EnumValues:
+          CrownLand: CrownLand (default)
+          StormWall: StormWall
+    - key: password
+      label: Server Password
+      category: Reign Of Kings
+      subcategory: Server
+      description: Sets the password to join the server. Default is no password
+      keywords: password
+      input_type: password
+      param_field_name: password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server. Default is no password
+        Keywords: password
+        FieldName: password
+        InputType: password
+        ParamFieldName: password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Reign Of Kings
+      subcategory: Server
+      description: Sets the maximum number of players that can connect to the server at one time
+      keywords: max,maximum,players,limit,maxPlayers
+      input_type: number
+      param_field_name: maxPlayers
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that can connect to the server at one time
+        Keywords: max,maximum,players,limit,maxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: maxPlayers
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: players
+        EnumValues: {}
+    - key: restartTime
+      label: Restart Time
+      category: Reign Of Kings
+      subcategory: Server
+      description: Sets the restart time. 0 = disabled
+      keywords: restart,time,restartTime
+      input_type: number
+      param_field_name: restartTime
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Restart Time
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the restart time. 0 = disabled
+        Keywords: restart,time,restartTime
+        FieldName: restartTime
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: restartTime
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: seconds
+        EnumValues: {}
+    - key: allowSaving
+      label: Allow Saving
+      category: Reign Of Kings
+      subcategory: Server
+      description: If enabled, allows saving on the server
+      keywords: allow,saving,allowSaving
+      input_type: checkbox
+      param_field_name: allowSaving
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Saving
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, allows saving on the server
+        Keywords: allow,saving,allowSaving
+        FieldName: allowSaving
+        InputType: checkbox
+        ParamFieldName: allowSaving
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: enableCommands
+      label: Enable Commands
+      category: Reign Of Kings
+      subcategory: Server
+      description: If set, all commands will be enabled
+      keywords: enable,commands,enableCommands
+      input_type: checkbox
+      param_field_name: enableCommands
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Commands
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, all commands will be enabled
+        Keywords: enable,commands,enableCommands
+        FieldName: enableCommands
+        InputType: checkbox
+        ParamFieldName: enableCommands
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: flyDetection
+      label: Enable Fly Detection
+      category: Reign Of Kings
+      subcategory: Server
+      description: If enabled, the server will check for players using fly hack
+      keywords: check,players,fly,hack,detection,flyDetection
+      input_type: checkbox
+      param_field_name: flyDetection
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Fly Detection
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will check for players using fly hack
+        Keywords: check,players,fly,hack,detection,flyDetection
+        FieldName: flyDetection
+        InputType: checkbox
+        ParamFieldName: flyDetection
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: timeBetweenPlayerJoin
+      label: Time Between Player Joins
+      category: Reign Of Kings
+      subcategory: Server
+      description: Sets the time that the server waits before allowing a player since the last player joined
+      keywords: wait,time,join,player,joined,timeBetweenPlayerJoin
+      input_type: number
+      param_field_name: timeBetweenPlayerJoin
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Time Between Player Joins
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time that the server waits before allowing a player since the last player joined
+        Keywords: wait,time,join,player,joined,timeBetweenPlayerJoin
+        FieldName: timeBetweenPlayerJoin
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: timeBetweenPlayerJoin
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: seconds
+        EnumValues: {}
+    - key: targetFrameRate
+      label: Target Frame Rate
+      category: Reign Of Kings
+      subcategory: Server
+      description: Sets the target frame rate for the server
+      keywords: target,frame,rate,targetFrameRate
+      input_type: number
+      param_field_name: targetFrameRate
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: fps
+      enum_values: {}
+      raw:
+        DisplayName: Target Frame Rate
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the target frame rate for the server
+        Keywords: target,frame,rate,targetFrameRate
+        FieldName: targetFrameRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: targetFrameRate
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: fps
+        EnumValues: {}
+    - key: enablePingLimit
+      label: Enable Ping Limit
+      category: Reign Of Kings
+      subcategory: Server
+      description: If enabled, players who exceed the Ping Limit will be kicked
+      keywords: kick,players,exceed,ping,limit,enablePingLimit
+      input_type: checkbox
+      param_field_name: enablePingLimit
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Ping Limit
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, players who exceed the Ping Limit will be kicked
+        Keywords: kick,players,exceed,ping,limit,enablePingLimit
+        FieldName: enablePingLimit
+        ParamFieldName: enablePingLimit
+        InputType: checkbox
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: pingLimit
+      label: Ping Limit
+      category: Reign Of Kings
+      subcategory: Server
+      description: Sets an average ping limit for players connecting to the server
+      keywords: average,ping,limit,pingLimit
+      input_type: number
+      param_field_name: pingLimit
+      default: '200'
+      placeholder: '200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 50
+      max: 10000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Ping Limit
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets an average ping limit for players connecting to the server
+        Keywords: average,ping,limit,pingLimit
+        FieldName: pingLimit
+        InputType: number
+        MinValue: '50'
+        MaxValue: '10000'
+        ParamFieldName: pingLimit
+        DefaultValue: '200'
+        Placeholder: '200'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: pingGraphLength
+      label: Ping Graph Length
+      category: Reign Of Kings
+      subcategory: Server
+      description: >-
+        Sets the length of the graph used to calculate the average ping. A longer graph gives more room for latency
+        spikes
+      keywords: length,graph,calculate,average,ping,pingGraphLength
+      input_type: number
+      param_field_name: pingGraphLength
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 10
+      max: 3600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Ping Graph Length
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the length of the graph used to calculate the average ping. A longer graph gives more room for latency
+          spikes
+        Keywords: length,graph,calculate,average,ping,pingGraphLength
+        FieldName: pingGraphLength
+        InputType: number
+        MinValue: '10'
+        MaxValue: '3600'
+        ParamFieldName: pingGraphLength
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: seconds
+        EnumValues: {}
+    - key: autoReportBanEnabled
+      label: Enable Auto Report Ban
+      category: Reign Of Kings
+      subcategory: Server
+      description: If enabled, players who accumulate too many spam or exploit report points will be banned
+      keywords: ban,auto,spam,exploit,report,points,autoReportBanEnabled
+      input_type: checkbox
+      param_field_name: autoReportBanEnabled
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Auto Report Ban
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, players who accumulate too many spam or exploit report points will be banned
+        Keywords: ban,auto,spam,exploit,report,points,autoReportBanEnabled
+        FieldName: autoReportBanEnabled
+        InputType: checkbox
+        ParamFieldName: autoReportBanEnabled
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: reportThresholdSpam
+      label: Report Threshold For Spam
+      category: Reign Of Kings
+      subcategory: Server
+      description: >-
+        Sets the point threshold used to ban players when valid spam reports are submitted. Reports are worth less
+        points when repeated by players or guildmates. 0 = instant ban, 3 = ~3 valid reports
+      keywords: point,threshold,ban,players,valid,report,spam,reportThresholdSpam
+      input_type: number
+      param_field_name: reportThresholdSpam
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: points
+      enum_values: {}
+      raw:
+        DisplayName: Report Threshold For Spam
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the point threshold used to ban players when valid spam reports are submitted. Reports are worth less
+          points when repeated by players or guildmates. 0 = instant ban, 3 = ~3 valid reports
+        Keywords: point,threshold,ban,players,valid,report,spam,reportThresholdSpam
+        FieldName: reportThresholdSpam
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: reportThresholdSpam
+        DefaultValue: '3'
+        Placeholder: '3'
+        Suffix: points
+        EnumValues: {}
+    - key: daysBannedForSpam
+      label: Days Banned For Spam
+      category: Reign Of Kings
+      subcategory: Server
+      description: >-
+        Sets the number of days a player will be banned for spam. 0 = banned forever. Repeat bans will increase the
+        duration additively
+      keywords: days,ban,banned,player,spam,daysBannedForSpam
+      input_type: number
+      param_field_name: daysBannedForSpam
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Days Banned For Spam
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the number of days a player will be banned for spam. 0 = banned forever. Repeat bans will increase the
+          duration additively
+        Keywords: days,ban,banned,player,spam,daysBannedForSpam
+        FieldName: daysBannedForSpam
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: daysBannedForSpam
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: days
+        EnumValues: {}
+    - key: reportThresholdExploit
+      label: Report Threshold For Exploit
+      category: Reign Of Kings
+      subcategory: Server
+      description: >-
+        Sets the point threshold used to ban players when valid exploit reports are submitted. Reports are worth less
+        points when repeated by players or guildmates. 0 = instant ban, 5 = ~5 valid reports
+      keywords: point,threshold,ban,players,valid,report,exploit,reportThresholdExploit
+      input_type: number
+      param_field_name: reportThresholdExploit
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: points
+      enum_values: {}
+      raw:
+        DisplayName: Report Threshold For Exploit
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the point threshold used to ban players when valid exploit reports are submitted. Reports are worth less
+          points when repeated by players or guildmates. 0 = instant ban, 5 = ~5 valid reports
+        Keywords: point,threshold,ban,players,valid,report,exploit,reportThresholdExploit
+        FieldName: reportThresholdExploit
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: reportThresholdExploit
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: points
+        EnumValues: {}
+    - key: daysBannedForExploit
+      label: Days Banned For Exploit
+      category: Reign Of Kings
+      subcategory: Server
+      description: >-
+        Sets the number of days a player will be banned for exploit. 0 = banned forever. Repeat bans will increase the
+        duration additively
+      keywords: days,ban,banned,player,exploit,daysBannedForExploit
+      input_type: number
+      param_field_name: daysBannedForExploit
+      default: '7'
+      placeholder: '7'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Days Banned For Exploit
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the number of days a player will be banned for exploit. 0 = banned forever. Repeat bans will increase the
+          duration additively
+        Keywords: days,ban,banned,player,exploit,daysBannedForExploit
+        FieldName: daysBannedForExploit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: daysBannedForExploit
+        DefaultValue: '7'
+        Placeholder: '7'
+        Suffix: days
+        EnumValues: {}
+    - key: decay
+      label: Enable Decay
+      category: Reign Of Kings
+      subcategory: Server
+      description: If enabled, placed objects and blocks will decay and destroy over time
+      keywords: placed,objects,block,blocks,decay,destroy
+      input_type: checkbox
+      param_field_name: decay
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Decay
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, placed objects and blocks will decay and destroy over time
+        Keywords: placed,objects,block,blocks,decay,destroy
+        FieldName: decay
+        ParamFieldName: decay
+        InputType: checkbox
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: blockDecay
+      label: Block Decay Time
+      category: Reign Of Kings
+      subcategory: Server
+      description: >-
+        Sets the time it takes for blocks to decay outside a crest area. -1 = default time. Changes will not affect
+        pre-existing objects
+      keywords: time,block,blocks,decay,crest,area,blockDecay
+      input_type: number
+      param_field_name: blockDecay
+      default: '-1'
+      placeholder: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Block Decay Time
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the time it takes for blocks to decay outside a crest area. -1 = default time. Changes will not affect
+          pre-existing objects
+        Keywords: time,block,blocks,decay,crest,area,blockDecay
+        FieldName: blockDecay
+        InputType: number
+        MinValue: '-1'
+        ParamFieldName: blockDecay
+        DefaultValue: '-1'
+        Placeholder: '-1'
+        Suffix: seconds
+        EnumValues: {}
+    - key: prefabDecay
+      label: Prefab Decay Time
+      category: Reign Of Kings
+      subcategory: Server
+      description: >-
+        Sets the time it takes for non-blocks to decay outside a crest area. -1 = default time. Changes will not affect
+        pre-existing objects
+      keywords: time,non-blocks,prefab,decay,crest,area,prefabDecay
+      input_type: number
+      param_field_name: prefabDecay
+      default: '-1'
+      placeholder: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Prefab Decay Time
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the time it takes for non-blocks to decay outside a crest area. -1 = default time. Changes will not
+          affect pre-existing objects
+        Keywords: time,non-blocks,prefab,decay,crest,area,prefabDecay
+        FieldName: prefabDecay
+        InputType: number
+        MinValue: '-1'
+        ParamFieldName: prefabDecay
+        DefaultValue: '-1'
+        Placeholder: '-1'
+        Suffix: seconds
+        EnumValues: {}
+    - key: crestSiege
+      label: Allow Crest Siege
+      category: Reign Of Kings
+      subcategory: Server
+      description: If enabled, the crest area can be under siege. Changes will not affect pre-existing objects
+      keywords: crest,area,under,siege,crestSiege
+      input_type: checkbox
+      param_field_name: crestSiege
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Crest Siege
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the crest area can be under siege. Changes will not affect pre-existing objects
+        Keywords: crest,area,under,siege,crestSiege
+        FieldName: crestSiege
+        InputType: checkbox
+        ParamFieldName: crestSiege
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: blockCollapsing
+      label: Enable Block Collapse
+      category: Reign Of Kings
+      subcategory: Server
+      description: If enabled, blocks will collapse when not attached to the ground. Changes will not affect pre-existing objects
+      keywords: blocks,collapse,attached,ground,blockCollapsing
+      input_type: checkbox
+      param_field_name: blockCollapsing
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Block Collapse
+        Category: Reign Of Kings:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, blocks will collapse when not attached to the ground. Changes will not affect pre-existing objects
+        Keywords: blocks,collapse,attached,ground,blockCollapsing
+        FieldName: blockCollapsing
+        InputType: checkbox
+        ParamFieldName: blockCollapsing
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: InstalluMod
+      label: Install uMod/Oxide
+      category: Updates
+      subcategory: Runtime Configuration
+      description: If enabled, uMod/Oxide will be installed when the server is updated
+      keywords: install,umod,mod
+      input_type: checkbox
+      param_field_name: InstalluMod
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Install uMod/Oxide
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: If enabled, uMod/Oxide will be installed when the server is updated
+        Keywords: install,umod,mod
+        FieldName: InstalluMod
+        InputType: checkbox
+        ParamFieldName: InstalluMod
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: Configuration/ServerSettings.cfg
+      type: kvp
+      format: '{0} = ''{1}'''
+      subsections: []
+      raw:
+        ConfigFile: Configuration/ServerSettings.cfg
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormat: '{0} = ''{1}'''
+        ConfigFormatRegex: ^(?<key>.+?) = '(?<value>.*?)'.*$
+    - path: Configuration/ConsoleSettings.cfg
+      type: kvp
+      format: '{0} = ''{1}'''
+      subsections:
+        - heading: $root
+          setting_mappings:
+            enableRCon: 'True'
+            rConPassword: $RemoteAdminPassword
+            rConPort: $AuthPort
+      raw:
+        ConfigFile: Configuration/ConsoleSettings.cfg
+        ConfigType: kvp
+        ConfigFormat: '{0} = ''{1}'''
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              enableRCon: 'True'
+              rConPassword: $RemoteAdminPassword
+              rConPort: $AuthPort
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: saveLocation
+    label: Saves Location
+    default: Saves/
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverName
+    label: Server Name
+    default: AMP Powered Reign Of Kings Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: isPrivate
+    label: Hide Server
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: greeting
+    label: Server Greeting
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: worldSlot
+    label: World Slot
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: levelName
+    label: Level Name
+    default: CrownLand
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: restartTime
+    label: Restart Time
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowSaving
+    label: Allow Saving
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableCommands
+    label: Enable Commands
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: flyDetection
+    label: Enable Fly Detection
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: timeBetweenPlayerJoin
+    label: Time Between Player Joins
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: targetFrameRate
+    label: Target Frame Rate
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enablePingLimit
+    label: Enable Ping Limit
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pingLimit
+    label: Ping Limit
+    default: '200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pingGraphLength
+    label: Ping Graph Length
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autoReportBanEnabled
+    label: Enable Auto Report Ban
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: reportThresholdSpam
+    label: Report Threshold For Spam
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: daysBannedForSpam
+    label: Days Banned For Spam
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: reportThresholdExploit
+    label: Report Threshold For Exploit
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: daysBannedForExploit
+    label: Days Banned For Exploit
+    default: '7'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: decay
+    label: Enable Decay
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: blockDecay
+    label: Block Decay Time
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: prefabDecay
+    label: Prefab Decay Time
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: crestSiege
+    label: Allow Crest Siege
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: blockCollapsing
+    label: Enable Block Collapse
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InstalluMod
+    label: Install uMod/Oxide
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '344760'
+  collection_support: true
 backup:
   include:
     - /data

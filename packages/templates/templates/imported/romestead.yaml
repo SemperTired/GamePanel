@@ -5,13 +5,16 @@ category: Imported
 summary: Romestead Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '4763510'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 4763510/Dotnet/dotnet
+  startup: 4763510/Dotnet/dotnet {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,352 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 8050
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: config.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Romestead
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Romestead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.Port
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: AutoCreateAndLoadWorld
+      label: Create New World
+      category: Romestead
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.AutoCreateAndLoadWorld
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Create New World
+        Category: Romestead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: AutoCreateAndLoadWorld
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.AutoCreateAndLoadWorld
+        DefaultValue: 'true'
+        EnumValues: {}
+    - key: AutoStartWorldName
+      label: World Name
+      category: Romestead
+      subcategory: Server
+      description: >-
+        Sets the name of the world to load when the server starts. A new world will be generated if it does not already
+        exist
+      keywords: world,name,map,save,AutoStartWorldName
+      input_type: text
+      param_field_name: $.AutoStartWorldName
+      default: world
+      placeholder: world
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Name
+        Category: Romestead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the world to load when the server starts. A new world will be generated if it does not
+          already exist
+        Keywords: world,name,map,save,AutoStartWorldName
+        FieldName: AutoStartWorldName
+        InputType: text
+        ParamFieldName: $.AutoStartWorldName
+        Required: true
+        DefaultValue: world
+        Placeholder: world
+        EnumValues: {}
+    - key: AutoCreateWorldSize
+      label: World Size
+      category: Romestead
+      subcategory: Server
+      description: Sets the size for generation of a new world. A large world requires at least 8GB of RAM to generate
+      keywords: world,size,map,generation,AutoCreateWorldSize
+      input_type: enum
+      param_field_name: $.AutoCreateWorldSize
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Small
+        '1': Standard
+        '2': Large
+      raw:
+        DisplayName: World Size
+        Category: Romestead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the size for generation of a new world. A large world requires at least 8GB of RAM to generate
+        Keywords: world,size,map,generation,AutoCreateWorldSize
+        FieldName: AutoCreateWorldSize
+        InputType: enum
+        ParamFieldName: $.AutoCreateWorldSize
+        DefaultValue: '1'
+        EnumValues:
+          '0': Small
+          '1': Standard
+          '2': Large
+    - key: AutoCreateWorldSeed
+      label: World Seed
+      category: Romestead
+      subcategory: Server
+      description: Sets the seed for generation of a new world. Empty = random seed
+      keywords: seed,world,generation,random,AutoCreateWorldSeed
+      input_type: text
+      param_field_name: $.AutoCreateWorldSeed
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Seed
+        Category: Romestead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the seed for generation of a new world. Empty = random seed
+        Keywords: seed,world,generation,random,AutoCreateWorldSeed
+        FieldName: AutoCreateWorldSeed
+        InputType: text
+        ParamFieldName: $.AutoCreateWorldSeed
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Password
+      label: Server Password
+      category: Romestead
+      subcategory: Server
+      description: Sets the password required to join the server. Empty = no password
+      keywords: server,password
+      input_type: password
+      param_field_name: $.Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Romestead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to join the server. Empty = no password
+        Keywords: server,password
+        FieldName: Password
+        InputType: password
+        ParamFieldName: $.Password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Romestead
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: player,limit,max,maximum,players,slots,MaxPlayers
+      input_type: number
+      param_field_name: $.MaxPlayers
+      default: '8'
+      placeholder: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 8
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Romestead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: player,limit,max,maximum,players,slots,MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '8'
+        ParamFieldName: $.MaxPlayers
+        DefaultValue: '8'
+        Placeholder: '8'
+        Suffix: players
+        EnumValues: {}
+    - key: EnableCheats
+      label: Enable Cheats
+      category: Romestead
+      subcategory: Server
+      description: If set, cheats will be enabled on the server. Not currently used
+      keywords: enable,cheats,commands,console,EnableCheats
+      input_type: checkbox
+      param_field_name: $.EnableCheats
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Cheats
+        Category: Romestead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, cheats will be enabled on the server. Not currently used
+        Keywords: enable,cheats,commands,console,EnableCheats
+        FieldName: EnableCheats
+        InputType: checkbox
+        ParamFieldName: $.EnableCheats
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: DotnetVersion
+      label: Dotnet Version
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the [.NET Runtime 8.0 version](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) to install. Empty =
+        latest. Update the server after changing this setting
+      keywords: dotnet,version
+      input_type: text
+      param_field_name: DotnetVersion
+      default: ''
+      placeholder: 8.0.27
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Dotnet Version
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the [.NET Runtime 8.0 version](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) to install. Empty
+          = latest. Update the server after changing this setting
+        Keywords: dotnet,version
+        FieldName: DotnetVersion
+        InputType: text
+        ParamFieldName: DotnetVersion
+        DefaultValue: ''
+        Placeholder: 8.0.27
+        EnumValues: {}
+  files:
+    - path: config.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: config.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: AutoCreateAndLoadWorld
+    label: Create New World
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutoStartWorldName
+    label: World Name
+    default: world
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: AutoCreateWorldSize
+    label: World Size
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutoCreateWorldSeed
+    label: World Seed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: EnableCheats
+    label: Enable Cheats
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DotnetVersion
+    label: Dotnet Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1805320'
+  collection_support: true
 backup:
   include:
     - /data

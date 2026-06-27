@@ -4,14 +4,16 @@ name: Node.js App Runner
 category: Imported
 summary: Node.js App Runner
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: node/bin/node
+  startup: node/bin/node {NodeArgs} {ApplicationName} {CommandLineArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +21,839 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Main Port
+    default: 7777
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: nodeconfig.json
+    type: json
+    editable: true
+  - path: nodemetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: DownloadType
+      label: App Download Type
+      category: NodeJS App Runner
+      subcategory: Download
+      description: >-
+        Sets how to download the app. Specify the App Download Source and the relevant Git repo or GitHub release
+        settings accordingly. Update the app after changing this setting
+      keywords: download,type
+      input_type: enum
+      param_field_name: DownloadType
+      default: ''
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': '--Please select--'
+        DownloadURL: Download URL
+        GithubRelease: GitHub release
+        GitRepo: Git repo
+        None: None
+      raw:
+        DisplayName: App Download Type
+        Category: NodeJS App Runner:code
+        Subcategory: Download:download:2
+        Description: >-
+          Sets how to download the app. Specify the App Download Source and the relevant Git repo or GitHub release
+          settings accordingly. Update the app after changing this setting
+        Keywords: download,type
+        FieldName: DownloadType
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: DownloadType
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Required: true
+        EnumValues:
+          '': '--Please select--'
+          DownloadURL: Download URL
+          GithubRelease: GitHub release
+          GitRepo: Git repo
+          None: None
+    - key: DownloadSource
+      label: App Download Source
+      category: NodeJS App Runner
+      subcategory: Download
+      description: >-
+        Sets the source for the App Download Type. Git repo = URL that ends in .git. GitHub release = User/Repo.
+        Download URL = URL to a zip file. Update the app after changing this setting
+      keywords: download,source
+      input_type: text
+      param_field_name: DownloadSource
+      default: ''
+      placeholder: https://github.com/IceOfWraith/IceBot.git
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Download Source
+        Category: NodeJS App Runner:code
+        Subcategory: Download:download:2
+        Description: >-
+          Sets the source for the App Download Type. Git repo = URL that ends in .git. GitHub release = User/Repo.
+          Download URL = URL to a zip file. Update the app after changing this setting
+        Keywords: download,source
+        FieldName: DownloadSource
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: DownloadSource
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: https://github.com/IceOfWraith/IceBot.git
+        EnumValues: {}
+    - key: DownloadBranch
+      label: Git Repo Branch
+      category: NodeJS App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the branch if required. Empty = default branch
+      keywords: git,repo,branch,DownloadBranch
+      input_type: text
+      param_field_name: DownloadBranch
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Branch
+        Category: NodeJS App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the branch if required. Empty = default branch
+        Keywords: git,repo,branch,DownloadBranch
+        FieldName: DownloadBranch
+        InputType: text
+        ParamFieldName: DownloadBranch
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadUsername
+      label: Git Repo Username
+      category: NodeJS App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the username if login is required
+      keywords: git,repo,username,DownloadUsername
+      input_type: text
+      param_field_name: DownloadUsername
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Username
+        Category: NodeJS App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the username if login is required
+        Keywords: git,repo,username,DownloadUsername
+        FieldName: DownloadUsername
+        InputType: text
+        ParamFieldName: DownloadUsername
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadPassword
+      label: Git Repo Password/Token
+      category: NodeJS App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the password/token if login is required
+      keywords: git,repo,password,token,DownloadPassword
+      input_type: password
+      param_field_name: DownloadPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Password/Token
+        Category: NodeJS App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the password/token if login is required
+        Keywords: git,repo,password,token,DownloadPassword
+        FieldName: DownloadPassword
+        InputType: password
+        ParamFieldName: DownloadPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadFilename
+      label: GitHub Release Filename
+      category: NodeJS App Runner
+      subcategory: Download
+      description: If "GitHub release" is selected under App Download Type, sets the name of the zip file to download
+      keywords: github,release,filename
+      input_type: text
+      param_field_name: DownloadFilename
+      default: ''
+      placeholder: discordbot.zip
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GitHub Release Filename
+        Category: NodeJS App Runner:code
+        Subcategory: Download:download:2
+        Description: If "GitHub release" is selected under App Download Type, sets the name of the zip file to download
+        Keywords: github,release,filename
+        FieldName: DownloadFilename
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: DownloadFilename
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: discordbot.zip
+        EnumValues: {}
+    - key: DownloadVersion
+      label: GitHub Release Version
+      category: NodeJS App Runner
+      subcategory: Download
+      description: If "GitHub release" is selected under App Download Type, sets the release version to download. Empty = latest
+      keywords: github,release,version
+      input_type: text
+      param_field_name: DownloadVersion
+      default: ''
+      placeholder: 1.0.0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GitHub Release Version
+        Category: NodeJS App Runner:code
+        Subcategory: Download:download:2
+        Description: If "GitHub release" is selected under App Download Type, sets the release version to download. Empty = latest
+        Keywords: github,release,version
+        FieldName: DownloadVersion
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: DownloadVersion
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: 1.0.0
+        EnumValues: {}
+    - key: NodeRelease
+      label: Node.js Release Stream
+      category: NodeJS App Runner
+      subcategory: App
+      description: >-
+        Sets the Node.js release stream from which to install the latest version (including the corresponding npm
+        package), unless a specific version is specified under Node.js Version. Update the server after changing this
+        setting
+      keywords: node,nodejs,release,stream,NodeRelease
+      input_type: enum
+      param_field_name: NodeRelease
+      default: '22'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '4': 4 - LTS
+        '5': '5'
+        '6': 6 - LTS
+        '7': '7'
+        '8': 8 - LTS
+        '9': '9'
+        '10': 10 - LTS
+        '11': '11'
+        '12': 12 - LTS
+        '13': '13'
+        '14': 14 - LTS
+        '15': '15'
+        '16': 16 - LTS
+        '17': '17'
+        '18': 18 - LTS
+        '19': '19'
+        '20': 20 - LTS
+        '21': '21'
+        '22': 22 - LTS (default)
+        '23': '23'
+        '24': '24'
+        '25': '25'
+        '26': '26'
+      raw:
+        DisplayName: Node.js Release Stream
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the Node.js release stream from which to install the latest version (including the corresponding npm
+          package), unless a specific version is specified under Node.js Version. Update the server after changing this
+          setting
+        Keywords: node,nodejs,release,stream,NodeRelease
+        FieldName: NodeRelease
+        InputType: enum
+        ParamFieldName: NodeRelease
+        DefaultValue: '22'
+        EnumValues:
+          '4': 4 - LTS
+          '5': '5'
+          '6': 6 - LTS
+          '7': '7'
+          '8': 8 - LTS
+          '9': '9'
+          '10': 10 - LTS
+          '11': '11'
+          '12': 12 - LTS
+          '13': '13'
+          '14': 14 - LTS
+          '15': '15'
+          '16': 16 - LTS
+          '17': '17'
+          '18': 18 - LTS
+          '19': '19'
+          '20': 20 - LTS
+          '21': '21'
+          '22': 22 - LTS (default)
+          '23': '23'
+          '24': '24'
+          '25': '25'
+          '26': '26'
+    - key: NodeVersion
+      label: Node.js Version
+      category: NodeJS App Runner
+      subcategory: App
+      description: >-
+        Sets the [Node.js version](https://nodejs.org/download/release/) to install. Format: v22.12.0. Empty = latest
+        version for the release stream specified under Node.js Release Stream. Update the server after changing this
+        setting
+      keywords: node,nodejs,version,NodeVersion
+      input_type: text
+      param_field_name: NodeVersion
+      default: ''
+      placeholder: v22.12.0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Node.js Version
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the [Node.js version](https://nodejs.org/download/release/) to install. Format: v22.12.0. Empty = latest
+          version for the release stream specified under Node.js Release Stream. Update the server after changing this
+          setting
+        Keywords: node,nodejs,version,NodeVersion
+        FieldName: NodeVersion
+        InputType: text
+        ParamFieldName: NodeVersion
+        DefaultValue: ''
+        Placeholder: v22.12.0
+        EnumValues: {}
+    - key: NpmInstallType
+      label: npm Install Type
+      category: NodeJS App Runner
+      subcategory: App
+      description: >-
+        Specify "npm i" to use a packages.json or specify "npm ci" to use a packages-lock.json. If "Specific packages"
+        is chosen you must enter the packages under Specific npm Packages
+      keywords: npm,install,type
+      input_type: enum
+      param_field_name: NpmInstallType
+      default: npmi
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        none: None
+        npmi: npm i (default)
+        npmci: npm ci (clean install)
+        specify: Specific packages
+      raw:
+        DisplayName: npm Install Type
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Specify "npm i" to use a packages.json or specify "npm ci" to use a packages-lock.json. If "Specific packages"
+          is chosen you must enter the packages under Specific npm Packages
+        Keywords: npm,install,type
+        FieldName: NpmInstallType
+        InputType: enum
+        ParamFieldName: NpmInstallType
+        DefaultValue: npmi
+        EnumValues:
+          none: None
+          npmi: npm i (default)
+          npmci: npm ci (clean install)
+          specify: Specific packages
+    - key: NpmPackages
+      label: Specific npm Packages
+      category: NodeJS App Runner
+      subcategory: App
+      description: >-
+        Specify any additional npm packages to install separated by a space. Select "Specific packages" for the npm
+        Install Type
+      keywords: additional,npm,packages
+      input_type: text
+      param_field_name: NpmPackages
+      default: ''
+      placeholder: express fastify socket.io
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Specific npm Packages
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Specify any additional npm packages to install separated by a space. Select "Specific packages" for the npm
+          Install Type
+        Keywords: additional,npm,packages
+        FieldName: NpmPackages
+        InputType: text
+        ParamFieldName: NpmPackages
+        DefaultValue: ''
+        Placeholder: express fastify socket.io
+        EnumValues: {}
+    - key: RunAppSetupCommands
+      label: Run App Setup Commands
+      category: NodeJS App Runner
+      subcategory: App
+      description: >-
+        If enabled, the command(s) specified under App Setup Commands will be run when the server is updated and after
+        the app is installed
+      keywords: app,setup,command,RunAppSetupCommands
+      input_type: checkbox
+      param_field_name: RunAppSetupCommands
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Run App Setup Commands
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          If enabled, the command(s) specified under App Setup Commands will be run when the server is updated and after
+          the app is installed
+        Keywords: app,setup,command,RunAppSetupCommands
+        FieldName: RunAppSetupCommands
+        InputType: checkbox
+        ParamFieldName: RunAppSetupCommands
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AppSetupCommands
+      label: App Setup Commands
+      category: NodeJS App Runner
+      subcategory: App
+      description: >-
+        Sets any required command(s) to run to set up the app after it is installed, if Run App Setup Commands is
+        enabled. Linux: command1; command2 | Windows: command1 & command2. Include "node", "npm" or "npx" as needed
+      keywords: app,setup,command,AppSetupCommands
+      input_type: text
+      param_field_name: AppSetupCommands
+      default: ''
+      placeholder: node setup.js | npm run build
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Setup Commands
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets any required command(s) to run to set up the app after it is installed, if Run App Setup Commands is
+          enabled. Linux: command1; command2 | Windows: command1 & command2. Include "node", "npm" or "npx" as needed
+        Keywords: app,setup,command,AppSetupCommands
+        FieldName: AppSetupCommands
+        InputType: text
+        ParamFieldName: AppSetupCommands
+        DefaultValue: ''
+        Placeholder: node setup.js | npm run build
+        EnumValues: {}
+    - key: RunAppPrestartCommands
+      label: Run App Pre-start Commands
+      category: NodeJS App Runner
+      subcategory: App
+      description: If enabled, the command(s) specified under App Pre-start Commands will be run immediately before each app start
+      keywords: app,prestart,pre-start,command,RunAppPrestartCommands
+      input_type: checkbox
+      param_field_name: RunAppPrestartCommands
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Run App Pre-start Commands
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          If enabled, the command(s) specified under App Pre-start Commands will be run immediately before each app
+          start
+        Keywords: app,prestart,pre-start,command,RunAppPrestartCommands
+        FieldName: RunAppPrestartCommands
+        InputType: checkbox
+        ParamFieldName: RunAppPrestartCommands
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AppPrestartCommands
+      label: App Pre-start Commands
+      category: NodeJS App Runner
+      subcategory: App
+      description: >-
+        Sets any required command(s) to run immediately before each app start, if Run App Pre-start Commands is enabled.
+        Linux: command1; command2 | Windows: command1 & command2. Include "node", "npm" or "npx" as needed
+      keywords: app,prestart,pre-start,command,AppPrestartCommands
+      input_type: text
+      param_field_name: AppPrestartCommands
+      default: ''
+      placeholder: node deploy-commands.js | npm run deploy
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Pre-start Commands
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets any required command(s) to run immediately before each app start, if Run App Pre-start Commands is
+          enabled. Linux: command1; command2 | Windows: command1 & command2. Include "node", "npm" or "npx" as needed
+        Keywords: app,prestart,pre-start,command,AppPrestartCommands
+        FieldName: AppPrestartCommands
+        InputType: text
+        ParamFieldName: AppPrestartCommands
+        DefaultValue: ''
+        Placeholder: node deploy-commands.js | npm run deploy
+        EnumValues: {}
+    - key: ApplicationName
+      label: App Name
+      category: NodeJS App Runner
+      subcategory: App
+      description: >-
+        Sets the name of the Node.js app to execute. Do not include "node" in front. Include any relative path from the
+        base directory or App Installation Location, if applicable. For apps that are otherwise run with npm, specify
+        the corresponding Node.js app identified in packages.json
+      keywords: app,application,name
+      input_type: text
+      param_field_name: ApplicationName
+      default: ''
+      placeholder: index.js | build/main.js
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Name
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the name of the Node.js app to execute. Do not include "node" in front. Include any relative path from
+          the base directory or App Installation Location, if applicable. For apps that are otherwise run with npm,
+          specify the corresponding Node.js app identified in packages.json
+        Keywords: app,application,name
+        FieldName: ApplicationName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: ApplicationName
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: index.js | build/main.js
+        EnumValues: {}
+    - key: ApplicationLocation
+      label: App Installation Location
+      category: NodeJS App Runner
+      subcategory: App
+      description: >-
+        Sets any applicable subdirectory path (under the base directory) that the app is installed in. This will set the
+        working directory for running the app accordingly
+      keywords: app,application,location,directory,subdirectory,path,ApplicationLocation
+      input_type: text
+      param_field_name: ApplicationLocation
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Installation Location
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets any applicable subdirectory path (under the base directory) that the app is installed in. This will set
+          the working directory for running the app accordingly
+        Keywords: app,application,location,directory,subdirectory,path,ApplicationLocation
+        FieldName: ApplicationLocation
+        InputType: text
+        ParamFieldName: ApplicationLocation
+        DefaultValue: ''
+        EnumValues: {}
+    - key: NodeArgs
+      label: Node.js Command Line Arguments
+      category: NodeJS App Runner
+      subcategory: App
+      description: Sets Node.js command line arguments (not app command line arguments) to include as startup parameters
+      keywords: node,command,line,arguments,args
+      input_type: text
+      param_field_name: NodeArgs
+      default: ''
+      placeholder: '--value1=foo --value2=bar'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Node.js Command Line Arguments
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: Sets Node.js command line arguments (not app command line arguments) to include as startup parameters
+        Keywords: node,command,line,arguments,args
+        FieldName: NodeArgs
+        InputType: text
+        ParamFieldName: NodeArgs
+        DefaultValue: ''
+        Placeholder: '--value1=foo --value2=bar'
+        EnumValues: {}
+    - key: EnvVars
+      label: App Environment Variables
+      category: NodeJS App Runner
+      subcategory: App
+      description: >-
+        To set a list of environment variables to run the app with, create a '.env' file in the working directory. For
+        example, this may include a [Discord bot token](https://discord.com/developers/applications/). Consult any
+        example '.env' file included with the app for relevant variables to specify
+      keywords: environment,variables,EnvVars
+      input_type: hidden
+      param_field_name: EnvVars
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Environment Variables
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          To set a list of environment variables to run the app with, create a '.env' file in the working directory. For
+          example, this may include a [Discord bot token](https://discord.com/developers/applications/). Consult any
+          example '.env' file included with the app for relevant variables to specify
+        Keywords: environment,variables,EnvVars
+        FieldName: EnvVars
+        InputType: hidden
+        ParamFieldName: EnvVars
+        EnumValues: {}
+    - key: CommandLineArgs
+      label: App Command Line Arguments
+      category: NodeJS App Runner
+      subcategory: App
+      description: Sets app command line arguments (not Node.js command line arguments) to include as startup parameters
+      keywords: app,command,line,arguments,args
+      input_type: text
+      param_field_name: CommandLineArgs
+      default: ''
+      placeholder: value1=foo value2=bar
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Command Line Arguments
+        Category: NodeJS App Runner:code
+        Subcategory: App:settings:1
+        Description: Sets app command line arguments (not Node.js command line arguments) to include as startup parameters
+        Keywords: app,command,line,arguments,args
+        FieldName: CommandLineArgs
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CommandLineArgs
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: value1=foo value2=bar
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: DownloadType
+    label: App Download Type
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: DownloadSource
+    label: App Download Source
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadBranch
+    label: Git Repo Branch
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadUsername
+    label: Git Repo Username
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadPassword
+    label: Git Repo Password/Token
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: DownloadFilename
+    label: GitHub Release Filename
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadVersion
+    label: GitHub Release Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NodeRelease
+    label: Node.js Release Stream
+    default: '22'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NodeVersion
+    label: Node.js Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NpmInstallType
+    label: npm Install Type
+    default: npmi
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NpmPackages
+    label: Specific npm Packages
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RunAppSetupCommands
+    label: Run App Setup Commands
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AppSetupCommands
+    label: App Setup Commands
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RunAppPrestartCommands
+    label: Run App Pre-start Commands
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AppPrestartCommands
+    label: App Pre-start Commands
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ApplicationName
+    label: App Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ApplicationLocation
+    label: App Installation Location
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NodeArgs
+    label: Node.js Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CommandLineArgs
+    label: App Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

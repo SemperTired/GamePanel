@@ -4,14 +4,22 @@ name: TeamSpeak 6
 category: Imported
 summary: TeamSpeak 6 Server
 install:
-  method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  method: custom
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/tsserver
+  startup: >-
+    server/tsserver {PlatformArgs} --accept-license=1 --default-voice-port={VoicePort}
+    --filetransfer-port={FileTransferPort} --query-http-port={HTTPQueryPort} --query-ssh-port={SSHQueryPort}
+    --query-https-port={HTTPSQueryPort} --voice-ip=[{ApplicationIPBinding},{IPv6Binding}]
+    --filetransfer-ip=[{ApplicationIPBinding},{IPv6Binding}] --query-http-ip=[{ApplicationIPBinding},{IPv6Binding}]
+    --query-ssh-ip=[{ApplicationIPBinding},{IPv6Binding}] --query-https-ip=[{ApplicationIPBinding},{IPv6Binding}]
+    --config-file=tsserver.yaml {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +27,2031 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: voiceport
+    name: Voice Port
+    default: 9987
     protocol: udp
     required: true
-config_files: []
+  - key: filetransferport
+    name: File Transfer Port
+    default: 30033
+    protocol: tcp
+    required: true
+  - key: sshqueryport
+    name: SSH Query Port
+    default: 10022
+    protocol: tcp
+    required: true
+  - key: httpqueryport
+    name: HTTP Query Port
+    default: 10080
+    protocol: tcp
+    required: true
+  - key: httpsqueryport
+    name: HTTPS Query Port
+    default: 10443
+    protocol: tcp
+    required: true
+config_files:
+  - path: teamspeak6config.json
+    type: json
+    editable: true
+  - path: teamspeak6metaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: machine-id
+      label: Machine ID
+      category: TeamSpeak 6
+      subcategory: Server
+      description: Sets an optional name for the server process to identify a group of servers with the same ID
+      keywords: machine,id,machine-id
+      input_type: text
+      param_field_name: machine-id
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Machine ID
+        Description: Sets an optional name for the server process to identify a group of servers with the same ID
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: machine,id,machine-id
+        FieldName: machine-id
+        InputType: text
+        ParamFieldName: machine-id
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: license-path
+      label: License File Directory Path
+      category: TeamSpeak 6
+      subcategory: Server
+      description: Sets the directory path where the server will look for the licensekey.dat file
+      keywords: license,path,license-path
+      input_type: text
+      param_field_name: license-path
+      default: ./
+      placeholder: ./
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: License File Directory Path
+        Description: Sets the directory path where the server will look for the licensekey.dat file
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: license,path,license-path
+        FieldName: license-path
+        InputType: text
+        ParamFieldName: license-path
+        IncludeInCommandLine: true
+        DefaultValue: ./
+        Placeholder: ./
+        Required: true
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: IPv4 Server Binding
+      category: TeamSpeak 6
+      subcategory: Server
+      description: >-
+        If required, you can change the IPv4 binding of the server by changing the Application IP Binding for the
+        instance
+      keywords: ipv4,binding,ip,address,net_ip
+      input_type: hidden
+      param_field_name: IPv4Binding
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: IPv4 Server Binding
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If required, you can change the IPv4 binding of the server by changing the Application IP Binding for the
+          instance
+        Keywords: ipv4,binding,ip,address,net_ip
+        FieldName: $ApplicationIPBinding
+        InputType: hidden
+        ParamFieldName: IPv4Binding
+        EnumValues: {}
+    - key: IPv6Binding
+      label: IPv6 Server Binding
+      category: TeamSpeak 6
+      subcategory: Server
+      description: Sets the IPv6 binding of the server
+      keywords: ipv6,binding,ip,address
+      input_type: text
+      param_field_name: IPv6Binding
+      default: '::'
+      placeholder: '::'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: IPv6 Server Binding
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the IPv6 binding of the server
+        Keywords: ipv6,binding,ip,address
+        FieldName: IPv6Binding
+        InputType: text
+        ParamFieldName: IPv6Binding
+        DefaultValue: '::'
+        Placeholder: '::'
+        EnumValues: {}
+    - key: threads-voice-udp
+      label: Voice UDP Threads
+      category: TeamSpeak 6
+      subcategory: Server
+      description: Sets the number of threads to use for voice processing. Empty = automatic based on CPU cores
+      keywords: threads,voice,udp,voice-udp,threads-voice-udp
+      input_type: number
+      param_field_name: threads-voice-udp
+      default: ''
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 1
+      max: 16
+      enum_values: {}
+      raw:
+        DisplayName: Voice UDP Threads
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of threads to use for voice processing. Empty = automatic based on CPU cores
+        Keywords: threads,voice,udp,voice-udp,threads-voice-udp
+        FieldName: threads-voice-udp
+        InputType: number
+        MinValue: '1'
+        MaxValue: '16'
+        ParamFieldName: threads-voice-udp
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: '4'
+        EnumValues: {}
+    - key: log-path
+      label: Log Path
+      category: TeamSpeak 6
+      subcategory: Server
+      description: Sets the directory path where log files are stored
+      keywords: log,path,logs,log-path
+      input_type: text
+      param_field_name: log-path
+      default: logs
+      placeholder: logs
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Log Path
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the directory path where log files are stored
+        Keywords: log,path,logs,log-path
+        FieldName: log-path
+        InputType: text
+        ParamFieldName: log-path
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: logs
+        Placeholder: logs
+        EnumValues: {}
+    - key: log-append
+      label: Append Logs
+      category: TeamSpeak 6
+      subcategory: Server
+      description: If set, the server will write one ever-growing log file per virtual server
+      keywords: log,append,log-append
+      input_type: checkbox
+      param_field_name: log-append
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Append Logs
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will write one ever-growing log file per virtual server
+        Keywords: log,append,log-append
+        FieldName: log-append
+        InputType: checkbox
+        ParamFieldName: log-append
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: no-default-virtual-server
+      label: No Default Virtual Server
+      category: TeamSpeak 6
+      subcategory: Server
+      description: If set, no default server is created even if no server exists in the database
+      keywords: virtual,server,default,no-default-virtual-server
+      input_type: checkbox
+      param_field_name: no-default-virtual-server
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: No Default Virtual Server
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, no default server is created even if no server exists in the database
+        Keywords: virtual,server,default,no-default-virtual-server
+        FieldName: no-default-virtual-server
+        InputType: checkbox
+        ParamFieldName: no-default-virtual-server
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: no-permission-update
+      label: No Permission Update
+      category: TeamSpeak 6
+      subcategory: Database
+      description: If set, disables automatic permission updates in the database
+      keywords: database,permission,update,no-permission-update
+      input_type: checkbox
+      param_field_name: no-permission-update
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: No Permission Update
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: If set, disables automatic permission updates in the database
+        Keywords: database,permission,update,no-permission-update
+        FieldName: no-permission-update
+        InputType: checkbox
+        ParamFieldName: no-permission-update
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: db-plugin
+      label: Database Plugin
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Specifies the database plugin to use
+      keywords: database,plugin,db-plugin
+      input_type: enum
+      param_field_name: db-plugin
+      default: sqlite3
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        mariadb: MariaDB/MySQL
+        sqlite3: SQLite3
+      raw:
+        DisplayName: Database Plugin
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Specifies the database plugin to use
+        Keywords: database,plugin,db-plugin
+        FieldName: db-plugin
+        InputType: enum
+        ParamFieldName: db-plugin
+        IncludeInCommandLine: true
+        DefaultValue: sqlite3
+        EnumValues:
+          mariadb: MariaDB/MySQL
+          sqlite3: SQLite3
+    - key: db-sql-path
+      label: SQL Path
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Sets the directory path to the SQL folder containing the SQL queries executed by the server
+      keywords: database,sql,path,db-sql-path
+      input_type: text
+      param_field_name: db-sql-path
+      default: sql
+      placeholder: sql
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: SQL Path
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Sets the directory path to the SQL folder containing the SQL queries executed by the server
+        Keywords: database,sql,path,db-sql-path
+        FieldName: db-sql-path
+        InputType: text
+        ParamFieldName: db-sql-path
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: sql
+        Placeholder: sql
+        EnumValues: {}
+    - key: db-sql-create-path
+      label: SQL Create Path
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Sets the path relative to the SQL Path where to load the database creation scripts from
+      keywords: database,sql,create,path,db-sql-create-path
+      input_type: text
+      param_field_name: db-sql-create-path
+      default: create_sqlite
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        create_mariadb: MariaDB/MySQL
+        create_sqlite: SQLite3
+      raw:
+        DisplayName: SQL Create Path
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Sets the path relative to the SQL Path where to load the database creation scripts from
+        Keywords: database,sql,create,path,db-sql-create-path
+        FieldName: db-sql-create-path
+        InputType: text
+        ParamFieldName: db-sql-create-path
+        IncludeInCommandLine: true
+        DefaultValue: create_sqlite
+        EnumValues:
+          create_mariadb: MariaDB/MySQL
+          create_sqlite: SQLite3
+    - key: db-client-keep-days
+      label: Client Keep Period
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Sets the period to keep clients in the database
+      keywords: database,client,keep,days,db-client-keep-days
+      input_type: number
+      param_field_name: db-client-keep-days
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 1
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Client Keep Period
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Sets the period to keep clients in the database
+        Keywords: database,client,keep,days,db-client-keep-days
+        FieldName: db-client-keep-days
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: db-client-keep-days
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: days
+        EnumValues: {}
+    - key: db-skip-integrity-check
+      label: Skip Database Integrity Check
+      category: TeamSpeak 6
+      subcategory: Database
+      description: If set, skips the database integrity check when opening the database. SQLite only
+      keywords: database,integrity,check,skip,db-skip-integrity-check
+      input_type: checkbox
+      param_field_name: db-skip-integrity-check
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Skip Database Integrity Check
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: If set, skips the database integrity check when opening the database. SQLite only
+        Keywords: database,integrity,check,skip,db-skip-integrity-check
+        FieldName: db-skip-integrity-check
+        InputType: checkbox
+        ParamFieldName: db-skip-integrity-check
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: db-host
+      label: Database Host
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Sets the hostname or IP address of the database server
+      keywords: database,host,db-host
+      input_type: text
+      param_field_name: db-host
+      default: localhost
+      placeholder: localhost
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Database Host
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Sets the hostname or IP address of the database server
+        Keywords: database,host,db-host
+        FieldName: db-host
+        InputType: text
+        ParamFieldName: db-host
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: localhost
+        Placeholder: localhost
+        EnumValues: {}
+    - key: db-port
+      label: Database Port
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Sets the port used to connect to the database server
+      keywords: database,port,db-port
+      input_type: number
+      param_field_name: db-port
+      default: '3306'
+      placeholder: '3306'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 1
+      max: 65535
+      enum_values: {}
+      raw:
+        DisplayName: Database Port
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Sets the port used to connect to the database server
+        Keywords: database,port,db-port
+        FieldName: db-port
+        InputType: number
+        MinValue: '1'
+        MaxValue: '65535'
+        ParamFieldName: db-port
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '3306'
+        Placeholder: '3306'
+        EnumValues: {}
+    - key: db-socket
+      label: Database Socket
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Sets the socket to use for the database connection
+      keywords: database,socket,db-socket
+      input_type: text
+      param_field_name: db-socket
+      default: ''
+      placeholder: /var/run/mysqld/mysqld.sock
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Database Socket
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Sets the socket to use for the database connection
+        Keywords: database,socket,db-socket
+        FieldName: db-socket
+        InputType: text
+        ParamFieldName: db-socket
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: /var/run/mysqld/mysqld.sock
+        EnumValues: {}
+    - key: db-timeout
+      label: Database Timeout
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Sets the timeout for the database connection
+      keywords: database,timeout,db-timeout
+      input_type: number
+      param_field_name: db-timeout
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 1
+      max: 432000
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Database Timeout
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Sets the timeout for the database connection
+        Keywords: database,timeout,db-timeout
+        FieldName: db-timeout
+        InputType: number
+        MinValue: '1'
+        MaxValue: '432000'
+        ParamFieldName: db-timeout
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: seconds
+        EnumValues: {}
+    - key: db-name
+      label: Database Name
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Sets the name of the database to use
+      keywords: database,name,db-name
+      input_type: text
+      param_field_name: db-name
+      default: ''
+      placeholder: teamspeak
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Database Name
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Sets the name of the database to use
+        Keywords: database,name,db-name
+        FieldName: db-name
+        InputType: text
+        ParamFieldName: db-name
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: teamspeak
+        EnumValues: {}
+    - key: db-username
+      label: Database Username
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Sets the username for database authentication
+      keywords: database,username
+      input_type: text
+      param_field_name: db-username
+      default: ''
+      placeholder: root
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Database Username
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Sets the username for database authentication
+        Keywords: database,username
+        FieldName: db-username
+        InputType: text
+        ParamFieldName: db-username
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: root
+        EnumValues: {}
+    - key: db-password
+      label: Database Password
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Sets the password for database authentication
+      keywords: database,password,db-password
+      input_type: password
+      param_field_name: db-password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Database Password
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Sets the password for database authentication
+        Keywords: database,password,db-password
+        FieldName: db-password
+        InputType: password
+        ParamFieldName: db-password
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: db-connections
+      label: Database Connections
+      category: TeamSpeak 6
+      subcategory: Database
+      description: Sets the number of connections to establish to the database
+      keywords: database,connections,db-connections
+      input_type: number
+      param_field_name: db-connections
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Database Connections
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: Sets the number of connections to establish to the database
+        Keywords: database,connections,db-connections
+        FieldName: db-connections
+        InputType: number
+        ParamFieldName: db-connections
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+    - key: db-log-queries
+      label: Log Database Queries
+      category: TeamSpeak 6
+      subcategory: Database
+      description: If set, logs database queries
+      keywords: database,log,queries,db-log-queries
+      input_type: checkbox
+      param_field_name: db-log-queries
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Log Database Queries
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Database:database:2
+        Description: If set, logs database queries
+        Keywords: database,log,queries,db-log-queries
+        FieldName: db-log-queries
+        InputType: checkbox
+        ParamFieldName: db-log-queries
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: query-pool-size
+      label: Query Pool Size
+      category: TeamSpeak 6
+      subcategory: Query
+      description: Sets the number of threads to use for query command processing. Empty = automatic based on CPU cores
+      keywords: query,pool,size,threads,query-pool-size
+      input_type: number
+      param_field_name: query-pool-size
+      default: ''
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 2
+      max: 32
+      enum_values: {}
+      raw:
+        DisplayName: Query Pool Size
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: Sets the number of threads to use for query command processing. Empty = automatic based on CPU cores
+        Keywords: query,pool,size,threads,query-pool-size
+        FieldName: query-pool-size
+        InputType: number
+        MinValue: '2'
+        MaxValue: '32'
+        ParamFieldName: query-pool-size
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: '2'
+        EnumValues: {}
+    - key: query-log-timing
+      label: Query Log Timing
+      category: TeamSpeak 6
+      subcategory: Query
+      description: Sets the interval after which to log query statistics
+      keywords: query,log,timing,interval,query-log-timing
+      input_type: number
+      param_field_name: query-log-timing
+      default: '3600'
+      placeholder: '3600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 10
+      max: 31556952
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Query Log Timing
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: Sets the interval after which to log query statistics
+        Keywords: query,log,timing,interval,query-log-timing
+        FieldName: query-log-timing
+        InputType: number
+        MinValue: '10'
+        MaxValue: '31556952'
+        ParamFieldName: query-log-timing
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '3600'
+        Placeholder: '3600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: query-ip-allow-list
+      label: Query IP Allow List
+      category: TeamSpeak 6
+      subcategory: Query
+      description: Specifies the path to a file listing IPs exempt from query flood protection
+      keywords: query,ip,allow,list,query-ip-allow-list
+      input_type: text
+      param_field_name: query-ip-allow-list
+      default: ./allowlist.txt
+      placeholder: ./allowlist.txt
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Query IP Allow List
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: Specifies the path to a file listing IPs exempt from query flood protection
+        Keywords: query,ip,allow,list,query-ip-allow-list
+        FieldName: query-ip-allow-list
+        InputType: text
+        ParamFieldName: query-ip-allow-list
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ./allowlist.txt
+        Placeholder: ./allowlist.txt
+        EnumValues: {}
+    - key: query-ip-block-list
+      label: Query IP Block List
+      category: TeamSpeak 6
+      subcategory: Query
+      description: Specifies the path to a file listing IPs that are blocked from the query interface
+      keywords: query,ip,block,list,query-ip-block-list
+      input_type: text
+      param_field_name: query-ip-block-list
+      default: ./blocklist.txt
+      placeholder: ./blocklist.txt
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Query IP Block List
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: Specifies the path to a file listing IPs that are blocked from the query interface
+        Keywords: query,ip,block,list,query-ip-block-list
+        FieldName: query-ip-block-list
+        InputType: text
+        ParamFieldName: query-ip-block-list
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ./blocklist.txt
+        Placeholder: ./blocklist.txt
+        EnumValues: {}
+    - key: query-admin-password
+      label: Query Admin Password
+      category: TeamSpeak 6
+      subcategory: Query
+      description: Sets a password for the serveradmin query account, overriding the database
+      keywords: query,admin,password,query-admin-password
+      input_type: password
+      param_field_name: query-admin-password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Query Admin Password
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: Sets a password for the serveradmin query account, overriding the database
+        Keywords: query,admin,password,query-admin-password
+        FieldName: query-admin-password
+        InputType: password
+        ParamFieldName: query-admin-password
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: query-log-commands
+      label: Log Query Commands
+      category: TeamSpeak 6
+      subcategory: Query
+      description: If set, every command received on the query interface will be logged
+      keywords: query,log,commands,query-log-commands
+      input_type: checkbox
+      param_field_name: query-log-commands
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Log Query Commands
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: If set, every command received on the query interface will be logged
+        Keywords: query,log,commands,query-log-commands
+        FieldName: query-log-commands
+        InputType: checkbox
+        ParamFieldName: query-log-commands
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: query-skip-brute-force-check
+      label: Skip Query Brute Force Check
+      category: TeamSpeak 6
+      subcategory: Query
+      description: If set, skips brute force checking when clients connect to the query interface
+      keywords: query,skip,brute,force,check,query-skip-brute-force-check
+      input_type: checkbox
+      param_field_name: query-skip-brute-force-check
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Skip Query Brute Force Check
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: If set, skips brute force checking when clients connect to the query interface
+        Keywords: query,skip,brute,force,check,query-skip-brute-force-check
+        FieldName: query-skip-brute-force-check
+        InputType: checkbox
+        ParamFieldName: query-skip-brute-force-check
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: query-buffer-mb
+      label: Query Memory Buffer
+      category: TeamSpeak 6
+      subcategory: Query
+      description: Sets the memory allocation for query connection buffering
+      keywords: query,buffer,memory,query-buffer-mb
+      input_type: number
+      param_field_name: query-buffer-mb
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 20
+      max: 100
+      suffix: MB
+      enum_values: {}
+      raw:
+        DisplayName: Query Memory Buffer
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: Sets the memory allocation for query connection buffering
+        Keywords: query,buffer,memory,query-buffer-mb
+        FieldName: query-buffer-mb
+        InputType: number
+        MinValue: '20'
+        MaxValue: '100'
+        ParamFieldName: query-buffer-mb
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: MB
+        EnumValues: {}
+    - key: query-documentation-path
+      label: Query Documentation Path
+      category: TeamSpeak 6
+      subcategory: Query
+      description: Specifies the directory path to the query documentation files
+      keywords: query,documentation,path,query-documentation-path
+      input_type: text
+      param_field_name: query-documentation-path
+      default: serverquerydocs
+      placeholder: serverquerydocs
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Query Documentation Path
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: Specifies the directory path to the query documentation files
+        Keywords: query,documentation,path,query-documentation-path
+        FieldName: query-documentation-path
+        InputType: text
+        ParamFieldName: query-documentation-path
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: serverquerydocs
+        Placeholder: serverquerydocs
+        EnumValues: {}
+    - key: query-timeout
+      label: Query Timeout
+      category: TeamSpeak 6
+      subcategory: Query
+      description: Sets the timeout for query connections
+      keywords: query,timeout,query-timeout
+      input_type: number
+      param_field_name: query-timeout
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Query Timeout
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: Sets the timeout for query connections
+        Keywords: query,timeout,query-timeout
+        FieldName: query-timeout
+        InputType: number
+        ParamFieldName: query-timeout
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: query-ssh-enable
+      label: Enable SSH Query Interface
+      category: TeamSpeak 6
+      subcategory: Query
+      description: If set, enables the SSH query interface
+      keywords: query,ssh,enable
+      input_type: checkbox
+      param_field_name: query-ssh-enable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable SSH Query Interface
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: If set, enables the SSH query interface
+        Keywords: query,ssh,enable
+        FieldName: query-ssh-enable
+        InputType: checkbox
+        ParamFieldName: query-ssh-enable
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: query-ssh-rsa-key
+      label: SSH Query RSA Key
+      category: TeamSpeak 6
+      subcategory: Query
+      description: Specifies the SSH RSA host key file to use for the query SSH interface
+      keywords: query,ssh,rsa,key,query-ssh-rsa-key
+      input_type: text
+      param_field_name: query-ssh-rsa-key
+      default: ssh_host_rsa_key
+      placeholder: ssh_host_rsa_key
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: SSH Query RSA Key
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: Specifies the SSH RSA host key file to use for the query SSH interface
+        Keywords: query,ssh,rsa,key,query-ssh-rsa-key
+        FieldName: query-ssh-rsa-key
+        InputType: text
+        ParamFieldName: query-ssh-rsa-key
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ssh_host_rsa_key
+        Placeholder: ssh_host_rsa_key
+        EnumValues: {}
+    - key: query-http-enable
+      label: Enable HTTP Query Interface
+      category: TeamSpeak 6
+      subcategory: Query
+      description: If set, enables the HTTP query interface
+      keywords: query,http,enable,query-http-enable
+      input_type: checkbox
+      param_field_name: query-http-enable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable HTTP Query Interface
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: If set, enables the HTTP query interface
+        Keywords: query,http,enable,query-http-enable
+        FieldName: query-http-enable
+        InputType: checkbox
+        ParamFieldName: query-http-enable
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: query-https-enable
+      label: Enable HTTPS Query Interface
+      category: TeamSpeak 6
+      subcategory: Query
+      description: If set, enables the HTTPS query interface
+      keywords: query,https,enable,query-https-enable
+      input_type: checkbox
+      param_field_name: query-https-enable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable HTTPS Query Interface
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: If set, enables the HTTPS query interface
+        Keywords: query,https,enable,query-https-enable
+        FieldName: query-https-enable
+        InputType: checkbox
+        ParamFieldName: query-https-enable
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: query-https-certificate
+      label: HTTPS Query Certificate
+      category: TeamSpeak 6
+      subcategory: Query
+      description: Specifies the file containing the certificate for HTTPS query connections
+      keywords: query,https,certificate,query-https-certificate
+      input_type: text
+      param_field_name: query-https-certificate
+      default: ''
+      placeholder: cert.pem
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: HTTPS Query Certificate
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: Specifies the file containing the certificate for HTTPS query connections
+        Keywords: query,https,certificate,query-https-certificate
+        FieldName: query-https-certificate
+        InputType: text
+        ParamFieldName: query-https-certificate
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: cert.pem
+        EnumValues: {}
+    - key: query-https-private-key
+      label: HTTPS Query Private Key
+      category: TeamSpeak 6
+      subcategory: Query
+      description: Specifies the file containing the private key for the certificate used by HTTPS query connections
+      keywords: query,https,private,key,query-https-private-key
+      input_type: text
+      param_field_name: query-https-private-key
+      default: ''
+      placeholder: privkey.pem
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: HTTPS Query Private Key
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Query:manufacturing:3
+        Description: Specifies the file containing the private key for the certificate used by HTTPS query connections
+        Keywords: query,https,private,key,query-https-private-key
+        FieldName: query-https-private-key
+        InputType: text
+        ParamFieldName: query-https-private-key
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: privkey.pem
+        EnumValues: {}
+    - key: http-proxy
+      label: HTTP Proxy
+      category: TeamSpeak 6
+      subcategory: Additional
+      description: Sets the proxy server for connecting to external services
+      keywords: http,proxy,external,services,http-proxy
+      input_type: text
+      param_field_name: http-proxy
+      default: ''
+      placeholder: http://proxy.example.com:8180
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: HTTP Proxy
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Additional:tune:4
+        Description: Sets the proxy server for connecting to external services
+        Keywords: http,proxy,external,services,http-proxy
+        FieldName: http-proxy
+        InputType: text
+        ParamFieldName: http-proxy
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: http://proxy.example.com:8180
+        EnumValues: {}
+    - key: crashdump-path
+      label: Crashdump Path
+      category: TeamSpeak 6
+      subcategory: Additional
+      description: Sets the directory path to store crash dumps
+      keywords: crashdump,path,crashdumps,crashdump-path
+      input_type: text
+      param_field_name: crashdump-path
+      default: crashdumps
+      placeholder: crashdumps
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Crashdump Path
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Additional:tune:4
+        Description: Sets the directory path to store crash dumps
+        Keywords: crashdump,path,crashdumps,crashdump-path
+        FieldName: crashdump-path
+        InputType: text
+        ParamFieldName: crashdump-path
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: crashdumps
+        Placeholder: crashdumps
+        EnumValues: {}
+    - key: hints-enabled
+      label: Enable Permission Hints
+      category: TeamSpeak 6
+      subcategory: Additional
+      description: If set, enables permission hints (may affect performance on larger servers)
+      keywords: hints,permission,enable,hints-enabled
+      input_type: checkbox
+      param_field_name: hints-enabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Permission Hints
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Additional:tune:4
+        Description: If set, enables permission hints (may affect performance on larger servers)
+        Keywords: hints,permission,enable,hints-enabled
+        FieldName: hints-enabled
+        InputType: checkbox
+        ParamFieldName: hints-enabled
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: maxmind-db-path
+      label: MaxMind DB Path
+      category: TeamSpeak 6
+      subcategory: Additional
+      description: Sets the directory path to the MaxMind IP database
+      keywords: maxmind,db,path,maxmind-db-path
+      input_type: text
+      param_field_name: maxmind-db-path
+      default: ''
+      placeholder: /path/to/GeoLite2-City.mmdb
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: MaxMind DB Path
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Additional:tune:4
+        Description: Sets the directory path to the MaxMind IP database
+        Keywords: maxmind,db,path,maxmind-db-path
+        FieldName: maxmind-db-path
+        InputType: text
+        ParamFieldName: maxmind-db-path
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: /path/to/GeoLite2-City.mmdb
+        EnumValues: {}
+    - key: administrative-domain
+      label: Administrative Domain
+      category: TeamSpeak 6
+      subcategory: Additional
+      description: Sets the administrative domain
+      keywords: administrative,domain,administrative-domain
+      input_type: text
+      param_field_name: administrative-domain
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Administrative Domain
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Additional:tune:4
+        Description: Sets the administrative domain
+        Keywords: administrative,domain,administrative-domain
+        FieldName: administrative-domain
+        InputType: text
+        ParamFieldName: administrative-domain
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: s3ft-enabled
+      label: Enable S3 File Transfer
+      category: TeamSpeak 6
+      subcategory: Storage
+      description: If set, enables S3 file transfer
+      keywords: s3,file,transfer,enable,s3ft-enabled
+      input_type: checkbox
+      param_field_name: s3ft-enabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable S3 File Transfer
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Storage:backup:5
+        Description: If set, enables S3 file transfer
+        Keywords: s3,file,transfer,enable,s3ft-enabled
+        FieldName: s3ft-enabled
+        InputType: checkbox
+        ParamFieldName: s3ft-enabled
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: s3ft-access-key
+      label: S3 Access Key
+      category: TeamSpeak 6
+      subcategory: Storage
+      description: Sets the access key for S3 file transfer
+      keywords: s3,access,key,s3ft-access-key
+      input_type: text
+      param_field_name: s3ft-access-key
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: S3 Access Key
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Storage:backup:5
+        Description: Sets the access key for S3 file transfer
+        Keywords: s3,access,key,s3ft-access-key
+        FieldName: s3ft-access-key
+        InputType: text
+        ParamFieldName: s3ft-access-key
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: s3ft-secret-key
+      label: S3 Secret Key
+      category: TeamSpeak 6
+      subcategory: Storage
+      description: Sets the secret key for S3 file transfer
+      keywords: s3,secret,key,s3ft-secret-key
+      input_type: password
+      param_field_name: s3ft-secret-key
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: S3 Secret Key
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Storage:backup:5
+        Description: Sets the secret key for S3 file transfer
+        Keywords: s3,secret,key,s3ft-secret-key
+        FieldName: s3ft-secret-key
+        InputType: password
+        ParamFieldName: s3ft-secret-key
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: s3ft-bucket
+      label: S3 Bucket
+      category: TeamSpeak 6
+      subcategory: Storage
+      description: Sets the S3 bucket for file storage
+      keywords: s3,bucket,s3ft-bucket
+      input_type: text
+      param_field_name: s3ft-bucket
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: S3 Bucket
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Storage:backup:5
+        Description: Sets the S3 bucket for file storage
+        Keywords: s3,bucket,s3ft-bucket
+        FieldName: s3ft-bucket
+        InputType: text
+        ParamFieldName: s3ft-bucket
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: s3ft-domain
+      label: S3 Domain
+      category: TeamSpeak 6
+      subcategory: Storage
+      description: Sets the S3 domain
+      keywords: s3,domain,s3ft-domain
+      input_type: text
+      param_field_name: s3ft-domain
+      default: ''
+      placeholder: s3.amazonaws.com
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: S3 Domain
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Storage:backup:5
+        Description: Sets the S3 domain
+        Keywords: s3,domain,s3ft-domain
+        FieldName: s3ft-domain
+        InputType: text
+        ParamFieldName: s3ft-domain
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: s3.amazonaws.com
+        EnumValues: {}
+    - key: s3ft-account-id
+      label: S3 Account ID
+      category: TeamSpeak 6
+      subcategory: Storage
+      description: Sets an optional S3 account ID
+      keywords: s3,account,id,s3ft-account-id
+      input_type: text
+      param_field_name: s3ft-account-id
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: S3 Account ID
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Storage:backup:5
+        Description: Sets an optional S3 account ID
+        Keywords: s3,account,id,s3ft-account-id
+        FieldName: s3ft-account-id
+        InputType: text
+        ParamFieldName: s3ft-account-id
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: s3ft-region
+      label: S3 Region
+      category: TeamSpeak 6
+      subcategory: Storage
+      description: Sets the region for S3 file transfer
+      keywords: s3,region,s3ft-region
+      input_type: text
+      param_field_name: s3ft-region
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: S3 Region
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Storage:backup:5
+        Description: Sets the region for S3 file transfer
+        Keywords: s3,region,s3ft-region
+        FieldName: s3ft-region
+        InputType: text
+        ParamFieldName: s3ft-region
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: s3ft-presigned-url-expiration
+      label: S3 Presigned URL Expiration
+      category: TeamSpeak 6
+      subcategory: Storage
+      description: Sets the expiration time for presigned URLs
+      keywords: s3,presigned,url,expiration,s3ft-presigned-url-expiration
+      input_type: number
+      param_field_name: s3ft-presigned-url-expiration
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: S3 Presigned URL Expiration
+        Category: TeamSpeak 6:stadia_controller
+        Subcategory: Storage:backup:5
+        Description: Sets the expiration time for presigned URLs
+        Keywords: s3,presigned,url,expiration,s3ft-presigned-url-expiration
+        FieldName: s3ft-presigned-url-expiration
+        InputType: number
+        ParamFieldName: s3ft-presigned-url-expiration
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: ServerVersion
+      label: Server Version
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [server version](https://github.com/teamspeak/teamspeak6-server/releases) to install. Format:
+        v6.0.0-beta2. Empty = latest release. Update the server after changing this setting
+      keywords: server,version,latest,specific
+      input_type: text
+      param_field_name: ServerVersion
+      default: ''
+      placeholder: v6.0.0-beta2
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [server version](https://github.com/teamspeak/teamspeak6-server/releases) to install. Format:
+          v6.0.0-beta2. Empty = latest release. Update the server after changing this setting
+        Keywords: server,version,latest,specific
+        FieldName: ServerVersion
+        InputType: text
+        ParamFieldName: ServerVersion
+        DefaultValue: ''
+        Placeholder: v6.0.0-beta2
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: machine-id
+    label: Machine ID
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: license-path
+    label: License File Directory Path
+    default: ./
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: IPv6Binding
+    label: IPv6 Server Binding
+    default: '::'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: threads-voice-udp
+    label: Voice UDP Threads
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: log-path
+    label: Log Path
+    default: logs
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: log-append
+    label: Append Logs
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: no-default-virtual-server
+    label: No Default Virtual Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: no-permission-update
+    label: No Permission Update
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-plugin
+    label: Database Plugin
+    default: sqlite3
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-sql-path
+    label: SQL Path
+    default: sql
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-sql-create-path
+    label: SQL Create Path
+    default: create_sqlite
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-client-keep-days
+    label: Client Keep Period
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-skip-integrity-check
+    label: Skip Database Integrity Check
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-host
+    label: Database Host
+    default: localhost
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-port
+    label: Database Port
+    default: '3306'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-socket
+    label: Database Socket
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-timeout
+    label: Database Timeout
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-name
+    label: Database Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-username
+    label: Database Username
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-password
+    label: Database Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: db-connections
+    label: Database Connections
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: db-log-queries
+    label: Log Database Queries
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-pool-size
+    label: Query Pool Size
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-log-timing
+    label: Query Log Timing
+    default: '3600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-ip-allow-list
+    label: Query IP Allow List
+    default: ./allowlist.txt
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-ip-block-list
+    label: Query IP Block List
+    default: ./blocklist.txt
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-admin-password
+    label: Query Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: query-log-commands
+    label: Log Query Commands
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-skip-brute-force-check
+    label: Skip Query Brute Force Check
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-buffer-mb
+    label: Query Memory Buffer
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-documentation-path
+    label: Query Documentation Path
+    default: serverquerydocs
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-timeout
+    label: Query Timeout
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-ssh-enable
+    label: Enable SSH Query Interface
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-ssh-rsa-key
+    label: SSH Query RSA Key
+    default: ssh_host_rsa_key
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: query-http-enable
+    label: Enable HTTP Query Interface
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-https-enable
+    label: Enable HTTPS Query Interface
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-https-certificate
+    label: HTTPS Query Certificate
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query-https-private-key
+    label: HTTPS Query Private Key
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: http-proxy
+    label: HTTP Proxy
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: crashdump-path
+    label: Crashdump Path
+    default: crashdumps
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hints-enabled
+    label: Enable Permission Hints
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: maxmind-db-path
+    label: MaxMind DB Path
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: administrative-domain
+    label: Administrative Domain
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: s3ft-enabled
+    label: Enable S3 File Transfer
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: s3ft-access-key
+    label: S3 Access Key
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: s3ft-secret-key
+    label: S3 Secret Key
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: s3ft-bucket
+    label: S3 Bucket
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: s3ft-domain
+    label: S3 Domain
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: s3ft-account-id
+    label: S3 Account ID
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: s3ft-region
+    label: S3 Region
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: s3ft-presigned-url-expiration
+    label: S3 Presigned URL Expiration
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerVersion
+    label: Server Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

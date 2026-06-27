@@ -5,13 +5,18 @@ category: Imported
 summary: Night of the Dead Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1420710'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: >-
+    /usr/bin/xvfb-run {PlatformArgs} ?listen -Port={GamePort} -QueryPort={QueryPort} -MultiHome={ApplicationIPBinding}
+    {DisableAntiCheat}{FormattedArgs} -stdout -FullStdOutLogOutput -CRASHREPORTS
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,2655 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 7777
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: LF/Saved/Config/ServerSettings.ini
+    type: ini
+    editable: true
+  - path: ServerSettings.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: ServerName
+      label: Server Name
+      category: Night of the Dead
+      subcategory: Server
+      description: Sets the name of the server to be displayed on the server list
+      keywords: server,name,ServerName
+      input_type: text
+      param_field_name: ServerSettings.ServerName
+      default: AMP Powered Night of the Dead Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server to be displayed on the server list
+        Keywords: server,name,ServerName
+        FieldName: ServerName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: ServerSettings.ServerName
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Night of the Dead Server
+        EnumValues: {}
+    - key: DefaultMessageOfTheDay
+      label: Message Of The Day
+      category: Night of the Dead
+      subcategory: Server
+      description: Sets the message of the day (MOTD) displayed when players join
+      keywords: message,motd,DefaultMessageOfTheDay
+      input_type: text
+      param_field_name: SystemSettings.DefaultMessageOfTheDay
+      default: Welcome to NOTD!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Message Of The Day
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the message of the day (MOTD) displayed when players join
+        Keywords: message,motd,DefaultMessageOfTheDay
+        FieldName: DefaultMessageOfTheDay
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: SystemSettings.DefaultMessageOfTheDay
+        IncludeInCommandLine: false
+        DefaultValue: Welcome to NOTD!
+        EnumValues: {}
+    - key: Password
+      label: Server Password
+      category: Night of the Dead
+      subcategory: Server
+      description: Sets the password to join the server. Default is no password
+      keywords: password
+      input_type: password
+      param_field_name: ServerSettings.Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server. Default is no password
+        Keywords: password
+        FieldName: Password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: ServerSettings.Password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: IngameAdminPassword
+      label: Admin Password
+      category: Night of the Dead
+      subcategory: Server
+      description: Sets the password for in-game admin commands. Default is no password
+      keywords: admin,password,IngameAdminPassword
+      input_type: password
+      param_field_name: SystemSettings.IngameAdminPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for in-game admin commands. Default is no password
+        Keywords: admin,password,IngameAdminPassword
+        FieldName: IngameAdminPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: SystemSettings.IngameAdminPassword
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Night of the Dead
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server
+      keywords: max,players,limit,MaxPlayers
+      input_type: number
+      param_field_name: ServerSettings.MaxPlayers
+      default: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server
+        Keywords: max,players,limit,MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: ServerSettings.MaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '16'
+        Suffix: players
+        EnumValues: {}
+        MinValue: '1'
+    - key: SaveName
+      label: Save Name
+      category: Night of the Dead
+      subcategory: Server
+      description: Sets the name of the world directory to load, or to create if it does not already exist
+      keywords: save,name,SaveName
+      input_type: text
+      param_field_name: SystemSettings.SaveName
+      default: world
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Save Name
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the world directory to load, or to create if it does not already exist
+        Keywords: save,name,SaveName
+        FieldName: SaveName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: SystemSettings.SaveName
+        IncludeInCommandLine: false
+        DefaultValue: world
+        EnumValues: {}
+    - key: SaveIntervalHour
+      label: Save Interval
+      category: Night of the Dead
+      subcategory: Server
+      description: Sets the save interval for the server. 1 in-game hour = 5 minutes in real time
+      keywords: save,interval,SaveIntervalHour
+      input_type: number
+      param_field_name: SystemSettings.SaveIntervalHour
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: in-game hours
+      enum_values: {}
+      raw:
+        DisplayName: Save Interval
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the save interval for the server. 1 in-game hour = 5 minutes in real time
+        Keywords: save,interval,SaveIntervalHour
+        FieldName: SaveIntervalHour
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: SystemSettings.SaveIntervalHour
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: in-game hours
+        EnumValues: {}
+    - key: DisableAntiCheat
+      label: Disable Anti-Cheat
+      category: Night of the Dead
+      subcategory: Server
+      description: If set, anti-cheat will be disabled on the server
+      keywords: anti,cheat,anticheat,DisableAntiCheat
+      input_type: checkbox
+      param_field_name: DisableAntiCheat
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-DisableAntiCheat '
+      raw:
+        DisplayName: Disable Anti-Cheat
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, anti-cheat will be disabled on the server
+        Keywords: anti,cheat,anticheat,DisableAntiCheat
+        FieldName: DisableAntiCheat
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: DisableAntiCheat
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-DisableAntiCheat '
+    - key: Difficulty
+      label: Game Difficulty
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: >-
+        Sets the game difficulty level. If Custom is selected, server parameters can be set under Custom Difficulty
+        Settings
+      keywords: game,difficulty
+      input_type: enum
+      param_field_name: GameSettings.Difficulty
+      default: Normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Peaceful: Peaceful
+        Easy: Easy
+        Normal: Normal
+        Hard: Hard
+        Survival: Survival
+        Challenge: Challenge
+        Legend: Legend
+        Custom: Custom
+      raw:
+        DisplayName: Game Difficulty
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the game difficulty level. If Custom is selected, server parameters can be set under Custom Difficulty
+          Settings
+        Keywords: game,difficulty
+        FieldName: Difficulty
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings.Difficulty
+        IncludeInCommandLine: false
+        DefaultValue: Normal
+        EnumValues:
+          Peaceful: Peaceful
+          Easy: Easy
+          Normal: Normal
+          Hard: Hard
+          Survival: Survival
+          Challenge: Challenge
+          Legend: Legend
+          Custom: Custom
+    - key: NoWave
+      label: Disable Wave
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: If set, there will be no wave
+      keywords: wave,NoWave
+      input_type: checkbox
+      param_field_name: GameSettings/General.NoWave
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Wave
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, there will be no wave
+        Keywords: wave,NoWave
+        FieldName: NoWave
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/General.NoWave
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: NoSpawnBuildingBlocker
+      label: Activate Building Forbidden Area
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: If set, the building forbidden area will be activated
+      keywords: spawn,building,blocker,forbidden,darea,NoSpawnBuildingBlocker
+      input_type: checkbox
+      param_field_name: GameSettings/General.NoSpawnBuildingBlocker
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Activate Building Forbidden Area
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the building forbidden area will be activated
+        Keywords: spawn,building,blocker,forbidden,darea,NoSpawnBuildingBlocker
+        FieldName: NoSpawnBuildingBlocker
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/General.NoSpawnBuildingBlocker
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: NoZombieRespawn
+      label: Disable Zombie Respawn
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: If set, zombies will not respawn
+      keywords: zombie,respawn,NoZombieRespawn
+      input_type: checkbox
+      param_field_name: GameSettings/General.NoZombieRespawn
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Zombie Respawn
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, zombies will not respawn
+        Keywords: zombie,respawn,NoZombieRespawn
+        FieldName: NoZombieRespawn
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/General.NoZombieRespawn
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: NaturalObjectRespawn
+      label: Enable Natural Objects Respawn
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: If enabled, natural objects will respawn
+      keywords: natural,objects,respawn,NaturalObjectRespawn
+      input_type: checkbox
+      param_field_name: GameSettings/General.NaturalObjectRespawn
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Natural Objects Respawn
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, natural objects will respawn
+        Keywords: natural,objects,respawn,NaturalObjectRespawn
+        FieldName: NaturalObjectRespawn
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/General.NaturalObjectRespawn
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: SyntheticObjectRespawn
+      label: Enable Synthetic Objects Respawn
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: If enabled, synthetic objects will respawn
+      keywords: synthetic,objects,respawn,SyntheticObjectRespawn
+      input_type: checkbox
+      param_field_name: GameSettings/General.SyntheticObjectRespawn
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Synthetic Objects Respawn
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, synthetic objects will respawn
+        Keywords: synthetic,objects,respawn,SyntheticObjectRespawn
+        FieldName: SyntheticObjectRespawn
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/General.SyntheticObjectRespawn
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: NoGeneratorTrouble
+      label: Disable Generator Breakdown
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: If set, generators will not break down
+      keywords: generator,breakdown,NoGeneratorTrouble
+      input_type: checkbox
+      param_field_name: GameSettings/General.NoGeneratorTrouble
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Generator Breakdown
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, generators will not break down
+        Keywords: generator,breakdown,NoGeneratorTrouble
+        FieldName: NoGeneratorTrouble
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/General.NoGeneratorTrouble
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: NoDeathResearchDrop
+      label: Disable Research Loss On Death
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: If set, research will not be lost on death
+      keywords: research,drop,loss,death,NoDeathResearchDrop
+      input_type: checkbox
+      param_field_name: GameSettings/General.NoDeathResearchDrop
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Research Loss On Death
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, research will not be lost on death
+        Keywords: research,drop,loss,death,NoDeathResearchDrop
+        FieldName: NoDeathResearchDrop
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/General.NoDeathResearchDrop
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: DropItemsOnExit
+      label: Enable Item Drop On Exit
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: If enabled, items will be dropped on exit
+      keywords: item,drop,exit,DropItemsOnExit
+      input_type: checkbox
+      param_field_name: GameSettings/General.DropItemsOnExit
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Item Drop On Exit
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, items will be dropped on exit
+        Keywords: item,drop,exit,DropItemsOnExit
+        FieldName: DropItemsOnExit
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/General.DropItemsOnExit
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: NoTeamKill
+      label: Disable Team Kill
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: If set, team kill will be disabled
+      keywords: team,kill,NoTeamKill
+      input_type: checkbox
+      param_field_name: GameSettings/General.NoTeamKill
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Team Kill
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, team kill will be disabled
+        Keywords: team,kill,NoTeamKill
+        FieldName: NoTeamKill
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/General.NoTeamKill
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: UsePlayerBuildingCorrode
+      label: Enable Building Decay
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: If set, building decay will occur after 5 days of inactivity
+      keywords: building,decay,corrode,UsePlayerBuildingCorrode
+      input_type: checkbox
+      param_field_name: GameSettings/General.UsePlayerBuildingCorrode
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Building Decay
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, building decay will occur after 5 days of inactivity
+        Keywords: building,decay,corrode,UsePlayerBuildingCorrode
+        FieldName: UsePlayerBuildingCorrode
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/General.UsePlayerBuildingCorrode
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: MaxWaveSpawnCount
+      label: Wave Zombie Amount Limit
+      category: Night of the Dead
+      subcategory: Gameplay
+      description: Sets the wave zombie amount limit
+      keywords: wave,zombie,limit,MaxWaveSpawnCount
+      input_type: enum
+      param_field_name: GameSettings/General.MaxWaveSpawnCount
+      default: '200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '50': '50'
+        '100': '100'
+        '200': 200 (default)
+        '400': '400'
+        '800': '800'
+        '2000': '2000'
+      raw:
+        DisplayName: Wave Zombie Amount Limit
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the wave zombie amount limit
+        Keywords: wave,zombie,limit,MaxWaveSpawnCount
+        FieldName: MaxWaveSpawnCount
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/General.MaxWaveSpawnCount
+        IncludeInCommandLine: false
+        DefaultValue: '200'
+        EnumValues:
+          '50': '50'
+          '100': '100'
+          '200': 200 (default)
+          '400': '400'
+          '800': '800'
+          '2000': '2000'
+    - key: NormalZombieHealth
+      label: Light Zombie HP
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the light zombie HP
+      keywords: light,normal,zombie,health,hp,NormalZombieHealth
+      input_type: number
+      param_field_name: GameSettings/Basic.NormalZombieHealth
+      default: '17'
+      placeholder: '17'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Light Zombie HP
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the light zombie HP
+        Keywords: light,normal,zombie,health,hp,NormalZombieHealth
+        FieldName: NormalZombieHealth
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.NormalZombieHealth
+        IncludeInCommandLine: false
+        DefaultValue: '17'
+        Placeholder: '17'
+        EnumValues: {}
+    - key: SpecialZombieHealth
+      label: Heavy Zombie HP
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the heavy zombie HP
+      keywords: heavy,special,zombie,health,hp,SpecialZombieHealth
+      input_type: number
+      param_field_name: GameSettings/Basic.SpecialZombieHealth
+      default: '17'
+      placeholder: '17'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Heavy Zombie HP
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the heavy zombie HP
+        Keywords: heavy,special,zombie,health,hp,SpecialZombieHealth
+        FieldName: SpecialZombieHealth
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.SpecialZombieHealth
+        IncludeInCommandLine: false
+        DefaultValue: '17'
+        Placeholder: '17'
+        EnumValues: {}
+    - key: GiantZombieHealth
+      label: Giant Zombie HP
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the giant zombie HP
+      keywords: giant,zombie,health,hp,GiantZombieHealth
+      input_type: number
+      param_field_name: GameSettings/Basic.GiantZombieHealth
+      default: '17'
+      placeholder: '17'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Giant Zombie HP
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the giant zombie HP
+        Keywords: giant,zombie,health,hp,GiantZombieHealth
+        FieldName: GiantZombieHealth
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.GiantZombieHealth
+        IncludeInCommandLine: false
+        DefaultValue: '17'
+        Placeholder: '17'
+        EnumValues: {}
+    - key: BossZombieHealth
+      label: Unique Zombie HP
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the unique zombie HP
+      keywords: unique,zombie,health,hp,BossZombieHealth
+      input_type: number
+      param_field_name: GameSettings/Basic.BossZombieHealth
+      default: '17'
+      placeholder: '17'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Unique Zombie HP
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the unique zombie HP
+        Keywords: unique,zombie,health,hp,BossZombieHealth
+        FieldName: BossZombieHealth
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.BossZombieHealth
+        IncludeInCommandLine: false
+        DefaultValue: '17'
+        Placeholder: '17'
+        EnumValues: {}
+    - key: ZombieDamage
+      label: Zombie Damage
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the zombie damage
+      keywords: zombie,damage,ZombieDamage
+      input_type: number
+      param_field_name: GameSettings/Basic.ZombieDamage
+      default: '25'
+      placeholder: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Zombie Damage
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the zombie damage
+        Keywords: zombie,damage,ZombieDamage
+        FieldName: ZombieDamage
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.ZombieDamage
+        IncludeInCommandLine: false
+        DefaultValue: '25'
+        Placeholder: '25'
+        EnumValues: {}
+    - key: ZombieMovementSpeed
+      label: Zombie Movement Speed
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the zombie movement speed
+      keywords: zombie,movement,speed,ZombieMovementSpeed
+      input_type: number
+      param_field_name: GameSettings/Basic.ZombieMovementSpeed
+      default: '37'
+      placeholder: '37'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Zombie Movement Speed
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the zombie movement speed
+        Keywords: zombie,movement,speed,ZombieMovementSpeed
+        FieldName: ZombieMovementSpeed
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.ZombieMovementSpeed
+        IncludeInCommandLine: false
+        DefaultValue: '37'
+        Placeholder: '37'
+        EnumValues: {}
+    - key: WorldZombieSpawn
+      label: World Zombie Spawn Amount
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the world zombie spawn amount
+      keywords: world,zombie,spawn,amount,WorldZombieSpawn
+      input_type: number
+      param_field_name: GameSettings/Basic.WorldZombieSpawn
+      default: '25'
+      placeholder: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: World Zombie Spawn Amount
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the world zombie spawn amount
+        Keywords: world,zombie,spawn,amount,WorldZombieSpawn
+        FieldName: WorldZombieSpawn
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.WorldZombieSpawn
+        IncludeInCommandLine: false
+        DefaultValue: '25'
+        Placeholder: '25'
+        EnumValues: {}
+    - key: WaveZombieHealth
+      label: Wave Zombie HP
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the wave zombie HP
+      keywords: wave,zombie,health,hp,WaveZombieHealth
+      input_type: number
+      param_field_name: GameSettings/Basic.WaveZombieHealth
+      default: '25'
+      placeholder: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Wave Zombie HP
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the wave zombie HP
+        Keywords: wave,zombie,health,hp,WaveZombieHealth
+        FieldName: WaveZombieHealth
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.WaveZombieHealth
+        IncludeInCommandLine: false
+        DefaultValue: '25'
+        Placeholder: '25'
+        EnumValues: {}
+    - key: WaveNormalZombieAmount
+      label: Light Zombie Amount
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the light zombie wave amount
+      keywords: light,normal,zombie,amount,WaveNormalZombieAmount
+      input_type: number
+      param_field_name: GameSettings/Basic.WaveNormalZombieAmount
+      default: '44'
+      placeholder: '44'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Light Zombie Amount
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the light zombie wave amount
+        Keywords: light,normal,zombie,amount,WaveNormalZombieAmount
+        FieldName: WaveNormalZombieAmount
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.WaveNormalZombieAmount
+        IncludeInCommandLine: false
+        DefaultValue: '44'
+        Placeholder: '44'
+        EnumValues: {}
+    - key: WaveSpecialZombieAmount
+      label: Heavy Zombie Amount
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the heavy zombie wave amount
+      keywords: heavy,special,zombie,amount,WaveSpecialZombieAmount
+      input_type: number
+      param_field_name: GameSettings/Basic.WaveSpecialZombieAmount
+      default: '18'
+      placeholder: '18'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Heavy Zombie Amount
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the heavy zombie wave amount
+        Keywords: heavy,special,zombie,amount,WaveSpecialZombieAmount
+        FieldName: WaveSpecialZombieAmount
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.WaveSpecialZombieAmount
+        IncludeInCommandLine: false
+        DefaultValue: '18'
+        Placeholder: '18'
+        EnumValues: {}
+    - key: WaveGiantZombieAmount
+      label: Giant Zombie Amount
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the giant zombie wave amount
+      keywords: giant,zombie,amount,WaveGiantZombieAmount
+      input_type: number
+      param_field_name: GameSettings/Basic.WaveGiantZombieAmount
+      default: '21'
+      placeholder: '21'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Giant Zombie Amount
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the giant zombie wave amount
+        Keywords: giant,zombie,amount,WaveGiantZombieAmount
+        FieldName: WaveGiantZombieAmount
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.WaveGiantZombieAmount
+        IncludeInCommandLine: false
+        DefaultValue: '21'
+        Placeholder: '21'
+        EnumValues: {}
+    - key: AnimalHealth
+      label: Animal HP
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the animal HP
+      keywords: animal,health,hp,AnimalHealth
+      input_type: number
+      param_field_name: GameSettings/Basic.AnimalHealth
+      default: '17'
+      placeholder: '17'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Animal HP
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the animal HP
+        Keywords: animal,health,hp,AnimalHealth
+        FieldName: AnimalHealth
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.AnimalHealth
+        IncludeInCommandLine: false
+        DefaultValue: '17'
+        Placeholder: '17'
+        EnumValues: {}
+    - key: AnimalDamage
+      label: Animal Attack Damage
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the animal attack damage
+      keywords: animal,attack,damage,AnimalDamage
+      input_type: number
+      param_field_name: GameSettings/Basic.AnimalDamage
+      default: '18'
+      placeholder: '18'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Animal Attack Damage
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the animal attack damage
+        Keywords: animal,attack,damage,AnimalDamage
+        FieldName: AnimalDamage
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.AnimalDamage
+        IncludeInCommandLine: false
+        DefaultValue: '18'
+        Placeholder: '18'
+        EnumValues: {}
+    - key: WorldNormalZombieRespawnTime
+      label: Light Zombie Respawn Time
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the light zombie respawn time
+      keywords: light,normal,zombie,respawn,time,WorldNormalZombieRespawnTime
+      input_type: enum
+      param_field_name: GameSettings/Basic.WorldNormalZombieRespawnTime
+      default: '120'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '30': '30'
+        '60': '60'
+        '120': 120 (default)
+        '180': '180'
+        '240': '240'
+      raw:
+        DisplayName: Light Zombie Respawn Time
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the light zombie respawn time
+        Keywords: light,normal,zombie,respawn,time,WorldNormalZombieRespawnTime
+        FieldName: WorldNormalZombieRespawnTime
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.WorldNormalZombieRespawnTime
+        IncludeInCommandLine: false
+        DefaultValue: '120'
+        EnumValues:
+          '30': '30'
+          '60': '60'
+          '120': 120 (default)
+          '180': '180'
+          '240': '240'
+    - key: WorldSpecialZombieRespawnTime
+      label: Heavy Zombie Respawn Time
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the heavy zombie respawn time
+      keywords: heavy,special,zombie,respawn,time,WorldSpecialZombieRespawnTime
+      input_type: enum
+      param_field_name: GameSettings/Basic.WorldSpecialZombieRespawnTime
+      default: '600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '120': '120'
+        '300': '300'
+        '600': 600 (default)
+        '900': '900'
+        '1200': '1200'
+      raw:
+        DisplayName: Heavy Zombie Respawn Time
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the heavy zombie respawn time
+        Keywords: heavy,special,zombie,respawn,time,WorldSpecialZombieRespawnTime
+        FieldName: WorldSpecialZombieRespawnTime
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.WorldSpecialZombieRespawnTime
+        IncludeInCommandLine: false
+        DefaultValue: '600'
+        EnumValues:
+          '120': '120'
+          '300': '300'
+          '600': 600 (default)
+          '900': '900'
+          '1200': '1200'
+    - key: WorldGiantZombieRespawnTime
+      label: Giant Zombie Respawn Time
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the giant zombie respawn time
+      keywords: giant,zombie,respawn,time,WorldGiantZombieRespawnTime
+      input_type: enum
+      param_field_name: GameSettings/Basic.WorldGiantZombieRespawnTime
+      default: '600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '120': '120'
+        '300': '300'
+        '600': 600 (default)
+        '900': '900'
+        '1200': '1200'
+      raw:
+        DisplayName: Giant Zombie Respawn Time
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the giant zombie respawn time
+        Keywords: giant,zombie,respawn,time,WorldGiantZombieRespawnTime
+        FieldName: WorldGiantZombieRespawnTime
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Basic.WorldGiantZombieRespawnTime
+        IncludeInCommandLine: false
+        DefaultValue: '600'
+        EnumValues:
+          '120': '120'
+          '300': '300'
+          '600': 600 (default)
+          '900': '900'
+          '1200': '1200'
+    - key: NoExperienceLoss
+      label: Disable XP Loss On Death
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: If set, no experience will be lost on death
+      keywords: experience,xp,loss,death,NoExperienceLoss
+      input_type: checkbox
+      param_field_name: GameSettings/Advanced.NoExperienceLoss
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable XP Loss On Death
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: If set, no experience will be lost on death
+        Keywords: experience,xp,loss,death,NoExperienceLoss
+        FieldName: NoExperienceLoss
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.NoExperienceLoss
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: NoDeathItemDrop
+      label: Disable Item Drop On Death
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: If set, no items will be dropped on death
+      keywords: item,drop,death,NoDeathItemDrop
+      input_type: checkbox
+      param_field_name: GameSettings/Advanced.NoDeathItemDrop
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Item Drop On Death
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: If set, no items will be dropped on death
+        Keywords: item,drop,death,NoDeathItemDrop
+        FieldName: NoDeathItemDrop
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.NoDeathItemDrop
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: NoDeathEquipmentItemDrop
+      label: Disable Equipment Drop On Death
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: If set, no equipment will be dropped on death
+      keywords: equipment,drop,death,NoDeathEquipmentItemDrop
+      input_type: checkbox
+      param_field_name: GameSettings/Advanced.NoDeathEquipmentItemDrop
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Equipment Drop On Death
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: If set, no equipment will be dropped on death
+        Keywords: equipment,drop,death,NoDeathEquipmentItemDrop
+        FieldName: NoDeathEquipmentItemDrop
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.NoDeathEquipmentItemDrop
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: ResearchDataConsumption
+      label: Research Data Consumption
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets research data consumption
+      keywords: research,data,consumption,ResearchDataConsumption
+      input_type: number
+      param_field_name: GameSettings/Advanced.ResearchDataConsumption
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Research Data Consumption
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets research data consumption
+        Keywords: research,data,consumption,ResearchDataConsumption
+        FieldName: ResearchDataConsumption
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.ResearchDataConsumption
+        IncludeInCommandLine: false
+        DefaultValue: '50'
+        Placeholder: '50'
+        EnumValues: {}
+    - key: FishSpeed
+      label: Fish Speed
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets fish speed
+      keywords: fish,speed,FishSpeed
+      input_type: number
+      param_field_name: GameSettings/Advanced.FishSpeed
+      default: '66'
+      placeholder: '66'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Fish Speed
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets fish speed
+        Keywords: fish,speed,FishSpeed
+        FieldName: FishSpeed
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.FishSpeed
+        IncludeInCommandLine: false
+        DefaultValue: '66'
+        Placeholder: '66'
+        EnumValues: {}
+    - key: FishingGaugeDecrease
+      label: Fish Power
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets fish power
+      keywords: fishing,gauge,increase,power,FishingGaugeDecrease
+      input_type: number
+      param_field_name: GameSettings/Advanced.FishingGaugeDecrease
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Fish Power
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets fish power
+        Keywords: fishing,gauge,increase,power,FishingGaugeDecrease
+        FieldName: FishingGaugeDecrease
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.FishingGaugeDecrease
+        IncludeInCommandLine: false
+        DefaultValue: '40'
+        Placeholder: '40'
+        EnumValues: {}
+    - key: SuperiorOrHigherEquipmentGainMultiplier
+      label: High-Grade Equipment Drop Rate
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the high-grade equipment drop rate
+      keywords: superior,high,equipment,gain,multiplier,rate,SuperiorOrHigherEquipmentGainMultiplier
+      input_type: number
+      param_field_name: GameSettings/Advanced.SuperiorOrHigherEquipmentGainMultiplier
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: High-Grade Equipment Drop Rate
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the high-grade equipment drop rate
+        Keywords: superior,high,equipment,gain,multiplier,rate,SuperiorOrHigherEquipmentGainMultiplier
+        FieldName: SuperiorOrHigherEquipmentGainMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.SuperiorOrHigherEquipmentGainMultiplier
+        IncludeInCommandLine: false
+        DefaultValue: '40'
+        Placeholder: '40'
+        EnumValues: {}
+    - key: BuildingHit
+      label: Building HP
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets building HP
+      keywords: building,health,hp,BuildingHit
+      input_type: number
+      param_field_name: GameSettings/Advanced.BuildingHit
+      default: '90'
+      placeholder: '90'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Building HP
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets building HP
+        Keywords: building,health,hp,BuildingHit
+        FieldName: BuildingHit
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.BuildingHit
+        IncludeInCommandLine: false
+        DefaultValue: '90'
+        Placeholder: '90'
+        EnumValues: {}
+    - key: TrapDamage
+      label: Trap Attack Damage
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets trap attack damage
+      keywords: trap,attack,damage,TrapDamage
+      input_type: number
+      param_field_name: GameSettings/Advanced.TrapDamage
+      default: '66'
+      placeholder: '66'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Trap Attack Damage
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets trap attack damage
+        Keywords: trap,attack,damage,TrapDamage
+        FieldName: TrapDamage
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.TrapDamage
+        IncludeInCommandLine: false
+        DefaultValue: '66'
+        Placeholder: '66'
+        EnumValues: {}
+    - key: ResourcesReturnedAfterBuildingDestroyed
+      label: Materials Return Rate
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the materials return rate after building destruction
+      keywords: materials,return,rate,building,destruction,ResourcesReturnedAfterBuildingDestroyed
+      input_type: number
+      param_field_name: GameSettings/Advanced.ResourcesReturnedAfterBuildingDestroyed
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Materials Return Rate
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the materials return rate after building destruction
+        Keywords: materials,return,rate,building,destruction,ResourcesReturnedAfterBuildingDestroyed
+        FieldName: ResourcesReturnedAfterBuildingDestroyed
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.ResourcesReturnedAfterBuildingDestroyed
+        IncludeInCommandLine: false
+        DefaultValue: '30'
+        Placeholder: '30'
+        EnumValues: {}
+    - key: AmountOfExperienceGained
+      label: Experience Gain Amount
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the amount of experience gained
+      keywords: experience,gain,AmountOfExperienceGained
+      input_type: enum
+      param_field_name: GameSettings/Advanced.AmountOfExperienceGained
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': 1 (default)
+        '2': '2'
+        '3': '3'
+        '4': '4'
+        '5': '5'
+      raw:
+        DisplayName: Experience Gain Amount
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the amount of experience gained
+        Keywords: experience,gain,AmountOfExperienceGained
+        FieldName: AmountOfExperienceGained
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.AmountOfExperienceGained
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '1': 1 (default)
+          '2': '2'
+          '3': '3'
+          '4': '4'
+          '5': '5'
+    - key: ResourceAcquisition
+      label: Resources Acquisition Amount
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the amount of resources acquired
+      keywords: item,resource,acquired,obtained,ResourceAcquisition
+      input_type: enum
+      param_field_name: GameSettings/Advanced.ResourceAcquisition
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': 1 (default)
+        '2': '2'
+        '3': '3'
+      raw:
+        DisplayName: Resources Acquisition Amount
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the amount of resources acquired
+        Keywords: item,resource,acquired,obtained,ResourceAcquisition
+        FieldName: ResourceAcquisition
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.ResourceAcquisition
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '1': 1 (default)
+          '2': '2'
+          '3': '3'
+    - key: InitialFoodAmount
+      label: Initial Food Amount
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the initial food amount
+      keywords: initial,food,amount,InitialFoodAmount
+      input_type: enum
+      param_field_name: GameSettings/Advanced.InitialFoodAmount
+      default: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': '0'
+        '1': '1'
+        '2': '2'
+        '5': '5'
+        '10': 10 (default)
+        '12': '12'
+        '15': '15'
+      raw:
+        DisplayName: Initial Food Amount
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the initial food amount
+        Keywords: initial,food,amount,InitialFoodAmount
+        FieldName: InitialFoodAmount
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.InitialFoodAmount
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        EnumValues:
+          '0': '0'
+          '1': '1'
+          '2': '2'
+          '5': '5'
+          '10': 10 (default)
+          '12': '12'
+          '15': '15'
+    - key: NaturalObjectRespawnTime
+      label: Natural Objects Respawn Time
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the natural objects respawn time
+      keywords: natural,objects,respawn,time,NaturalObjectRespawnTime
+      input_type: enum
+      param_field_name: GameSettings/Advanced.NaturalObjectRespawnTime
+      default: '720'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '240': '240'
+        '360': '360'
+        '480': '480'
+        '600': '600'
+        '720': 720 (default)
+        '840': '840'
+        '960': '960'
+      raw:
+        DisplayName: Natural Objects Respawn Time
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the natural objects respawn time
+        Keywords: natural,objects,respawn,time,NaturalObjectRespawnTime
+        FieldName: NaturalObjectRespawnTime
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.NaturalObjectRespawnTime
+        IncludeInCommandLine: false
+        DefaultValue: '720'
+        EnumValues:
+          '240': '240'
+          '360': '360'
+          '480': '480'
+          '600': '600'
+          '720': 720 (default)
+          '840': '840'
+          '960': '960'
+    - key: SyntheticObjectRespawnTime
+      label: Synthetic Objects Respawn Time
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the synthetic objects respawn time
+      keywords: synthetic,objects,respawn,time,SyntheticObjectRespawnTime
+      input_type: enum
+      param_field_name: GameSettings/Advanced.SyntheticObjectRespawnTime
+      default: '720'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '240': '240'
+        '360': '360'
+        '480': '480'
+        '600': '600'
+        '720': 720 (default)
+        '840': '840'
+        '960': '960'
+      raw:
+        DisplayName: Synthetic Objects Respawn Time
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the synthetic objects respawn time
+        Keywords: synthetic,objects,respawn,time,SyntheticObjectRespawnTime
+        FieldName: SyntheticObjectRespawnTime
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.SyntheticObjectRespawnTime
+        IncludeInCommandLine: false
+        DefaultValue: '720'
+        EnumValues:
+          '240': '240'
+          '360': '360'
+          '480': '480'
+          '600': '600'
+          '720': 720 (default)
+          '840': '840'
+          '960': '960'
+    - key: FarmResourceOutput
+      label: Farm Resource Production Amount
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the farm resource production amount
+      keywords: farm,resource,production,amount,FarmResourceOutput
+      input_type: enum
+      param_field_name: GameSettings/Advanced.FarmResourceOutput
+      default: '1.25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': '1'
+        '2': '2'
+        '1.25': 1.25 (default)
+        '1.5': '1.5'
+        '1.75': '1.75'
+      raw:
+        DisplayName: Farm Resource Production Amount
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the farm resource production amount
+        Keywords: farm,resource,production,amount,FarmResourceOutput
+        FieldName: FarmResourceOutput
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.FarmResourceOutput
+        IncludeInCommandLine: false
+        DefaultValue: '1.25'
+        EnumValues:
+          '1': '1'
+          '2': '2'
+          '1.25': 1.25 (default)
+          '1.5': '1.5'
+          '1.75': '1.75'
+    - key: MachineResourceOutput
+      label: Machine Resource Production Amount
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the machine resource production amount
+      keywords: machine,resource,production,amount,MachineResourceOutput
+      input_type: enum
+      param_field_name: GameSettings/Advanced.MachineResourceOutput
+      default: '1.5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': '1'
+        '2': '2'
+        '0.5': '0.5'
+        '1.5': 1.5 (default)
+        '2.5': '2.5'
+      raw:
+        DisplayName: Machine Resource Production Amount
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the machine resource production amount
+        Keywords: machine,resource,production,amount,MachineResourceOutput
+        FieldName: MachineResourceOutput
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.MachineResourceOutput
+        IncludeInCommandLine: false
+        DefaultValue: '1.5'
+        EnumValues:
+          '1': '1'
+          '2': '2'
+          '0.5': '0.5'
+          '1.5': 1.5 (default)
+          '2.5': '2.5'
+    - key: AnimalTrapTime
+      label: Animal Trap Time
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the animal trap time
+      keywords: animal,trap,time,AnimalTrapTime
+      input_type: enum
+      param_field_name: GameSettings/Advanced.AnimalTrapTime
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': 1 (default)
+        '2': '2'
+        '0.5': '0.5'
+        '1.5': '1.5'
+        '2.5': '2.5'
+      raw:
+        DisplayName: Animal Trap Time
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the animal trap time
+        Keywords: animal,trap,time,AnimalTrapTime
+        FieldName: AnimalTrapTime
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.AnimalTrapTime
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '1': 1 (default)
+          '2': '2'
+          '0.5': '0.5'
+          '1.5': '1.5'
+          '2.5': '2.5'
+    - key: FarmResourceProductionTime
+      label: Farm Resource Production Time
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the farm resource production time
+      keywords: farm,resource,production,time,FarmResourceProductionTime
+      input_type: enum
+      param_field_name: GameSettings/Advanced.FarmResourceProductionTime
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': 1 (default)
+        '0.5': '0.5'
+        '1.5': '1.5'
+      raw:
+        DisplayName: Farm Resource Production Time
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the farm resource production time
+        Keywords: farm,resource,production,time,FarmResourceProductionTime
+        FieldName: FarmResourceProductionTime
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.FarmResourceProductionTime
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '1': 1 (default)
+          '0.5': '0.5'
+          '1.5': '1.5'
+    - key: MachineResourceProductionTime
+      label: Machine Resource Production Time
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the machine resource production time
+      keywords: machine,resource,production,time,MachineResourceProductionTime
+      input_type: enum
+      param_field_name: GameSettings/Advanced.MachineResourceProductionTime
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': 1 (default)
+        '0.5': '0.5'
+        '1.5': '1.5'
+      raw:
+        DisplayName: Machine Resource Production Time
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the machine resource production time
+        Keywords: machine,resource,production,time,MachineResourceProductionTime
+        FieldName: MachineResourceProductionTime
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.MachineResourceProductionTime
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '1': 1 (default)
+          '0.5': '0.5'
+          '1.5': '1.5'
+    - key: ElectricGeneration
+      label: Power Generated
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the power generated
+      keywords: power,generated,electric,ElectricGeneration
+      input_type: enum
+      param_field_name: GameSettings/Advanced.ElectricGeneration
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': 1 (default)
+        '2': '2'
+        '0.5': '0.5'
+        '1.5': '1.5'
+        '2.5': '2.5'
+      raw:
+        DisplayName: Power Generated
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the power generated
+        Keywords: power,generated,electric,ElectricGeneration
+        FieldName: ElectricGeneration
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.ElectricGeneration
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '1': 1 (default)
+          '2': '2'
+          '0.5': '0.5'
+          '1.5': '1.5'
+          '2.5': '2.5'
+    - key: ElectricConsumption
+      label: Power Consumption
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the power consumption
+      keywords: power,consumption,electric,ElectricConsumption
+      input_type: enum
+      param_field_name: GameSettings/Advanced.ElectricConsumption
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': 1 (default)
+        '0.5': '0.5'
+        '1.5': '1.5'
+      raw:
+        DisplayName: Power Consumption
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the power consumption
+        Keywords: power,consumption,electric,ElectricConsumption
+        FieldName: ElectricConsumption
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.ElectricConsumption
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '1': 1 (default)
+          '0.5': '0.5'
+          '1.5': '1.5'
+    - key: ElectricOvercurrentLimit
+      label: Power Limit
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the power limit
+      keywords: power,limit,electric,ElectricOvercurrentLimit
+      input_type: enum
+      param_field_name: GameSettings/Advanced.ElectricOvercurrentLimit
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': 1 (default)
+        '2': '2'
+        '0.5': '0.5'
+        '1.5': '1.5'
+        '2.5': '2.5'
+      raw:
+        DisplayName: Power Limit
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the power limit
+        Keywords: power,limit,electric,ElectricOvercurrentLimit
+        FieldName: ElectricOvercurrentLimit
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.ElectricOvercurrentLimit
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '1': 1 (default)
+          '2': '2'
+          '0.5': '0.5'
+          '1.5': '1.5'
+          '2.5': '2.5'
+    - key: ElectricStandbyPower
+      label: Standby Power
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the standby power
+      keywords: power,standby,electric,ElectricStandbyPower
+      input_type: enum
+      param_field_name: GameSettings/Advanced.ElectricStandbyPower
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': 1 (default)
+        '0.5': '0.5'
+        '1.5': '1.5'
+      raw:
+        DisplayName: Standby Power
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the standby power
+        Keywords: power,standby,electric,ElectricStandbyPower
+        FieldName: ElectricStandbyPower
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Advanced.ElectricStandbyPower
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '1': 1 (default)
+          '0.5': '0.5'
+          '1.5': '1.5'
+    - key: OneDayTime
+      label: Times Per Day
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: Sets the times per day
+      keywords: times,day,OneDayTime
+      input_type: enum
+      param_field_name: GameSettings/Detail.OneDayTime
+      default: '240'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '60': '60'
+        '120': '120'
+        '180': '180'
+        '240': 240 (default)
+        '300': '300'
+        '360': '360'
+        '420': '420'
+      raw:
+        DisplayName: Times Per Day
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: Sets the times per day
+        Keywords: times,day,OneDayTime
+        FieldName: OneDayTime
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Detail.OneDayTime
+        IncludeInCommandLine: false
+        DefaultValue: '240'
+        EnumValues:
+          '60': '60'
+          '120': '120'
+          '180': '180'
+          '240': 240 (default)
+          '300': '300'
+          '360': '360'
+          '420': '420'
+    - key: UnlockAllBuilding
+      label: Unlock All Buildings
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: If set, all buildings will be unlocked
+      keywords: unlock,buildings,UnlockAllBuilding
+      input_type: enum
+      param_field_name: GameSettings/Detail.UnlockAllBuilding
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': '0'
+        '1': '1'
+      raw:
+        DisplayName: Unlock All Buildings
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: If set, all buildings will be unlocked
+        Keywords: unlock,buildings,UnlockAllBuilding
+        FieldName: UnlockAllBuilding
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Detail.UnlockAllBuilding
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': '0'
+          '1': '1'
+    - key: Hardcore
+      label: Enable Hardcore
+      category: Night of the Dead
+      subcategory: Custom Difficulty
+      description: If set, hardcore mode will be enabled
+      keywords: hardcore
+      input_type: checkbox
+      param_field_name: GameSettings/Detail.Hardcore
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Hardcore
+        Category: Night of the Dead:stadia_controller
+        Subcategory: Custom Difficulty:tune:3
+        Description: If set, hardcore mode will be enabled
+        Keywords: hardcore
+        FieldName: Hardcore
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GameSettings/Detail.Hardcore
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+  files:
+    - path: LF/Saved/Config/ServerSettings.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: LF/Saved/Config/ServerSettings.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)(?:\s+\/\/.*)?$
+    - path: ServerSettings.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: ServerSettings.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)(?:\s+\/\/.*)?$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered Night of the Dead Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DefaultMessageOfTheDay
+    label: Message Of The Day
+    default: Welcome to NOTD!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: IngameAdminPassword
+    label: Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: SaveName
+    label: Save Name
+    default: world
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SaveIntervalHour
+    label: Save Interval
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisableAntiCheat
+    label: Disable Anti-Cheat
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Difficulty
+    label: Game Difficulty
+    default: Normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoWave
+    label: Disable Wave
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoSpawnBuildingBlocker
+    label: Activate Building Forbidden Area
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoZombieRespawn
+    label: Disable Zombie Respawn
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NaturalObjectRespawn
+    label: Enable Natural Objects Respawn
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SyntheticObjectRespawn
+    label: Enable Synthetic Objects Respawn
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoGeneratorTrouble
+    label: Disable Generator Breakdown
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoDeathResearchDrop
+    label: Disable Research Loss On Death
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DropItemsOnExit
+    label: Enable Item Drop On Exit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoTeamKill
+    label: Disable Team Kill
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UsePlayerBuildingCorrode
+    label: Enable Building Decay
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxWaveSpawnCount
+    label: Wave Zombie Amount Limit
+    default: '200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NormalZombieHealth
+    label: Light Zombie HP
+    default: '17'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecialZombieHealth
+    label: Heavy Zombie HP
+    default: '17'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GiantZombieHealth
+    label: Giant Zombie HP
+    default: '17'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BossZombieHealth
+    label: Unique Zombie HP
+    default: '17'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieDamage
+    label: Zombie Damage
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieMovementSpeed
+    label: Zombie Movement Speed
+    default: '37'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WorldZombieSpawn
+    label: World Zombie Spawn Amount
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WaveZombieHealth
+    label: Wave Zombie HP
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WaveNormalZombieAmount
+    label: Light Zombie Amount
+    default: '44'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WaveSpecialZombieAmount
+    label: Heavy Zombie Amount
+    default: '18'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WaveGiantZombieAmount
+    label: Giant Zombie Amount
+    default: '21'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AnimalHealth
+    label: Animal HP
+    default: '17'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AnimalDamage
+    label: Animal Attack Damage
+    default: '18'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WorldNormalZombieRespawnTime
+    label: Light Zombie Respawn Time
+    default: '120'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WorldSpecialZombieRespawnTime
+    label: Heavy Zombie Respawn Time
+    default: '600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WorldGiantZombieRespawnTime
+    label: Giant Zombie Respawn Time
+    default: '600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoExperienceLoss
+    label: Disable XP Loss On Death
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoDeathItemDrop
+    label: Disable Item Drop On Death
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoDeathEquipmentItemDrop
+    label: Disable Equipment Drop On Death
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ResearchDataConsumption
+    label: Research Data Consumption
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FishSpeed
+    label: Fish Speed
+    default: '66'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FishingGaugeDecrease
+    label: Fish Power
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SuperiorOrHigherEquipmentGainMultiplier
+    label: High-Grade Equipment Drop Rate
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BuildingHit
+    label: Building HP
+    default: '90'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TrapDamage
+    label: Trap Attack Damage
+    default: '66'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ResourcesReturnedAfterBuildingDestroyed
+    label: Materials Return Rate
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AmountOfExperienceGained
+    label: Experience Gain Amount
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ResourceAcquisition
+    label: Resources Acquisition Amount
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InitialFoodAmount
+    label: Initial Food Amount
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NaturalObjectRespawnTime
+    label: Natural Objects Respawn Time
+    default: '720'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SyntheticObjectRespawnTime
+    label: Synthetic Objects Respawn Time
+    default: '720'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FarmResourceOutput
+    label: Farm Resource Production Amount
+    default: '1.25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MachineResourceOutput
+    label: Machine Resource Production Amount
+    default: '1.5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AnimalTrapTime
+    label: Animal Trap Time
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FarmResourceProductionTime
+    label: Farm Resource Production Time
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MachineResourceProductionTime
+    label: Machine Resource Production Time
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ElectricGeneration
+    label: Power Generated
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ElectricConsumption
+    label: Power Consumption
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ElectricOvercurrentLimit
+    label: Power Limit
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ElectricStandbyPower
+    label: Standby Power
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OneDayTime
+    label: Times Per Day
+    default: '240'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UnlockAllBuilding
+    label: Unlock All Buildings
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Hardcore
+    label: Enable Hardcore
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1377380'
+  collection_support: true
 backup:
   include:
     - /data

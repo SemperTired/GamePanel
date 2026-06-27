@@ -4,14 +4,16 @@ name: Spellmasons
 category: Imported
 summary: Spellmasons Dedicated Server
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: custom
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: node/bin/node
+  startup: node/bin/node src/HeadlessServer.js
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +21,178 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 9876
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: spellmasonsconfig.json
+    type: json
+    editable: true
+  - path: spellmasonsmetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: ServerVersion
+      label: Server Version
+      category: Updates
+      subcategory: Server Updates
+      description: Sets the [server version](https://github.com/jdoleary/Spellmasons/tags) to install. Empty = latest
+      keywords: server,version
+      input_type: text
+      param_field_name: ServerVersion
+      default: ''
+      placeholder: v1.56.0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: Sets the [server version](https://github.com/jdoleary/Spellmasons/tags) to install. Empty = latest
+        Keywords: server,version
+        FieldName: ServerVersion
+        InputType: text
+        ParamFieldName: ServerVersion
+        DefaultValue: ''
+        Placeholder: v1.56.0
+        EnumValues: {}
+    - key: NodeRelease
+      label: Node.js Release Stream
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the Node.js release stream from which to install the latest version (including the corresponding npm
+        package), unless a specific version is specified under Node.js Version. Update the server after changing this
+        setting
+      keywords: node,nodejs,release,stream,NodeRelease
+      input_type: enum
+      param_field_name: NodeRelease
+      default: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '7': '7'
+        '8': 8 - LTS
+        '9': '9'
+        '10': 10 - LTS
+        '11': '11'
+        '12': 12 - LTS
+        '13': '13'
+        '14': 14 - LTS
+        '15': '15'
+        '16': 16 - LTS
+        '17': '17'
+        '18': 18 - LTS
+        '19': '19'
+        '20': 20 - LTS (default)
+        '21': '21'
+        '22': 22 - LTS
+        '23': '23'
+        '24': '24'
+        '25': '25'
+        '26': '26'
+      raw:
+        DisplayName: Node.js Release Stream
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the Node.js release stream from which to install the latest version (including the corresponding npm
+          package), unless a specific version is specified under Node.js Version. Update the server after changing this
+          setting
+        Keywords: node,nodejs,release,stream,NodeRelease
+        FieldName: NodeRelease
+        InputType: enum
+        ParamFieldName: NodeRelease
+        DefaultValue: '20'
+        EnumValues:
+          '7': '7'
+          '8': 8 - LTS
+          '9': '9'
+          '10': 10 - LTS
+          '11': '11'
+          '12': 12 - LTS
+          '13': '13'
+          '14': 14 - LTS
+          '15': '15'
+          '16': 16 - LTS
+          '17': '17'
+          '18': 18 - LTS
+          '19': '19'
+          '20': 20 - LTS (default)
+          '21': '21'
+          '22': 22 - LTS
+          '23': '23'
+          '24': '24'
+          '25': '25'
+          '26': '26'
+    - key: NodeVersion
+      label: Node.js Version
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [Node.js version](https://nodejs.org/download/release/) to install. Format: v20.19.0. Empty = latest
+        version for the release stream specified under Node.js Release Stream. Update the server after changing this
+        setting
+      keywords: node,nodejs,version,NodeVersion
+      input_type: text
+      param_field_name: NodeVersion
+      default: ''
+      placeholder: v20.19.0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Node.js Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [Node.js version](https://nodejs.org/download/release/) to install. Format: v20.19.0. Empty = latest
+          version for the release stream specified under Node.js Release Stream. Update the server after changing this
+          setting
+        Keywords: node,nodejs,version,NodeVersion
+        FieldName: NodeVersion
+        InputType: text
+        ParamFieldName: NodeVersion
+        DefaultValue: ''
+        Placeholder: v20.19.0
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerVersion
+    label: Server Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NodeRelease
+    label: Node.js Release Stream
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NodeVersion
+    label: Node.js Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

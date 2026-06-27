@@ -5,13 +5,16 @@ category: Imported
 summary: Icarus Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2089300'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: .proton/proton
+  startup: .proton/proton {PlatformArgs} -Port={GamePort} -QueryPort={QueryPort} {StartupMode}{FormattedArgs} -log=Icarus.log
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1339 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 17777
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: Icarus/Saved/Config/WindowsServer/ServerSettings.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: LoadProspect
+      label: Load Prospect
+      category: Icarus
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /Script/Icarus.DedicatedServerSettings.LoadProspect
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Load Prospect
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: LoadProspect
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.LoadProspect
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: CreateProspect
+      label: Create Prospect
+      category: Icarus
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /Script/Icarus.DedicatedServerSettings.CreateProspect
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Create Prospect
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: CreateProspect
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.CreateProspect
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: ResumeProspect
+      label: Resume Prospect
+      category: Icarus
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /Script/Icarus.DedicatedServerSettings.ResumeProspect
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Resume Prospect
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: ResumeProspect
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.ResumeProspect
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: SessionName
+      label: Session Name
+      category: Icarus
+      subcategory: Server
+      description: Sets the session name for the server to be displayed in the server browser. Limit of 64 characters
+      keywords: session,name
+      input_type: text
+      param_field_name: SteamServerName
+      default: AMP Powered Icarus Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Session Name
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the session name for the server to be displayed in the server browser. Limit of 64 characters
+        Keywords: session,name
+        FieldName: SessionName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: SteamServerName
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: AMP Powered Icarus Server
+        EnumValues: {}
+    - key: SessionName
+      label: Session Name
+      category: Icarus
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /Script/Icarus.DedicatedServerSettings.SessionName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Session Name
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: SessionName
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.SessionName
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: JoinPassword
+      label: Server Password
+      category: Icarus
+      subcategory: Server
+      description: Sets the password to join the server. Default is no password
+      keywords: server,password
+      input_type: password
+      param_field_name: JoinPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server. Default is no password
+        Keywords: server,password
+        FieldName: JoinPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: JoinPassword
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: JoinPassword
+      label: Server Password
+      category: Icarus
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /Script/Icarus.DedicatedServerSettings.JoinPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: JoinPassword
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.JoinPassword
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: AdminPassword
+      label: RCON Password
+      category: Icarus
+      subcategory: Server
+      description: Sets the admin RCON password. Default is a random, strong password
+      keywords: rcon,admin,password
+      input_type: password
+      param_field_name: AdminPassword
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the admin RCON password. Default is a random, strong password
+        Keywords: rcon,admin,password
+        FieldName: AdminPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: AdminPassword
+        IncludeInCommandLine: true
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: AdminPassword
+      label: RCON Password
+      category: Icarus
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /Script/Icarus.DedicatedServerSettings.AdminPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: AdminPassword
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.AdminPassword
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Icarus
+      subcategory: Server
+      description: Maximum number of players that may connect to the server at one time
+      keywords: players,limit,maxplayers
+      input_type: number
+      param_field_name: /Script/Icarus.DedicatedServerSettings.MaxPlayers
+      default: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Maximum number of players that may connect to the server at one time
+        Keywords: players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.MaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '8'
+        Suffix: players
+        EnumValues: {}
+    - key: StartupMode
+      label: Startup Mode
+      category: Icarus
+      subcategory: Server
+      description: >-
+        Sets the server startup mode. For "Load existing prospect", the Prospect Save Name must be set and the file must
+        exist. For "Create and launch new prospect", the Prospect Type must be set; if no Prospect Save Name is set, a
+        random save name will be created for regular prospects
+      keywords: startup,mode,load,create,resume,startupmode
+      input_type: enum
+      param_field_name: StartupMode
+      default: '-CreateProspect="{{ProspectType}} {{Difficulty}} {{Hardcore}} {{ProspectSaveName}}" '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Wait in lobby
+        '-CreateProspect="{{ProspectType}} {{Difficulty}} {{Hardcore}} {{ProspectSaveName}}" ': Create and launch new prospect (default)
+        '-LoadProspect={{ProspectSaveName}} ': Load existing prospect
+        '-ResumeProspect ': Resume last prospect
+      raw:
+        DisplayName: Startup Mode
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the server startup mode. For "Load existing prospect", the Prospect Save Name must be set and the file
+          must exist. For "Create and launch new prospect", the Prospect Type must be set; if no Prospect Save Name is
+          set, a random save name will be created for regular prospects
+        Keywords: startup,mode,load,create,resume,startupmode
+        FieldName: StartupMode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: StartupMode
+        IncludeInCommandLine: false
+        DefaultValue: '-CreateProspect="{{ProspectType}} {{Difficulty}} {{Hardcore}} {{ProspectSaveName}}" '
+        EnumValues:
+          '': Wait in lobby
+          '-CreateProspect="{{ProspectType}} {{Difficulty}} {{Hardcore}} {{ProspectSaveName}}" ': Create and launch new prospect (default)
+          '-LoadProspect={{ProspectSaveName}} ': Load existing prospect
+          '-ResumeProspect ': Resume last prospect
+    - key: ProspectSaveName
+      label: Prospect Save Name
+      category: Icarus
+      subcategory: Server
+      description: Sets the save name of the specific prospect to be loaded or created
+      keywords: prospect,save,name,prospectsavename
+      input_type: text
+      param_field_name: ProspectSaveName
+      default: DefaultProspect01
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Prospect Save Name
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the save name of the specific prospect to be loaded or created
+        Keywords: prospect,save,name,prospectsavename
+        FieldName: ProspectSaveName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: ProspectSaveName
+        IncludeInCommandLine: false
+        DefaultValue: DefaultProspect01
+        EnumValues: {}
+    - key: ProspectType
+      label: Prospect Type
+      category: Icarus
+      subcategory: Server
+      description: Sets the prospect type to create a prospect with
+      keywords: prospect,type,prospecttype
+      input_type: enum
+      param_field_name: ProspectType
+      default: Tier1_Forest_Recon_0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Tier4_Arctic_Stockpile: 'Olympus: ADVANCED ORDER'
+        Tier1_Farming: 'Olympus: AGRICULTURE'
+        Tier1_Forest_Stockpile: 'Olympus: AGRICULTURE (Forest Stockpile)'
+        Tier1_Forest_Exploration_0: 'Olympus: ARGOS'
+        Tier4_Arctic_Expedition_0: 'Olympus: AVALANCHE'
+        Tier1_Forest_Recon_0: 'Olympus: BEACHHEAD (default)'
+        Tier3_RiverLands_Stockpile_2: 'Olympus: BIG SHOT'
+        Tier2_Glacier_Recovery_0: 'Olympus: BROKEN ARROW'
+        Tier4_Desert_Research_2: 'Olympus: CARAPACE'
+        Tier4_Arctic_Extermination_0: 'Olympus: CLEAN UP'
+        Tier3_RiverLands_Survey_0: 'Olympus: CLUSTERED'
+        Tier4_Desert_Recovery: 'Olympus: CONCEALMENT'
+        Tier5_Omni_Research_2: 'Olympus: CRYOGENIC'
+        Tier2_Canyon_Scan_0: 'Olympus: DEATH RAY'
+        Tier2_Glacier_Extraction_0: 'Olympus: DEEP VEIN'
+        Tier2_Canyon_Expedition_0: 'Olympus: DRY RUN'
+        Tier4_Desert_Extermination_0: 'Olympus: DUST UP'
+        Tier3_RiverLands_Exploration_0: 'Olympus: EDELWEISS'
+        Tier4_Desert_Expedition_0: 'Olympus: EL CAMINO'
+        Tier2_Canyon_Recovery_0: 'Olympus: FIELD TEST'
+        Tier3_RiverLands_Delivery: 'Olympus: FIRE WALK'
+        Tier1_Forest_Defence: 'Olympus: FORSAKEN'
+        Tier1_Forest_Survey_0: 'Olympus: HEADSTONE'
+        Tier2_Glacier_Exploration_0: 'Olympus: HIGH WIRE'
+        Tier1_Forest_Construction: 'Olympus: HOMESTEAD'
+        Tier2_Glacier_Expedition_0: 'Olympus: ICESTORM'
+        Tier3_RiverLands_Scan_0: 'Olympus: INCURSION'
+        Tier2_Glacier_Construction_0: 'Olympus: INFLUX'
+        Tier1_Forest_Extermination_0: 'Olympus: KILL LIST'
+        Tier3_RiverLands_Construction: 'Olympus: LIFE LINE'
+        Tier1_Forest_Scan_0: 'Olympus: LIVEWIRE'
+        Tier4_Desert_Extermination_2: 'Olympus: LOOSE ENDS'
+        Tier3_RiverLands_Extraction: 'Olympus: MERIDIAN'
+        Tier4_Desert_Survey: 'Olympus: MIGRATING SANDS'
+        Tier5_Omni_Olympus: 'Olympus: NIGHTFALL'
+        Tier4_Desert_Research_0: 'Olympus: NIGHTWATCH'
+        Tier4_Arctic_Extraction_0: 'Olympus: PAYDAY'
+        Tier1_Forest_Range: 'Olympus: POTSHOT'
+        Tier2_Canyon_Stockpile2: 'Olympus: PRESERVATION'
+        Tier4_Desert_Exploration_0: 'Olympus: PROMISED LAND'
+        Tier2_Canyon_Construction_0: 'Olympus: PYRAMID'
+        Tier3_RiverLands_Stockpile_0: 'Olympus: RAMP UP'
+        Tier2_Glacier_Research_0: 'Olympus: RESURGENCE'
+        Tier2_Canyon_Exploration_0: 'Olympus: SANDBLAST'
+        Tier4_Desert_Construction_0: 'Olympus: SANDBOX'
+        Tier2_Canyon_LongSurvey_0: 'Olympus: SANDY BRIDGES'
+        Tier2_Glacier_Scan_0: 'Olympus: SEARCHLIGHT'
+        Tier4_Desert_Scan_0: 'Olympus: SEVEN PILLARS'
+        Tier4_Arctic_Scan_0: 'Olympus: SNOWBLIND'
+        Tier4_Arctic_Recovery_0: 'Olympus: SNOWCRASH'
+        Tier2_Canyon_Stockpile: 'Olympus: SOLID METAL'
+        Tier1_Forest_WS_Stockpile: 'Olympus: SPELUNKING'
+        Tier2_Canyon_Survey_0: 'Olympus: SPIRIT LEVEL'
+        Tier5_Omni_Exploration_0: 'Olympus: SPIRIT WALK'
+        Tier4_Arctic_Survey_0: 'Olympus: STATION TO STATION'
+        Tier1_Forest_Research_0: 'Olympus: STRANGE HARVEST'
+        Tier4_Arctic_Exploration_0: 'Olympus: TUNDRA'
+        Tier5_Omni_Research: 'Olympus: UNEARTHED'
+        Tier3_RiverLands_Research_0: 'Olympus: UPLIFT'
+        Tier5_Omni_Recovery: 'Olympus: VOYAGER'
+        Tier3_RiverLands_Expedition_0: 'Olympus: WATERFALL'
+        Tier3_RiverLands_Extermination_0: 'Olympus: WET WORK'
+        STYX_D_Research_2: 'Styx: ABYSS'
+        STYX_B_Exploration: 'Styx: ADAGIO'
+        STYX_C_Construction: 'Styx: ALCAZAR'
+        STYX_C_Extermination2: 'Styx: AUGMENTATION'
+        STYX_C_Extermination: 'Styx: BALLISTIC'
+        STYX_D_Exploration: 'Styx: CAVALCADE'
+        STYX_E_Survey: 'Styx: CRESCENDO'
+        STYX_E_Exploration: 'Styx: DUST'
+        STYX_B_Extermination2: 'Styx: ENCROACHMENT'
+        STYX_E_Research: 'Styx: FLATLINE'
+        STYX_D_Research: 'Styx: GOSSAMER'
+        STYX_B_Extermination: 'Styx: HALCYON'
+        STYX_A_Exploration: 'Styx: HEADLONG'
+        STYX_A_Construction: 'Styx: HIGHRISE'
+        STYX_A_Extermination: 'Styx: HUSK'
+        STYX_B_Research: 'Styx: IRONCLAD'
+        STYX_C_Exploration: 'Styx: KISMET'
+        STYX_D_Extermination: 'Styx: LUPINE'
+        STYX_B_Expedition: 'Styx: MAELSTROM'
+        STYX_C_Fishing: 'Styx: OASIS'
+        STYX_A_Expedition: 'Styx: OMPHALOS'
+        STYX_B_Stockpile: 'Styx: OPULENCE'
+        STYX_E_Extraction: 'Styx: REMNANT'
+        STYX_D_Delivery: 'Styx: RENDEZVOUS'
+        STYX_C_Expedition: 'Styx: RICOCHET'
+        STYX_E_Expedition: 'Styx: VERTIGO'
+        STYX_D_Expedition: 'Styx: ZEPHYR'
+        PRO_Ashlands_Story: 'Prometheus: ASHLANDS'
+        PRO_A_Stockpile: 'Prometheus: CELEBRITY CHEF'
+        PRO_D_Research: 'Prometheus: COMPOSITION'
+        PRO_D_Recovery: 'Prometheus: CRISIS'
+        PRO_A_Extraction: 'Prometheus: CRYSTAL'
+        PRO_Story_5: 'Prometheus: DISPATCH'
+        PRO_E_Research: 'Prometheus: DROVER'
+        PRO_B_Exploration: 'Prometheus: ENDEAVOR'
+        PRO_Story_6: 'Prometheus: FRACTURE'
+        PRO_A_Exploration: 'Prometheus: HORIZON'
+        PRO_Icesheet_Story: 'Prometheus: ICE SHEET'
+        PRO_B_Extermination: 'Prometheus: MAGMATIC'
+        PRO_C_Research: 'Prometheus: MIASMIC'
+        PRO_Story_1: 'Prometheus: NOMAD'
+        PRO_Nullsector_Story: 'Prometheus: NULL SECTOR'
+        PRO_Story_2: 'Prometheus: OFFENDER'
+        PRO_D_Rescue: 'Prometheus: RESCUE'
+        PRO_Story_3: 'Prometheus: SHADOWED'
+        PRO_D_Resupply: 'Prometheus: STRANDED'
+        PRO_Story_4: 'Prometheus: TEMPEST'
+        PRO_C_Exploration: 'Prometheus: TERRA'
+        PRO_C_Construction: 'Prometheus: TREEHUT'
+        ELY_SQ_Ambush: 'Elysium: AMBUSH'
+        ELY_SQ_Fish: 'Elysium: ANGLER'
+        ELY_SQ_Norex: 'Elysium: BLACK MARKET'
+        ELY_SQ_Courier: 'Elysium: COURIER'
+        ELY_SQ_Farmer: 'Elysium: CULTIVATION SPECIALIST'
+        ELY_SQ_Yeti: 'Elysium: EVOLUTION'
+        ELY_Story_4: 'Elysium: FALLOUT'
+        ELY_SQ_Fisher: 'Elysium: FISHERIES OFFICER'
+        ELY_SQ_Igloo: 'Elysium: IGLOO'
+        ELY_SQ_Lifeline: 'Elysium: LIFELINE'
+        ELY_Story_1: 'Elysium: LOST'
+        ELY_Story_3: 'Elysium: NEXUS'
+        ELY_SQ_Hunter: 'Elysium: PREDATOR SPECIALIST'
+        ELY_Story_6: 'Elysium: RECKONING'
+        ELY_Story_2: 'Elysium: RELICS'
+        ELY_Story_5: 'Elysium: RIFT'
+        ELY_SQ_Trials: 'Elysium: TRIALS'
+        Outpost006_Olympus: 'Open World: Olympus'
+        OpenWorld_Styx: 'Open World: Styx'
+        OpenWorld_Prometheus: 'Open World: Prometheus'
+        OpenWorld_Elysium: 'Open World: Elysium'
+        Outpost_012: 'Outpost: AQUATICA ISLE'
+        Outpost008_Arctic: 'Outpost: ARCTICUS'
+        Outpost002_Forest: 'Outpost: ARCWOOD'
+        Outpost007_Desert: 'Outpost: CACTUS'
+        Outpost006_Forest: 'Outpost: EVERBARK'
+        Outpost009_IceVolcano: 'Outpost: FROSTFALL'
+        Outpost005_Forest: 'Outpost: HOLDFAST'
+        Outpost003_Arctic: 'Outpost: ICEHOLM'
+        Outpost004_Deset: 'Outpost: TECTON'
+      raw:
+        DisplayName: Prospect Type
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the prospect type to create a prospect with
+        Keywords: prospect,type,prospecttype
+        FieldName: ProspectType
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ProspectType
+        IncludeInCommandLine: false
+        DefaultValue: Tier1_Forest_Recon_0
+        EnumValues:
+          Tier4_Arctic_Stockpile: 'Olympus: ADVANCED ORDER'
+          Tier1_Farming: 'Olympus: AGRICULTURE'
+          Tier1_Forest_Stockpile: 'Olympus: AGRICULTURE (Forest Stockpile)'
+          Tier1_Forest_Exploration_0: 'Olympus: ARGOS'
+          Tier4_Arctic_Expedition_0: 'Olympus: AVALANCHE'
+          Tier1_Forest_Recon_0: 'Olympus: BEACHHEAD (default)'
+          Tier3_RiverLands_Stockpile_2: 'Olympus: BIG SHOT'
+          Tier2_Glacier_Recovery_0: 'Olympus: BROKEN ARROW'
+          Tier4_Desert_Research_2: 'Olympus: CARAPACE'
+          Tier4_Arctic_Extermination_0: 'Olympus: CLEAN UP'
+          Tier3_RiverLands_Survey_0: 'Olympus: CLUSTERED'
+          Tier4_Desert_Recovery: 'Olympus: CONCEALMENT'
+          Tier5_Omni_Research_2: 'Olympus: CRYOGENIC'
+          Tier2_Canyon_Scan_0: 'Olympus: DEATH RAY'
+          Tier2_Glacier_Extraction_0: 'Olympus: DEEP VEIN'
+          Tier2_Canyon_Expedition_0: 'Olympus: DRY RUN'
+          Tier4_Desert_Extermination_0: 'Olympus: DUST UP'
+          Tier3_RiverLands_Exploration_0: 'Olympus: EDELWEISS'
+          Tier4_Desert_Expedition_0: 'Olympus: EL CAMINO'
+          Tier2_Canyon_Recovery_0: 'Olympus: FIELD TEST'
+          Tier3_RiverLands_Delivery: 'Olympus: FIRE WALK'
+          Tier1_Forest_Defence: 'Olympus: FORSAKEN'
+          Tier1_Forest_Survey_0: 'Olympus: HEADSTONE'
+          Tier2_Glacier_Exploration_0: 'Olympus: HIGH WIRE'
+          Tier1_Forest_Construction: 'Olympus: HOMESTEAD'
+          Tier2_Glacier_Expedition_0: 'Olympus: ICESTORM'
+          Tier3_RiverLands_Scan_0: 'Olympus: INCURSION'
+          Tier2_Glacier_Construction_0: 'Olympus: INFLUX'
+          Tier1_Forest_Extermination_0: 'Olympus: KILL LIST'
+          Tier3_RiverLands_Construction: 'Olympus: LIFE LINE'
+          Tier1_Forest_Scan_0: 'Olympus: LIVEWIRE'
+          Tier4_Desert_Extermination_2: 'Olympus: LOOSE ENDS'
+          Tier3_RiverLands_Extraction: 'Olympus: MERIDIAN'
+          Tier4_Desert_Survey: 'Olympus: MIGRATING SANDS'
+          Tier5_Omni_Olympus: 'Olympus: NIGHTFALL'
+          Tier4_Desert_Research_0: 'Olympus: NIGHTWATCH'
+          Tier4_Arctic_Extraction_0: 'Olympus: PAYDAY'
+          Tier1_Forest_Range: 'Olympus: POTSHOT'
+          Tier2_Canyon_Stockpile2: 'Olympus: PRESERVATION'
+          Tier4_Desert_Exploration_0: 'Olympus: PROMISED LAND'
+          Tier2_Canyon_Construction_0: 'Olympus: PYRAMID'
+          Tier3_RiverLands_Stockpile_0: 'Olympus: RAMP UP'
+          Tier2_Glacier_Research_0: 'Olympus: RESURGENCE'
+          Tier2_Canyon_Exploration_0: 'Olympus: SANDBLAST'
+          Tier4_Desert_Construction_0: 'Olympus: SANDBOX'
+          Tier2_Canyon_LongSurvey_0: 'Olympus: SANDY BRIDGES'
+          Tier2_Glacier_Scan_0: 'Olympus: SEARCHLIGHT'
+          Tier4_Desert_Scan_0: 'Olympus: SEVEN PILLARS'
+          Tier4_Arctic_Scan_0: 'Olympus: SNOWBLIND'
+          Tier4_Arctic_Recovery_0: 'Olympus: SNOWCRASH'
+          Tier2_Canyon_Stockpile: 'Olympus: SOLID METAL'
+          Tier1_Forest_WS_Stockpile: 'Olympus: SPELUNKING'
+          Tier2_Canyon_Survey_0: 'Olympus: SPIRIT LEVEL'
+          Tier5_Omni_Exploration_0: 'Olympus: SPIRIT WALK'
+          Tier4_Arctic_Survey_0: 'Olympus: STATION TO STATION'
+          Tier1_Forest_Research_0: 'Olympus: STRANGE HARVEST'
+          Tier4_Arctic_Exploration_0: 'Olympus: TUNDRA'
+          Tier5_Omni_Research: 'Olympus: UNEARTHED'
+          Tier3_RiverLands_Research_0: 'Olympus: UPLIFT'
+          Tier5_Omni_Recovery: 'Olympus: VOYAGER'
+          Tier3_RiverLands_Expedition_0: 'Olympus: WATERFALL'
+          Tier3_RiverLands_Extermination_0: 'Olympus: WET WORK'
+          STYX_D_Research_2: 'Styx: ABYSS'
+          STYX_B_Exploration: 'Styx: ADAGIO'
+          STYX_C_Construction: 'Styx: ALCAZAR'
+          STYX_C_Extermination2: 'Styx: AUGMENTATION'
+          STYX_C_Extermination: 'Styx: BALLISTIC'
+          STYX_D_Exploration: 'Styx: CAVALCADE'
+          STYX_E_Survey: 'Styx: CRESCENDO'
+          STYX_E_Exploration: 'Styx: DUST'
+          STYX_B_Extermination2: 'Styx: ENCROACHMENT'
+          STYX_E_Research: 'Styx: FLATLINE'
+          STYX_D_Research: 'Styx: GOSSAMER'
+          STYX_B_Extermination: 'Styx: HALCYON'
+          STYX_A_Exploration: 'Styx: HEADLONG'
+          STYX_A_Construction: 'Styx: HIGHRISE'
+          STYX_A_Extermination: 'Styx: HUSK'
+          STYX_B_Research: 'Styx: IRONCLAD'
+          STYX_C_Exploration: 'Styx: KISMET'
+          STYX_D_Extermination: 'Styx: LUPINE'
+          STYX_B_Expedition: 'Styx: MAELSTROM'
+          STYX_C_Fishing: 'Styx: OASIS'
+          STYX_A_Expedition: 'Styx: OMPHALOS'
+          STYX_B_Stockpile: 'Styx: OPULENCE'
+          STYX_E_Extraction: 'Styx: REMNANT'
+          STYX_D_Delivery: 'Styx: RENDEZVOUS'
+          STYX_C_Expedition: 'Styx: RICOCHET'
+          STYX_E_Expedition: 'Styx: VERTIGO'
+          STYX_D_Expedition: 'Styx: ZEPHYR'
+          PRO_Ashlands_Story: 'Prometheus: ASHLANDS'
+          PRO_A_Stockpile: 'Prometheus: CELEBRITY CHEF'
+          PRO_D_Research: 'Prometheus: COMPOSITION'
+          PRO_D_Recovery: 'Prometheus: CRISIS'
+          PRO_A_Extraction: 'Prometheus: CRYSTAL'
+          PRO_Story_5: 'Prometheus: DISPATCH'
+          PRO_E_Research: 'Prometheus: DROVER'
+          PRO_B_Exploration: 'Prometheus: ENDEAVOR'
+          PRO_Story_6: 'Prometheus: FRACTURE'
+          PRO_A_Exploration: 'Prometheus: HORIZON'
+          PRO_Icesheet_Story: 'Prometheus: ICE SHEET'
+          PRO_B_Extermination: 'Prometheus: MAGMATIC'
+          PRO_C_Research: 'Prometheus: MIASMIC'
+          PRO_Story_1: 'Prometheus: NOMAD'
+          PRO_Nullsector_Story: 'Prometheus: NULL SECTOR'
+          PRO_Story_2: 'Prometheus: OFFENDER'
+          PRO_D_Rescue: 'Prometheus: RESCUE'
+          PRO_Story_3: 'Prometheus: SHADOWED'
+          PRO_D_Resupply: 'Prometheus: STRANDED'
+          PRO_Story_4: 'Prometheus: TEMPEST'
+          PRO_C_Exploration: 'Prometheus: TERRA'
+          PRO_C_Construction: 'Prometheus: TREEHUT'
+          ELY_SQ_Ambush: 'Elysium: AMBUSH'
+          ELY_SQ_Fish: 'Elysium: ANGLER'
+          ELY_SQ_Norex: 'Elysium: BLACK MARKET'
+          ELY_SQ_Courier: 'Elysium: COURIER'
+          ELY_SQ_Farmer: 'Elysium: CULTIVATION SPECIALIST'
+          ELY_SQ_Yeti: 'Elysium: EVOLUTION'
+          ELY_Story_4: 'Elysium: FALLOUT'
+          ELY_SQ_Fisher: 'Elysium: FISHERIES OFFICER'
+          ELY_SQ_Igloo: 'Elysium: IGLOO'
+          ELY_SQ_Lifeline: 'Elysium: LIFELINE'
+          ELY_Story_1: 'Elysium: LOST'
+          ELY_Story_3: 'Elysium: NEXUS'
+          ELY_SQ_Hunter: 'Elysium: PREDATOR SPECIALIST'
+          ELY_Story_6: 'Elysium: RECKONING'
+          ELY_Story_2: 'Elysium: RELICS'
+          ELY_Story_5: 'Elysium: RIFT'
+          ELY_SQ_Trials: 'Elysium: TRIALS'
+          Outpost006_Olympus: 'Open World: Olympus'
+          OpenWorld_Styx: 'Open World: Styx'
+          OpenWorld_Prometheus: 'Open World: Prometheus'
+          OpenWorld_Elysium: 'Open World: Elysium'
+          Outpost_012: 'Outpost: AQUATICA ISLE'
+          Outpost008_Arctic: 'Outpost: ARCTICUS'
+          Outpost002_Forest: 'Outpost: ARCWOOD'
+          Outpost007_Desert: 'Outpost: CACTUS'
+          Outpost006_Forest: 'Outpost: EVERBARK'
+          Outpost009_IceVolcano: 'Outpost: FROSTFALL'
+          Outpost005_Forest: 'Outpost: HOLDFAST'
+          Outpost003_Arctic: 'Outpost: ICEHOLM'
+          Outpost004_Deset: 'Outpost: TECTON'
+    - key: Difficulty
+      label: Difficulty Level
+      category: Icarus
+      subcategory: Server
+      description: Sets the difficulty level to create a prospect with
+      keywords: difficulty,level
+      input_type: enum
+      param_field_name: Difficulty
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': Easy
+        '2': Medium / Normal (default)
+        '3': Hard
+        '4': Extreme
+      raw:
+        DisplayName: Difficulty Level
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the difficulty level to create a prospect with
+        Keywords: difficulty,level
+        FieldName: Difficulty
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: Difficulty
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues:
+          '1': Easy
+          '2': Medium / Normal (default)
+          '3': Hard
+          '4': Extreme
+    - key: Hardcore
+      label: Enable Hardcore
+      category: Icarus
+      subcategory: Server
+      description: If set, hardcore mode will be enabled when creating a prospect (respawns will be disabled)
+      keywords: hardcore
+      input_type: checkbox
+      param_field_name: Hardcore
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Hardcore
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, hardcore mode will be enabled when creating a prospect (respawns will be disabled)
+        Keywords: hardcore
+        FieldName: Hardcore
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: Hardcore
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: ShutdownIfNotJoinedFor
+      label: No Join Shutdown Interval
+      category: Icarus
+      subcategory: Server
+      description: >-
+        Sets the period after which the server will exit a prospect and return to the lobby, if no player has joined. -1
+        = run indefinitely, 0 = return to lobby immediately, >0 = interval for shutdown. Note that data loss/corruption
+        may occur if the server is shut down in AMP before returning to the lobby
+      keywords: shutdown,not,joined,interval,shutdownifnotjoinedfor
+      input_type: number
+      param_field_name: /Script/Icarus.DedicatedServerSettings.ShutdownIfNotJoinedFor
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: No Join Shutdown Interval
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the period after which the server will exit a prospect and return to the lobby, if no player has joined.
+          -1 = run indefinitely, 0 = return to lobby immediately, >0 = interval for shutdown. Note that data
+          loss/corruption may occur if the server is shut down in AMP before returning to the lobby
+        Keywords: shutdown,not,joined,interval,shutdownifnotjoinedfor
+        FieldName: ShutdownIfNotJoinedFor
+        InputType: number
+        MinValue: '-1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.ShutdownIfNotJoinedFor
+        IncludeInCommandLine: false
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: ShutdownIfEmptyFor
+      label: Empty Shutdown Interval
+      category: Icarus
+      subcategory: Server
+      description: >-
+        Sets the period after which the server will exit a prospect and return to the lobby, if the server becomes
+        empty. -1 = run indefinitely, 0 = return to lobby immediately, >0 = interval for shutdown. Note that data
+        loss/corruption may occur if the server is shut down in AMP before returning to the lobby
+      keywords: shutdown,not,joined,interval,shutdownifemptyfor
+      input_type: number
+      param_field_name: /Script/Icarus.DedicatedServerSettings.ShutdownIfEmptyFor
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Empty Shutdown Interval
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the period after which the server will exit a prospect and return to the lobby, if the server becomes
+          empty. -1 = run indefinitely, 0 = return to lobby immediately, >0 = interval for shutdown. Note that data
+          loss/corruption may occur if the server is shut down in AMP before returning to the lobby
+        Keywords: shutdown,not,joined,interval,shutdownifemptyfor
+        FieldName: ShutdownIfEmptyFor
+        InputType: number
+        MinValue: '-1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.ShutdownIfEmptyFor
+        IncludeInCommandLine: false
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: AllowNonAdminsToLaunchProspects
+      label: Allow Non-Admins To Load Prospects
+      category: Icarus
+      subcategory: Server
+      description: If set, anyone who joins the lobby can create a new prospect or load an existing one. Otherwise, only admins can
+      keywords: non,admins,create,prospects,allownonadminstolaunchprospects
+      input_type: checkbox
+      param_field_name: /Script/Icarus.DedicatedServerSettings.AllowNonAdminsToLaunchProspects
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Non-Admins To Load Prospects
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, anyone who joins the lobby can create a new prospect or load an existing one. Otherwise, only admins
+          can
+        Keywords: non,admins,create,prospects,allownonadminstolaunchprospects
+        FieldName: AllowNonAdminsToLaunchProspects
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.AllowNonAdminsToLaunchProspects
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AllowNonAdminsToDeleteProspects
+      label: Allow Non-Admins To Delete Prospects
+      category: Icarus
+      subcategory: Server
+      description: If set, anyone who joins the lobby can delete existing prospects from the server. Otherwise, only admins can
+      keywords: non,admins,delete,prospects,allownonadminstodeleteprospects
+      input_type: checkbox
+      param_field_name: /Script/Icarus.DedicatedServerSettings.AllowNonAdminsToDeleteProspects
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Non-Admins To Delete Prospects
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, anyone who joins the lobby can delete existing prospects from the server. Otherwise, only admins can
+        Keywords: non,admins,delete,prospects,allownonadminstodeleteprospects
+        FieldName: AllowNonAdminsToDeleteProspects
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.AllowNonAdminsToDeleteProspects
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AsyncTaskTimeout
+      label: Async Task Timeout
+      category: Icarus
+      subcategory: Server
+      description: >-
+        Sets the "AsyncTaskTimeout" parameter for Engine.ini. This can be helpful for resolving connection issues (Linux
+        only)
+      keywords: async,task,timeout,connection,asynctasktimeout
+      input_type: number
+      param_field_name: AsyncTaskTimeout
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Async Task Timeout
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the "AsyncTaskTimeout" parameter for Engine.ini. This can be helpful for resolving connection issues
+          (Linux only)
+        Keywords: async,task,timeout,connection,asynctasktimeout
+        FieldName: AsyncTaskTimeout
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: AsyncTaskTimeout
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: seconds
+        EnumValues: {}
+    - key: FiberFoliageRespawn
+      label: Enable Fiber Foliage Respawn
+      category: Icarus
+      subcategory: Server
+      description: If set, respawn of fiber foliage will be enabled
+      keywords: fiber,foliage,respawn,FiberFoliageRespawn
+      input_type: checkbox
+      param_field_name: /Script/Icarus.DedicatedServerSettings.FiberFoliageRespawn
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Fiber Foliage Respawn
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, respawn of fiber foliage will be enabled
+        Keywords: fiber,foliage,respawn,FiberFoliageRespawn
+        FieldName: FiberFoliageRespawn
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.FiberFoliageRespawn
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: LargeStonesRespawn
+      label: Enable Large Stones Respawn
+      category: Icarus
+      subcategory: Server
+      description: If set, respawn of large stones will be enabled
+      keywords: large,stones,respawn,LargeStonesRespawn
+      input_type: checkbox
+      param_field_name: /Script/Icarus.DedicatedServerSettings.LargeStonesRespawn
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Large Stones Respawn
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, respawn of large stones will be enabled
+        Keywords: large,stones,respawn,LargeStonesRespawn
+        FieldName: LargeStonesRespawn
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.LargeStonesRespawn
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: GameSaveFrequency
+      label: Autosave Interval
+      category: Icarus
+      subcategory: Server
+      description: Sets the time interval between automatic game saves
+      keywords: autosave,interval,gave,save,frequency,GameSaveFrequency
+      input_type: number
+      param_field_name: /Script/Icarus.DedicatedServerSettings.GameSaveFrequency
+      default: '10.000000'
+      placeholder: '10.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Autosave Interval
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time interval between automatic game saves
+        Keywords: autosave,interval,gave,save,frequency,GameSaveFrequency
+        FieldName: GameSaveFrequency
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.GameSaveFrequency
+        IncludeInCommandLine: false
+        DefaultValue: '10.000000'
+        Placeholder: '10.000000'
+        Suffix: minutes
+        EnumValues: {}
+    - key: SaveGameOnExit
+      label: Save Game On Exit
+      category: Icarus
+      subcategory: Server
+      description: If set, the server will be saved when the server is stopped
+      keywords: save,game,exit,SaveGameOnExit
+      input_type: checkbox
+      param_field_name: /Script/Icarus.DedicatedServerSettings.SaveGameOnExit
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Save Game On Exit
+        Category: Icarus:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be saved when the server is stopped
+        Keywords: save,game,exit,SaveGameOnExit
+        FieldName: SaveGameOnExit
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/Icarus.DedicatedServerSettings.SaveGameOnExit
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: >-
+        Sets the server branch to install. The client must be on the same version. Set any required password under "Beta
+        Password". NOTE: Update the server after switching branches!
+      keywords: server,branch,depot
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        experimental: Experimental
+        greathunts: Great Hunts release testing
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: >-
+          Sets the server branch to install. The client must be on the same version. Set any required password under
+          "Beta Password". NOTE: Update the server after switching branches!
+        Keywords: server,branch,depot
+        FieldName: ServerBranch
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ServerBranch
+        IncludeInCommandLine: false
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          experimental: Experimental
+          greathunts: Great Hunts release testing
+    - key: SpecificReleaseVersion
+      label: Proton GE Release Version (Linux)
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+        Empty = latest. Example: GE-Proton9-1
+      keywords: proton,release,version
+      input_type: text
+      param_field_name: SpecificReleaseVersion
+      default: ''
+      placeholder: GE-Proton9-1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Proton GE Release Version (Linux)
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+          Empty = latest. Example: GE-Proton9-1
+        Keywords: proton,release,version
+        FieldName: SpecificReleaseVersion
+        InputType: text
+        ParamFieldName: SpecificReleaseVersion
+        DefaultValue: ''
+        Placeholder: GE-Proton9-1
+        EnumValues: {}
+  files:
+    - path: Icarus/Saved/Config/WindowsServer/ServerSettings.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: Icarus/Saved/Config/WindowsServer/ServerSettings.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: LoadProspect
+    label: Load Prospect
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CreateProspect
+    label: Create Prospect
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ResumeProspect
+    label: Resume Prospect
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SessionName
+    label: Session Name
+    default: AMP Powered Icarus Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SessionName
+    label: Session Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JoinPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: JoinPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AdminPassword
+    label: RCON Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AdminPassword
+    label: RCON Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: StartupMode
+    label: Startup Mode
+    default: '-CreateProspect="{{ProspectType}} {{Difficulty}} {{Hardcore}} {{ProspectSaveName}}" '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ProspectSaveName
+    label: Prospect Save Name
+    default: DefaultProspect01
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ProspectType
+    label: Prospect Type
+    default: Tier1_Forest_Recon_0
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Difficulty
+    label: Difficulty Level
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Hardcore
+    label: Enable Hardcore
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ShutdownIfNotJoinedFor
+    label: No Join Shutdown Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ShutdownIfEmptyFor
+    label: Empty Shutdown Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowNonAdminsToLaunchProspects
+    label: Allow Non-Admins To Load Prospects
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowNonAdminsToDeleteProspects
+    label: Allow Non-Admins To Delete Prospects
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AsyncTaskTimeout
+    label: Async Task Timeout
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FiberFoliageRespawn
+    label: Enable Fiber Foliage Respawn
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LargeStonesRespawn
+    label: Enable Large Stones Respawn
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GameSaveFrequency
+    label: Autosave Interval
+    default: '10.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SaveGameOnExit
+    label: Save Game On Exit
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificReleaseVersion
+    label: Proton GE Release Version (Linux)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1149460'
+  collection_support: true
 backup:
   include:
     - /data

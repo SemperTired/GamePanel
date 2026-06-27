@@ -5,13 +5,21 @@ category: Imported
 summary: Renown Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1512690'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1512690/Renown_Combat/Binaries/Linux/Renown_CombatServer-Linux-Shipping
+  startup: >-
+    1512690/Renown_Combat/Binaries/Linux/Renown_CombatServer-Linux-Shipping Renown_Combat -Port={GamePort}
+    -QueryPort={QueryPort} -BeaconPort={BeaconPort} -RCONPort={RCONPort} -RCONPassword="{RemoteAdminPassword}"
+    {FormattedArgs} {PlatformArgs}
+    -ini:Engine:[EpicOnlineServices]:DedicatedServerClientId=xyza78917DzEE5Ey0isciVt66QDm5IzM
+    -ini:Engine:[EpicOnlineServices]:DedicatedServerClientSecret=m/mrnywFCdeA1mW3ZSvv3qcVlQlfwi1a+7Z63Q44EGU
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +27,871 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: gameport
+    name: Main Game Port
+    default: 7777
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+  - key: beaconport
+    name: Beacon Port
+    default: 9999
+    protocol: udp
+    required: true
+  - key: rconport
+    name: RCON Port
+    default: 25575
+    protocol: tcp
+    required: true
+config_files:
+  - path: Renown_Combat/Saved/Config/LinuxServer/Game.ini
+    type: ini
+    editable: true
+  - path: Renown_Combat/Saved/Config/WindowsServer/Game.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: EnableRCON
+      label: Enable RCON
+      category: Renown
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.EnableRCON
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable RCON
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: EnableRCON
+        InputType: text
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.EnableRCON
+        Hidden: true
+        DefaultValue: 'True'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Renown
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.RCONPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RemoteAdminPassword
+        InputType: text
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.RCONPassword
+        Hidden: true
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $RCONPort
+      label: RCON Port
+      category: Renown
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.RCONPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Port
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RCONPort
+        InputType: number
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.RCONPort
+        Hidden: true
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Renown
+      subcategory: Server
+      description: Sets the name of the server that is displayed in the server browser
+      keywords: server,name,ServerName
+      input_type: text
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.ServerName
+      default: AMP Powered Renown Server
+      placeholder: AMP Powered Renown Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that is displayed in the server browser
+        Keywords: server,name,ServerName
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.ServerName
+        DefaultValue: AMP Powered Renown Server
+        Placeholder: AMP Powered Renown Server
+        EnumValues: {}
+    - key: Region
+      label: Server Region
+      category: Renown
+      subcategory: Server
+      description: >-
+        Sets the region tag for the server as shown in the server browser. The official tags appear in the dropdown. If
+        'Custom' is selected, Custom Server Region must also be set
+      keywords: region
+      input_type: enum
+      param_field_name: Region
+      default: US Central
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        US East: US East
+        US West: US West
+        US Central: US Central
+        Europe: Europe
+        South America: South America
+        Asia: Asia
+        Oceania: Oceania
+        '{{CustomRegion}}': '--Custom--'
+      raw:
+        DisplayName: Server Region
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the region tag for the server as shown in the server browser. The official tags appear in the dropdown.
+          If 'Custom' is selected, Custom Server Region must also be set
+        Keywords: region
+        FieldName: Region
+        InputType: enum
+        ParamFieldName: Region
+        DefaultValue: US Central
+        EnumValues:
+          US East: US East
+          US West: US West
+          US Central: US Central
+          Europe: Europe
+          South America: South America
+          Asia: Asia
+          Oceania: Oceania
+          '{{CustomRegion}}': '--Custom--'
+    - key: CustomRegion
+      label: Custom Server Region
+      category: Renown
+      subcategory: Server
+      description: Sets a custom region tag for the server, if 'Custom' is selected under Server Region
+      keywords: custom,region
+      input_type: text
+      param_field_name: CustomRegion
+      default: ''
+      placeholder: Modded
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Server Region
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom region tag for the server, if 'Custom' is selected under Server Region
+        Keywords: custom,region
+        FieldName: CustomRegion
+        InputType: text
+        ParamFieldName: CustomRegion
+        DefaultValue: ''
+        Placeholder: Modded
+        EnumValues: {}
+    - key: PrivateSession
+      label: Make Server Private
+      category: Renown
+      subcategory: Server
+      description: If set, the server will not be listed in the server browser and can only be joined via direct connect
+      keywords: private,session,PrivateSession
+      input_type: checkbox
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.PrivateSession
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Make Server Private
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will not be listed in the server browser and can only be joined via direct connect
+        Keywords: private,session,PrivateSession
+        FieldName: PrivateSession
+        InputType: checkbox
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.PrivateSession
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: MOTD
+      label: Server MOTD
+      category: Renown
+      subcategory: Server
+      description: Sets the message of the day (MOTD) shown to players when they join
+      keywords: motd,message,day
+      input_type: text
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.MOTD
+      default: Welome to my server!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server MOTD
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the message of the day (MOTD) shown to players when they join
+        Keywords: motd,message,day
+        FieldName: MOTD
+        InputType: text
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.MOTD
+        DefaultValue: Welome to my server!
+        EnumValues: {}
+    - key: ServerPassword
+      label: Server Password
+      category: Renown
+      subcategory: Server
+      description: Sets the password required to join the server. Empty = no password
+      keywords: server,password,ServerPassword
+      input_type: password
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.ServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to join the server. Empty = no password
+        Keywords: server,password,ServerPassword
+        FieldName: ServerPassword
+        InputType: password
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.ServerPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: AdminPassword
+      label: Admin Password
+      category: Renown
+      subcategory: Server
+      description: Sets the password for server admins in-game
+      keywords: admin,password,AdminPassword
+      input_type: password
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.AdminPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for server admins in-game
+        Keywords: admin,password,AdminPassword
+        FieldName: AdminPassword
+        InputType: password
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.AdminPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Renown
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,MaxPlayers
+      input_type: number
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.MaxPlayers
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.MaxPlayers
+        DefaultValue: '40'
+        Placeholder: '40'
+        Suffix: players
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Renown
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /Script/Engine.GameSession.MaxPlayers
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $MaxUsers
+        InputType: number
+        ParamFieldName: /Script/Engine.GameSession.MaxPlayers
+        Hidden: true
+        EnumValues: {}
+    - key: MapRotation
+      label: Map Rotation
+      category: Renown
+      subcategory: Server
+      description: 'Map rotations can be set in Game.ini. Format: MapRotation=RSurv-AlgaraIsle_p. One map entry per line'
+      keywords: map,rotation,MapRotation
+      input_type: hidden
+      param_field_name: MapRotation
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Map Rotation
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Map rotations can be set in Game.ini. Format: MapRotation=RSurv-AlgaraIsle_p. One map entry per line'
+        Keywords: map,rotation,MapRotation
+        FieldName: MapRotation
+        InputType: hidden
+        ParamFieldName: MapRotation
+        EnumValues: {}
+    - key: GameSaveName
+      label: Game Save Name
+      category: Renown
+      subcategory: Server
+      description: Sets the name of the game save
+      keywords: game,save,name,GameSaveName
+      input_type: text
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.GameSaveName
+      default: Save 1
+      placeholder: Save 1
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Save Name
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the game save
+        Keywords: game,save,name,GameSaveName
+        FieldName: GameSaveName
+        InputType: text
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.GameSaveName
+        DefaultValue: Save 1
+        Placeholder: Save 1
+        Required: true
+        EnumValues: {}
+    - key: MaxPing
+      label: Maximum Ping
+      category: Renown
+      subcategory: Server
+      description: Sets the maximum ping allowed for players to join the server. 0 = no limit
+      keywords: max,ping,MaxPing
+      input_type: number
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.MaxPing
+      default: '180'
+      placeholder: '180'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Ping
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum ping allowed for players to join the server. 0 = no limit
+        Keywords: max,ping,MaxPing
+        FieldName: MaxPing
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.MaxPing
+        DefaultValue: '180'
+        Placeholder: '180'
+        EnumValues: {}
+    - key: RCONChatMessagesLimit
+      label: RCON Chat Messages Limit
+      category: Renown
+      subcategory: Server
+      description: Sets the limit for RCON chat messages
+      keywords: rcon,chat,messages,limit
+      input_type: number
+      param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.RCONChatMessagesLimit
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: RCON Chat Messages Limit
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the limit for RCON chat messages
+        Keywords: rcon,chat,messages,limit
+        FieldName: RCONChatMessagesLimit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.RCONChatMessagesLimit
+        DefaultValue: '30'
+        Placeholder: '30'
+        EnumValues: {}
+    - key: NetServerMaxTickRate
+      label: Network Maximum Tick Rate
+      category: Renown
+      subcategory: Server
+      description: Sets the maximum tick rate for the server's network driver
+      keywords: net,server,tick,rate,NetServerMaxTickRate
+      input_type: number
+      param_field_name: ini:Engine:[Script/SteamSockets.SteamSocketsNetDriver]:NetServerMaxTickRate
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Network Maximum Tick Rate
+        Category: Renown:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum tick rate for the server's network driver
+        Keywords: net,server,tick,rate,NetServerMaxTickRate
+        FieldName: NetServerMaxTickRate
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: ini:Engine:[Script/SteamSockets.SteamSocketsNetDriver]:NetServerMaxTickRate
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '30'
+        Placeholder: '30'
+        EnumValues: {}
+    - key: ResourceGainMultiplier
+      label: Resource Gain Multiplier
+      category: Renown
+      subcategory: Gameplay
+      description: Sets the multiplier for resource gain, which determines how much players gather from resources
+      keywords: resource,gain,multiplier,ResourceGainMultiplier
+      input_type: number
+      param_field_name: /Game/Core/Blueprints/GameModes/Renown_Survival_GameMode.Renown_Survival_GameMode_C.ResourceGainMultiplier
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Resource Gain Multiplier
+        Category: Renown:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the multiplier for resource gain, which determines how much players gather from resources
+        Keywords: resource,gain,multiplier,ResourceGainMultiplier
+        FieldName: ResourceGainMultiplier
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: /Game/Core/Blueprints/GameModes/Renown_Survival_GameMode.Renown_Survival_GameMode_C.ResourceGainMultiplier
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GoldCoinGainMultiplier
+      label: Gold Coin Gain Multiplier
+      category: Renown
+      subcategory: Gameplay
+      description: Sets the multiplier for gold coin gain, which determines how much gold players earn
+      keywords: gold,coin,gain,multiplier,GoldCoinGainMultiplier
+      input_type: number
+      param_field_name: /Game/Core/Blueprints/GameModes/Renown_Survival_GameMode.Renown_Survival_GameMode_C.GoldCoinGainMultiplier
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Gold Coin Gain Multiplier
+        Category: Renown:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the multiplier for gold coin gain, which determines how much gold players earn
+        Keywords: gold,coin,gain,multiplier,GoldCoinGainMultiplier
+        FieldName: GoldCoinGainMultiplier
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: /Game/Core/Blueprints/GameModes/Renown_Survival_GameMode.Renown_Survival_GameMode_C.GoldCoinGainMultiplier
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GlobalCraftingMultiplier
+      label: Global Crafting Multiplier
+      category: Renown
+      subcategory: Gameplay
+      description: Sets the multiplier for crafting speed globally
+      keywords: crafting,multiplier,global,CraftingSpeedMultiplier
+      input_type: number
+      param_field_name: /Game/Core/Blueprints/GameModes/Renown_Survival_GameMode.Renown_Survival_GameMode_C.GlobalCraftingMultiplier
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Global Crafting Multiplier
+        Category: Renown:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the multiplier for crafting speed globally
+        Keywords: crafting,multiplier,global,CraftingSpeedMultiplier
+        FieldName: GlobalCraftingMultiplier
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: /Game/Core/Blueprints/GameModes/Renown_Survival_GameMode.Renown_Survival_GameMode_C.GlobalCraftingMultiplier
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GlobalSmeltingMultiplier
+      label: Global Smelting Multiplier
+      category: Renown
+      subcategory: Gameplay
+      description: Sets the multiplier for smelting speed globally
+      keywords: smelting,multiplier,global,GlobalSmeltingMultiplier
+      input_type: number
+      param_field_name: /Game/Core/Blueprints/GameModes/Renown_Survival_GameMode.Renown_Survival_GameMode_C.GlobalSmeltingMultiplier
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Global Smelting Multiplier
+        Category: Renown:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the multiplier for smelting speed globally
+        Keywords: smelting,multiplier,global,GlobalSmeltingMultiplier
+        FieldName: GlobalSmeltingMultiplier
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: /Game/Core/Blueprints/GameModes/Renown_Survival_GameMode.Renown_Survival_GameMode_C.GlobalSmeltingMultiplier
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Server.FirstPersonOnly
+      label: Enable First Person Only
+      category: Renown
+      subcategory: Gameplay
+      description: If set, the server will enforce first-person-only gameplay
+      keywords: first,person,only,Server.FirstPersonOnly
+      input_type: checkbox
+      param_field_name: ini:Engine:[SystemSettings]:Server.FirstPersonOnly
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable First Person Only
+        Category: Renown:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the server will enforce first-person-only gameplay
+        Keywords: first,person,only,Server.FirstPersonOnly
+        FieldName: Server.FirstPersonOnly
+        InputType: checkbox
+        ParamFieldName: ini:Engine:[SystemSettings]:Server.FirstPersonOnly
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: ServerVersion
+      label: Server Release Version
+      category: Updates
+      subcategory: Steam Downloads
+      description: Sets the server release version to install. Update the server after changing this setting
+      keywords: server,version,public,beta
+      input_type: enum
+      param_field_name: ServerVersion
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        beta: Beta
+      raw:
+        DisplayName: Server Release Version
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: Sets the server release version to install. Update the server after changing this setting
+        Keywords: server,version,public,beta
+        FieldName: ServerVersion
+        InputType: enum
+        ParamFieldName: ServerVersion
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          beta: Beta
+  files:
+    - path: Renown_Combat/Saved/Config/LinuxServer/Game.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: Renown_Combat/Saved/Config/LinuxServer/Game.ini
+        ConfigType: ini
+        AutoMap: true
+        Importable: true
+    - path: Renown_Combat/Saved/Config/WindowsServer/Game.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: Renown_Combat/Saved/Config/WindowsServer/Game.ini
+        ConfigType: ini
+        AutoMap: true
+        Importable: true
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: EnableRCON
+    label: Enable RCON
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered Renown Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Region
+    label: Server Region
+    default: US Central
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomRegion
+    label: Custom Server Region
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PrivateSession
+    label: Make Server Private
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MOTD
+    label: Server MOTD
+    default: Welome to my server!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AdminPassword
+    label: Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: GameSaveName
+    label: Game Save Name
+    default: Save 1
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: MaxPing
+    label: Maximum Ping
+    default: '180'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RCONChatMessagesLimit
+    label: RCON Chat Messages Limit
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NetServerMaxTickRate
+    label: Network Maximum Tick Rate
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ResourceGainMultiplier
+    label: Resource Gain Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GoldCoinGainMultiplier
+    label: Gold Coin Gain Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GlobalCraftingMultiplier
+    label: Global Crafting Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GlobalSmeltingMultiplier
+    label: Global Smelting Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server.FirstPersonOnly
+    label: Enable First Person Only
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerVersion
+    label: Server Release Version
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1488310'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,16 @@ category: Imported
 summary: Creativerse Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1098260'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1098260/CreativerseServer
+  startup: 1098260/CreativerseServer {PlatformArgs} {FormattedArgs} -forceIp={ApplicationIPBinding}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,424 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 26900
     protocol: udp
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 26901
+    protocol: udp
+    required: true
+  - key: webadminport
+    name: Web Admin Port
+    default: 26902
+    protocol: udp
+    required: true
+config_files:
+  - path: PlayfulCorp/CreativerseServer/worlddata/worlds/{{worldId}}/config_world.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Creativerse
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.GamePort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Creativerse:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: $.GamePort
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: worldId
+      label: World Key
+      category: Creativerse
+      subcategory: Server
+      description: 'Sets the world key for the server. Don''t use spaces. NOTE: Update the server after changing this setting'
+      keywords: world,key,id
+      input_type: text
+      param_field_name: worldId
+      default: AMP_Server
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Key
+        Category: Creativerse:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Sets the world key for the server. Don''t use spaces. NOTE: Update the server after changing this setting'
+        Keywords: world,key,id
+        FieldName: worldId
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: worldId
+        IncludeInCommandLine: true
+        DefaultValue: AMP_Server
+        Required: true
+        EnumValues: {}
+    - key: worldId
+      label: World Key
+      category: Creativerse
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.WorldKey
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Key
+        Category: Creativerse:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: worldId
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: $.WorldKey
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: TemplateKey
+      label: World Template
+      category: Creativerse
+      subcategory: Server
+      description: Sets the template for the world. If Custom Template is selected, then the Custom Template Key must also be set
+      keywords: template,key
+      input_type: enum
+      param_field_name: $.TemplateKey
+      default: 69bac762182c4dd69c59a48c3e1e9304
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        cb201411260047e5ab4f4b8166eb3976: Archipelago 10K
+        cb20141210ed4b1590c6a1420c384f2b: Continent 1K
+        cb20150118204805ab4f4b8166eb3980: Continent 2K-1
+        cb20150119204805ab4f4b8166eb3980: Continent 2K-2
+        cb20150120204805ab4f4b8166eb3980: Continent 2K-3
+        cb20141228040965ab4f4b8166eb3977: Continent 4K-1
+        cb20141231040965ab4f4b8166eb3981: Continent 4K-2
+        892bbca2d6444e26a8857a07a90292f1: Flat Grass 2K
+        b0c2e10917fe4b709255b1b6f162e558: Flat Sand 2K
+        bb0326fd64b74791b493ad03abe7af6b: Flat Snow 4K
+        hg_testmap_1: HG TestMap
+        island_ruins: Island Ruins
+        6af068019ad648ceb3d8eadf3e1ab854: Lowlands 1K-1
+        18285efb343e4e619df1facc2b7d27c3: Lowlands 1K-2
+        425a9f8d3f6a4d42ad4d7a0ef98dc4ce: Lowlands 2K
+        1ec67c5a8598480cabac567762bf59b9: Lowlands 3K
+        25b95767960e4810a0d896f2b4d1d3df: Lowlands 10K-1
+        cb20140912ac428bae68abb4822dbfda: Lowlands 10K-2
+        cb20140915ac428bae68abb4822dbfda: Lowlands 10K-3
+        6b87b59bdfc344c89920dc7eb44c5839: Lowlands 10K-4
+        6d1ef9b9e2bd46889068f3df6aa73954: Mixed 1K-1
+        35da7596161942ffad4bad6b7b932950: Mixed 1K-2
+        69bac762182c4dd69c59a48c3e1e9304: RW1 10K (default)
+        e153099c609f4bb2b5f89e218fcb471e: RW2 10K
+        4a4d04caf0d449e3a5a04c0ecfe03957: RW3 10K
+        5dcc93229f004bfe86e2bca3cc60e2d3: RW4 10K
+        f8d02b7209a54aa19d2fcca0f58778e4: RW5 10K
+        e05d2ad3952a4061931cbe003bc71ec9: RW6 10K
+        6b7f11478cb54a1896ef30352af168ef: RW7 10K
+        5c659bff855243f2bc26c9d82b8ca073: RW8 10K
+        c773ad62e9b74fedb989092e8d6cb3af: RW9? 10K
+        0c9de19ab8b8485dabae8144e6b39317: RW10? 10K
+        024dbf3fcb92412295cd8d07ba93288f: RW10? 10K-1
+        cb20150125819205ab4f4b8166eb0520: RW? 8K
+        6af665950087483b9fac9c21f3e9f0ff: RW? 10K-2
+        fb45525a5f9b48eaa4820bed2759bb59: RW? 10K-3
+        0ce5b025a31546ec84b28330a78a431e: RW? 10K-4
+        '{{CustomTemplate}}': Custom Template
+      raw:
+        DisplayName: World Template
+        Category: Creativerse:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the template for the world. If Custom Template is selected, then the Custom Template Key must also be set
+        Keywords: template,key
+        FieldName: TemplateKey
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: $.TemplateKey
+        IncludeInCommandLine: false
+        DefaultValue: 69bac762182c4dd69c59a48c3e1e9304
+        EnumValues:
+          cb201411260047e5ab4f4b8166eb3976: Archipelago 10K
+          cb20141210ed4b1590c6a1420c384f2b: Continent 1K
+          cb20150118204805ab4f4b8166eb3980: Continent 2K-1
+          cb20150119204805ab4f4b8166eb3980: Continent 2K-2
+          cb20150120204805ab4f4b8166eb3980: Continent 2K-3
+          cb20141228040965ab4f4b8166eb3977: Continent 4K-1
+          cb20141231040965ab4f4b8166eb3981: Continent 4K-2
+          892bbca2d6444e26a8857a07a90292f1: Flat Grass 2K
+          b0c2e10917fe4b709255b1b6f162e558: Flat Sand 2K
+          bb0326fd64b74791b493ad03abe7af6b: Flat Snow 4K
+          hg_testmap_1: HG TestMap
+          island_ruins: Island Ruins
+          6af068019ad648ceb3d8eadf3e1ab854: Lowlands 1K-1
+          18285efb343e4e619df1facc2b7d27c3: Lowlands 1K-2
+          425a9f8d3f6a4d42ad4d7a0ef98dc4ce: Lowlands 2K
+          1ec67c5a8598480cabac567762bf59b9: Lowlands 3K
+          25b95767960e4810a0d896f2b4d1d3df: Lowlands 10K-1
+          cb20140912ac428bae68abb4822dbfda: Lowlands 10K-2
+          cb20140915ac428bae68abb4822dbfda: Lowlands 10K-3
+          6b87b59bdfc344c89920dc7eb44c5839: Lowlands 10K-4
+          6d1ef9b9e2bd46889068f3df6aa73954: Mixed 1K-1
+          35da7596161942ffad4bad6b7b932950: Mixed 1K-2
+          69bac762182c4dd69c59a48c3e1e9304: RW1 10K (default)
+          e153099c609f4bb2b5f89e218fcb471e: RW2 10K
+          4a4d04caf0d449e3a5a04c0ecfe03957: RW3 10K
+          5dcc93229f004bfe86e2bca3cc60e2d3: RW4 10K
+          f8d02b7209a54aa19d2fcca0f58778e4: RW5 10K
+          e05d2ad3952a4061931cbe003bc71ec9: RW6 10K
+          6b7f11478cb54a1896ef30352af168ef: RW7 10K
+          5c659bff855243f2bc26c9d82b8ca073: RW8 10K
+          c773ad62e9b74fedb989092e8d6cb3af: RW9? 10K
+          0c9de19ab8b8485dabae8144e6b39317: RW10? 10K
+          024dbf3fcb92412295cd8d07ba93288f: RW10? 10K-1
+          cb20150125819205ab4f4b8166eb0520: RW? 8K
+          6af665950087483b9fac9c21f3e9f0ff: RW? 10K-2
+          fb45525a5f9b48eaa4820bed2759bb59: RW? 10K-3
+          0ce5b025a31546ec84b28330a78a431e: RW? 10K-4
+          '{{CustomTemplate}}': Custom Template
+    - key: CustomTemplate
+      label: Custom Template Key
+      category: Creativerse
+      subcategory: Server
+      description: Sets the key for a custom template for the world
+      keywords: custom,template,key
+      input_type: text
+      param_field_name: CustomTemplate
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Template Key
+        Category: Creativerse:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the key for a custom template for the world
+        Keywords: custom,template,key
+        FieldName: CustomTemplate
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomTemplate
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: SteamID
+      label: World Owner SteamID
+      category: Creativerse
+      subcategory: Server
+      description: >-
+        To start the server, you must include a valid Steam64 ID for "WorldOwnerSteamId" in the world's
+        config_world.json
+      keywords: steam,id
+      input_type: hidden
+      param_field_name: SteamID
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Owner SteamID
+        Category: Creativerse:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          To start the server, you must include a valid Steam64 ID for "WorldOwnerSteamId" in the world's
+          config_world.json
+        Keywords: steam,id
+        FieldName: SteamID
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: SteamID
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: WorldName
+      label: World Name
+      category: Creativerse
+      subcategory: Server
+      description: Sets the name of the world
+      keywords: world,name
+      input_type: text
+      param_field_name: $.WorldName
+      default: AMP Powered Creativerse Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Name
+        Category: Creativerse:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the world
+        Keywords: world,name
+        FieldName: WorldName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: $.WorldName
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Creativerse Server
+        EnumValues: {}
+    - key: WorldDescription
+      label: World Description
+      category: Creativerse
+      subcategory: Server
+      description: Sets the world description
+      keywords: world,description
+      input_type: text
+      param_field_name: $.WorldDescription
+      default: A Creativerse World
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Description
+        Category: Creativerse:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the world description
+        Keywords: world,description
+        FieldName: WorldDescription
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: $.WorldDescription
+        IncludeInCommandLine: false
+        DefaultValue: A Creativerse World
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Creativerse
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at the same time
+      keywords: max,players,limit
+      input_type: number
+      param_field_name: $.MaxPlayers
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Creativerse:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at the same time
+        Keywords: max,players,limit
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: $.MaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: players
+        EnumValues: {}
+  files:
+    - path: PlayfulCorp/CreativerseServer/worlddata/worlds/{{worldId}}/config_world.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: PlayfulCorp/CreativerseServer/worlddata/worlds/{{worldId}}/config_world.json
+        AutoMap: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: worldId
+    label: World Key
+    default: AMP_Server
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: worldId
+    label: World Key
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: TemplateKey
+    label: World Template
+    default: 69bac762182c4dd69c59a48c3e1e9304
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: CustomTemplate
+    label: Custom Template Key
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: WorldName
+    label: World Name
+    default: AMP Powered Creativerse Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WorldDescription
+    label: World Description
+    default: A Creativerse World
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '280790'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,16 @@ category: Imported
 summary: TerraTech Worlds Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2533070'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: /usr/bin/xvfb-run {PlatformArgs} TT2 -stdout -FullStdOutLogOutput
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1064 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 7777
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: dedicated_server_config.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Public Port
+      category: TerraTech Worlds
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Public Port
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.Port
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: ReplacePlanetSettings
+      label: Replace Planet Settings
+      category: TerraTech Worlds
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.ReplacePlanetSettings
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Replace Planet Settings
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        FieldName: ReplacePlanetSettings
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.ReplacePlanetSettings
+        DefaultValue: 'true'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: IsCustomised
+      label: Is Customised
+      category: TerraTech Worlds
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.PlanetSettings.IsCustomised
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Is Customised
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        FieldName: IsCustomised
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.PlanetSettings.IsCustomised
+        DefaultValue: 'true'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: TerraTech Worlds
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,slots,limit,SlotCount
+      input_type: number
+      param_field_name: $.SlotCount
+      default: '8'
+      placeholder: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 8
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,slots,limit,SlotCount
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '8'
+        ParamFieldName: $.SlotCount
+        DefaultValue: '8'
+        Placeholder: '8'
+        Suffix: players
+        EnumValues: {}
+    - key: Password
+      label: Server Password
+      category: TerraTech Worlds
+      subcategory: Server
+      description: Sets the password required for players to join the server. Default is no password
+      keywords: password,server
+      input_type: password
+      param_field_name: $.Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for players to join the server. Default is no password
+        Keywords: password,server
+        FieldName: Password
+        InputType: password
+        ParamFieldName: $.Password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: MaxBackupCount
+      label: Backup Count
+      category: TerraTech Worlds
+      subcategory: Server
+      description: Sets the maximum number of backups
+      keywords: backup,count,maximum,MaxBackupCount
+      input_type: number
+      param_field_name: $.MaxBackupCount
+      default: '25'
+      placeholder: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Backup Count
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of backups
+        Keywords: backup,count,maximum,MaxBackupCount
+        FieldName: MaxBackupCount
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.MaxBackupCount
+        DefaultValue: '25'
+        Placeholder: '25'
+        EnumValues: {}
+    - key: BackupInterval
+      label: Backup Interval
+      category: TerraTech Worlds
+      subcategory: Server
+      description: Sets how frequently backups are made
+      keywords: backup,interval,BackupInterval
+      input_type: number
+      param_field_name: $.BackupInterval
+      default: '3600'
+      placeholder: '3600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Backup Interval
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how frequently backups are made
+        Keywords: backup,interval,BackupInterval
+        FieldName: BackupInterval
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.BackupInterval
+        DefaultValue: '3600'
+        Placeholder: '3600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: DayLength
+      label: Day Length
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets how long the day cycle is
+      keywords: day,cycle,time,length,DayLength
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.DayLength
+      default: '1200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1200': 20 minutes (default)
+        '1800': 30 minutes
+        '2700': 45 minutes
+        '3600': 1 hour
+        '7200': 2 hours
+        '14400': 4 hours
+      raw:
+        DisplayName: Day Length
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how long the day cycle is
+        Keywords: day,cycle,time,length,DayLength
+        FieldName: DayLength
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.DayLength
+        DefaultValue: '1200'
+        EnumValues:
+          '1200': 20 minutes (default)
+          '1800': 30 minutes
+          '2700': 45 minutes
+          '3600': 1 hour
+          '7200': 2 hours
+          '14400': 4 hours
+    - key: WeatherEvents
+      label: Weather Event Frequency
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets the frequency of inhospitable weather
+      keywords: weather,events,frequency,WeatherEvents
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.WeatherEvents
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': Normal
+        '2': High
+        '0.5': Low
+      raw:
+        DisplayName: Weather Event Frequency
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the frequency of inhospitable weather
+        Keywords: weather,events,frequency,WeatherEvents
+        FieldName: WeatherEvents
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.WeatherEvents
+        DefaultValue: '1'
+        EnumValues:
+          '1': Normal
+          '2': High
+          '0.5': Low
+    - key: HazardTargetingMode
+      label: Natural Hazards Targeting
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets the hazard targeting mode
+      keywords: natural,hazards,targeting,HazardTargetingMode
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.HazardTargetingMode
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No techs
+        '1': Player techs (default)
+        '3': Player and enemy techs
+      raw:
+        DisplayName: Natural Hazards Targeting
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the hazard targeting mode
+        Keywords: natural,hazards,targeting,HazardTargetingMode
+        FieldName: HazardTargetingMode
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.HazardTargetingMode
+        DefaultValue: '1'
+        EnumValues:
+          '0': No techs
+          '1': Player techs (default)
+          '3': Player and enemy techs
+    - key: ResourceToughness
+      label: Resource Toughness
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets the amount of health flora and mineral deposits have
+      keywords: resource,toughness,health,flora,deposits,ResourceToughness
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.ResourceToughness
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': Normal
+        '0.7': Low
+        '1.5': High
+      raw:
+        DisplayName: Resource Toughness
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the amount of health flora and mineral deposits have
+        Keywords: resource,toughness,health,flora,deposits,ResourceToughness
+        FieldName: ResourceToughness
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.ResourceToughness
+        DefaultValue: '1'
+        EnumValues:
+          '1': Normal
+          '0.7': Low
+          '1.5': High
+    - key: ResourceYield
+      label: Resource Yield
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets the amount of resources that can be obtained from flora and mineral deposits
+      keywords: resource,yield,flora,deposits,ResourceYield
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.ResourceYield
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': Normal
+        '2': More
+        '3': Lots
+        '0.5': Less
+      raw:
+        DisplayName: Resource Yield
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the amount of resources that can be obtained from flora and mineral deposits
+        Keywords: resource,yield,flora,deposits,ResourceYield
+        FieldName: ResourceYield
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.ResourceYield
+        DefaultValue: '1'
+        EnumValues:
+          '1': Normal
+          '2': More
+          '3': Lots
+          '0.5': Less
+    - key: EnemyDangerLevel
+      label: Enemy Danger Level
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets how difficult enemy techs are. Affects toughness, damage, and accuracy
+      keywords: enemy,danger,level,EnemyDangerLevel
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.EnemyDangerLevel
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Tame
+        '1': Normal
+        '2': Dangerous
+        '3': Savage
+      raw:
+        DisplayName: Enemy Danger Level
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how difficult enemy techs are. Affects toughness, damage, and accuracy
+        Keywords: enemy,danger,level,EnemyDangerLevel
+        FieldName: EnemyDangerLevel
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.EnemyDangerLevel
+        DefaultValue: '1'
+        EnumValues:
+          '0': Tame
+          '1': Normal
+          '2': Dangerous
+          '3': Savage
+    - key: EnemyRespawnRate
+      label: Enemy Respawn Rate
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets how quickly enemies will respawn after being destroyed
+      keywords: enemy,respawn,rate,EnemyRespawnRate
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.EnemyRespawnRate
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Never
+        '1': Normal
+        '2': Fast
+        '3': Extreme
+        '0.5': Slow
+      raw:
+        DisplayName: Enemy Respawn Rate
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how quickly enemies will respawn after being destroyed
+        Keywords: enemy,respawn,rate,EnemyRespawnRate
+        FieldName: EnemyRespawnRate
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.EnemyRespawnRate
+        DefaultValue: '1'
+        EnumValues:
+          '0': Never
+          '1': Normal
+          '2': Fast
+          '3': Extreme
+          '0.5': Slow
+    - key: EnemyBlockDropRate
+      label: Enemy Block Drop Rate
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets the likelihood of blocks falling from enemies rather then being destroyed
+      keywords: enemy,block,drop,rate,EnemyBlockDropRate
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.EnemyBlockDropRate
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None
+        '1': Normal
+        '2': Most
+        '0.5': Less
+        '1.5': More
+      raw:
+        DisplayName: Enemy Block Drop Rate
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the likelihood of blocks falling from enemies rather then being destroyed
+        Keywords: enemy,block,drop,rate,EnemyBlockDropRate
+        FieldName: EnemyBlockDropRate
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.EnemyBlockDropRate
+        DefaultValue: '1'
+        EnumValues:
+          '0': None
+          '1': Normal
+          '2': Most
+          '0.5': Less
+          '1.5': More
+    - key: StructuresRequirePower
+      label: Enable Structure Power Requirement
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: If set, structures that requires power will need generators to operate
+      keywords: structure,power,generation,requirement,StructuresRequirePower
+      input_type: checkbox
+      param_field_name: $.PlanetSettings.Details.StructuresRequirePower
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Structure Power Requirement
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, structures that requires power will need generators to operate
+        Keywords: structure,power,generation,requirement,StructuresRequirePower
+        FieldName: StructuresRequirePower
+        InputType: checkbox
+        ParamFieldName: $.PlanetSettings.Details.StructuresRequirePower
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: StructurePowerGeneration
+      label: Structure Power Generation Level
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets how much power generators, solar panels, and other power producing structures generate
+      keywords: structure,power,generation,rate,StructurePowerGeneration
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.StructurePowerGeneration
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': Normal
+        '2': +100%
+        '1.5': +50%
+      raw:
+        DisplayName: Structure Power Generation Level
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how much power generators, solar panels, and other power producing structures generate
+        Keywords: structure,power,generation,rate,StructurePowerGeneration
+        FieldName: StructurePowerGeneration
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.StructurePowerGeneration
+        DefaultValue: '1'
+        EnumValues:
+          '1': Normal
+          '2': +100%
+          '1.5': +50%
+    - key: BlockLicensingEnabled
+      label: Require Block Licensing
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: If set, blocks/parts for techs will require licensing before they can be stored in the tech yard
+      keywords: block,part,licensing,techyard,BlockLicensingEnabled
+      input_type: checkbox
+      param_field_name: $.PlanetSettings.Details.BlockLicensingEnabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Block Licensing
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, blocks/parts for techs will require licensing before they can be stored in the tech yard
+        Keywords: block,part,licensing,techyard,BlockLicensingEnabled
+        FieldName: BlockLicensingEnabled
+        InputType: checkbox
+        ParamFieldName: $.PlanetSettings.Details.BlockLicensingEnabled
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: BlocksGloballyAccessible
+      label: Allow Blocks Globally Accessible Without Tech Yard
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: If set, players can access blocks/parts when tech is away from the tech yard
+      keywords: block,part,techyard,access,BlocksGloballyAccessible
+      input_type: checkbox
+      param_field_name: $.PlanetSettings.Details.BlocksGloballyAccessible
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Blocks Globally Accessible Without Tech Yard
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players can access blocks/parts when tech is away from the tech yard
+        Keywords: block,part,techyard,access,BlocksGloballyAccessible
+        FieldName: BlocksGloballyAccessible
+        InputType: checkbox
+        ParamFieldName: $.PlanetSettings.Details.BlocksGloballyAccessible
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PlayerTechPowerRegen
+      label: Tech Power Regeneration Rate
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets the rate at which players tech regenerates power
+      keywords: tech,power,regeneration,rate,PlayerTechPowerRegen
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.PlayerTechPowerRegen
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': Normal
+        '2': Fast
+      raw:
+        DisplayName: Tech Power Regeneration Rate
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the rate at which players tech regenerates power
+        Keywords: tech,power,regeneration,rate,PlayerTechPowerRegen
+        FieldName: PlayerTechPowerRegen
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.PlayerTechPowerRegen
+        DefaultValue: '1'
+        EnumValues:
+          '1': Normal
+          '2': Fast
+    - key: PlayerTechAutoRepair
+      label: Tech Auto Repair Rate
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets the rate at which players tech repairs minor damage
+      keywords: tech,auto,repair,rate,PlayerTechAutoRepair
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.PlayerTechAutoRepair
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': 'Off'
+        '1': Normal
+        '0.75': Slow
+        '1.5': Fast
+      raw:
+        DisplayName: Tech Auto Repair Rate
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the rate at which players tech repairs minor damage
+        Keywords: tech,auto,repair,rate,PlayerTechAutoRepair
+        FieldName: PlayerTechAutoRepair
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.PlayerTechAutoRepair
+        DefaultValue: '1'
+        EnumValues:
+          '0': 'Off'
+          '1': Normal
+          '0.75': Slow
+          '1.5': Fast
+    - key: PlayerTechRepairCharges
+      label: Cab Repair Charges
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Sets the base number of cab repairs
+      keywords: cab,repair,charge,PlayerTechRepairCharges
+      input_type: number
+      param_field_name: $.PlanetSettings.Details.PlayerTechRepairCharges
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 6
+      enum_values: {}
+      raw:
+        DisplayName: Cab Repair Charges
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the base number of cab repairs
+        Keywords: cab,repair,charge,PlayerTechRepairCharges
+        FieldName: PlayerTechRepairCharges
+        InputType: number
+        MinValue: '0'
+        MaxValue: '6'
+        ParamFieldName: $.PlanetSettings.Details.PlayerTechRepairCharges
+        DefaultValue: '3'
+        Placeholder: '3'
+        EnumValues: {}
+    - key: PlayerTechLimit
+      label: Tech Reactor Capacity
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: Modifies the reactor capacity of cabs
+      keywords: reactor,capacity,tech,PlayerTechLimit
+      input_type: enum
+      param_field_name: $.PlanetSettings.Details.PlayerTechLimit
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': Normal
+        '2': +100%
+        '500002': Infinite
+        '1.10': +10%
+        '1.25': +25%
+        '1.5': +50%
+      raw:
+        DisplayName: Tech Reactor Capacity
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Modifies the reactor capacity of cabs
+        Keywords: reactor,capacity,tech,PlayerTechLimit
+        FieldName: PlayerTechLimit
+        InputType: enum
+        ParamFieldName: $.PlanetSettings.Details.PlayerTechLimit
+        DefaultValue: '1'
+        EnumValues:
+          '1': Normal
+          '2': +100%
+          '500002': Infinite
+          '1.10': +10%
+          '1.25': +25%
+          '1.5': +50%
+    - key: PlayerTechUsesPower
+      label: Enable Tech Energy Weapon Power Requirement
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: If set, energy weapons on techs will require battery power and have recharge cooldown
+      keywords: energy,weapon,tech,uses,power,requirement,battery,cooldown,PlayerTechUsesPower
+      input_type: checkbox
+      param_field_name: $.PlanetSettings.Details.PlayerTechUsesPower
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Tech Energy Weapon Power Requirement
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, energy weapons on techs will require battery power and have recharge cooldown
+        Keywords: energy,weapon,tech,uses,power,requirement,battery,cooldown,PlayerTechUsesPower
+        FieldName: PlayerTechUsesPower
+        InputType: checkbox
+        ParamFieldName: $.PlanetSettings.Details.PlayerTechUsesPower
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PlayerUnlimitedAmmo
+      label: Allow Unlimited Ammo
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: If set, allows unlimited ammo
+      keywords: unlimited,ammo,ammunition,PlayerUnlimitedAmmo
+      input_type: checkbox
+      param_field_name: $.PlanetSettings.Details.PlayerUnlimitedAmmo
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Unlimited Ammo
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, allows unlimited ammo
+        Keywords: unlimited,ammo,ammunition,PlayerUnlimitedAmmo
+        FieldName: PlayerUnlimitedAmmo
+        InputType: checkbox
+        ParamFieldName: $.PlanetSettings.Details.PlayerUnlimitedAmmo
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PlayerUnlimitedBoosterFuel
+      label: Allow Unlimited Booster Fuel
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: If set, allows unlimited booster fuel
+      keywords: unlimited,booster,fuel,PlayerUnlimitedBoosterFuel
+      input_type: checkbox
+      param_field_name: $.PlanetSettings.Details.PlayerUnlimitedBoosterFuel
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Unlimited Booster Fuel
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, allows unlimited booster fuel
+        Keywords: unlimited,booster,fuel,PlayerUnlimitedBoosterFuel
+        FieldName: PlayerUnlimitedBoosterFuel
+        InputType: checkbox
+        ParamFieldName: $.PlanetSettings.Details.PlayerUnlimitedBoosterFuel
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PlayerUnlimitedOtherConsumables
+      label: Allow Unlimited Other Consumables
+      category: TerraTech Worlds
+      subcategory: Gameplay
+      description: If set, allows unlimited other consumables
+      keywords: unlimited,other,consumables,PlayerUnlimitedOtherConsumables
+      input_type: checkbox
+      param_field_name: $.PlanetSettings.Details.PlayerUnlimitedOtherConsumables
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Unlimited Other Consumables
+        Category: TerraTech Worlds:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, allows unlimited other consumables
+        Keywords: unlimited,other,consumables,PlayerUnlimitedOtherConsumables
+        FieldName: PlayerUnlimitedOtherConsumables
+        InputType: checkbox
+        ParamFieldName: $.PlanetSettings.Details.PlayerUnlimitedOtherConsumables
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: dedicated_server_config.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: dedicated_server_config.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ReplacePlanetSettings
+    label: Replace Planet Settings
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsCustomised
+    label: Is Customised
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: MaxBackupCount
+    label: Backup Count
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BackupInterval
+    label: Backup Interval
+    default: '3600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DayLength
+    label: Day Length
+    default: '1200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WeatherEvents
+    label: Weather Event Frequency
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HazardTargetingMode
+    label: Natural Hazards Targeting
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ResourceToughness
+    label: Resource Toughness
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ResourceYield
+    label: Resource Yield
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnemyDangerLevel
+    label: Enemy Danger Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnemyRespawnRate
+    label: Enemy Respawn Rate
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnemyBlockDropRate
+    label: Enemy Block Drop Rate
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: StructuresRequirePower
+    label: Enable Structure Power Requirement
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: StructurePowerGeneration
+    label: Structure Power Generation Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BlockLicensingEnabled
+    label: Require Block Licensing
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BlocksGloballyAccessible
+    label: Allow Blocks Globally Accessible Without Tech Yard
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerTechPowerRegen
+    label: Tech Power Regeneration Rate
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerTechAutoRepair
+    label: Tech Auto Repair Rate
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerTechRepairCharges
+    label: Cab Repair Charges
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerTechLimit
+    label: Tech Reactor Capacity
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerTechUsesPower
+    label: Enable Tech Energy Weapon Power Requirement
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerUnlimitedAmmo
+    label: Allow Unlimited Ammo
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerUnlimitedBoosterFuel
+    label: Allow Unlimited Booster Fuel
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerUnlimitedOtherConsumables
+    label: Allow Unlimited Other Consumables
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '2313330'
+  collection_support: true
 backup:
   include:
     - /data

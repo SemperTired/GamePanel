@@ -5,13 +5,16 @@ category: Imported
 summary: Windrose Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '4129620'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: /usr/bin/wine {PlatformArgs} R5 {FormattedArgs} -stdout -FullStdOutLogOutput
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,448 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
-    protocol: udp
+    default: 7777
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: R5/ServerDescription.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Windrose
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.ServerDescription_Persistent.DirectConnectionServerPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Windrose:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.ServerDescription_Persistent.DirectConnectionServerPort
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: DirectConnectionProxyAddress
+      label: Direct Connection IP Binding
+      category: Windrose
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.ServerDescription_Persistent.DirectConnectionProxyAddress
+      default: 0.0.0.0
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Direct Connection IP Binding
+        Category: Windrose:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: DirectConnectionProxyAddress
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.ServerDescription_Persistent.DirectConnectionProxyAddress
+        DefaultValue: 0.0.0.0
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: InviteCode
+      label: Invite Code
+      category: Windrose
+      subcategory: Server
+      description: >-
+        Sets the invite code used to search for the server in-game, if the Connection Mode is set to 'P2P Connection'.
+        Must contain between 1 and 32 alphanumeric characters. Case-sensitive. Empty or not valid = a new invite code
+        will be generated at server start (which can be imported from 'R5/ServerDescription.json' into this setting for
+        persistence)
+      keywords: invite,code,invitecode,search
+      input_type: text
+      param_field_name: $.ServerDescription_Persistent.InviteCode
+      default: ''
+      placeholder: d6221bb7
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Invite Code
+        Category: Windrose:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the invite code used to search for the server in-game, if the Connection Mode is set to 'P2P Connection'.
+          Must contain between 1 and 32 alphanumeric characters. Case-sensitive. Empty or not valid = a new invite code
+          will be generated at server start (which can be imported from 'R5/ServerDescription.json' into this setting
+          for persistence)
+        Keywords: invite,code,invitecode,search
+        FieldName: InviteCode
+        InputType: text
+        ParamFieldName: $.ServerDescription_Persistent.InviteCode
+        DefaultValue: ''
+        Placeholder: d6221bb7
+        EnumValues: {}
+    - key: WorldIslandId
+      label: World Island ID
+      category: Windrose
+      subcategory: Server
+      description: >-
+        Sets the ID of an existing world to load on server start. It must match the ID in that world's
+        'WorldDescription.json' file. Empty = new world created on start - you MUST import the world ID generated for
+        that world from 'R5/ServerDescription.json' into this setting for that world to load on next start
+      keywords: world,id,worldId,worldislandid
+      input_type: text
+      param_field_name: $.ServerDescription_Persistent.WorldIslandId
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Island ID
+        Category: Windrose:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the ID of an existing world to load on server start. It must match the ID in that world's
+          'WorldDescription.json' file. Empty = new world created on start - you MUST import the world ID generated for
+          that world from 'R5/ServerDescription.json' into this setting for that world to load on next start
+        Keywords: world,id,worldId,worldislandid
+        FieldName: WorldIslandId
+        InputType: text
+        ParamFieldName: $.ServerDescription_Persistent.WorldIslandId
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Windrose
+      subcategory: Server
+      description: Sets the name of the server. Helpful if invite codes look similar
+      keywords: name,description,server,ServerName
+      input_type: text
+      param_field_name: $.ServerDescription_Persistent.ServerName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Windrose:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server. Helpful if invite codes look similar
+        Keywords: name,description,server,ServerName
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: $.ServerDescription_Persistent.ServerName
+        DefaultValue: ''
+        EnumValues: {}
+    - key: IsPasswordProtected
+      label: Enable Password Protection
+      category: Windrose
+      subcategory: Server
+      description: If set, the password set under Server Password will be required to join the server
+      keywords: password,protected,ispasswordprotected
+      input_type: checkbox
+      param_field_name: $.ServerDescription_Persistent.IsPasswordProtected
+      default: 'false'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Password Protection
+        Category: Windrose:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password set under Server Password will be required to join the server
+        Keywords: password,protected,ispasswordprotected
+        FieldName: IsPasswordProtected
+        InputType: checkbox
+        ParamFieldName: $.ServerDescription_Persistent.IsPasswordProtected
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: Password
+      label: Server Password
+      category: Windrose
+      subcategory: Server
+      description: Sets the password required to join the server. Enable Password Protection must be set for this to take effect
+      keywords: server,password
+      input_type: password
+      param_field_name: $.ServerDescription_Persistent.Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Windrose:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to join the server. Enable Password Protection must be set for this to take effect
+        Keywords: server,password
+        FieldName: Password
+        InputType: password
+        ParamFieldName: $.ServerDescription_Persistent.Password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Windrose
+      subcategory: Server
+      description: >-
+        Sets the maximum number of players allowed on the server at one time. More than 4 players may cause performance
+        issues, particularly when deploying large frigates
+      keywords: max,player,count,players,limit,maxplayercount
+      input_type: number
+      param_field_name: $.ServerDescription_Persistent.MaxPlayerCount
+      default: '8'
+      placeholder: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 10
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Windrose:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of players allowed on the server at one time. More than 4 players may cause
+          performance issues, particularly when deploying large frigates
+        Keywords: max,player,count,players,limit,maxplayercount
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '10'
+        ParamFieldName: $.ServerDescription_Persistent.MaxPlayerCount
+        DefaultValue: '8'
+        Placeholder: '8'
+        Suffix: players
+        EnumValues: {}
+    - key: UseDirectConnection
+      label: Connection Mode
+      category: Windrose
+      subcategory: Server
+      description: >-
+        Sets the connection mode - either via a P2P connection using the ICE protocol (no ports required), or via a
+        direct port connection on the Game Port
+      keywords: p2p,relay,connection,service,direct,network,port,UseDirectConnection
+      input_type: enum
+      param_field_name: $.ServerDescription_Persistent.UseDirectConnection
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'false': P2P Connection (default)
+        'true': Direct Port Connection
+      raw:
+        DisplayName: Connection Mode
+        Category: Windrose:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the connection mode - either via a P2P connection using the ICE protocol (no ports required), or via a
+          direct port connection on the Game Port
+        Keywords: p2p,relay,connection,service,direct,network,port,UseDirectConnection
+        FieldName: UseDirectConnection
+        InputType: enum
+        ParamFieldName: $.ServerDescription_Persistent.UseDirectConnection
+        DefaultValue: 'false'
+        EnumValues:
+          'false': P2P Connection (default)
+          'true': Direct Port Connection
+    - key: UserSelectedRegion
+      label: P2P Connection Service Region
+      category: Windrose
+      subcategory: Server
+      description: >-
+        Sets the P2P connection service region to use, if the Connection Mode is set to 'P2P Connection'. 'Automatic
+        selection' is based on latency from the server
+      keywords: p2p,relay,connection,service,user,selected,automatic,region,UserSelectedRegion
+      input_type: enum
+      param_field_name: $.ServerDescription_Persistent.UserSelectedRegion
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Automatic selection (default)
+        SEA: SEA
+        CIS: CIS
+        EU: EU and NA
+      raw:
+        DisplayName: P2P Connection Service Region
+        Category: Windrose:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the P2P connection service region to use, if the Connection Mode is set to 'P2P Connection'. 'Automatic
+          selection' is based on latency from the server
+        Keywords: p2p,relay,connection,service,user,selected,automatic,region,UserSelectedRegion
+        FieldName: UserSelectedRegion
+        InputType: enum
+        ParamFieldName: $.ServerDescription_Persistent.UserSelectedRegion
+        DefaultValue: ''
+        EnumValues:
+          '': Automatic selection (default)
+          SEA: SEA
+          CIS: CIS
+          EU: EU and NA
+    - key: AutoLoadLatestBackupIfHasBroken
+      label: Load From Backup If Broken
+      category: Windrose
+      subcategory: Server
+      description: >-
+        If set, on launch the server will try to restore broken save files from backups, as described in
+        'SaveWorkflow.md'
+      keywords: restore,load,save,file,backup,auto,broken,AutoLoadLatestBackupIfHasBroken
+      input_type: checkbox
+      param_field_name: $.ServerDescription_Persistent.AutoLoadLatestBackupIfHasBroken
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Load From Backup If Broken
+        Category: Windrose:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, on launch the server will try to restore broken save files from backups, as described in
+          'SaveWorkflow.md'
+        Keywords: restore,load,save,file,backup,auto,broken,AutoLoadLatestBackupIfHasBroken
+        FieldName: AutoLoadLatestBackupIfHasBroken
+        InputType: checkbox
+        ParamFieldName: $.ServerDescription_Persistent.AutoLoadLatestBackupIfHasBroken
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: R5/ServerDescription.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: R5/ServerDescription.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: DirectConnectionProxyAddress
+    label: Direct Connection IP Binding
+    default: 0.0.0.0
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InviteCode
+    label: Invite Code
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WorldIslandId
+    label: World Island ID
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsPasswordProtected
+    label: Enable Password Protection
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: UseDirectConnection
+    label: Connection Mode
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UserSelectedRegion
+    label: P2P Connection Service Region
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutoLoadLatestBackupIfHasBroken
+    label: Load From Backup If Broken
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '3041230'
+  collection_support: true
 backup:
   include:
     - /data

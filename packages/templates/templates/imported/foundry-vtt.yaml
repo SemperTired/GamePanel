@@ -4,14 +4,16 @@ name: Foundry Virtual Tabletop
 category: Imported
 summary: Foundry Virtual Tabletop Dedicated Server
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: node/bin/node
+  startup: node/bin/node {PlatformArgs} {NodeArgs} {app} --port={ServerPort} --dataPath="{FullBaseDir}data" {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +21,304 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 30000
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: data/Config/options.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Server Port
+      category: Foundry Virtual Tabletop
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: Foundry Virtual Tabletop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: $.port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: DownloadURL
+      label: Server Download URL
+      category: Foundry Virtual Tabletop
+      subcategory: Server
+      description: >-
+        Sets the full URL to download the server from. [Login](https://foundryvtt.com/) to obtain a current timed URL,
+        then update the server before the timeout. NOTE: Make sure to select the "Node.js" version
+      keywords: download,url
+      input_type: text
+      param_field_name: DownloadURL
+      default: ''
+      placeholder: https://foundryvtt.s3.amazonaws.com
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Download URL
+        Category: Foundry Virtual Tabletop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the full URL to download the server from. [Login](https://foundryvtt.com/) to obtain a current timed URL,
+          then update the server before the timeout. NOTE: Make sure to select the "Node.js" version
+        Keywords: download,url
+        FieldName: DownloadURL
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: DownloadURL
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: https://foundryvtt.s3.amazonaws.com
+        Required: true
+        EnumValues: {}
+    - key: app
+      label: Server Version
+      category: Foundry Virtual Tabletop
+      subcategory: Server
+      description: Sets the version of the server that is installed, which determines the appropriate application to run
+      keywords: server,application,app
+      input_type: enum
+      param_field_name: app
+      default: ''
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': '--Please select--'
+        main.js: Version 13 and above
+        resources/app/main.js: Version 12 and below
+      raw:
+        DisplayName: Server Version
+        Category: Foundry Virtual Tabletop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the version of the server that is installed, which determines the appropriate application to run
+        Keywords: server,application,app
+        FieldName: app
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: app
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Required: true
+        EnumValues:
+          '': '--Please select--'
+          main.js: Version 13 and above
+          resources/app/main.js: Version 12 and below
+    - key: NodeRelease
+      label: Node.js Release Stream
+      category: Foundry Virtual Tabletop
+      subcategory: Server
+      description: >-
+        Sets the Node.js release stream from which to install the latest version, unless a specific version is specified
+        under Node.js Version. Use v22 for server version 13, v24 for server version 14. Update the server after
+        changing this setting
+      keywords: node,nodejs,release,stream,NodeRelease
+      input_type: enum
+      param_field_name: NodeRelease
+      default: '22'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '18': 18 - LTS
+        '20': 20 - LTS
+        '22': 22 - LTS (default)
+        '24': 24 - LTS
+      raw:
+        DisplayName: Node.js Release Stream
+        Category: Foundry Virtual Tabletop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the Node.js release stream from which to install the latest version, unless a specific version is
+          specified under Node.js Version. Use v22 for server version 13, v24 for server version 14. Update the server
+          after changing this setting
+        Keywords: node,nodejs,release,stream,NodeRelease
+        FieldName: NodeRelease
+        InputType: enum
+        ParamFieldName: NodeRelease
+        DefaultValue: '22'
+        EnumValues:
+          '18': 18 - LTS
+          '20': 20 - LTS
+          '22': 22 - LTS (default)
+          '24': 24 - LTS
+    - key: NodeVersion
+      label: Node.js Version
+      category: Foundry Virtual Tabletop
+      subcategory: Server
+      description: >-
+        Sets the [Node.js version](https://nodejs.org/download/release/) to install. Format: v22.22.2. Empty = latest
+        version for the release stream specified under Node.js Release Stream. Update the server after changing this
+        setting
+      keywords: node,nodejs,version,NodeVersion
+      input_type: text
+      param_field_name: NodeVersion
+      default: ''
+      placeholder: v22.22.2
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Node.js Version
+        Category: Foundry Virtual Tabletop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [Node.js version](https://nodejs.org/download/release/) to install. Format: v22.22.2. Empty = latest
+          version for the release stream specified under Node.js Release Stream. Update the server after changing this
+          setting
+        Keywords: node,nodejs,version,NodeVersion
+        FieldName: NodeVersion
+        InputType: text
+        ParamFieldName: NodeVersion
+        DefaultValue: ''
+        Placeholder: v22.22.2
+        EnumValues: {}
+    - key: NodeArgs
+      label: Node.js Command Line Arguments
+      category: Foundry Virtual Tabletop
+      subcategory: Server
+      description: Sets any Node.js command line arguments to include as startup parameters
+      keywords: node,nodejs,command,line,arguments,args
+      input_type: text
+      param_field_name: NodeArgs
+      default: ''
+      placeholder: '--max-old-space-size=7168'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Node.js Command Line Arguments
+        Category: Foundry Virtual Tabletop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets any Node.js command line arguments to include as startup parameters
+        Keywords: node,nodejs,command,line,arguments,args
+        FieldName: NodeArgs
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: NodeArgs
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: '--max-old-space-size=7168'
+        EnumValues: {}
+    - key: upnp
+      label: Enable UPnP
+      category: Foundry Virtual Tabletop
+      subcategory: Server
+      description: If set, UPnP will be enabled on the server. This functionality requires a UPnP-enabled router to work
+      keywords: upnp
+      input_type: checkbox
+      param_field_name: upnp
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable UPnP
+        Category: Foundry Virtual Tabletop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, UPnP will be enabled on the server. This functionality requires a UPnP-enabled router to work
+        Keywords: upnp
+        FieldName: upnp
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: upnp
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: data/Config/options.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: data/Config/options.json
+        AutoMap: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: DownloadURL
+    label: Server Download URL
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: app
+    label: Server Version
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: NodeRelease
+    label: Node.js Release Stream
+    default: '22'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NodeVersion
+    label: Node.js Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NodeArgs
+    label: Node.js Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: upnp
+    label: Enable UPnP
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

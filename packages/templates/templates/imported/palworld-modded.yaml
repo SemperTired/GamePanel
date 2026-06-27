@@ -5,13 +5,19 @@ category: Imported
 summary: Palworld Dedicated Server with Steam Workshop and legacy Unreal Engine 4/5 Scripting System modding support
 install:
   method: steamcmd
-  app_id: NotMods
+  app_id: '2394010'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: >-
+    /usr/bin/wine {PlatformArgs} Pal {CommunityServer}-Port={GamePort} -QueryPort={QueryPort} -RCONPort={RCONPort}
+    -MultiHome={ApplicationIPBinding} -publicport={PublicPort} -publicip={PublicIP} -players={MaxUsers}
+    {MultiThread}{FormattedArgs} {CustomArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +25,4612 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 8211
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+  - key: rconport
+    name: RCON Port
+    default: 25575
+    protocol: tcp
+    required: true
+config_files:
+  - path: Pal/Saved/Config/WindowsServer/PalWorldSettings.ini
+    type: text
+    editable: true
+  - path: Pal/Binaries/Win64/UE4SS-settings.ini
+    type: ini
+    editable: true
+  - path: Pal/Binaries/Win64/ue4ss/UE4SS-settings.ini
+    type: ini
+    editable: true
+  - path: steamapps/workshop/content/1623730/3625223587/UE4SS-settings.ini
+    type: ini
+    editable: true
+  - path: Mods/PalModSettings.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $RCONPort
+      label: RCON Port
+      category: Palworld
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: RCONPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Port
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RCONPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: RCONPort
+        EnumValues: {}
+    - key: RCONEnabled
+      label: Enable RCON
+      category: Palworld
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: RCONEnabled
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable RCON
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: RCONEnabled
+        InputType: text
+        Hidden: true
+        ParamFieldName: RCONEnabled
+        DefaultValue: 'True'
+        EnumValues: {}
+    - key: Debug.ConsoleEnabled
+      label: Disable UE4SS Console
+      category: Palworld
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: Debug.ConsoleEnabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Disable UE4SS Console
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: Debug.ConsoleEnabled
+        InputType: number
+        Hidden: true
+        ParamFieldName: Debug.ConsoleEnabled
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: GuiConsoleEnabled
+      label: Disable UE4SS GUI Console
+      category: Palworld
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: Debug.GuiConsoleEnabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Disable UE4SS GUI Console
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: GuiConsoleEnabled
+        InputType: number
+        Hidden: true
+        ParamFieldName: Debug.GuiConsoleEnabled
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Palworld
+      subcategory: Server
+      description: Sets the name of the server that is displayed in the server list
+      keywords: server,name,servername
+      input_type: text
+      param_field_name: ServerName
+      default: AMP Powered Palworld Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that is displayed in the server list
+        Keywords: server,name,servername
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: ServerName
+        DefaultValue: AMP Powered Palworld Server
+        EnumValues: {}
+    - key: ServerDescription
+      label: Server Description
+      category: Palworld
+      subcategory: Server
+      description: Sets the server description as it appears publicly
+      keywords: server,description,ServerDescription
+      input_type: text
+      param_field_name: ServerDescription
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Description
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server description as it appears publicly
+        Keywords: server,description,ServerDescription
+        FieldName: ServerDescription
+        InputType: text
+        ParamFieldName: ServerDescription
+        DefaultValue: ''
+        EnumValues: {}
+    - key: RandomizerType
+      label: Randomizer Type
+      category: Palworld
+      subcategory: Server
+      description: Sets the type of randomizer to use
+      keywords: randomizer,type,RandomizerType
+      input_type: enum
+      param_field_name: RandomizerType
+      default: None
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        None: None (default)
+        Region: Region
+        All: All
+      raw:
+        DisplayName: Randomizer Type
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the type of randomizer to use
+        Keywords: randomizer,type,RandomizerType
+        FieldName: RandomizerType
+        InputType: enum
+        ParamFieldName: RandomizerType
+        DefaultValue: None
+        EnumValues:
+          None: None (default)
+          Region: Region
+          All: All
+    - key: RandomizerSeed
+      label: Randomizer Seed
+      category: Palworld
+      subcategory: Server
+      description: Sets the seed for the randomizer
+      keywords: randomizer,seed,RandomizerSeed
+      input_type: text
+      param_field_name: RandomizerSeed
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Randomizer Seed
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the seed for the randomizer
+        Keywords: randomizer,seed,RandomizerSeed
+        FieldName: RandomizerSeed
+        InputType: text
+        ParamFieldName: RandomizerSeed
+        DefaultValue: ''
+        EnumValues: {}
+    - key: bIsRandomizerPalLevelRandom
+      label: Enable Full Pal Level Randomization
+      category: Palworld
+      subcategory: Server
+      description: >-
+        If enabled, the wild pals level will be fully randomized. Otherwise, wild pals will be randomized within a level
+        optimized with the area
+      keywords: randomizer,level,wild,pals,bIsRandomizerPalLevelRandom
+      input_type: checkbox
+      param_field_name: bIsRandomizerPalLevelRandom
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Full Pal Level Randomization
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the wild pals level will be fully randomized. Otherwise, wild pals will be randomized within a
+          level optimized with the area
+        Keywords: randomizer,level,wild,pals,bIsRandomizerPalLevelRandom
+        FieldName: bIsRandomizerPalLevelRandom
+        InputType: checkbox
+        ParamFieldName: bIsRandomizerPalLevelRandom
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Region
+      label: Server Region
+      category: Palworld
+      subcategory: Server
+      description: Sets the region for the server
+      keywords: server,region
+      input_type: enum
+      param_field_name: Region
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': None (default)
+        NA: North America
+        SA: South America
+        China: China
+        Asia: Asia
+        EU: European Union
+        JP: Japan
+      raw:
+        DisplayName: Server Region
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the region for the server
+        Keywords: server,region
+        FieldName: Region
+        InputType: enum
+        ParamFieldName: Region
+        DefaultValue: ''
+        EnumValues:
+          '': None (default)
+          NA: North America
+          SA: South America
+          China: China
+          Asia: Asia
+          EU: European Union
+          JP: Japan
+    - key: CommunityServer
+      label: Make Community Server
+      category: Palworld
+      subcategory: Server
+      description: If enabled, the server will appear in the list of community servers in-game
+      keywords: community,server,public,list,epicapp,palserver,publiclobby
+      input_type: checkbox
+      param_field_name: CommunityServer
+      default: '-publiclobby '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-publiclobby '
+      raw:
+        DisplayName: Make Community Server
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will appear in the list of community servers in-game
+        Keywords: community,server,public,list,epicapp,palserver,publiclobby
+        FieldName: CommunityServer
+        InputType: checkbox
+        ParamFieldName: CommunityServer
+        DefaultValue: '-publiclobby '
+        EnumValues:
+          'False': ''
+          'True': '-publiclobby '
+    - key: PublicIP
+      label: Public IP Selection Mode
+      category: Palworld
+      subcategory: Server
+      description: >-
+        Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+        the IP set under Server Public IP
+      keywords: public,ip,publicip
+      input_type: enum
+      param_field_name: PublicIP
+      default: '{{$ExternalIP}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{{$ExternalIP}}': Automatic (default)
+        '{{ManualPublicIP}}': Manual
+      raw:
+        DisplayName: Public IP Selection Mode
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+          the IP set under Server Public IP
+        Keywords: public,ip,publicip
+        FieldName: PublicIP
+        InputType: enum
+        ParamFieldName: PublicIP
+        DefaultValue: '{{$ExternalIP}}'
+        EnumValues:
+          '{{$ExternalIP}}': Automatic (default)
+          '{{ManualPublicIP}}': Manual
+    - key: ManualPublicIP
+      label: Server Public IP
+      category: Palworld
+      subcategory: Server
+      description: >-
+        Sets the public IP advertised for the server, if "Manual" is selected as the Public IP Selection Mode. Useful if
+        the host network has multiple public IPs, or the server is behind a public proxy
+      keywords: manual,public,ip,publicip
+      input_type: text
+      param_field_name: ManualPublicIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Public IP
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public IP advertised for the server, if "Manual" is selected as the Public IP Selection Mode. Useful
+          if the host network has multiple public IPs, or the server is behind a public proxy
+        Keywords: manual,public,ip,publicip
+        FieldName: ManualPublicIP
+        InputType: text
+        ParamFieldName: ManualPublicIP
+        DefaultValue: ''
+        EnumValues: {}
+    - key: PublicPort
+      label: Public Port Selection Mode
+      category: Palworld
+      subcategory: Server
+      description: >-
+        Sets whether the public port advertised for the server should be the same as the Game Port, or whether it should
+        be the custom port set under Server Public Port
+      keywords: public,port,publicport
+      input_type: enum
+      param_field_name: PublicPort
+      default: '{{$GamePort}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{{$GamePort}}': Use Game Port (default)
+        '{{CustomPublicPort}}': Use custom port
+      raw:
+        DisplayName: Public Port Selection Mode
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether the public port advertised for the server should be the same as the Game Port, or whether it
+          should be the custom port set under Server Public Port
+        Keywords: public,port,publicport
+        FieldName: PublicPort
+        InputType: enum
+        ParamFieldName: PublicPort
+        DefaultValue: '{{$GamePort}}'
+        EnumValues:
+          '{{$GamePort}}': Use Game Port (default)
+          '{{CustomPublicPort}}': Use custom port
+    - key: CustomPublicPort
+      label: Server Public Port
+      category: Palworld
+      subcategory: Server
+      description: >-
+        Sets the public port advertised for the server, if "Use custom port" is selected as the Public Port Selection
+        Mode
+      keywords: custom,public,port,publicport
+      input_type: number
+      param_field_name: CustomPublicPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1024
+      max: 65535
+      enum_values: {}
+      raw:
+        DisplayName: Server Public Port
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public port advertised for the server, if "Use custom port" is selected as the Public Port Selection
+          Mode
+        Keywords: custom,public,port,publicport
+        FieldName: CustomPublicPort
+        InputType: number
+        MinValue: '1024'
+        MaxValue: '65535'
+        ParamFieldName: CustomPublicPort
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerPassword
+      label: Server Password
+      category: Palworld
+      subcategory: Server
+      description: Sets the password required for players to join the server. Default is no password
+      keywords: password,server,serverpassword
+      input_type: password
+      param_field_name: ServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for players to join the server. Default is no password
+        Keywords: password,server,serverpassword
+        FieldName: ServerPassword
+        InputType: password
+        ParamFieldName: ServerPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $RemoteAdminPassword
+      label: RCON/Admin Password
+      category: Palworld
+      subcategory: Server
+      description: >-
+        See the Security and Privacy menu for configurable options for the server's RCON password. The RCON password is
+        also used in the in-game console for players to access administrator commands
+      keywords: rcon,password,admin,adminpassword
+      input_type: hidden
+      param_field_name: AdminPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON/Admin Password
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          See the Security and Privacy menu for configurable options for the server's RCON password. The RCON password
+          is also used in the in-game console for players to access administrator commands
+        Keywords: rcon,password,admin,adminpassword
+        FieldName: $RemoteAdminPassword
+        InputType: hidden
+        ParamFieldName: AdminPassword
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Palworld
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,slots,limit,ServerPlayerMaxNum
+      input_type: number
+      param_field_name: ServerPlayerMaxNum
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 64
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,slots,limit,ServerPlayerMaxNum
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '64'
+        ParamFieldName: ServerPlayerMaxNum
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: players
+        EnumValues: {}
+    - key: CoopPlayerMaxNum
+      label: Co-op Player Limit
+      category: Palworld
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time in co-op mode
+      keywords: coop,player,maximum,number,limit,CoopPlayerMaxNum
+      input_type: number
+      param_field_name: CoopPlayerMaxNum
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Co-op Player Limit
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time in co-op mode
+        Keywords: coop,player,maximum,number,limit,CoopPlayerMaxNum
+        FieldName: CoopPlayerMaxNum
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: CoopPlayerMaxNum
+        DefaultValue: '4'
+        Placeholder: '4'
+        Suffix: players
+        EnumValues: {}
+    - key: bShowPlayerList
+      label: Show Player List
+      category: Palworld
+      subcategory: Server
+      description: If set, the player list can be shown in-game by pressing the ESC key
+      keywords: show,player,list,bShowPlayerList
+      input_type: checkbox
+      param_field_name: bShowPlayerList
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show Player List
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the player list can be shown in-game by pressing the ESC key
+        Keywords: show,player,list,bShowPlayerList
+        FieldName: bShowPlayerList
+        InputType: checkbox
+        ParamFieldName: bShowPlayerList
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: MultiThread
+      label: Enable Multi-Threaded Performance Improvements
+      category: Palworld
+      subcategory: Server
+      description: >-
+        If enabled, the server's performance will be enhanced in multi-threaded CPU environments. May cause the server
+        to crash if enabled
+      keywords: multi,thread,threaded,performance,improvements,useperfthreads,NoAsyncLoadingThread,UseMultithreadForDS
+      input_type: checkbox
+      param_field_name: MultiThread
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS '
+      raw:
+        DisplayName: Enable Multi-Threaded Performance Improvements
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server's performance will be enhanced in multi-threaded CPU environments. May cause the server
+          to crash if enabled
+        Keywords: multi,thread,threaded,performance,improvements,useperfthreads,NoAsyncLoadingThread,UseMultithreadForDS
+        FieldName: MultiThread
+        InputType: checkbox
+        ParamFieldName: MultiThread
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS '
+    - key: NumberOfWorkerThreadsServer
+      label: Process Thread Number
+      category: Palworld
+      subcategory: Server
+      description: >-
+        Sets the number of process threads that the server will use. Multi-Threaded Performance Improvements must be
+        enabled. Maximum = CPU thread count - 1. Empty = disabled
+      keywords: process,thread,number,NumberOfWorkerThreadsServer
+      input_type: number
+      param_field_name: NumberOfWorkerThreadsServer
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Process Thread Number
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the number of process threads that the server will use. Multi-Threaded Performance Improvements must be
+          enabled. Maximum = CPU thread count - 1. Empty = disabled
+        Keywords: process,thread,number,NumberOfWorkerThreadsServer
+        FieldName: NumberOfWorkerThreadsServer
+        InputType: number
+        ParamFieldName: NumberOfWorkerThreadsServer
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: bUseAuth
+      label: Enable Authentication
+      category: Palworld
+      subcategory: Server
+      description: If set, enables server authentication
+      keywords: use,auth,bUseAuth
+      input_type: checkbox
+      param_field_name: bUseAuth
+      default: 'True'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Authentication
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, enables server authentication
+        Keywords: use,auth,bUseAuth
+        FieldName: bUseAuth
+        InputType: checkbox
+        ParamFieldName: bUseAuth
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: BanListURL
+      label: Ban List URL
+      category: Palworld
+      subcategory: Server
+      description: Sets the URL for the server ban list
+      keywords: ban,list,url,BanListURL
+      input_type: url
+      param_field_name: BanListURL
+      default: https://api.palworldgame.com/api/banlist.txt
+      placeholder: https://api.palworldgame.com/api/banlist.txt
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Ban List URL
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the URL for the server ban list
+        Keywords: ban,list,url,BanListURL
+        FieldName: BanListURL
+        InputType: url
+        ParamFieldName: BanListURL
+        DefaultValue: https://api.palworldgame.com/api/banlist.txt
+        Placeholder: https://api.palworldgame.com/api/banlist.txt
+        EnumValues: {}
+    - key: bAllowClientMod
+      label: Allow Client Mods
+      category: Palworld
+      subcategory: Server
+      description: If set, allows players with mods enabled to join the server
+      keywords: allow,client,mod,bAllowClientMod
+      input_type: checkbox
+      param_field_name: bAllowClientMod
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Client Mods
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, allows players with mods enabled to join the server
+        Keywords: allow,client,mod,bAllowClientMod
+        FieldName: bAllowClientMod
+        InputType: checkbox
+        ParamFieldName: bAllowClientMod
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bIsShowJoinLeftMessage
+      label: Show Join/Leave Messages
+      category: Palworld
+      subcategory: Server
+      description: If set, shows in-game messages when players join and leave
+      keywords: show,join,left,leave,message,bIsShowJoinLeftMessage
+      input_type: checkbox
+      param_field_name: bIsShowJoinLeftMessage
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show Join/Leave Messages
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, shows in-game messages when players join and leave
+        Keywords: show,join,left,leave,message,bIsShowJoinLeftMessage
+        FieldName: bIsShowJoinLeftMessage
+        InputType: checkbox
+        ParamFieldName: bIsShowJoinLeftMessage
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: CrossplayPlatforms
+      label: Crossplay Platforms
+      category: Palworld
+      subcategory: Server
+      description: 'Comma-separated list of platforms that can connect to the server. Available options: Steam, Xbox, PS5, Mac'
+      keywords: crossplay,connect,platform,steam,xbox,ps5,mac,CrossplayPlatforms
+      input_type: text
+      param_field_name: CrossplayPlatforms
+      default: Steam,Xbox,PS5,Mac
+      placeholder: Steam,Xbox,PS5,Mac
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Crossplay Platforms
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Comma-separated list of platforms that can connect to the server. Available options: Steam, Xbox, PS5, Mac'
+        Keywords: crossplay,connect,platform,steam,xbox,ps5,mac,CrossplayPlatforms
+        FieldName: CrossplayPlatforms
+        InputType: text
+        ParamFieldName: CrossplayPlatforms
+        DefaultValue: Steam,Xbox,PS5,Mac
+        Placeholder: Steam,Xbox,PS5,Mac
+        EnumValues: {}
+    - key: bGlobalEnableMod
+      label: Enable Steam Workshop Mods
+      category: Palworld
+      subcategory: Server
+      description: >-
+        If set, the mods listed under Active Steam Workshop Mods List will be enabled on the server, if they are
+        installed. Steam Workshop mods can be downloaded from the Steam Workshop under Updates>Steam Workshop, or
+        installed manually in the 'Mods/Workshop' folder
+      keywords: mods,workshop,items,bGlobalEnableMod
+      input_type: checkbox
+      param_field_name: bGlobalEnableMod
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Steam Workshop Mods
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the mods listed under Active Steam Workshop Mods List will be enabled on the server, if they are
+          installed. Steam Workshop mods can be downloaded from the Steam Workshop under Updates>Steam Workshop, or
+          installed manually in the 'Mods/Workshop' folder
+        Keywords: mods,workshop,items,bGlobalEnableMod
+        FieldName: bGlobalEnableMod
+        InputType: checkbox
+        ParamFieldName: bGlobalEnableMod
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: ActiveModList
+      label: Active Steam Workshop Mods List
+      category: Palworld
+      subcategory: Server
+      description: >-
+        List of Steam Workshop mods to enable on the server. Example: ActiveModList=PalSync. One mod per line. Use the
+        PackageName of each mod from the mod's Info.json file. [More
+        information](https://docs.palworldgame.com/settings-and-operation/mod#enabling-mods-via-palmodsettingsini).
+        Requires the mods to be installed, and Enable Steam Workshop Mods to be set
+      keywords: mods,workshop,items,ActiveModList
+      input_type: Textarea
+      param_field_name: ActiveModList
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Active Steam Workshop Mods List
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          List of Steam Workshop mods to enable on the server. Example: ActiveModList=PalSync. One mod per line. Use the
+          PackageName of each mod from the mod's Info.json file. [More
+          information](https://docs.palworldgame.com/settings-and-operation/mod#enabling-mods-via-palmodsettingsini).
+          Requires the mods to be installed, and Enable Steam Workshop Mods to be set
+        Keywords: mods,workshop,items,ActiveModList
+        FieldName: ActiveModList
+        InputType: Textarea
+        ParamFieldName: ActiveModList
+        DefaultValue: ''
+        EnumValues: {}
+    - key: bIsUseBackupSaveData
+      label: Enable World Backup
+      category: Palworld
+      subcategory: Server
+      description: If set, the server's automatic backup will be enabled. Disk load will increase
+      keywords: world,backup,bIsUseBackupSaveData
+      input_type: checkbox
+      param_field_name: bIsUseBackupSaveData
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable World Backup
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server's automatic backup will be enabled. Disk load will increase
+        Keywords: world,backup,bIsUseBackupSaveData
+        FieldName: bIsUseBackupSaveData
+        InputType: checkbox
+        ParamFieldName: bIsUseBackupSaveData
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AutoSaveSpan
+      label: Auto Save Interval
+      category: Palworld
+      subcategory: Server
+      description: Sets the in-game auto save interval
+      keywords: auto,save,span,interval,AutoSaveSpan
+      input_type: number
+      param_field_name: AutoSaveSpan
+      default: '30.000000'
+      placeholder: '30.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Auto Save Interval
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the in-game auto save interval
+        Keywords: auto,save,span,interval,AutoSaveSpan
+        FieldName: AutoSaveSpan
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: AutoSaveSpan
+        DefaultValue: '30.000000'
+        Placeholder: '30.000000'
+        Suffix: seconds
+        EnumValues: {}
+    - key: LogFormatType
+      label: Log Format
+      category: Palworld
+      subcategory: Server
+      description: Sets the server's logging format
+      keywords: log,logging,format,LogFormatType
+      input_type: enum
+      param_field_name: LogFormatType
+      default: Text
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Text: Text (default)
+        Json: JSON
+      raw:
+        DisplayName: Log Format
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server's logging format
+        Keywords: log,logging,format,LogFormatType
+        FieldName: LogFormatType
+        InputType: enum
+        ParamFieldName: LogFormatType
+        DefaultValue: Text
+        EnumValues:
+          Text: Text (default)
+          Json: JSON
+    - key: bUseUObjectArrayCache
+      label: Enable UE4SS UObject Listeners
+      category: Palworld
+      subcategory: Server
+      description: >-
+        If set, UObject listeners will be created in GUObjectArray to create a fast cache for use instead of iterating
+        GUObjectArray. Recommended to keep disabled for UE4SS mods to avoid crashes
+      keywords: ue4ss,uobject,listeners,bUseUObjectArrayCache
+      input_type: checkbox
+      param_field_name: General.bUseUObjectArrayCache
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable UE4SS UObject Listeners
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, UObject listeners will be created in GUObjectArray to create a fast cache for use instead of iterating
+          GUObjectArray. Recommended to keep disabled for UE4SS mods to avoid crashes
+        Keywords: ue4ss,uobject,listeners,bUseUObjectArrayCache
+        FieldName: bUseUObjectArrayCache
+        InputType: checkbox
+        ParamFieldName: General.bUseUObjectArrayCache
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: CustomArgs
+      label: Custom Command Line Arguments
+      category: Palworld
+      subcategory: Server
+      description: Sets custom command line arguments. Don't use arguments already in AMP's settings!
+      keywords: custom,command,line,arguments
+      input_type: text
+      param_field_name: CustomArgs
+      default: ''
+      placeholder: '-nosteam'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Command Line Arguments
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets custom command line arguments. Don't use arguments already in AMP's settings!
+        Keywords: custom,command,line,arguments
+        FieldName: CustomArgs
+        InputType: text
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        Placeholder: '-nosteam'
+        EnumValues: {}
+    - key: UserSettings
+      label: Custom Settings
+      category: Palworld
+      subcategory: Server
+      description: >-
+        Comma-separated list of additional settings to include in "PalWorldSettings.ini" that are not otherwise set by
+        AMP. Useful for new settings that are not yet in AMP's UI. Use with care
+      keywords: additional,settings,custom
+      input_type: text
+      param_field_name: UserSettings
+      default: ''
+      placeholder: RESTAPIEnabled=True,RESTAPIPort=8212
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Settings
+        Category: Palworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma-separated list of additional settings to include in "PalWorldSettings.ini" that are not otherwise set by
+          AMP. Useful for new settings that are not yet in AMP's UI. Use with care
+        Keywords: additional,settings,custom
+        FieldName: UserSettings
+        InputType: text
+        ParamFieldName: UserSettings
+        DefaultValue: ''
+        Placeholder: RESTAPIEnabled=True,RESTAPIPort=8212
+        EnumValues: {}
+    - key: Difficulty
+      label: Difficulty Level
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the game difficulty level
+      keywords: difficulty,game
+      input_type: text
+      param_field_name: Difficulty
+      default: None
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Difficulty Level
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the game difficulty level
+        Keywords: difficulty,game
+        FieldName: Difficulty
+        InputType: text
+        Hidden: true
+        ParamFieldName: Difficulty
+        DefaultValue: None
+        EnumValues: {}
+    - key: DeathPenalty
+      label: Death Penalty
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the penalty on player death
+      keywords: death,penalty,DeathPenalty
+      input_type: enum
+      param_field_name: DeathPenalty
+      default: All
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        None: Lose nothing
+        Item: Lose items (not equipment)
+        ItemAndEquipment: Lose items and equipment
+        All: Lose items, equipment and pals (default)
+      raw:
+        DisplayName: Death Penalty
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the penalty on player death
+        Keywords: death,penalty,DeathPenalty
+        FieldName: DeathPenalty
+        InputType: enum
+        ParamFieldName: DeathPenalty
+        DefaultValue: All
+        EnumValues:
+          None: Lose nothing
+          Item: Lose items (not equipment)
+          ItemAndEquipment: Lose items and equipment
+          All: Lose items, equipment and pals (default)
+    - key: bEnablePlayerToPlayerDamage
+      label: Enable Player To Player Damage
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables player-to-player damage
+      keywords: enable,player-to-player,damage,bEnablePlayerToPlayerDamage
+      input_type: checkbox
+      param_field_name: bEnablePlayerToPlayerDamage
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Player To Player Damage
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables player-to-player damage
+        Keywords: enable,player-to-player,damage,bEnablePlayerToPlayerDamage
+        FieldName: bEnablePlayerToPlayerDamage
+        InputType: checkbox
+        ParamFieldName: bEnablePlayerToPlayerDamage
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bEnableFriendlyFire
+      label: Enable Friendly Fire
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables friendly fire
+      keywords: enable,friendly,fire,bEnableFriendlyFire
+      input_type: checkbox
+      param_field_name: bEnableFriendlyFire
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Friendly Fire
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables friendly fire
+        Keywords: enable,friendly,fire,bEnableFriendlyFire
+        FieldName: bEnableFriendlyFire
+        InputType: checkbox
+        ParamFieldName: bEnableFriendlyFire
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bEnableInvaderEnemy
+      label: Enable Invader Enemies
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables invader enemies
+      keywords: enable,invader,enemies,bEnableInvaderEnemy
+      input_type: checkbox
+      param_field_name: bEnableInvaderEnemy
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Invader Enemies
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables invader enemies
+        Keywords: enable,invader,enemies,bEnableInvaderEnemy
+        FieldName: bEnableInvaderEnemy
+        InputType: checkbox
+        ParamFieldName: bEnableInvaderEnemy
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bActiveUNKO
+      label: Activate UNKO
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, activates UNKO
+      keywords: activate,UNKO,bActiveUNKO
+      input_type: checkbox
+      param_field_name: bActiveUNKO
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Activate UNKO
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, activates UNKO
+        Keywords: activate,UNKO,bActiveUNKO
+        FieldName: bActiveUNKO
+        InputType: checkbox
+        ParamFieldName: bActiveUNKO
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bEnableAimAssistPad
+      label: Enable Pad Aim Assist
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables aim assist for pad controls
+      keywords: enable,aim,assist,pad,controls,bEnableAimAssistPad
+      input_type: checkbox
+      param_field_name: bEnableAimAssistPad
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Pad Aim Assist
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables aim assist for pad controls
+        Keywords: enable,aim,assist,pad,controls,bEnableAimAssistPad
+        FieldName: bEnableAimAssistPad
+        InputType: checkbox
+        ParamFieldName: bEnableAimAssistPad
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bEnableAimAssistKeyboard
+      label: Enable Keyboard Aim Assist
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables aim assist for keyboard controls
+      keywords: enable,aim,assist,keyboard,controls,bEnableAimAssistKeyboard
+      input_type: checkbox
+      param_field_name: bEnableAimAssistKeyboard
+      default: 'False'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Keyboard Aim Assist
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables aim assist for keyboard controls
+        Keywords: enable,aim,assist,keyboard,controls,bEnableAimAssistKeyboard
+        FieldName: bEnableAimAssistKeyboard
+        InputType: checkbox
+        ParamFieldName: bEnableAimAssistKeyboard
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: DropItemMaxNum
+      label: Drop Items Limit
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the maximum number of drop items
+      keywords: maximum,number,limit,drop,items,DropItemMaxNum
+      input_type: number
+      param_field_name: DropItemMaxNum
+      default: '3000'
+      placeholder: '3000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Drop Items Limit
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of drop items
+        Keywords: maximum,number,limit,drop,items,DropItemMaxNum
+        FieldName: DropItemMaxNum
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: DropItemMaxNum
+        DefaultValue: '3000'
+        Placeholder: '3000'
+        EnumValues: {}
+    - key: DropItemMaxNum_UNKO
+      label: UNKO Drop Items Limit
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the maximum number of UNKO drop items
+      keywords: maximum,number,UNKO,drop,items,DropItemMaxNum_UNKO
+      input_type: number
+      param_field_name: DropItemMaxNum_UNKO
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: UNKO Drop Items Limit
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of UNKO drop items
+        Keywords: maximum,number,UNKO,drop,items,DropItemMaxNum_UNKO
+        FieldName: DropItemMaxNum_UNKO
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: DropItemMaxNum_UNKO
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: BaseCampMaxNum
+      label: Base Camps Limit
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the maximum number of base camps
+      keywords: maximum,number,limit,base,camps,BaseCampMaxNum
+      input_type: number
+      param_field_name: BaseCampMaxNum
+      default: '128'
+      placeholder: '128'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Base Camps Limit
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of base camps
+        Keywords: maximum,number,limit,base,camps,BaseCampMaxNum
+        FieldName: BaseCampMaxNum
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: BaseCampMaxNum
+        DefaultValue: '128'
+        Placeholder: '128'
+        EnumValues: {}
+    - key: BaseCampMaxNumInGuild
+      label: Base Camps Per Guild Limit
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the maximum number of base camps per guild. Larger values increase system load
+      keywords: maximum,number,limit,base,camps,guild,BaseCampMaxNumInGuild
+      input_type: number
+      param_field_name: BaseCampMaxNumInGuild
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Base Camps Per Guild Limit
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of base camps per guild. Larger values increase system load
+        Keywords: maximum,number,limit,base,camps,guild,BaseCampMaxNumInGuild
+        FieldName: BaseCampMaxNumInGuild
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseCampMaxNumInGuild
+        DefaultValue: '4'
+        Placeholder: '4'
+        EnumValues: {}
+    - key: BaseCampWorkerMaxNum
+      label: Base Camp Workers Limit
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the maximum number of workers at base camps. Larger values increase system load
+      keywords: maximum,number,limit,workers,base,camps,BaseCampWorkerMaxNum
+      input_type: number
+      param_field_name: BaseCampWorkerMaxNum
+      default: '15'
+      placeholder: '15'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Base Camp Workers Limit
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of workers at base camps. Larger values increase system load
+        Keywords: maximum,number,limit,workers,base,camps,BaseCampWorkerMaxNum
+        FieldName: BaseCampWorkerMaxNum
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseCampWorkerMaxNum
+        DefaultValue: '15'
+        Placeholder: '15'
+        EnumValues: {}
+    - key: DropItemAliveMaxHours
+      label: Drop Item Alive Time Maximum
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the maximum time a drop item remains alive
+      keywords: maximum,hours,drop,item,alive,DropItemAliveMaxHours
+      input_type: number
+      param_field_name: DropItemAliveMaxHours
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: hours
+      enum_values: {}
+      raw:
+        DisplayName: Drop Item Alive Time Maximum
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum time a drop item remains alive
+        Keywords: maximum,hours,drop,item,alive,DropItemAliveMaxHours
+        FieldName: DropItemAliveMaxHours
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: DropItemAliveMaxHours
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        Suffix: hours
+        EnumValues: {}
+    - key: bAutoResetGuildNoOnlinePlayers
+      label: Enable Guild Auto Reset
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables automatic reset of a guild with no online players
+      keywords: enable,automatic,reset,guild,online,players,bAutoResetGuildNoOnlinePlayers
+      input_type: checkbox
+      param_field_name: bAutoResetGuildNoOnlinePlayers
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Guild Auto Reset
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables automatic reset of a guild with no online players
+        Keywords: enable,automatic,reset,guild,online,players,bAutoResetGuildNoOnlinePlayers
+        FieldName: bAutoResetGuildNoOnlinePlayers
+        InputType: checkbox
+        ParamFieldName: bAutoResetGuildNoOnlinePlayers
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AutoResetGuildTimeNoOnlinePlayers
+      label: Guild Auto Reset Time
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the time for automatic reset of a guild with no online players. Guild Auto Reset must be enabled
+      keywords: time,automatic,reset,guild,online,players,AutoResetGuildTimeNoOnlinePlayers
+      input_type: number
+      param_field_name: AutoResetGuildTimeNoOnlinePlayers
+      default: '72.000000'
+      placeholder: '72.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: hours
+      enum_values: {}
+      raw:
+        DisplayName: Guild Auto Reset Time
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time for automatic reset of a guild with no online players. Guild Auto Reset must be enabled
+        Keywords: time,automatic,reset,guild,online,players,AutoResetGuildTimeNoOnlinePlayers
+        FieldName: AutoResetGuildTimeNoOnlinePlayers
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: AutoResetGuildTimeNoOnlinePlayers
+        DefaultValue: '72.000000'
+        Placeholder: '72.000000'
+        Suffix: hours
+        EnumValues: {}
+    - key: GuildPlayerMaxNum
+      label: Guild Player Limit
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the maximum number of players in a guild
+      keywords: guild,player,maximum,number,GuildPlayerMaxNum
+      input_type: number
+      param_field_name: GuildPlayerMaxNum
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Guild Player Limit
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of players in a guild
+        Keywords: guild,player,maximum,number,GuildPlayerMaxNum
+        FieldName: GuildPlayerMaxNum
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: GuildPlayerMaxNum
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: players
+        EnumValues: {}
+    - key: GuildRejoinCooldownMinutes
+      label: Guild Rejoin Cooldown Period
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the cooldown period before a player can rejoin a guild
+      keywords: guild,rejoin,cooldown,minutes,GuildRejoinCooldownMinutes
+      input_type: number
+      param_field_name: GuildRejoinCooldownMinutes
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Guild Rejoin Cooldown Period
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cooldown period before a player can rejoin a guild
+        Keywords: guild,rejoin,cooldown,minutes,GuildRejoinCooldownMinutes
+        FieldName: GuildRejoinCooldownMinutes
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: GuildRejoinCooldownMinutes
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: minutes
+        EnumValues: {}
+    - key: PalEggDefaultHatchingTime
+      label: Egg Hatching Time
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the time to incubate a massive egg
+      keywords: egg,default,hatching,time,PalEggDefaultHatchingTime
+      input_type: number
+      param_field_name: PalEggDefaultHatchingTime
+      default: '72.000000'
+      placeholder: '72.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: hours
+      enum_values: {}
+      raw:
+        DisplayName: Egg Hatching Time
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time to incubate a massive egg
+        Keywords: egg,default,hatching,time,PalEggDefaultHatchingTime
+        FieldName: PalEggDefaultHatchingTime
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PalEggDefaultHatchingTime
+        DefaultValue: '72.000000'
+        Placeholder: '72.000000'
+        Suffix: hours
+        EnumValues: {}
+    - key: bIsMultiplay
+      label: Enable Multiplayer
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables multiplayer
+      keywords: multiplayer,enable,bIsMultiplay
+      input_type: checkbox
+      param_field_name: bIsMultiplay
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Multiplayer
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables multiplayer
+        Keywords: multiplayer,enable,bIsMultiplay
+        FieldName: bIsMultiplay
+        InputType: checkbox
+        ParamFieldName: bIsMultiplay
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bIsPvP
+      label: Enable PvP
+      category: Palworld
+      subcategory: Gameplay
+      description: >-
+        If set, enables Player vs Player (PvP) mode. Enable Player To Player Damage and  Enable Defending Other Guild
+        Players must also be set. [Recommended settings for PvP
+        servers](https://docs.palworldgame.com/settings-and-operation/pvp#recommended-server-settings-when-enabling-pvp)
+      keywords: pvp,enable,disable,bIsPvP
+      input_type: checkbox
+      param_field_name: bIsPvP
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable PvP
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, enables Player vs Player (PvP) mode. Enable Player To Player Damage and  Enable Defending Other Guild
+          Players must also be set. [Recommended settings for PvP
+          servers](https://docs.palworldgame.com/settings-and-operation/pvp#recommended-server-settings-when-enabling-pvp)
+        Keywords: pvp,enable,disable,bIsPvP
+        FieldName: bIsPvP
+        InputType: checkbox
+        ParamFieldName: bIsPvP
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bHardcore
+      label: Enable Hardcore Mode
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, hardcore mode will be enabled
+      keywords: hardcore,mode,bHardcore
+      input_type: checkbox
+      param_field_name: bHardcore
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Hardcore Mode
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, hardcore mode will be enabled
+        Keywords: hardcore,mode,bHardcore
+        FieldName: bHardcore
+        InputType: checkbox
+        ParamFieldName: bHardcore
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bPalLost
+      label: Enable Pal Loss On Death
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, Pals will be permanently lost on death
+      keywords: pal,lost,death,permanent,bPalLost
+      input_type: checkbox
+      param_field_name: bPalLost
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Pal Loss On Death
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, Pals will be permanently lost on death
+        Keywords: pal,lost,death,permanent,bPalLost
+        FieldName: bPalLost
+        InputType: checkbox
+        ParamFieldName: bPalLost
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bCharacterRecreateInHardcore
+      label: Enable Character Recreation In Hardcore Mode
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, characters will be recreated in hardcore mode
+      keywords: character,recreate,hardcore,bCharacterRecreateInHardcore
+      input_type: checkbox
+      param_field_name: bCharacterRecreateInHardcore
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Character Recreation In Hardcore Mode
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, characters will be recreated in hardcore mode
+        Keywords: character,recreate,hardcore,bCharacterRecreateInHardcore
+        FieldName: bCharacterRecreateInHardcore
+        InputType: checkbox
+        ParamFieldName: bCharacterRecreateInHardcore
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bDisplayPvPItemNumOnWorldMap_BaseCamp
+      label: Display PVP Items In Bases
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, shows the number of PvP-exclusive items in each base on the map
+      keywords: display,pvp,item,number,world,map,base,camp,bDisplayPvPItemNumOnWorldMap_BaseCamp
+      input_type: checkbox
+      param_field_name: bDisplayPvPItemNumOnWorldMap_BaseCamp
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Display PVP Items In Bases
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, shows the number of PvP-exclusive items in each base on the map
+        Keywords: display,pvp,item,number,world,map,base,camp,bDisplayPvPItemNumOnWorldMap_BaseCamp
+        FieldName: bDisplayPvPItemNumOnWorldMap_BaseCamp
+        InputType: checkbox
+        ParamFieldName: bDisplayPvPItemNumOnWorldMap_BaseCamp
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bDisplayPvPItemNumOnWorldMap_Player
+      label: Display PVP Items On Players
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, shows player locations and the number of PvP-exclusive items on the map
+      keywords: display,pvp,item,number,world,map,player,bDisplayPvPItemNumOnWorldMap_Player
+      input_type: checkbox
+      param_field_name: bDisplayPvPItemNumOnWorldMap_Player
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Display PVP Items On Players
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, shows player locations and the number of PvP-exclusive items on the map
+        Keywords: display,pvp,item,number,world,map,player,bDisplayPvPItemNumOnWorldMap_Player
+        FieldName: bDisplayPvPItemNumOnWorldMap_Player
+        InputType: checkbox
+        ParamFieldName: bDisplayPvPItemNumOnWorldMap_Player
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bCanPickupOtherGuildDeathPenaltyDrop
+      label: Enable Death Penalty Pickup
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, allows picking up death penalty items from other guilds
+      keywords: pickup,other,guild,death,penalty,drop,allow,bCanPickupOtherGuildDeathPenaltyDrop
+      input_type: checkbox
+      param_field_name: bCanPickupOtherGuildDeathPenaltyDrop
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Death Penalty Pickup
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, allows picking up death penalty items from other guilds
+        Keywords: pickup,other,guild,death,penalty,drop,allow,bCanPickupOtherGuildDeathPenaltyDrop
+        FieldName: bCanPickupOtherGuildDeathPenaltyDrop
+        InputType: checkbox
+        ParamFieldName: bCanPickupOtherGuildDeathPenaltyDrop
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bEnableNonLoginPenalty
+      label: Enable Non-Login Penalty
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables non-login penalty
+      keywords: non-login,penalty,enable,bEnableNonLoginPenalty
+      input_type: checkbox
+      param_field_name: bEnableNonLoginPenalty
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Non-Login Penalty
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables non-login penalty
+        Keywords: non-login,penalty,enable,bEnableNonLoginPenalty
+        FieldName: bEnableNonLoginPenalty
+        InputType: checkbox
+        ParamFieldName: bEnableNonLoginPenalty
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bEnableFastTravel
+      label: Enable Fast Travel
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables fast travel
+      keywords: fast,travel,enable,bEnableFastTravel
+      input_type: checkbox
+      param_field_name: bEnableFastTravel
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Fast Travel
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables fast travel
+        Keywords: fast,travel,enable,bEnableFastTravel
+        FieldName: bEnableFastTravel
+        InputType: checkbox
+        ParamFieldName: bEnableFastTravel
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bEnableFastTravelOnlyBaseCamp
+      label: Enable Fast Travel Only Base Camps
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, restricts fast travel to between bases only
+      keywords: fast,travel,enable,only,base,camp,bEnableFastTravelOnlyBaseCamp
+      input_type: checkbox
+      param_field_name: bEnableFastTravelOnlyBaseCamp
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Fast Travel Only Base Camps
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, restricts fast travel to between bases only
+        Keywords: fast,travel,enable,only,base,camp,bEnableFastTravelOnlyBaseCamp
+        FieldName: bEnableFastTravelOnlyBaseCamp
+        InputType: checkbox
+        ParamFieldName: bEnableFastTravelOnlyBaseCamp
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bIsStartLocationSelectByMap
+      label: Enable Start Location Selection By Map
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables starting location selection by map
+      keywords: start,location,select,map,enable,bIsStartLocationSelectByMap
+      input_type: checkbox
+      param_field_name: bIsStartLocationSelectByMap
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Start Location Selection By Map
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables starting location selection by map
+        Keywords: start,location,select,map,enable,bIsStartLocationSelectByMap
+        FieldName: bIsStartLocationSelectByMap
+        InputType: checkbox
+        ParamFieldName: bIsStartLocationSelectByMap
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bExistPlayerAfterLogout
+      label: Enable Player Existence After Logout
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables player existence after logout
+      keywords: exist,player,after,logout,enable,bExistPlayerAfterLogout
+      input_type: checkbox
+      param_field_name: bExistPlayerAfterLogout
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Player Existence After Logout
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables player existence after logout
+        Keywords: exist,player,after,logout,enable,bExistPlayerAfterLogout
+        FieldName: bExistPlayerAfterLogout
+        InputType: checkbox
+        ParamFieldName: bExistPlayerAfterLogout
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bEnableDefenseOtherGuildPlayer
+      label: Enable Defending Other Guild Players
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables defending other guild's players
+      keywords: enable,defense,defence,other,guild,player,bEnableDefenseOtherGuildPlayer
+      input_type: checkbox
+      param_field_name: bEnableDefenseOtherGuildPlayer
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Defending Other Guild Players
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables defending other guild's players
+        Keywords: enable,defense,defence,other,guild,player,bEnableDefenseOtherGuildPlayer
+        FieldName: bEnableDefenseOtherGuildPlayer
+        InputType: checkbox
+        ParamFieldName: bEnableDefenseOtherGuildPlayer
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bInvisibleOtherGuildBaseCampAreaFX
+      label: Enable Hiding Palbox Circles
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, enables hiding palbox circles from other guild's players
+      keywords: enable,hide,invisible,palbox,circles,other,guild,player,bInvisibleOtherGuildBaseCampAreaFX
+      input_type: checkbox
+      param_field_name: bInvisibleOtherGuildBaseCampAreaFX
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Hiding Palbox Circles
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables hiding palbox circles from other guild's players
+        Keywords: enable,hide,invisible,palbox,circles,other,guild,player,bInvisibleOtherGuildBaseCampAreaFX
+        FieldName: bInvisibleOtherGuildBaseCampAreaFX
+        InputType: checkbox
+        ParamFieldName: bInvisibleOtherGuildBaseCampAreaFX
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bBuildAreaLimit
+      label: Set Build Area Limit
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, building near structures such as fast travel will be prohibited
+      keywords: build,area,limit,bBuildAreaLimit
+      input_type: checkbox
+      param_field_name: bBuildAreaLimit
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Set Build Area Limit
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, building near structures such as fast travel will be prohibited
+        Keywords: build,area,limit,bBuildAreaLimit
+        FieldName: bBuildAreaLimit
+        InputType: checkbox
+        ParamFieldName: bBuildAreaLimit
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: SupplyDropSpan
+      label: Meteorite and Supply Drop Interval
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the meteorite and supply drop interval
+      keywords: meteorite,supply,drop,span,interval,SupplyDropSpan
+      input_type: number
+      param_field_name: SupplyDropSpan
+      default: '180'
+      placeholder: '180'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Meteorite and Supply Drop Interval
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the meteorite and supply drop interval
+        Keywords: meteorite,supply,drop,span,interval,SupplyDropSpan
+        FieldName: SupplyDropSpan
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: SupplyDropSpan
+        DefaultValue: '180'
+        Placeholder: '180'
+        Suffix: minutes
+        EnumValues: {}
+    - key: ChatPostLimitPerMinute
+      label: Chat Post Limit Per Minute
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the limit for the number of chat posts per minute
+      keywords: chat,post,limit,ChatPostLimitPerMinute
+      input_type: number
+      param_field_name: ChatPostLimitPerMinute
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Chat Post Limit Per Minute
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the limit for the number of chat posts per minute
+        Keywords: chat,post,limit,ChatPostLimitPerMinute
+        FieldName: ChatPostLimitPerMinute
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: ChatPostLimitPerMinute
+        DefaultValue: '30'
+        Placeholder: '30'
+        EnumValues: {}
+    - key: EnablePredatorBossPal
+      label: Enable Predator Boss Pal
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, the predator boss pal will be enabled
+      keywords: predator,boss,pal,EnablePredatorBossPal
+      input_type: checkbox
+      param_field_name: EnablePredatorBossPal
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Predator Boss Pal
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the predator boss pal will be enabled
+        Keywords: predator,boss,pal,EnablePredatorBossPal
+        FieldName: EnablePredatorBossPal
+        InputType: checkbox
+        ParamFieldName: EnablePredatorBossPal
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: MaxBuildingLimitNum
+      label: Building Limit Per Player
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the maximum number of buildings allowed per player. 0 = unlimited
+      keywords: max,maximum,building,limit,MaxBuildingLimitNum
+      input_type: number
+      param_field_name: MaxBuildingLimitNum
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Building Limit Per Player
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of buildings allowed per player. 0 = unlimited
+        Keywords: max,maximum,building,limit,MaxBuildingLimitNum
+        FieldName: MaxBuildingLimitNum
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: MaxBuildingLimitNum
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: ServerReplicatePawnCullDistance
+      label: Pal Sync Distance
+      category: Palworld
+      subcategory: Gameplay
+      description: Sets the pal sync distance from a player
+      keywords: server,replicate,pawn,cull,sync,distance,ServerReplicatePawnCullDistance
+      input_type: number
+      param_field_name: ServerReplicatePawnCullDistance
+      default: '15000.000000'
+      placeholder: '15000.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 5000
+      max: 15000
+      suffix: cm
+      enum_values: {}
+      raw:
+        DisplayName: Pal Sync Distance
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the pal sync distance from a player
+        Keywords: server,replicate,pawn,cull,sync,distance,ServerReplicatePawnCullDistance
+        FieldName: ServerReplicatePawnCullDistance
+        InputType: number
+        MinValue: '5000'
+        MaxValue: '15000'
+        ParamFieldName: ServerReplicatePawnCullDistance
+        DefaultValue: '15000.000000'
+        Placeholder: '15000.000000'
+        Suffix: cm
+        EnumValues: {}
+    - key: bAllowGlobalPalboxExport
+      label: Allow Saving To Global Palbox
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, saving to the global palbox will be allowed
+      keywords: allow,saving,export,global,palbox,bAllowGlobalPalboxExport
+      input_type: checkbox
+      param_field_name: bAllowGlobalPalboxExport
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Saving To Global Palbox
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, saving to the global palbox will be allowed
+        Keywords: allow,saving,export,global,palbox,bAllowGlobalPalboxExport
+        FieldName: bAllowGlobalPalboxExport
+        InputType: checkbox
+        ParamFieldName: bAllowGlobalPalboxExport
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bAllowGlobalPalboxImport
+      label: Allow Importing From Global Palbox
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, importing from the global palbox will be allowed
+      keywords: allow,import,global,palbox,bAllowGlobalPalboxImport
+      input_type: checkbox
+      param_field_name: bAllowGlobalPalboxImport
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Importing From Global Palbox
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, importing from the global palbox will be allowed
+        Keywords: allow,import,global,palbox,bAllowGlobalPalboxImport
+        FieldName: bAllowGlobalPalboxImport
+        InputType: checkbox
+        ParamFieldName: bAllowGlobalPalboxImport
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bAllowEnhanceStat_Attack
+      label: Allow Stat Allocation - Attack
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, allows allocating stat points to Attack
+      keywords: allow,enhanced,stat,attack,bAllowEnhanceStat_Attack
+      input_type: checkbox
+      param_field_name: bAllowEnhanceStat_Attack
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Stat Allocation - Attack
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, allows allocating stat points to Attack
+        Keywords: allow,enhanced,stat,attack,bAllowEnhanceStat_Attack
+        FieldName: bAllowEnhanceStat_Attack
+        InputType: checkbox
+        ParamFieldName: bAllowEnhanceStat_Attack
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bAllowEnhanceStat_Health
+      label: Allow Stat Allocation - Health
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, allows allocating stat points to Health
+      keywords: allow,enhanced,stat,health,bAllowEnhanceStat_Health
+      input_type: checkbox
+      param_field_name: bAllowEnhanceStat_Health
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Stat Allocation - Health
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, allows allocating stat points to Health
+        Keywords: allow,enhanced,stat,health,bAllowEnhanceStat_Health
+        FieldName: bAllowEnhanceStat_Health
+        InputType: checkbox
+        ParamFieldName: bAllowEnhanceStat_Health
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bAllowEnhanceStat_Stamina
+      label: Allow Stat Allocation - Stamina
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, allows allocating stat points to Stamina
+      keywords: allow,enhanced,stat,stamina,bAllowEnhanceStat_Stamina
+      input_type: checkbox
+      param_field_name: bAllowEnhanceStat_Stamina
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Stat Allocation - Stamina
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, allows allocating stat points to Stamina
+        Keywords: allow,enhanced,stat,stamina,bAllowEnhanceStat_Stamina
+        FieldName: bAllowEnhanceStat_Stamina
+        InputType: checkbox
+        ParamFieldName: bAllowEnhanceStat_Stamina
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bAllowEnhanceStat_Weight
+      label: Allow Stat Allocation - Weight
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, allows allocating stat points to Weight
+      keywords: allow,enhanced,stat,weight,bAllowEnhanceStat_Weight
+      input_type: checkbox
+      param_field_name: bAllowEnhanceStat_Weight
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Stat Allocation - Weight
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, allows allocating stat points to Weight
+        Keywords: allow,enhanced,stat,weight,bAllowEnhanceStat_Weight
+        FieldName: bAllowEnhanceStat_Weight
+        InputType: checkbox
+        ParamFieldName: bAllowEnhanceStat_Weight
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bAllowEnhanceStat_WorkSpeed
+      label: Allow Stat Allocation - Work Speed
+      category: Palworld
+      subcategory: Gameplay
+      description: If set, allows allocating stat points to Work Speed
+      keywords: allow,enhanced,stat,work,speed,bAllowEnhanceStat_WorkSpeed
+      input_type: checkbox
+      param_field_name: bAllowEnhanceStat_WorkSpeed
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Stat Allocation - Work Speed
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, allows allocating stat points to Work Speed
+        Keywords: allow,enhanced,stat,work,speed,bAllowEnhanceStat_WorkSpeed
+        FieldName: bAllowEnhanceStat_WorkSpeed
+        InputType: checkbox
+        ParamFieldName: bAllowEnhanceStat_WorkSpeed
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bAdditionalDropItemWhenPlayerKillingInPvPMode
+      label: Enable Additional Drop Item In PVP
+      category: Palworld
+      subcategory: Gameplay
+      description: >-
+        If set, players will drop a special item when killed while PvP is enabled. Additional Drop Item In PVP Item ID
+        and Additional Drop Item In PVP Amount must also be set
+      keywords: additional,drop,item,when,player,killing,pvp,mode,bAdditionalDropItemWhenPlayerKillingInPvPMode
+      input_type: checkbox
+      param_field_name: bAdditionalDropItemWhenPlayerKillingInPvPMode
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Additional Drop Item In PVP
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, players will drop a special item when killed while PvP is enabled. Additional Drop Item In PVP Item ID
+          and Additional Drop Item In PVP Amount must also be set
+        Keywords: additional,drop,item,when,player,killing,pvp,mode,bAdditionalDropItemWhenPlayerKillingInPvPMode
+        FieldName: bAdditionalDropItemWhenPlayerKillingInPvPMode
+        InputType: checkbox
+        ParamFieldName: bAdditionalDropItemWhenPlayerKillingInPvPMode
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AdditionalDropItemWhenPlayerKillingInPvPMode
+      label: Additional Drop Item In PVP Item ID
+      category: Palworld
+      subcategory: Gameplay
+      description: If Enable Additional Drop Item In PVP is set, sets the ID of the item to drop
+      keywords: additional,drop,item,number,player,killing,pvp,mode,AdditionalDropItemWhenPlayerKillingInPvPMode
+      input_type: text
+      param_field_name: AdditionalDropItemWhenPlayerKillingInPvPMode
+      default: PlayerDropItem
+      placeholder: PlayerDropItem
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Drop Item In PVP Item ID
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If Enable Additional Drop Item In PVP is set, sets the ID of the item to drop
+        Keywords: additional,drop,item,number,player,killing,pvp,mode,AdditionalDropItemWhenPlayerKillingInPvPMode
+        FieldName: AdditionalDropItemWhenPlayerKillingInPvPMode
+        InputType: text
+        ParamFieldName: AdditionalDropItemWhenPlayerKillingInPvPMode
+        DefaultValue: PlayerDropItem
+        Placeholder: PlayerDropItem
+        EnumValues: {}
+    - key: AdditionalDropItemNumWhenPlayerKillingInPvPMode
+      label: Additional Drop Item In PVP Amount
+      category: Palworld
+      subcategory: Gameplay
+      description: If Enable Additional Drop Item In PVP is set, sets the quantity of the item to drop
+      keywords: additional,drop,item,number,player,killing,pvp,mode,AdditionalDropItemNumWhenPlayerKillingInPvPMode
+      input_type: number
+      param_field_name: AdditionalDropItemNumWhenPlayerKillingInPvPMode
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Additional Drop Item In PVP Amount
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If Enable Additional Drop Item In PVP is set, sets the quantity of the item to drop
+        Keywords: additional,drop,item,number,player,killing,pvp,mode,AdditionalDropItemNumWhenPlayerKillingInPvPMode
+        FieldName: AdditionalDropItemNumWhenPlayerKillingInPvPMode
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: AdditionalDropItemNumWhenPlayerKillingInPvPMode
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: DenyTechnologyList
+      label: Deny Technology List
+      category: Palworld
+      subcategory: Gameplay
+      description: >-
+        Disable specific technologies by specifying [Technology
+        IDs](https://docs.palworldgame.com/settings-and-operation/technologyids). Must follow the exact format:
+        "ItemID1", "ItemID2"
+      keywords: deny,technology,list,DenyTechnologyList
+      input_type: text
+      param_field_name: DenyTechnologyList
+      default: ''
+      placeholder: '"PALBOX", "RepairBench"'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Deny Technology List
+        Category: Palworld:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Disable specific technologies by specifying [Technology
+          IDs](https://docs.palworldgame.com/settings-and-operation/technologyids). Must follow the exact format:
+          "ItemID1", "ItemID2"
+        Keywords: deny,technology,list,DenyTechnologyList
+        FieldName: DenyTechnologyList
+        InputType: text
+        ParamFieldName: DenyTechnologyList
+        DefaultValue: ''
+        Placeholder: '"PALBOX", "RepairBench"'
+        EnumValues: {}
+    - key: DayTimeSpeedRate
+      label: Day Time Speed Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the day time speed rate
+      keywords: day,time,speed,rate,multiplier,DayTimeSpeedRate
+      input_type: number
+      param_field_name: DayTimeSpeedRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Day Time Speed Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the day time speed rate
+        Keywords: day,time,speed,rate,multiplier,DayTimeSpeedRate
+        FieldName: DayTimeSpeedRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: DayTimeSpeedRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: NightTimeSpeedRate
+      label: Night Time Speed Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the night time speed rate
+      keywords: night,time,speed,rate,multiplier,NightTimeSpeedRate
+      input_type: number
+      param_field_name: NightTimeSpeedRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Night Time Speed Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the night time speed rate
+        Keywords: night,time,speed,rate,multiplier,NightTimeSpeedRate
+        FieldName: NightTimeSpeedRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: NightTimeSpeedRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: ExpRate
+      label: Experience Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the experience rate
+      keywords: experience,exp,rate,multiplier,ExpRate
+      input_type: number
+      param_field_name: ExpRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Experience Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the experience rate
+        Keywords: experience,exp,rate,multiplier,ExpRate
+        FieldName: ExpRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: ExpRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PalCaptureRate
+      label: Pal Capture Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the pal capture rate
+      keywords: pal,capture,rate,multiplier,PalCaptureRate
+      input_type: number
+      param_field_name: PalCaptureRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Pal Capture Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the pal capture rate
+        Keywords: pal,capture,rate,multiplier,PalCaptureRate
+        FieldName: PalCaptureRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PalCaptureRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PalSpawnNumRate
+      label: Pal Appearance Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the pal appearance rate
+      keywords: pal,spawn,appearance,number,rate,multiplier,PalSpawnNumRate
+      input_type: number
+      param_field_name: PalSpawnNumRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Pal Appearance Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the pal appearance rate
+        Keywords: pal,spawn,appearance,number,rate,multiplier,PalSpawnNumRate
+        FieldName: PalSpawnNumRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PalSpawnNumRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PalDamageRateAttack
+      label: Pal Attack Damage Multiplier
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the damage from pals multiplier
+      keywords: pal,damage,attack,rate,multiplier,PalDamageRateAttack
+      input_type: number
+      param_field_name: PalDamageRateAttack
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Pal Attack Damage Multiplier
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the damage from pals multiplier
+        Keywords: pal,damage,attack,rate,multiplier,PalDamageRateAttack
+        FieldName: PalDamageRateAttack
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PalDamageRateAttack
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PalDamageRateDefense
+      label: Pal Defence Damage Multiplier
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the damage to pals multiplier
+      keywords: pal,damage,defense,defence,rate,multiplier,PalDamageRateDefense
+      input_type: number
+      param_field_name: PalDamageRateDefense
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Pal Defence Damage Multiplier
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the damage to pals multiplier
+        Keywords: pal,damage,defense,defence,rate,multiplier,PalDamageRateDefense
+        FieldName: PalDamageRateDefense
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PalDamageRateDefense
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PalStomachDecreaceRate
+      label: Pal Hunger Depletion Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the pal hunger depletion rate
+      keywords: pal,stomach,decrease,rate,multiplier,PalStomachDecreaceRate
+      input_type: number
+      param_field_name: PalStomachDecreaceRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Pal Hunger Depletion Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the pal hunger depletion rate
+        Keywords: pal,stomach,decrease,rate,multiplier,PalStomachDecreaceRate
+        FieldName: PalStomachDecreaceRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PalStomachDecreaceRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PalStaminaDecreaceRate
+      label: Pal Stamina Depletion Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the pal stamina reduction rate
+      keywords: pal,stamina,decrease,rate,multiplier,PalStaminaDecreaceRate
+      input_type: number
+      param_field_name: PalStaminaDecreaceRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Pal Stamina Depletion Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the pal stamina reduction rate
+        Keywords: pal,stamina,decrease,rate,multiplier,PalStaminaDecreaceRate
+        FieldName: PalStaminaDecreaceRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PalStaminaDecreaceRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PalAutoHPRegeneRate
+      label: Pal Auto HP Regeneration Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the pal auto HP regeneration rate
+      keywords: pal,auto,hp,regeneration,rate,multiplier,PalAutoHPRegeneRate
+      input_type: number
+      param_field_name: PalAutoHPRegeneRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Pal Auto HP Regeneration Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the pal auto HP regeneration rate
+        Keywords: pal,auto,hp,regeneration,rate,multiplier,PalAutoHPRegeneRate
+        FieldName: PalAutoHPRegeneRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PalAutoHPRegeneRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PalAutoHpRegeneRateInSleep
+      label: Pal Sleep Auto HP Regeneration Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the pal sleep HP regeneration rate
+      keywords: pal,sleep,hp,regeneration,rate,multiplier,PalAutoHpRegeneRateInSleep
+      input_type: number
+      param_field_name: PalAutoHpRegeneRateInSleep
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Pal Sleep Auto HP Regeneration Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the pal sleep HP regeneration rate
+        Keywords: pal,sleep,hp,regeneration,rate,multiplier,PalAutoHpRegeneRateInSleep
+        FieldName: PalAutoHpRegeneRateInSleep
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PalAutoHpRegeneRateInSleep
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: BuildObjectHpRate
+      label: Build Object HP Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the rate of HP for build objects
+      keywords: build,object,hp,rate,multiplier,BuildObjectHpRate
+      input_type: number
+      param_field_name: BuildObjectHpRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Build Object HP Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the rate of HP for build objects
+        Keywords: build,object,hp,rate,multiplier,BuildObjectHpRate
+        FieldName: BuildObjectHpRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: BuildObjectHpRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PlayerDamageRateAttack
+      label: Player Attack Damage Multiplier
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the damage from player multiplier
+      keywords: player,damage,attack,rate,multiplier,PlayerDamageRateAttack
+      input_type: number
+      param_field_name: PlayerDamageRateAttack
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Player Attack Damage Multiplier
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the damage from player multiplier
+        Keywords: player,damage,attack,rate,multiplier,PlayerDamageRateAttack
+        FieldName: PlayerDamageRateAttack
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PlayerDamageRateAttack
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PlayerDamageRateDefense
+      label: Player Defence Damage Multiplier
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the damage to player multiplier
+      keywords: player,damage,defense,defence,rate,multiplier,PlayerDamageRateDefense
+      input_type: number
+      param_field_name: PlayerDamageRateDefense
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Player Defence Damage Multiplier
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the damage to player multiplier
+        Keywords: player,damage,defense,defence,rate,multiplier,PlayerDamageRateDefense
+        FieldName: PlayerDamageRateDefense
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PlayerDamageRateDefense
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PlayerStomachDecreaceRate
+      label: Player Hunger Depletion Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the player hunger depletion rate
+      keywords: player,stomach,decrease,rate,multiplier,PlayerStomachDecreaceRate
+      input_type: number
+      param_field_name: PlayerStomachDecreaceRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Player Hunger Depletion Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the player hunger depletion rate
+        Keywords: player,stomach,decrease,rate,multiplier,PlayerStomachDecreaceRate
+        FieldName: PlayerStomachDecreaceRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PlayerStomachDecreaceRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PlayerStaminaDecreaceRate
+      label: Player Stamina Depletion Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the player stamina reduction rate
+      keywords: player,stamina,decrease,rate,multiplier,PlayerStaminaDecreaceRate
+      input_type: number
+      param_field_name: PlayerStaminaDecreaceRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Player Stamina Depletion Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the player stamina reduction rate
+        Keywords: player,stamina,decrease,rate,multiplier,PlayerStaminaDecreaceRate
+        FieldName: PlayerStaminaDecreaceRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PlayerStaminaDecreaceRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PlayerAutoHPRegeneRate
+      label: Player Auto HP Regeneration Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the player auto HP regeneration rate
+      keywords: player,auto,hp,regeneration,rate,multiplier,PlayerAutoHPRegeneRate
+      input_type: number
+      param_field_name: PlayerAutoHPRegeneRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Player Auto HP Regeneration Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the player auto HP regeneration rate
+        Keywords: player,auto,hp,regeneration,rate,multiplier,PlayerAutoHPRegeneRate
+        FieldName: PlayerAutoHPRegeneRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PlayerAutoHPRegeneRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: PlayerAutoHpRegeneRateInSleep
+      label: Player Sleep Auto HP Regeneration Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the player sleep HP regeneration rate
+      keywords: player,sleep,hp,regeneration,rate,multiplier,PlayerAutoHpRegeneRateInSleep
+      input_type: number
+      param_field_name: PlayerAutoHpRegeneRateInSleep
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Player Sleep Auto HP Regeneration Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the player sleep HP regeneration rate
+        Keywords: player,sleep,hp,regeneration,rate,multiplier,PlayerAutoHpRegeneRateInSleep
+        FieldName: PlayerAutoHpRegeneRateInSleep
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: PlayerAutoHpRegeneRateInSleep
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: BuildObjectDamageRate
+      label: Structure Damage Multiplier
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the damage to structures multiplier
+      keywords: build,object,damage,rate,multiplier,BuildObjectDamageRate
+      input_type: number
+      param_field_name: BuildObjectDamageRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Structure Damage Multiplier
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the damage to structures multiplier
+        Keywords: build,object,damage,rate,multiplier,BuildObjectDamageRate
+        FieldName: BuildObjectDamageRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: BuildObjectDamageRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: BuildObjectDeteriorationDamageRate
+      label: Structure Deterioration Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the structure deterioration rate
+      keywords: build,object,deterioration,damage,rate,multiplier,BuildObjectDeteriorationDamageRate
+      input_type: number
+      param_field_name: BuildObjectDeteriorationDamageRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Structure Deterioration Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the structure deterioration rate
+        Keywords: build,object,deterioration,damage,rate,multiplier,BuildObjectDeteriorationDamageRate
+        FieldName: BuildObjectDeteriorationDamageRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: BuildObjectDeteriorationDamageRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: CollectionDropRate
+      label: Gatherable Items Multiplier
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the gatherable items multiplier
+      keywords: collection,drop,gatherable,items,rate,multiplier,CollectionDropRate
+      input_type: number
+      param_field_name: CollectionDropRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Gatherable Items Multiplier
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the gatherable items multiplier
+        Keywords: collection,drop,gatherable,items,rate,multiplier,CollectionDropRate
+        FieldName: CollectionDropRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: CollectionDropRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: CollectionObjectHpRate
+      label: Gatherable Objects HP Multiplier
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the gatherable objects HP multiplier
+      keywords: collection,gatherable,object,hp,rate,multiplier,CollectionObjectHpRate
+      input_type: number
+      param_field_name: CollectionObjectHpRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Gatherable Objects HP Multiplier
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the gatherable objects HP multiplier
+        Keywords: collection,gatherable,object,hp,rate,multiplier,CollectionObjectHpRate
+        FieldName: CollectionObjectHpRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: CollectionObjectHpRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: CollectionObjectRespawnSpeedRate
+      label: Gatherable Objects Respawn Interval
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the gatherable objects respawn interval
+      keywords: collection,gatherable,object,respawn,speed,rate,interval,CollectionObjectRespawnSpeedRate
+      input_type: number
+      param_field_name: CollectionObjectRespawnSpeedRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Gatherable Objects Respawn Interval
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the gatherable objects respawn interval
+        Keywords: collection,gatherable,object,respawn,speed,rate,interval,CollectionObjectRespawnSpeedRate
+        FieldName: CollectionObjectRespawnSpeedRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: CollectionObjectRespawnSpeedRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: EnemyDropItemRate
+      label: Enemy Dropped Items Multiplier
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the enemy dropped items multiplier
+      keywords: 'enemy,drop,item,rate,multiplier,EnemyDropItemRate '
+      input_type: number
+      param_field_name: EnemyDropItemRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Dropped Items Multiplier
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the enemy dropped items multiplier
+        Keywords: 'enemy,drop,item,rate,multiplier,EnemyDropItemRate '
+        FieldName: EnemyDropItemRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: EnemyDropItemRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: WorkSpeedRate
+      label: Work Speed Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the work speed multiplier
+      keywords: work,speed,rate,multiplier,WorkSpeedRate
+      input_type: number
+      param_field_name: WorkSpeedRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Work Speed Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the work speed multiplier
+        Keywords: work,speed,rate,multiplier,WorkSpeedRate
+        FieldName: WorkSpeedRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: WorkSpeedRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: ItemWeightRate
+      label: Item Weight Ratio
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the item weight ratio
+      keywords: item,weight,rate,ratio,multiplier,ItemWeightRate
+      input_type: number
+      param_field_name: ItemWeightRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Item Weight Ratio
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the item weight ratio
+        Keywords: item,weight,rate,ratio,multiplier,ItemWeightRate
+        FieldName: ItemWeightRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: ItemWeightRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: EquipmentDurabilityDamageRate
+      label: Equipment Durability Damage Rate
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the equipment durability loss multiplier
+      keywords: equipment,durability,loss,multiplier,damage,rate,EquipmentDurabilityDamageRate
+      input_type: number
+      param_field_name: EquipmentDurabilityDamageRate
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Equipment Durability Damage Rate
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the equipment durability loss multiplier
+        Keywords: equipment,durability,loss,multiplier,damage,rate,EquipmentDurabilityDamageRate
+        FieldName: EquipmentDurabilityDamageRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: EquipmentDurabilityDamageRate
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: ItemContainerForceMarkDirtyInterval
+      label: Item Container Force Mark Dirty Interval
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the interval for force sync when open the container
+      keywords: interval,force,sync,open,container,mark,dirty,ItemContainerForceMarkDirtyInterval
+      input_type: number
+      param_field_name: ItemContainerForceMarkDirtyInterval
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Item Container Force Mark Dirty Interval
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the interval for force sync when open the container
+        Keywords: interval,force,sync,open,container,mark,dirty,ItemContainerForceMarkDirtyInterval
+        FieldName: ItemContainerForceMarkDirtyInterval
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: ItemContainerForceMarkDirtyInterval
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        Suffix: seconds
+        EnumValues: {}
+    - key: ItemCorruptionMultiplier
+      label: Item Decay Rate Multiplier
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the rate items decay or spoil
+      keywords: decay,spoil,rate,multiplier,item,corruption,ItemCorruptionMultiplier
+      input_type: number
+      param_field_name: ItemCorruptionMultiplier
+      default: '1.000000'
+      placeholder: '1.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Item Decay Rate Multiplier
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the rate items decay or spoil
+        Keywords: decay,spoil,rate,multiplier,item,corruption,ItemCorruptionMultiplier
+        FieldName: ItemCorruptionMultiplier
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: ItemCorruptionMultiplier
+        DefaultValue: '1.000000'
+        Placeholder: '1.000000'
+        EnumValues: {}
+    - key: BlockRespawnTime
+      label: Block Respawn Time
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the cooldown period before a player can respawn after death
+      keywords: block,respawn,time,BlockRespawnTime
+      input_type: number
+      param_field_name: BlockRespawnTime
+      default: '5.000000'
+      placeholder: '5.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Block Respawn Time
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the cooldown period before a player can respawn after death
+        Keywords: block,respawn,time,BlockRespawnTime
+        FieldName: BlockRespawnTime
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: BlockRespawnTime
+        DefaultValue: '5.000000'
+        Placeholder: '5.000000'
+        Suffix: seconds
+        EnumValues: {}
+    - key: RespawnPenaltyTimeScale
+      label: Respawn Penalty Time Scale
+      category: Palworld
+      subcategory: Multipliers
+      description: Sets the multiplier applied to the respawn cooldown period
+      keywords: respawn,penalty,time,scale,RespawnPenaltyTimeScale
+      input_type: number
+      param_field_name: RespawnPenaltyTimeScale
+      default: '2.000000'
+      placeholder: '2.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Respawn Penalty Time Scale
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: Sets the multiplier applied to the respawn cooldown period
+        Keywords: respawn,penalty,time,scale,RespawnPenaltyTimeScale
+        FieldName: RespawnPenaltyTimeScale
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: RespawnPenaltyTimeScale
+        DefaultValue: '2.000000'
+        Placeholder: '2.000000'
+        EnumValues: {}
+    - key: RespawnPenaltyDurationThreshold
+      label: Respawn Penalty Duration Threshold
+      category: Palworld
+      subcategory: Multipliers
+      description: >-
+        Sets the survival-time threshold for applying the respawn cooldown multiplier set by Respawn Penalty Time Scale
+        on a subsequent death
+      keywords: respawn,penalty,duration,threshold,RespawnPenaltyDurationThreshold
+      input_type: number
+      param_field_name: RespawnPenaltyDurationThreshold
+      default: '0.000000'
+      placeholder: '0.000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Respawn Penalty Duration Threshold
+        Category: Palworld:stadia_controller
+        Subcategory: Multipliers:tune:3
+        Description: >-
+          Sets the survival-time threshold for applying the respawn cooldown multiplier set by Respawn Penalty Time
+          Scale on a subsequent death
+        Keywords: respawn,penalty,duration,threshold,RespawnPenaltyDurationThreshold
+        FieldName: RespawnPenaltyDurationThreshold
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: RespawnPenaltyDurationThreshold
+        DefaultValue: '0.000000'
+        Placeholder: '0.000000'
+        Suffix: seconds
+        EnumValues: {}
+    - key: InstallUE4SS
+      label: Install UE Scripting System
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the action to take when the server is updated. If an installation option is selected, the selected build of
+        the Unreal Engine 4/5 Scripting System will be installed from either the [UE4SS-RE
+        repo](https://github.com/UE4SS-RE/RE-UE4SS) or the [Okaetsu forked repo](https://github.com/Okaetsu/RE-UE4SS),
+        allowing the server to be modded without using the Steam Workshop. Also set the Specific UE4SS-RE Experimental
+        Build Version if relevant
+      keywords: install,ue4ss,unreal,engine,scripting,system,ue4ss-re,okaetsu,modding,experimental
+      input_type: enum
+      param_field_name: InstallUE4SS
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Do nothing (default)
+        'false': Remove UE4SS files
+        experimental-palworld: Install latest Okaetsu experimental build (recommended build)
+        experimental-latest: Install latest UE4SS-RE experimental build
+        experimental: Install specific UE4SS-RE experimental build
+        'true': Install latest UE4SS-RE release build
+      raw:
+        DisplayName: Install UE Scripting System
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the action to take when the server is updated. If an installation option is selected, the selected build
+          of the Unreal Engine 4/5 Scripting System will be installed from either the [UE4SS-RE
+          repo](https://github.com/UE4SS-RE/RE-UE4SS) or the [Okaetsu forked repo](https://github.com/Okaetsu/RE-UE4SS),
+          allowing the server to be modded without using the Steam Workshop. Also set the Specific UE4SS-RE Experimental
+          Build Version if relevant
+        Keywords: install,ue4ss,unreal,engine,scripting,system,ue4ss-re,okaetsu,modding,experimental
+        FieldName: InstallUE4SS
+        InputType: enum
+        ParamFieldName: InstallUE4SS
+        DefaultValue: ''
+        EnumValues:
+          '': Do nothing (default)
+          'false': Remove UE4SS files
+          experimental-palworld: Install latest Okaetsu experimental build (recommended build)
+          experimental-latest: Install latest UE4SS-RE experimental build
+          experimental: Install specific UE4SS-RE experimental build
+          'true': Install latest UE4SS-RE release build
+    - key: UE4SSExperimentalVersion
+      label: Specific UE4SS-RE Experimental Build Version
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        If "Install specific UE4SS-RE experimental build" is selected under Install UE Scripting System, sets the
+        [relevant UE4SS-RE version](https://github.com/UE4SS-RE/RE-UE4SS/releases/tag/experimental) to install. Example:
+        v3.0.1-137-g6867a08
+      keywords: ue4ss,unreal,engine,scripting,system,experimental
+      input_type: text
+      param_field_name: UE4SSExperimentalVersion
+      default: v3.0.1-137-g6867a08
+      placeholder: v3.0.1-137-g6867a08
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Specific UE4SS-RE Experimental Build Version
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          If "Install specific UE4SS-RE experimental build" is selected under Install UE Scripting System, sets the
+          [relevant UE4SS-RE version](https://github.com/UE4SS-RE/RE-UE4SS/releases/tag/experimental) to install.
+          Example: v3.0.1-137-g6867a08
+        Keywords: ue4ss,unreal,engine,scripting,system,experimental
+        FieldName: UE4SSExperimentalVersion
+        InputType: text
+        ParamFieldName: UE4SSExperimentalVersion
+        DefaultValue: v3.0.1-137-g6867a08
+        Placeholder: v3.0.1-137-g6867a08
+        EnumValues: {}
+  files:
+    - path: Pal/Saved/Config/WindowsServer/PalWorldSettings.ini
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: Pal/Saved/Config/WindowsServer/PalWorldSettings.ini
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: palworld/AMP_PalWorldSettings.ini
+    - path: Pal/Binaries/Win64/UE4SS-settings.ini
+      type: ini
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: Pal/Binaries/Win64/UE4SS-settings.ini
+        ConfigType: ini
+        AutoMap: true
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
+    - path: Pal/Binaries/Win64/ue4ss/UE4SS-settings.ini
+      type: ini
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: Pal/Binaries/Win64/ue4ss/UE4SS-settings.ini
+        ConfigType: ini
+        AutoMap: true
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
+    - path: steamapps/workshop/content/1623730/3625223587/UE4SS-settings.ini
+      type: ini
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: steamapps/workshop/content/1623730/3625223587/UE4SS-settings.ini
+        ConfigType: ini
+        AutoMap: true
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
+    - path: Mods/PalModSettings.ini
+      type: ini
+      format: '{0}{1}'
+      subsections:
+        - heading: PalModSettings
+          setting_mappings:
+            bGlobalEnableMod=: bGlobalEnableMod
+            '': ActiveModList
+      raw:
+        ConfigFile: Mods/PalModSettings.ini
+        ConfigType: ini
+        ConfigFormat: '{0}{1}'
+        Subsections:
+          - Heading: PalModSettings
+            SettingMappings:
+              bGlobalEnableMod=: bGlobalEnableMod
+              '': ActiveModList
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: RCONEnabled
+    label: Enable RCON
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Debug.ConsoleEnabled
+    label: Disable UE4SS Console
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GuiConsoleEnabled
+    label: Disable UE4SS GUI Console
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered Palworld Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerDescription
+    label: Server Description
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RandomizerType
+    label: Randomizer Type
+    default: None
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RandomizerSeed
+    label: Randomizer Seed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bIsRandomizerPalLevelRandom
+    label: Enable Full Pal Level Randomization
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Region
+    label: Server Region
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CommunityServer
+    label: Make Community Server
+    default: '-publiclobby '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PublicIP
+    label: Public IP Selection Mode
+    default: '{{$ExternalIP}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualPublicIP
+    label: Server Public IP
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PublicPort
+    label: Public Port Selection Mode
+    default: '{{$GamePort}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomPublicPort
+    label: Server Public Port
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: CoopPlayerMaxNum
+    label: Co-op Player Limit
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bShowPlayerList
+    label: Show Player List
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MultiThread
+    label: Enable Multi-Threaded Performance Improvements
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NumberOfWorkerThreadsServer
+    label: Process Thread Number
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bUseAuth
+    label: Enable Authentication
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: BanListURL
+    label: Ban List URL
+    default: https://api.palworldgame.com/api/banlist.txt
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowClientMod
+    label: Allow Client Mods
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bIsShowJoinLeftMessage
+    label: Show Join/Leave Messages
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CrossplayPlatforms
+    label: Crossplay Platforms
+    default: Steam,Xbox,PS5,Mac
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bGlobalEnableMod
+    label: Enable Steam Workshop Mods
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ActiveModList
+    label: Active Steam Workshop Mods List
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bIsUseBackupSaveData
+    label: Enable World Backup
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutoSaveSpan
+    label: Auto Save Interval
+    default: '30.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LogFormatType
+    label: Log Format
+    default: Text
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bUseUObjectArrayCache
+    label: Enable UE4SS UObject Listeners
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Custom Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UserSettings
+    label: Custom Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Difficulty
+    label: Difficulty Level
+    default: None
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DeathPenalty
+    label: Death Penalty
+    default: All
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnablePlayerToPlayerDamage
+    label: Enable Player To Player Damage
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableFriendlyFire
+    label: Enable Friendly Fire
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableInvaderEnemy
+    label: Enable Invader Enemies
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bActiveUNKO
+    label: Activate UNKO
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableAimAssistPad
+    label: Enable Pad Aim Assist
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableAimAssistKeyboard
+    label: Enable Keyboard Aim Assist
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: DropItemMaxNum
+    label: Drop Items Limit
+    default: '3000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DropItemMaxNum_UNKO
+    label: UNKO Drop Items Limit
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BaseCampMaxNum
+    label: Base Camps Limit
+    default: '128'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BaseCampMaxNumInGuild
+    label: Base Camps Per Guild Limit
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BaseCampWorkerMaxNum
+    label: Base Camp Workers Limit
+    default: '15'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DropItemAliveMaxHours
+    label: Drop Item Alive Time Maximum
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAutoResetGuildNoOnlinePlayers
+    label: Enable Guild Auto Reset
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutoResetGuildTimeNoOnlinePlayers
+    label: Guild Auto Reset Time
+    default: '72.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GuildPlayerMaxNum
+    label: Guild Player Limit
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GuildRejoinCooldownMinutes
+    label: Guild Rejoin Cooldown Period
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PalEggDefaultHatchingTime
+    label: Egg Hatching Time
+    default: '72.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bIsMultiplay
+    label: Enable Multiplayer
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bIsPvP
+    label: Enable PvP
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bHardcore
+    label: Enable Hardcore Mode
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bPalLost
+    label: Enable Pal Loss On Death
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bCharacterRecreateInHardcore
+    label: Enable Character Recreation In Hardcore Mode
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bDisplayPvPItemNumOnWorldMap_BaseCamp
+    label: Display PVP Items In Bases
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bDisplayPvPItemNumOnWorldMap_Player
+    label: Display PVP Items On Players
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bCanPickupOtherGuildDeathPenaltyDrop
+    label: Enable Death Penalty Pickup
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableNonLoginPenalty
+    label: Enable Non-Login Penalty
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableFastTravel
+    label: Enable Fast Travel
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableFastTravelOnlyBaseCamp
+    label: Enable Fast Travel Only Base Camps
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bIsStartLocationSelectByMap
+    label: Enable Start Location Selection By Map
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bExistPlayerAfterLogout
+    label: Enable Player Existence After Logout
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableDefenseOtherGuildPlayer
+    label: Enable Defending Other Guild Players
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bInvisibleOtherGuildBaseCampAreaFX
+    label: Enable Hiding Palbox Circles
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bBuildAreaLimit
+    label: Set Build Area Limit
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SupplyDropSpan
+    label: Meteorite and Supply Drop Interval
+    default: '180'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ChatPostLimitPerMinute
+    label: Chat Post Limit Per Minute
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnablePredatorBossPal
+    label: Enable Predator Boss Pal
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxBuildingLimitNum
+    label: Building Limit Per Player
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerReplicatePawnCullDistance
+    label: Pal Sync Distance
+    default: '15000.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowGlobalPalboxExport
+    label: Allow Saving To Global Palbox
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowGlobalPalboxImport
+    label: Allow Importing From Global Palbox
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowEnhanceStat_Attack
+    label: Allow Stat Allocation - Attack
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowEnhanceStat_Health
+    label: Allow Stat Allocation - Health
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowEnhanceStat_Stamina
+    label: Allow Stat Allocation - Stamina
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowEnhanceStat_Weight
+    label: Allow Stat Allocation - Weight
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowEnhanceStat_WorkSpeed
+    label: Allow Stat Allocation - Work Speed
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAdditionalDropItemWhenPlayerKillingInPvPMode
+    label: Enable Additional Drop Item In PVP
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AdditionalDropItemWhenPlayerKillingInPvPMode
+    label: Additional Drop Item In PVP Item ID
+    default: PlayerDropItem
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AdditionalDropItemNumWhenPlayerKillingInPvPMode
+    label: Additional Drop Item In PVP Amount
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DenyTechnologyList
+    label: Deny Technology List
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DayTimeSpeedRate
+    label: Day Time Speed Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NightTimeSpeedRate
+    label: Night Time Speed Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ExpRate
+    label: Experience Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PalCaptureRate
+    label: Pal Capture Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PalSpawnNumRate
+    label: Pal Appearance Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PalDamageRateAttack
+    label: Pal Attack Damage Multiplier
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PalDamageRateDefense
+    label: Pal Defence Damage Multiplier
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PalStomachDecreaceRate
+    label: Pal Hunger Depletion Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PalStaminaDecreaceRate
+    label: Pal Stamina Depletion Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PalAutoHPRegeneRate
+    label: Pal Auto HP Regeneration Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PalAutoHpRegeneRateInSleep
+    label: Pal Sleep Auto HP Regeneration Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BuildObjectHpRate
+    label: Build Object HP Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerDamageRateAttack
+    label: Player Attack Damage Multiplier
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerDamageRateDefense
+    label: Player Defence Damage Multiplier
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerStomachDecreaceRate
+    label: Player Hunger Depletion Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerStaminaDecreaceRate
+    label: Player Stamina Depletion Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerAutoHPRegeneRate
+    label: Player Auto HP Regeneration Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerAutoHpRegeneRateInSleep
+    label: Player Sleep Auto HP Regeneration Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BuildObjectDamageRate
+    label: Structure Damage Multiplier
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BuildObjectDeteriorationDamageRate
+    label: Structure Deterioration Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CollectionDropRate
+    label: Gatherable Items Multiplier
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CollectionObjectHpRate
+    label: Gatherable Objects HP Multiplier
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CollectionObjectRespawnSpeedRate
+    label: Gatherable Objects Respawn Interval
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnemyDropItemRate
+    label: Enemy Dropped Items Multiplier
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WorkSpeedRate
+    label: Work Speed Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ItemWeightRate
+    label: Item Weight Ratio
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EquipmentDurabilityDamageRate
+    label: Equipment Durability Damage Rate
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ItemContainerForceMarkDirtyInterval
+    label: Item Container Force Mark Dirty Interval
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ItemCorruptionMultiplier
+    label: Item Decay Rate Multiplier
+    default: '1.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BlockRespawnTime
+    label: Block Respawn Time
+    default: '5.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RespawnPenaltyTimeScale
+    label: Respawn Penalty Time Scale
+    default: '2.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RespawnPenaltyDurationThreshold
+    label: Respawn Penalty Duration Threshold
+    default: '0.000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InstallUE4SS
+    label: Install UE Scripting System
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UE4SSExperimentalVersion
+    label: Specific UE4SS-RE Experimental Build Version
+    default: v3.0.1-137-g6867a08
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1623730'
+  collection_support: true
 backup:
   include:
     - /data

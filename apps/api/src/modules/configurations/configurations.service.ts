@@ -14,6 +14,13 @@ export class ConfigurationsService {
     return {
       service_id: service.id,
       template_id: template.id,
+      config_schema: {
+        ...template.config_schema,
+        fields: template.config_schema.fields.map((field) => ({
+          ...field,
+          value: service.startup_variables?.[field.key] ?? field.default,
+        })),
+      },
       startup_variables: template.startup_variables.map((variable) => ({
         ...variable,
         value: service.startup_variables?.[variable.key] ?? variable.default,
@@ -29,7 +36,10 @@ export class ConfigurationsService {
     if (!service) throw new NotFoundException("Service not found");
     const template = this.templates.get(service.template_id);
     if (!template) throw new NotFoundException("Template not found");
-    const allowed = new Set(template.startup_variables.filter((variable) => variable.customer_editable).map((variable) => variable.key));
+    const allowed = new Set([
+      ...template.startup_variables.filter((variable) => variable.customer_editable).map((variable) => variable.key),
+      ...template.config_schema.fields.filter((field) => field.customer_editable && !field.hidden).map((field) => field.key),
+    ]);
     service.startup_variables = {
       ...(service.startup_variables || {}),
       ...Object.fromEntries(Object.entries(values).filter(([key]) => allowed.has(key))),

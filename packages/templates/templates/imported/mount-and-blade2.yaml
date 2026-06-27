@@ -5,13 +5,18 @@ category: Imported
 summary: 'Mount & Blade II: Bannerlord Dedicated Server'
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1863440'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1863440/Dotnet/dotnet
+  startup: >-
+    1863440/Dotnet/dotnet {PlatformArgs} {FormattedArgs} /LogOutputPath "{FullBaseDir}" {CustomArgs} -log
+    _MODULES_*{Modules}*_MODULES_
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,296 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Game and Web Admin Port
+    default: 7210
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: mount-and-blade2config.json
+    type: json
+    editable: true
+  - path: mount-and-blade2metaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: dedicatedcustomserverauthtoken
+      label: Auth Token
+      category: M+B II Bannerlord
+      subcategory: Server
+      description: >-
+        Sets the [auth token](https://moddocs.bannerlord.com/multiplayer/hosting_server/#generating-a-token) required to
+        run the server
+      keywords: auth,token,authtoken,dedicatedcustomserverauthtoken
+      input_type: password
+      param_field_name: dedicatedcustomserverauthtoken
+      default: ''
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auth Token
+        Category: M+B II Bannerlord:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [auth token](https://moddocs.bannerlord.com/multiplayer/hosting_server/#generating-a-token) required
+          to run the server
+        Keywords: auth,token,authtoken,dedicatedcustomserverauthtoken
+        FieldName: dedicatedcustomserverauthtoken
+        InputType: password
+        ParamFieldName: dedicatedcustomserverauthtoken
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        Required: true
+        EnumValues: {}
+    - key: dedicatedcustomserverconfigfile
+      label: Configuration File
+      category: M+B II Bannerlord
+      subcategory: Server
+      description: Sets the name of the server configuration file to load from the 'Modules/Native' directory
+      keywords: config,configuration,file,dedicatedcustomserverconfigfile
+      input_type: text
+      param_field_name: dedicatedcustomserverconfigfile
+      default: ds_config_sample_duel.txt
+      placeholder: ds_config_sample_duel.txt
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Configuration File
+        Category: M+B II Bannerlord:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server configuration file to load from the 'Modules/Native' directory
+        Keywords: config,configuration,file,dedicatedcustomserverconfigfile
+        FieldName: dedicatedcustomserverconfigfile
+        InputType: text
+        ParamFieldName: dedicatedcustomserverconfigfile
+        IncludeInCommandLine: true
+        DefaultValue: ds_config_sample_duel.txt
+        Placeholder: ds_config_sample_duel.txt
+        Required: true
+        EnumValues: {}
+    - key: Modules
+      label: Modules
+      category: M+B II Bannerlord
+      subcategory: Server
+      description: Sets a list - separated by * - of modules to load. Include at least 'Native*Multiplayer'
+      keywords: modules,native,multiplayer
+      input_type: text
+      param_field_name: Modules
+      default: Native*Multiplayer
+      placeholder: Native*Multiplayer
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Modules
+        Category: M+B II Bannerlord:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a list - separated by * - of modules to load. Include at least 'Native*Multiplayer'
+        Keywords: modules,native,multiplayer
+        FieldName: Modules
+        InputType: text
+        ParamFieldName: Modules
+        DefaultValue: Native*Multiplayer
+        Placeholder: Native*Multiplayer
+        Required: true
+        EnumValues: {}
+    - key: tickrate
+      label: Tick Rate
+      category: M+B II Bannerlord
+      subcategory: Server
+      description: Sets the server tick rate
+      keywords: tick,rate,tickrate
+      input_type: number
+      param_field_name: tickrate
+      default: '240'
+      placeholder: '240'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      max: 240
+      suffix: tps
+      enum_values: {}
+      raw:
+        DisplayName: Tick Rate
+        Category: M+B II Bannerlord:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server tick rate
+        Keywords: tick,rate,tickrate
+        FieldName: tickrate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '240'
+        ParamFieldName: tickrate
+        IncludeInCommandLine: true
+        DefaultValue: '240'
+        Placeholder: '240'
+        Suffix: tps
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: M+B II Bannerlord
+      subcategory: Server
+      description: >-
+        Sets the maximum number of players at one time to display in the AMP status tab. This is visual only - the
+        actual maximum is determined by the configuration file that is loaded
+      keywords: maximum,players,clients,limit,MaxNumberOfPlayers
+      input_type: number
+      param_field_name: MaxNumberOfPlayers
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: M+B II Bannerlord:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of players at one time to display in the AMP status tab. This is visual only - the
+          actual maximum is determined by the configuration file that is loaded
+        Keywords: maximum,players,clients,limit,MaxNumberOfPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        ParamFieldName: MaxNumberOfPlayers
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: players
+        EnumValues: {}
+    - key: CustomArgs
+      label: Additional Launch Arguments
+      category: M+B II Bannerlord
+      subcategory: Server
+      description: >-
+        Specifies additional command line launch arguments (anything that begins with a /) that are not otherwise set by
+        AMP
+      keywords: custom,server,arguments
+      input_type: text
+      param_field_name: CustomArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Launch Arguments
+        Category: M+B II Bannerlord:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line launch arguments (anything that begins with a /) that are not otherwise set
+          by AMP
+        Keywords: custom,server,arguments
+        FieldName: CustomArgs
+        InputType: text
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DotnetVersion
+      label: Dotnet Version (Linux)
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the [ASP.NET Core Runtime 6.0 version](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) to install
+        to run the server on Linux. Empty = latest. NOTE: Update the server after changing this setting
+      keywords: dotnet,version
+      input_type: text
+      param_field_name: DotnetVersion
+      default: ''
+      placeholder: 6.0.26
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Dotnet Version (Linux)
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the [ASP.NET Core Runtime 6.0 version](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) to install
+          to run the server on Linux. Empty = latest. NOTE: Update the server after changing this setting
+        Keywords: dotnet,version
+        FieldName: DotnetVersion
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: DotnetVersion
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: 6.0.26
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: dedicatedcustomserverauthtoken
+    label: Auth Token
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: dedicatedcustomserverconfigfile
+    label: Configuration File
+    default: ds_config_sample_duel.txt
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: Modules
+    label: Modules
+    default: Native*Multiplayer
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: tickrate
+    label: Tick Rate
+    default: '240'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Additional Launch Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DotnetVersion
+    label: Dotnet Version (Linux)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '261550'
+  collection_support: true
 backup:
   include:
     - /data

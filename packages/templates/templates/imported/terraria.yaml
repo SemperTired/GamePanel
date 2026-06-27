@@ -5,13 +5,18 @@ category: Imported
 summary: Terraria generic module with support for various options.
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '105600'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: serverfiles/TerrariaServer
+  startup: >-
+    serverfiles/TerrariaServer -server {FormattedArgs} -players {MaxUsers} -port {ApplicationPort1} -config
+    terrariaserverconfig.txt
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,1409 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: applicationport1
+    name: Main Game Port
+    default: 7777
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: terrariaserverconfig.txt
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: Seed
+      label: World Seed
+      category: Terraria
+      subcategory: Generator
+      description: Which world seed to use when generating a new world
+      keywords: seed,new,world
+      input_type: text
+      param_field_name: seed
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Seed
+        Category: Terraria:stadia_controller
+        Subcategory: Generator:build:1
+        Keywords: seed,new,world
+        Description: Which world seed to use when generating a new world
+        FieldName: Seed
+        ParamFieldName: seed
+        placeholder: PoweredByAMP
+        suffix: ''
+        InputType: text
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: WorldSize
+      label: World Size
+      category: Terraria
+      subcategory: Generator
+      description: Set the Size of the World
+      keywords: size,new,world
+      input_type: enum
+      param_field_name: autocreate
+      default: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '1': 1 - Small World
+        '2': 2 - Medium World
+        '3': 3 - Large World
+      raw:
+        DisplayName: World Size
+        Category: Terraria:stadia_controller
+        Subcategory: Generator:build:1
+        Keywords: size,new,world
+        Description: Set the Size of the World
+        FieldName: WorldSize
+        ParamFieldName: autocreate
+        IncludeInCommandLine: true
+        InputType: enum
+        EnumValues:
+          '1': 1 - Small World
+          '2': 2 - Medium World
+          '3': 3 - Large World
+        DefaultValue: '3'
+    - key: Difficulty
+      label: Difficulty
+      category: Terraria
+      subcategory: Generator
+      description: The difficulty of a newly generated world
+      keywords: difficulty,new,world,journey,expert,master
+      input_type: enum
+      param_field_name: difficulty
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Classic
+        '1': Expert
+        '2': Master
+        '3': Journey
+      raw:
+        DisplayName: Difficulty
+        Category: Terraria:stadia_controller
+        Subcategory: Generator:build:1
+        Keywords: difficulty,new,world,journey,expert,master
+        Description: The difficulty of a newly generated world
+        FieldName: Difficulty
+        ParamFieldName: difficulty
+        InputType: enum
+        EnumValues:
+          '0': Classic
+          '1': Expert
+          '2': Master
+          '3': Journey
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+    - key: WorldName
+      label: Created World Name
+      category: Terraria
+      subcategory: Generator
+      description: >-
+        How to name the new world if one is generated. Make sure the World name under Terraria Server Settings matches
+        this name if you want to load it in subsequent starts.
+      keywords: name,new,world
+      input_type: text
+      param_field_name: worldname
+      default: world
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Created World Name
+        Category: Terraria:stadia_controller
+        Subcategory: Generator:build:1
+        Keywords: name,new,world
+        Description: >-
+          How to name the new world if one is generated. Make sure the World name under Terraria Server Settings matches
+          this name if you want to load it in subsequent starts.
+        FieldName: WorldName
+        ParamFieldName: worldname
+        placeholder: World
+        suffix: ''
+        InputType: text
+        IncludeInCommandLine: true
+        DefaultValue: world
+        EnumValues: {}
+    - key: Backups
+      label: Backup Count
+      category: Terraria
+      subcategory: Generator
+      description: Sets the number of rolling world backups to keep
+      keywords: backup,backups,count,world,rollback
+      input_type: number
+      param_field_name: worldrollbackstokeep
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Backup Count
+        Category: Terraria:stadia_controller
+        Subcategory: Generator:build:1
+        Keywords: backup,backups,count,world,rollback
+        Description: Sets the number of rolling world backups to keep
+        FieldName: Backups
+        ParamFieldName: worldrollbackstokeep
+        placeholder: some integer
+        suffix: Backups
+        InputType: number
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues: {}
+    - key: WorldPath
+      label: World Path
+      category: Terraria
+      subcategory: Server
+      description: The relative path to save worlds in
+      keywords: folder,path,world,saves,savegame,worlds
+      input_type: text
+      param_field_name: worldpath
+      default: Worlds
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Path
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: folder,path,world,saves,savegame,worlds
+        Description: The relative path to save worlds in
+        FieldName: WorldPath
+        ParamFieldName: worldpath
+        placeholder: Worlds
+        suffix: ''
+        InputType: text
+        IncludeInCommandLine: false
+        DefaultValue: Worlds
+        EnumValues: {}
+    - key: World
+      label: World Name
+      category: Terraria
+      subcategory: Server
+      description: Which world to load on boot
+      keywords: name,world,worldname,load,boot
+      input_type: text
+      param_field_name: world
+      default: Worlds/world.wld
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Name
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: name,world,worldname,load,boot
+        Description: Which world to load on boot
+        FieldName: World
+        ParamFieldName: world
+        placeholder: Worlds/world.wld
+        suffix: ''
+        InputType: text
+        IncludeInCommandLine: true
+        DefaultValue: Worlds/world.wld
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Max Players
+      category: Terraria
+      subcategory: Server
+      description: The maximum players in the server
+      keywords: players,max,maximum
+      input_type: number
+      param_field_name: maxplayers
+      default: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Max Players
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: players,max,maximum
+        Description: The maximum players in the server
+        FieldName: $MaxUsers
+        ParamFieldName: maxplayers
+        placeholder: '8'
+        suffix: Users
+        InputType: number
+        IncludeInCommandLine: false
+        DefaultValue: '8'
+        MinValue: '1'
+        EnumValues: {}
+    - key: Password
+      label: Password
+      category: Terraria
+      subcategory: Server
+      description: The password players must enter to join
+      keywords: password,pw,security
+      input_type: password
+      param_field_name: password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Password
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: password,pw,security
+        Description: The password players must enter to join
+        FieldName: Password
+        ParamFieldName: password
+        placeholder: Password123
+        suffix: ''
+        InputType: password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: BanList
+      label: Ban List
+      category: Terraria
+      subcategory: Server
+      description: Where to store the ban list
+      keywords: ban,banlist,bans,security
+      input_type: text
+      param_field_name: banlist
+      default: banlist.txt
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Ban List
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: ban,banlist,bans,security
+        Description: Where to store the ban list
+        FieldName: BanList
+        ParamFieldName: banlist
+        placeholder: somefilename.txt
+        suffix: ''
+        InputType: text
+        IncludeInCommandLine: false
+        DefaultValue: banlist.txt
+        EnumValues: {}
+    - key: Motd
+      label: MOTD
+      category: Terraria
+      subcategory: Server
+      description: The motto/message of the day
+      keywords: motd,motto,message,welcome
+      input_type: text
+      param_field_name: motd
+      default: Welcome!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: MOTD
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: motd,motto,message,welcome
+        Description: The motto/message of the day
+        FieldName: Motd
+        ParamFieldName: motd
+        placeholder: Welcome!
+        suffix: ''
+        InputType: text
+        IncludeInCommandLine: false
+        DefaultValue: Welcome!
+        EnumValues: {}
+    - key: Language
+      label: Language
+      category: Terraria
+      subcategory: Server
+      description: The language of your server
+      keywords: language,lang
+      input_type: enum
+      param_field_name: language
+      default: en-US
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        en-US: English
+        de-DE: German
+        it-IT: Italian
+        fr-FR: French
+        es-ES: Spanish
+        ru-RU: Russian
+        zh-Hans: Chinese
+        pt-PT: Portuguese
+        pt-BR: Portuguese (Brazil)
+        pl-PL: Polish
+      raw:
+        DisplayName: Language
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: language,lang
+        Description: The language of your server
+        FieldName: Language
+        ParamFieldName: language
+        InputType: enum
+        EnumValues:
+          en-US: English
+          de-DE: German
+          it-IT: Italian
+          fr-FR: French
+          es-ES: Spanish
+          ru-RU: Russian
+          zh-Hans: Chinese
+          pt-PT: Portuguese
+          pt-BR: Portuguese (Brazil)
+          pl-PL: Polish
+        IncludeInCommandLine: false
+        DefaultValue: en-US
+    - key: Priority
+      label: Priority
+      category: Terraria
+      subcategory: Server
+      description: The process priority
+      keywords: priority,process,prio,performance
+      input_type: enum
+      param_field_name: priority
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Realtime
+        '1': High
+        '2': AboveNormal
+        '3': Normal
+        '4': BelowNormal
+        '5': Idle
+      raw:
+        DisplayName: Priority
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: priority,process,prio,performance
+        Description: The process priority
+        FieldName: Priority
+        ParamFieldName: priority
+        InputType: enum
+        EnumValues:
+          '0': Realtime
+          '1': High
+          '2': AboveNormal
+          '3': Normal
+          '4': BelowNormal
+          '5': Idle
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+    - key: NPCStream
+      label: NPC Stream
+      category: Terraria
+      subcategory: Server
+      description: >-
+        Reduces enemy skipping but increases bandwidth usage. The lower the number the less skipping will happen, but
+        more data is sent. 0 is off.
+      keywords: npc,stream,skipping,lag,bandwidth,performance
+      input_type: number
+      param_field_name: npcstream
+      default: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: NPC Stream
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: npc,stream,skipping,lag,bandwidth,performance
+        Description: >-
+          Reduces enemy skipping but increases bandwidth usage. The lower the number the less skipping will happen, but
+          more data is sent. 0 is off.
+        FieldName: NPCStream
+        ParamFieldName: npcstream
+        placeholder: '60'
+        suffix: ''
+        InputType: number
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        EnumValues: {}
+    - key: Slowliquids
+      label: Slower Liquids
+      category: Terraria
+      subcategory: Server
+      description: >-
+        Reduces maximum liquids moving at the same time. If enabled may reduce lag but liquids may take longer to
+        settle.
+      keywords: slow,liquid,liquids,slower,lag,performance
+      input_type: checkbox
+      param_field_name: slowliquids
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Slower Liquids
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: slow,liquid,liquids,slower,lag,performance
+        Description: >-
+          Reduces maximum liquids moving at the same time. If enabled may reduce lag but liquids may take longer to
+          settle.
+        FieldName: Slowliquids
+        ParamFieldName: slowliquids
+        InputType: checkbox
+        IncludeInCommandLine: false
+        EnumValues:
+          'False': '0'
+          'True': '1'
+        DefaultValue: '1'
+    - key: Secure
+      label: Cheat Protection
+      category: Terraria
+      subcategory: Server
+      description: Enable/Disable additional cheat protection. This may cause unwanted automatic kicks
+      keywords: security,cheat,cheats,auto,kick,spam
+      input_type: checkbox
+      param_field_name: secure
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Cheat Protection
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: security,cheat,cheats,auto,kick,spam
+        Description: Enable/Disable additional cheat protection. This may cause unwanted automatic kicks
+        FieldName: Secure
+        ParamFieldName: secure
+        InputType: checkbox
+        IncludeInCommandLine: false
+        EnumValues:
+          'False': '0'
+          'True': '1'
+        DefaultValue: '0'
+    - key: DisableAnnouncementBox
+      label: Disable Announcement Box
+      category: Terraria
+      subcategory: Server
+      description: Enable/Disable the text announcements Announcement Box makes when pulsed from wire.
+      keywords: announcement,box,disable,griefing
+      input_type: checkbox
+      param_field_name: disableannouncementbox
+      default: '-disableannouncementbox'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Disable Announcement Box
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: announcement,box,disable,griefing
+        Description: Enable/Disable the text announcements Announcement Box makes when pulsed from wire.
+        FieldName: DisableAnnouncementBox
+        InputType: checkbox
+        IncludeInCommandLine: true
+        ParamFieldName: disableannouncementbox
+        IsFlagArgument: true
+        DefaultValue: '-disableannouncementbox'
+        EnumValues: {}
+    - key: AnnouncementBoxRange
+      label: Announcement Box Range
+      category: Terraria
+      subcategory: Server
+      description: Sets the announcement box text messaging range in pixels, -1 for serverwide announcements.
+      keywords: announcement,box,range,griefing
+      input_type: number
+      param_field_name: announcementboxrange
+      default: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Announcement Box Range
+        Category: Terraria:stadia_controller
+        Subcategory: Server:dns:2
+        Keywords: announcement,box,range,griefing
+        Description: Sets the announcement box text messaging range in pixels, -1 for serverwide announcements.
+        FieldName: AnnouncementBoxRange
+        placeholder: '-1'
+        suffix: Pixels
+        InputType: number
+        IncludeInCommandLine: true
+        ParamFieldName: announcementboxrange
+        DefaultValue: '-1'
+        EnumValues: {}
+    - key: journeypermissions
+      label: Please Read
+      category: Terraria
+      subcategory: Journey Permissions
+      description: >-
+        Journey mode power permissions for every individual power. 'Host' is only relevant when using steam integration,
+        which is not supported by AMP by default.
+      keywords: ''
+      input_type: hidden
+      param_field_name: journeypermissions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Please Read
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: ''
+        Description: >-
+          Journey mode power permissions for every individual power. 'Host' is only relevant when using steam
+          integration, which is not supported by AMP by default.
+        FieldName: journeypermissions
+        InputType: hidden
+        ParamFieldName: journeypermissions
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: time_setfrozen
+      label: Freeze Time
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,freeze,time,stop,clock
+      input_type: enum
+      param_field_name: journeypermission_time_setfrozen
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Freeze Time
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,freeze,time,stop,clock
+        Description: ''
+        FieldName: time_setfrozen
+        ParamFieldName: journeypermission_time_setfrozen
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: time_setdawn
+      label: Set To Dawn
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,dawn,time,clock
+      input_type: enum
+      param_field_name: journeypermission_time_setdawn
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set To Dawn
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,dawn,time,clock
+        Description: ''
+        FieldName: time_setdawn
+        ParamFieldName: journeypermission_time_setdawn
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: time_setnoon
+      label: Set To Noon
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,noon,time,clock
+      input_type: enum
+      param_field_name: journeypermission_time_setnoon
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set To Noon
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,noon,time,clock
+        Description: ''
+        FieldName: time_setnoon
+        ParamFieldName: journeypermission_time_setnoon
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: time_setdusk
+      label: Set To Dusk
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,dusk,time,clock
+      input_type: enum
+      param_field_name: journeypermission_time_setdusk
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set To Dusk
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,dusk,time,clock
+        Description: ''
+        FieldName: time_setdusk
+        ParamFieldName: journeypermission_time_setdusk
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: time_setmidnight
+      label: Set To Midnight
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,midnight,time,clock
+      input_type: enum
+      param_field_name: journeypermission_time_setmidnight
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set To Midnight
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,midnight,time,clock
+        Description: ''
+        FieldName: time_setmidnight
+        ParamFieldName: journeypermission_time_setmidnight
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: godmode
+      label: Set God Mode
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,god,godmode
+      input_type: enum
+      param_field_name: journeypermission_godmode
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set God Mode
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,god,godmode
+        Description: ''
+        FieldName: godmode
+        ParamFieldName: journeypermission_godmode
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: wind_setstrength
+      label: Set Wind intensity
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,wind,set,strength
+      input_type: enum
+      param_field_name: journeypermission_wind_setstrength
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set Wind intensity
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,wind,set,strength
+        Description: ''
+        FieldName: wind_setstrength
+        ParamFieldName: journeypermission_wind_setstrength
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: rain_setstrength
+      label: Set Rain Intensity
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,rain,set,strength
+      input_type: enum
+      param_field_name: journeypermission_rain_setstrength
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set Rain Intensity
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,rain,set,strength
+        Description: ''
+        FieldName: rain_setstrength
+        ParamFieldName: journeypermission_rain_setstrength
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: time_setspeed
+      label: Set Game Speed
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,speed,time,speedup
+      input_type: enum
+      param_field_name: journeypermission_time_setspeed
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set Game Speed
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,speed,time,speedup
+        Description: ''
+        FieldName: time_setspeed
+        ParamFieldName: journeypermission_time_setspeed
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: rain_setfrozen
+      label: Set Rain Conditions
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,rain,lock,freeze
+      input_type: enum
+      param_field_name: journeypermission_rain_setfrozen
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set Rain Conditions
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,rain,lock,freeze
+        Description: ''
+        FieldName: rain_setfrozen
+        ParamFieldName: journeypermission_rain_setfrozen
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: wind_setfrozen
+      label: Set Wind Conditions
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,wind,lock,freeze
+      input_type: enum
+      param_field_name: journeypermission_wind_setfrozen
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set Wind Conditions
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,wind,lock,freeze
+        Description: ''
+        FieldName: wind_setfrozen
+        ParamFieldName: journeypermission_wind_setfrozen
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: increaseplacementrange
+      label: Set Placement Range
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,placement,range,rech,tile
+      input_type: enum
+      param_field_name: journeypermission_increaseplacementrange
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set Placement Range
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,placement,range,rech,tile
+        Description: ''
+        FieldName: increaseplacementrange
+        ParamFieldName: journeypermission_increaseplacementrange
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: setdifficulty
+      label: Set Difficulty
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,difficulty
+      input_type: enum
+      param_field_name: journeypermission_setdifficulty
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set Difficulty
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,difficulty
+        Description: ''
+        FieldName: setdifficulty
+        ParamFieldName: journeypermission_setdifficulty
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: biomespread_setfrozen
+      label: Set Biome/Evil Spreading
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,evil,spread,biome,crimson,hallow,corrupted
+      input_type: enum
+      param_field_name: journeypermission_biomespread_setfrozen
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set Biome/Evil Spreading
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,evil,spread,biome,crimson,hallow,corrupted
+        Description: ''
+        FieldName: biomespread_setfrozen
+        ParamFieldName: journeypermission_biomespread_setfrozen
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: setspawnrate
+      label: Set Spawn Rate
+      category: Terraria
+      subcategory: Journey Permissions
+      description: ''
+      keywords: journey,mode,permissions,power,spawn,rate
+      input_type: enum
+      param_field_name: journeypermission_setspawnrate
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Locked for everyone
+        '1': Can only be changed by host
+        '2': Can be changed by everyone
+      raw:
+        DisplayName: Set Spawn Rate
+        Category: Terraria:stadia_controller
+        Subcategory: Journey Permissions:joystick:3
+        Keywords: journey,mode,permissions,power,spawn,rate
+        Description: ''
+        FieldName: setspawnrate
+        ParamFieldName: journeypermission_setspawnrate
+        InputType: enum
+        EnumValues:
+          '0': Locked for everyone
+          '1': Can only be changed by host
+          '2': Can be changed by everyone
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+    - key: DownloadSource
+      label: Download Source
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets how to download the latest server files. Steam = download from Steam (along with the client files).
+        Standalone = direct download of the standalone server files from the Terraria API. NOTE: Update the server after
+        changing this setting
+      keywords: server,download,source,steam,direct,standalone
+      input_type: enum
+      param_field_name: DownloadSource
+      default: steam
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        steam: Steam (default)
+        standalone: Standalone
+      raw:
+        DisplayName: Download Source
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets how to download the latest server files. Steam = download from Steam (along with the client files).
+          Standalone = direct download of the standalone server files from the Terraria API. NOTE: Update the server
+          after changing this setting
+        Keywords: server,download,source,steam,direct,standalone
+        FieldName: DownloadSource
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: DownloadSource
+        IncludeInCommandLine: false
+        DefaultValue: steam
+        EnumValues:
+          steam: Steam (default)
+          standalone: Standalone
+  files:
+    - path: terrariaserverconfig.txt
+      type: kvp
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: terrariaserverconfig.txt
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormat: '{0}={1}'
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: Seed
+    label: World Seed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WorldSize
+    label: World Size
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Difficulty
+    label: Difficulty
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WorldName
+    label: Created World Name
+    default: world
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Backups
+    label: Backup Count
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WorldPath
+    label: World Path
+    default: Worlds
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World
+    label: World Name
+    default: Worlds/world.wld
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Password
+    label: Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: BanList
+    label: Ban List
+    default: banlist.txt
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Motd
+    label: MOTD
+    default: Welcome!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Language
+    label: Language
+    default: en-US
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Priority
+    label: Priority
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NPCStream
+    label: NPC Stream
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Slowliquids
+    label: Slower Liquids
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Secure
+    label: Cheat Protection
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisableAnnouncementBox
+    label: Disable Announcement Box
+    default: '-disableannouncementbox'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AnnouncementBoxRange
+    label: Announcement Box Range
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: time_setfrozen
+    label: Freeze Time
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: time_setdawn
+    label: Set To Dawn
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: time_setnoon
+    label: Set To Noon
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: time_setdusk
+    label: Set To Dusk
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: time_setmidnight
+    label: Set To Midnight
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: godmode
+    label: Set God Mode
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: wind_setstrength
+    label: Set Wind intensity
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rain_setstrength
+    label: Set Rain Intensity
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: time_setspeed
+    label: Set Game Speed
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rain_setfrozen
+    label: Set Rain Conditions
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: wind_setfrozen
+    label: Set Wind Conditions
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: increaseplacementrange
+    label: Set Placement Range
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: setdifficulty
+    label: Set Difficulty
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: biomespread_setfrozen
+    label: Set Biome/Evil Spreading
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: setspawnrate
+    label: Set Spawn Rate
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadSource
+    label: Download Source
+    default: steam
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '105600'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,22 @@ category: Imported
 summary: Myth of Empires Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1794810'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: .proton/proton
+  startup: >-
+    .proton/proton {PlatformArgs} MOE {Map} -game -server -DataLocalFile -NotCheckServerSteamAuth -stdout
+    -FullStdOutLogOutput log={ServerListId}.log -LOCALLOGTIMES -PrivateServer -Port={GamePort} -QueryPort={QueryPort}
+    -ShutDownServicePort={RCONPort} -bStartShutDownServiceInPrivateServer=true -MultiHome={ApplicationIPBinding}
+    -ShutDownServiceIP={ApplicationIPBinding} -OutAddress={OutAddress} -SessionName="{SessionName}"
+    -SteamServerName="{SessionName}" -ShutDownServiceKey="{RemoteAdminPassword}"
+    -pakdir="{FullBaseDir}MOE/{ServerListId}Mods" {UseACE}{ForceSteamNet}{FormattedArgs} {CustomArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +28,1969 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 7777
     protocol: udp
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 7778
+    protocol: udp
+    required: true
+  - key: rconport
+    name: Remote Management Port
+    default: 7779
+    protocol: tcp
+    required: true
+config_files:
+  - path: myth-of-empiresconfig.json
+    type: json
+    editable: true
+  - path: myth-of-empiresmetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: ServerListId
+      label: Server List ID
+      category: Myth of Empires
+      subcategory: Basic
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: ServerListId
+      default: '{{randomdigits(6)}}'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server List ID
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: ''
+        Keywords: ''
+        FieldName: ServerListId
+        InputType: text
+        Hidden: true
+        ParamFieldName: ServerListId
+        DefaultValue: '{{randomdigits(6)}}'
+        EnumValues: {}
+    - key: ServerId
+      label: Server ID
+      category: Myth of Empires
+      subcategory: Basic
+      description: Sets the ID of the server
+      keywords: server,id,ServerId
+      input_type: text
+      param_field_name: ServerId
+      default: '100'
+      placeholder: '100'
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server ID
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: Sets the ID of the server
+        Keywords: server,id,ServerId
+        FieldName: ServerId
+        InputType: text
+        ParamFieldName: ServerId
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        Required: true
+        EnumValues: {}
+    - key: ClusterId
+      label: Cluster ID
+      category: Myth of Empires
+      subcategory: Basic
+      description: Sets the cluster ID for the server
+      keywords: cluster,id,ClusterId
+      input_type: text
+      param_field_name: ClusterId
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Cluster ID
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: Sets the cluster ID for the server
+        Keywords: cluster,id,ClusterId
+        FieldName: ClusterId
+        InputType: text
+        ParamFieldName: ClusterId
+        IncludeInCommandLine: true
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: SessionName
+      label: Server Name
+      category: Myth of Empires
+      subcategory: Basic
+      description: Sets the name of the server to display in the server list
+      keywords: server,session,name,SessionName
+      input_type: text
+      param_field_name: SessionName
+      default: AMP Powered Myth of Empires Server
+      placeholder: AMP Powered Myth of Empires Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: Sets the name of the server to display in the server list
+        Keywords: server,session,name,SessionName
+        FieldName: SessionName
+        InputType: text
+        ParamFieldName: SessionName
+        DefaultValue: AMP Powered Myth of Empires Server
+        Placeholder: AMP Powered Myth of Empires Server
+        EnumValues: {}
+    - key: Description
+      label: Server Description
+      category: Myth of Empires
+      subcategory: Basic
+      description: Sets a short description of the server that is displayed when clicked on in the server list
+      keywords: server,description
+      input_type: text
+      param_field_name: Description
+      default: A cool MOE server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Description
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: Sets a short description of the server that is displayed when clicked on in the server list
+        Keywords: server,description
+        FieldName: Description
+        InputType: text
+        ParamFieldName: Description
+        IncludeInCommandLine: true
+        DefaultValue: A cool MOE server
+        EnumValues: {}
+    - key: NoticeSelfEnable
+      label: Enable Welcome Message
+      category: Myth of Empires
+      subcategory: Basic
+      description: If set, the Welcome Message will be displayed when players join the server
+      keywords: motd,welcome,message,NoticeSelfEnable
+      input_type: checkbox
+      param_field_name: NoticeSelfEnable
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Welcome Message
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: If set, the Welcome Message will be displayed when players join the server
+        Keywords: motd,welcome,message,NoticeSelfEnable
+        FieldName: NoticeSelfEnable
+        InputType: checkbox
+        ParamFieldName: NoticeSelfEnable
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: NoticeSelfEnterServer
+      label: Welcome Message
+      category: Myth of Empires
+      subcategory: Basic
+      description: Sets the welcome message (or MOTD) that is displayed when players join the server
+      keywords: motd,welcome,message,NoticeSelfEnterServer
+      input_type: text
+      param_field_name: NoticeSelfEnterServer
+      default: Welcome to my Myth of Empires server!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Welcome Message
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: Sets the welcome message (or MOTD) that is displayed when players join the server
+        Keywords: motd,welcome,message,NoticeSelfEnterServer
+        FieldName: NoticeSelfEnterServer
+        InputType: text
+        ParamFieldName: NoticeSelfEnterServer
+        IncludeInCommandLine: true
+        DefaultValue: Welcome to my Myth of Empires server!
+        EnumValues: {}
+    - key: PrivateServerPassword
+      label: Server Password
+      category: Myth of Empires
+      subcategory: Basic
+      description: Sets the password required to join the server. Default is no password
+      keywords: server,password,PrivateServerPassword
+      input_type: password
+      param_field_name: PrivateServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: Sets the password required to join the server. Default is no password
+        Keywords: server,password,PrivateServerPassword
+        FieldName: PrivateServerPassword
+        InputType: password
+        ParamFieldName: PrivateServerPassword
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: bUseServerAdmin
+      label: Enable Server Admins
+      category: Myth of Empires
+      subcategory: Basic
+      description: If set, server admins will be enabled on the server. Specify the admins under Server Admins
+      keywords: server,admin,admins,bUseServerAdmin
+      input_type: checkbox
+      param_field_name: bUseServerAdmin
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Server Admins
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: If set, server admins will be enabled on the server. Specify the admins under Server Admins
+        Keywords: server,admin,admins,bUseServerAdmin
+        FieldName: bUseServerAdmin
+        InputType: checkbox
+        ParamFieldName: bUseServerAdmin
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ServerAdminAccounts
+      label: Server Admins
+      category: Myth of Empires
+      subcategory: Basic
+      description: Semi-colon separated list of [Steam64 IDs](https://steamid.io/) of server admins
+      keywords: server,admin,admins,accounts,ServerAdminAccounts
+      input_type: text
+      param_field_name: ServerAdminAccounts
+      default: ''
+      placeholder: 76561198095468380;76561198181635451
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Admins
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: Semi-colon separated list of [Steam64 IDs](https://steamid.io/) of server admins
+        Keywords: server,admin,admins,accounts,ServerAdminAccounts
+        FieldName: ServerAdminAccounts
+        InputType: text
+        ParamFieldName: ServerAdminAccounts
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: 76561198095468380;76561198181635451
+        EnumValues: {}
+    - key: UseACE
+      label: Enable Anti Cheat Engine
+      category: Myth of Empires
+      subcategory: Basic
+      description: If set, the Anti Cheat Engine will be enabled
+      keywords: ace,anti,cheat,engine,UseACE
+      input_type: checkbox
+      param_field_name: UseACE
+      default: '-UseACE '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-UseACE '
+      raw:
+        DisplayName: Enable Anti Cheat Engine
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: If set, the Anti Cheat Engine will be enabled
+        Keywords: ace,anti,cheat,engine,UseACE
+        FieldName: UseACE
+        InputType: checkbox
+        ParamFieldName: UseACE
+        DefaultValue: '-UseACE '
+        EnumValues:
+          'False': ''
+          'True': '-UseACE '
+    - key: EnableVACBan
+      label: Enable VAC Ban
+      category: Myth of Empires
+      subcategory: Basic
+      description: If set, VAC ban will be enabled
+      keywords: vac,ban,EnableVACBan
+      input_type: checkbox
+      param_field_name: EnableVACBan
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable VAC Ban
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: If set, VAC ban will be enabled
+        Keywords: vac,ban,EnableVACBan
+        FieldName: EnableVACBan
+        InputType: checkbox
+        ParamFieldName: EnableVACBan
+        IncludeInCommandLine: true
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: Map
+      label: Initial Map
+      category: Myth of Empires
+      subcategory: Basic
+      description: Sets the map to start the server with
+      keywords: map
+      input_type: enum
+      param_field_name: Map
+      default: LargeTerrain_Central_Main
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        LargeTerrain_Central_Main: Zhongzhou (default)
+        LargeTerrain_Central2_Main: Dongzhou
+        LargeTerrain_Desert_Main: Xizhou
+      raw:
+        DisplayName: Initial Map
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: Sets the map to start the server with
+        Keywords: map
+        FieldName: Map
+        InputType: enum
+        ParamFieldName: Map
+        DefaultValue: LargeTerrain_Central_Main
+        EnumValues:
+          LargeTerrain_Central_Main: Zhongzhou (default)
+          LargeTerrain_Central2_Main: Dongzhou
+          LargeTerrain_Desert_Main: Xizhou
+    - key: $MaxUsers
+      label: Player Limit
+      category: Myth of Empires
+      subcategory: Basic
+      description: Sets the maximum number of players that can connect to the server at one time
+      keywords: max,maximum,players,limit,maxclient,MaxPlayers
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: Sets the maximum number of players that can connect to the server at one time
+        Keywords: max,maximum,players,limit,maxclient,MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: MaxPlayers
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: players
+        EnumValues: {}
+    - key: SteamModList
+      label: Load Steam Mods
+      category: Myth of Empires
+      subcategory: Basic
+      description: >-
+        List (separated by '+') of Steam mod directories to load. ONE LINE ONLY! Example for mods downloaded under the
+        Updates menu: Mods/3181632026+Mods/3202759474. Otherwise, use mod directory paths relative to the
+        'MOE/Binaries/Win64' directory or full paths
+      keywords: steam,mod,list,paks,mods,addons,SteamModList
+      input_type: Textarea
+      param_field_name: SteamModList
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Load Steam Mods
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: >-
+          List (separated by '+') of Steam mod directories to load. ONE LINE ONLY! Example for mods downloaded under the
+          Updates menu: Mods/3181632026+Mods/3202759474. Otherwise, use mod directory paths relative to the
+          'MOE/Binaries/Win64' directory or full paths
+        Keywords: steam,mod,list,paks,mods,addons,SteamModList
+        FieldName: SteamModList
+        InputType: Textarea
+        ParamFieldName: SteamModList
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: MapDifficultyRate
+      label: Difficulty Level
+      category: Myth of Empires
+      subcategory: Basic
+      description: Sets the difficulty level of the server, based on the strength and HP of NPCs and animals
+      keywords: difficulty,level,MapDifficultyRate
+      input_type: number
+      param_field_name: MapDifficultyRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Difficulty Level
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: Sets the difficulty level of the server, based on the strength and HP of NPCs and animals
+        Keywords: difficulty,level,MapDifficultyRate
+        FieldName: MapDifficultyRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '5'
+        ParamFieldName: MapDifficultyRate
+        IncludeInCommandLine: true
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GameServerPVPType
+      label: Enable PvE / Disable PvP
+      category: Myth of Empires
+      subcategory: Basic
+      description: If set, PvE mode will be enabled on the server. Otherwise, PvP will be enabled
+      keywords: pve,pvp,GameServerPVPType
+      input_type: checkbox
+      param_field_name: GameServerPVPType
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable PvE / Disable PvP
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: If set, PvE mode will be enabled on the server. Otherwise, PvP will be enabled
+        Keywords: pve,pvp,GameServerPVPType
+        FieldName: GameServerPVPType
+        InputType: checkbox
+        ParamFieldName: GameServerPVPType
+        IncludeInCommandLine: true
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: ForceSteamNet
+      label: Enable Steam P2P
+      category: Myth of Empires
+      subcategory: Basic
+      description: If set, Steam P2P will be enabled
+      keywords: steam,net,p2p,ForceSteamNet
+      input_type: checkbox
+      param_field_name: ForceSteamNet
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-ForceSteamNet '
+      raw:
+        DisplayName: Enable Steam P2P
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: If set, Steam P2P will be enabled
+        Keywords: steam,net,p2p,ForceSteamNet
+        FieldName: ForceSteamNet
+        InputType: checkbox
+        ParamFieldName: ForceSteamNet
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-ForceSteamNet '
+    - key: OutAddress
+      label: Out IP Address
+      category: Myth of Empires
+      subcategory: Basic
+      description: >-
+        Sets the 'OutAddress' IP parameter. Usually this should be set to 'Public IP'. However, for purely LAN servers,
+        the 'Application IP Binding' may need to be used - make sure this is set to an actual IP for the instance, and
+        not 0.0.0.0
+      keywords: out,ip,address,public,outaddress
+      input_type: enum
+      param_field_name: OutAddress
+      default: '{{$ExternalIP}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{{$ExternalIP}}': Public IP
+        '{{$ApplicationIPBinding}}': Application IP Binding
+      raw:
+        DisplayName: Out IP Address
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: >-
+          Sets the 'OutAddress' IP parameter. Usually this should be set to 'Public IP'. However, for purely LAN
+          servers, the 'Application IP Binding' may need to be used - make sure this is set to an actual IP for the
+          instance, and not 0.0.0.0
+        Keywords: out,ip,address,public,outaddress
+        FieldName: OutAddress
+        InputType: enum
+        ParamFieldName: OutAddress
+        DefaultValue: '{{$ExternalIP}}'
+        EnumValues:
+          '{{$ExternalIP}}': Public IP
+          '{{$ApplicationIPBinding}}': Application IP Binding
+    - key: CustomArgs
+      label: Additional Command Line Arguments
+      category: Myth of Empires
+      subcategory: Basic
+      description: >-
+        Specifies [additional command line
+        arguments](https://docs.google.com/spreadsheets/d/1xTy0iQzI6utIqVBSQ4IIOjIyrAeDzLyYpGUVKbjwudY/edit#gid=1781338141)
+        that are not otherwise set by AMP. Alternatively use PrivateServerTool.exe on the client to generate relevant
+        command line arguments. Use with care
+      keywords: custom,server,arguments
+      input_type: text
+      param_field_name: CustomArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Arguments
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Basic:settings:1
+        Description: >-
+          Specifies [additional command line
+          arguments](https://docs.google.com/spreadsheets/d/1xTy0iQzI6utIqVBSQ4IIOjIyrAeDzLyYpGUVKbjwudY/edit#gid=1781338141)
+          that are not otherwise set by AMP. Alternatively use PrivateServerTool.exe on the client to generate relevant
+          command line arguments. Use with care
+        Keywords: custom,server,arguments
+        FieldName: CustomArgs
+        InputType: text
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        Placeholder: ''
+        EnumValues: {}
+    - key: bCanChat
+      label: Enable Text Chat
+      category: Myth of Empires
+      subcategory: Advanced
+      description: If set, text chat will be enabled
+      keywords: text,chat,bCanChat
+      input_type: checkbox
+      param_field_name: bCanChat
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Text Chat
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: If set, text chat will be enabled
+        Keywords: text,chat,bCanChat
+        FieldName: bCanChat
+        InputType: checkbox
+        ParamFieldName: bCanChat
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bCanVoiceChat
+      label: Enable Voice Chat
+      category: Myth of Empires
+      subcategory: Advanced
+      description: If set, voice chat will be enabled
+      keywords: voice,chat,bCanVoiceChat
+      input_type: checkbox
+      param_field_name: bCanVoiceChat
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Voice Chat
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: If set, voice chat will be enabled
+        Keywords: voice,chat,bCanVoiceChat
+        FieldName: bCanVoiceChat
+        InputType: checkbox
+        ParamFieldName: bCanVoiceChat
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: NoticeAllEnable
+      label: Enable Join/Leave Messages
+      category: Myth of Empires
+      subcategory: Advanced
+      description: If set, join and leave broadcast messages will be enabled
+      keywords: join,leave,message,notice,NoticeAllEnable
+      input_type: checkbox
+      param_field_name: NoticeAllEnable
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Join/Leave Messages
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: If set, join and leave broadcast messages will be enabled
+        Keywords: join,leave,message,notice,NoticeAllEnable
+        FieldName: NoticeAllEnable
+        InputType: checkbox
+        ParamFieldName: NoticeAllEnable
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: NoticeEnterServer
+      label: Join Message
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the message broadcast when a player joins the server. Enable Join/Leave Message must be set
+      keywords: join,message,notice,NoticeEnterServer
+      input_type: text
+      param_field_name: NoticeEnterServer
+      default: ' has joined the server'
+      placeholder: ' has joined the server'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Join Message
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the message broadcast when a player joins the server. Enable Join/Leave Message must be set
+        Keywords: join,message,notice,NoticeEnterServer
+        FieldName: NoticeEnterServer
+        InputType: text
+        ParamFieldName: NoticeEnterServer
+        IncludeInCommandLine: true
+        DefaultValue: ' has joined the server'
+        Placeholder: ' has joined the server'
+        EnumValues: {}
+    - key: NoticeLeaveServer
+      label: Leave Message
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the message broadcast when a player leaves the server. Enable Join/Leave Message must be set
+      keywords: leave,message,notice,NoticeLeaveServer
+      input_type: text
+      param_field_name: NoticeLeaveServer
+      default: ' has left the server'
+      placeholder: ' has left the server'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Leave Message
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the message broadcast when a player leaves the server. Enable Join/Leave Message must be set
+        Keywords: leave,message,notice,NoticeLeaveServer
+        FieldName: NoticeLeaveServer
+        InputType: text
+        ParamFieldName: NoticeLeaveServer
+        IncludeInCommandLine: true
+        DefaultValue: ' has left the server'
+        Placeholder: ' has left the server'
+        EnumValues: {}
+    - key: SaveGameIntervalMinute
+      label: Automatic Save Interval
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the interval between automatic saves of the server
+      keywords: save,interval,SaveGameIntervalMinute
+      input_type: number
+      param_field_name: SaveGameIntervalMinute
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Automatic Save Interval
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the interval between automatic saves of the server
+        Keywords: save,interval,SaveGameIntervalMinute
+        FieldName: SaveGameIntervalMinute
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: SaveGameIntervalMinute
+        IncludeInCommandLine: true
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: minutes
+        EnumValues: {}
+    - key: bUseDurable
+      label: Enable Durability
+      category: Myth of Empires
+      subcategory: Advanced
+      description: If set, durability will be enabled
+      keywords: durability,enable,durable,bUseDurable
+      input_type: checkbox
+      param_field_name: bUseDurable
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Durability
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: If set, durability will be enabled
+        Keywords: durability,enable,durable,bUseDurable
+        FieldName: bUseDurable
+        InputType: checkbox
+        ParamFieldName: bUseDurable
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bRiderUseShooterMovingCheck
+      label: Enable Horse Archery View Increase
+      category: Myth of Empires
+      subcategory: Advanced
+      description: If set, horse archery view increase will be enabled
+      keywords: horse,archery,view,increase,bRiderUseShooterMovingCheck
+      input_type: checkbox
+      param_field_name: bRiderUseShooterMovingCheck
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Horse Archery View Increase
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: If set, horse archery view increase will be enabled
+        Keywords: horse,archery,view,increase,bRiderUseShooterMovingCheck
+        FieldName: bRiderUseShooterMovingCheck
+        InputType: checkbox
+        ParamFieldName: bRiderUseShooterMovingCheck
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: NpcSpawnMultiplier
+      label: NPC Spawn Multiplier
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the NPC spawn multiplier
+      keywords: npc,spawn,amount,multiplier,NpcSpawnMultiplier
+      input_type: number
+      param_field_name: NpcSpawnMultiplier
+      default: '1.00'
+      placeholder: '1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: NPC Spawn Multiplier
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the NPC spawn multiplier
+        Keywords: npc,spawn,amount,multiplier,NpcSpawnMultiplier
+        FieldName: NpcSpawnMultiplier
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: NpcSpawnMultiplier
+        IncludeInCommandLine: true
+        DefaultValue: '1.00'
+        Placeholder: '1.00'
+        EnumValues: {}
+    - key: InitCapitalCopper
+      label: Starting Copper Coins
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the starting copper coins for new players
+      keywords: starting,copper,coins,new,players,InitCapitalCopper
+      input_type: number
+      param_field_name: InitCapitalCopper
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: coins
+      enum_values: {}
+      raw:
+        DisplayName: Starting Copper Coins
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the starting copper coins for new players
+        Keywords: starting,copper,coins,new,players,InitCapitalCopper
+        FieldName: InitCapitalCopper
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: InitCapitalCopper
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: coins
+        EnumValues: {}
+    - key: bDeadCorpseCreateBag
+      label: Enable Loot Drop On Death
+      category: Myth of Empires
+      subcategory: Advanced
+      description: If set, loot will be dropped on death
+      keywords: drop,loot,death,bDeadCorpseCreateBag
+      input_type: checkbox
+      param_field_name: bDeadCorpseCreateBag
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Loot Drop On Death
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: If set, loot will be dropped on death
+        Keywords: drop,loot,death,bDeadCorpseCreateBag
+        FieldName: bDeadCorpseCreateBag
+        InputType: checkbox
+        ParamFieldName: bDeadCorpseCreateBag
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bOpenWillDead
+      label: Enable Wounded State
+      category: Myth of Empires
+      subcategory: Advanced
+      description: If set, the wounded state will be enabled
+      keywords: wounded,state,bOpenWillDead
+      input_type: checkbox
+      param_field_name: bOpenWillDead
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Wounded State
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: If set, the wounded state will be enabled
+        Keywords: wounded,state,bOpenWillDead
+        FieldName: bOpenWillDead
+        InputType: checkbox
+        ParamFieldName: bOpenWillDead
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bAllCanRescue
+      label: Allow Players To Rescue Everyone
+      category: Myth of Empires
+      subcategory: Advanced
+      description: If set, every player can rescue everyone
+      keywords: rescue,enable,disable,player,bAllCanRescue
+      input_type: checkbox
+      param_field_name: bAllCanRescue
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Players To Rescue Everyone
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: If set, every player can rescue everyone
+        Keywords: rescue,enable,disable,player,bAllCanRescue
+        FieldName: bAllCanRescue
+        InputType: checkbox
+        ParamFieldName: bAllCanRescue
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bCanDropItem
+      label: Enable Inventory Item Drop
+      category: Myth of Empires
+      subcategory: Advanced
+      description: If set, items can be dropped from inventory
+      keywords: drop,item,inventory,bCanDropItem
+      input_type: checkbox
+      param_field_name: bCanDropItem
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Inventory Item Drop
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: If set, items can be dropped from inventory
+        Keywords: drop,item,inventory,bCanDropItem
+        FieldName: bCanDropItem
+        InputType: checkbox
+        ParamFieldName: bCanDropItem
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bShowFleshPhysicialMaterialEffect
+      label: Show Blood Effect
+      category: Myth of Empires
+      subcategory: Advanced
+      description: If set, the red blood screen will be shown when wounded
+      keywords: red,blood,screen,wounded,bShowFleshPhysicialMaterialEffect
+      input_type: checkbox
+      param_field_name: bShowFleshPhysicialMaterialEffect
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Show Blood Effect
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: If set, the red blood screen will be shown when wounded
+        Keywords: red,blood,screen,wounded,bShowFleshPhysicialMaterialEffect
+        FieldName: bShowFleshPhysicialMaterialEffect
+        InputType: checkbox
+        ParamFieldName: bShowFleshPhysicialMaterialEffect
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AITurretTraceProjectileRatio
+      label: Chance of Turret Hitting Enemy
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the chance of a turret hitting an enemy
+      keywords: turret,hit,enemy,chance,AITurretTraceProjectileRatio
+      input_type: number
+      param_field_name: AITurretTraceProjectileRatio
+      default: '-1.00'
+      placeholder: '-1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: -1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Chance of Turret Hitting Enemy
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the chance of a turret hitting an enemy
+        Keywords: turret,hit,enemy,chance,AITurretTraceProjectileRatio
+        FieldName: AITurretTraceProjectileRatio
+        InputType: number
+        MinValue: '-1'
+        MaxValue: '100'
+        ParamFieldName: AITurretTraceProjectileRatio
+        IncludeInCommandLine: true
+        DefaultValue: '-1.00'
+        Placeholder: '-1.00'
+        EnumValues: {}
+    - key: MaxActiveCharacterCountConfig
+      label: Character Limit
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the limit for NPCs, animals and players
+      keywords: npc,animal,player,character,limit,MaxActiveCharacterCountConfig
+      input_type: number
+      param_field_name: MaxActiveCharacterCountConfig
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Character Limit
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the limit for NPCs, animals and players
+        Keywords: npc,animal,player,character,limit,MaxActiveCharacterCountConfig
+        FieldName: MaxActiveCharacterCountConfig
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: MaxActiveCharacterCountConfig
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: MaxActiveStructureCountConfig
+      label: Building Limit
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the limit for buildings
+      keywords: building,limit,MaxActiveStructureCountConfig
+      input_type: number
+      param_field_name: MaxActiveStructureCountConfig
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Building Limit
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the limit for buildings
+        Keywords: building,limit,MaxActiveStructureCountConfig
+        FieldName: MaxActiveStructureCountConfig
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: MaxActiveStructureCountConfig
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: NormalReduceDurableMultiplier
+      label: Durability Consumption Multiplier
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the durability consumption multiplier for gear, tools and weapons
+      keywords: durability,consumption,multiplier,gear,tools,weapons,NormalReduceDurableMultiplier
+      input_type: number
+      param_field_name: NormalReduceDurableMultiplier
+      default: '1.00'
+      placeholder: '1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Durability Consumption Multiplier
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the durability consumption multiplier for gear, tools and weapons
+        Keywords: durability,consumption,multiplier,gear,tools,weapons,NormalReduceDurableMultiplier
+        FieldName: NormalReduceDurableMultiplier
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: NormalReduceDurableMultiplier
+        IncludeInCommandLine: true
+        DefaultValue: '1.00'
+        Placeholder: '1.00'
+        EnumValues: {}
+    - key: SleepPlayerCharacterDestroyDays
+      label: Offline Player Clearance Period
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the period after which an offline player character is destroyed
+      keywords: sleep,offline,player,character,destroy,SleepPlayerCharacterDestroyDays
+      input_type: number
+      param_field_name: SleepPlayerCharacterDestroyDays
+      default: '7'
+      placeholder: '7'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Offline Player Clearance Period
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the period after which an offline player character is destroyed
+        Keywords: sleep,offline,player,character,destroy,SleepPlayerCharacterDestroyDays
+        FieldName: SleepPlayerCharacterDestroyDays
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: SleepPlayerCharacterDestroyDays
+        IncludeInCommandLine: true
+        DefaultValue: '7'
+        Placeholder: '7'
+        Suffix: days
+        EnumValues: {}
+    - key: bEnableServerLevel
+      label: Enable Server Level System
+      category: Myth of Empires
+      subcategory: Advanced
+      description: If set, the server level system will be enabled
+      keywords: server,level,system,bEnableServerLevel
+      input_type: checkbox
+      param_field_name: bEnableServerLevel
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Server Level System
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: If set, the server level system will be enabled
+        Keywords: server,level,system,bEnableServerLevel
+        FieldName: bEnableServerLevel
+        InputType: checkbox
+        ParamFieldName: bEnableServerLevel
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ServerLevelAddMul
+      label: Server Level Upgrade Multiplier
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the server level upgrade multiplier
+      keywords: server,level,upgrade,multiplier,ServerLevelAddMul
+      input_type: number
+      param_field_name: ServerLevelAddMul
+      default: '1.00'
+      placeholder: '1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Server Level Upgrade Multiplier
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the server level upgrade multiplier
+        Keywords: server,level,upgrade,multiplier,ServerLevelAddMul
+        FieldName: ServerLevelAddMul
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: ServerLevelAddMul
+        IncludeInCommandLine: true
+        DefaultValue: '1.00'
+        Placeholder: '1.00'
+        EnumValues: {}
+    - key: FoodBuffValueMulti
+      label: Food Restores Satiety Multiplier
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the food restores satiety multiplier
+      keywords: food,satiety,recover,restore,multiplier,FoodBuffValueMulti
+      input_type: number
+      param_field_name: FoodBuffValueMulti
+      default: '1.00'
+      placeholder: '1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Food Restores Satiety Multiplier
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the food restores satiety multiplier
+        Keywords: food,satiety,recover,restore,multiplier,FoodBuffValueMulti
+        FieldName: FoodBuffValueMulti
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: FoodBuffValueMulti
+        IncludeInCommandLine: true
+        DefaultValue: '1.00'
+        Placeholder: '1.00'
+        EnumValues: {}
+    - key: MedicineBuffValueMulti
+      label: Medicine Restores HP Multiplier
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the medicine restores HP multiplier
+      keywords: hp,recover,restore,medicine,multiplier,MedicineBuffValueMulti
+      input_type: number
+      param_field_name: MedicineBuffValueMulti
+      default: '1.00'
+      placeholder: '1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Medicine Restores HP Multiplier
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the medicine restores HP multiplier
+        Keywords: hp,recover,restore,medicine,multiplier,MedicineBuffValueMulti
+        FieldName: MedicineBuffValueMulti
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: MedicineBuffValueMulti
+        IncludeInCommandLine: true
+        DefaultValue: '1.00'
+        Placeholder: '1.00'
+        EnumValues: {}
+    - key: ItemCDMulti
+      label: Food And Medicine Use Cooldown Multiplier
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the food and medicine use cooldown multiplier
+      keywords: food,medicine,use,cooldown,time,ItemCDMulti
+      input_type: number
+      param_field_name: ItemCDMulti
+      default: '1.00'
+      placeholder: '1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Food And Medicine Use Cooldown Multiplier
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the food and medicine use cooldown multiplier
+        Keywords: food,medicine,use,cooldown,time,ItemCDMulti
+        FieldName: ItemCDMulti
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: ItemCDMulti
+        IncludeInCommandLine: true
+        DefaultValue: '1.00'
+        Placeholder: '1.00'
+        EnumValues: {}
+    - key: FoodMedicineWineBuffTimeMulti
+      label: Food, Medicine And Wine Buff Time Multiplier
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the food, medicine and wine buff time multiplier
+      keywords: food,medicine,wine,buff,time,multiplier,FoodMedicineWineBuffTimeMulti
+      input_type: number
+      param_field_name: FoodMedicineWineBuffTimeMulti
+      default: '1.00'
+      placeholder: '1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Food, Medicine And Wine Buff Time Multiplier
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the food, medicine and wine buff time multiplier
+        Keywords: food,medicine,wine,buff,time,multiplier,FoodMedicineWineBuffTimeMulti
+        FieldName: FoodMedicineWineBuffTimeMulti
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: FoodMedicineWineBuffTimeMulti
+        IncludeInCommandLine: true
+        DefaultValue: '1.00'
+        Placeholder: '1.00'
+        EnumValues: {}
+    - key: ButterflyDropMul
+      label: Butterfly Drop Multiplier
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the butterfly drop multiplier
+      keywords: butterfly,drop,multiplier,ButterflyDropMul
+      input_type: number
+      param_field_name: ButterflyDropMul
+      default: '1.00'
+      placeholder: '1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Butterfly Drop Multiplier
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the butterfly drop multiplier
+        Keywords: butterfly,drop,multiplier,ButterflyDropMul
+        FieldName: ButterflyDropMul
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: ButterflyDropMul
+        IncludeInCommandLine: true
+        DefaultValue: '1.00'
+        Placeholder: '1.00'
+        EnumValues: {}
+    - key: UnLockSkillPriceMul
+      label: Skill Breakthrough Copper Coin Multiplier
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the unlock skill price multiplier
+      keywords: unlock,skill,price,multiplier,UnLockSkillPriceMul
+      input_type: number
+      param_field_name: UnLockSkillPriceMul
+      default: '1.00'
+      placeholder: '1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Skill Breakthrough Copper Coin Multiplier
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the unlock skill price multiplier
+        Keywords: unlock,skill,price,multiplier,UnLockSkillPriceMul
+        FieldName: UnLockSkillPriceMul
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: UnLockSkillPriceMul
+        IncludeInCommandLine: true
+        DefaultValue: '1.00'
+        Placeholder: '1.00'
+        EnumValues: {}
+    - key: FubenCoolDownMultiplier
+      label: Treasure Map Instance Cooldown Multiplier
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the treasure map instance cooldown multiplier
+      keywords: treasure,map,instance,fuben,cooldown,multiplier,FubenCoolDownMultiplier
+      input_type: number
+      param_field_name: FubenCoolDownMultiplier
+      default: '1.00'
+      placeholder: '1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Treasure Map Instance Cooldown Multiplier
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the treasure map instance cooldown multiplier
+        Keywords: treasure,map,instance,fuben,cooldown,multiplier,FubenCoolDownMultiplier
+        FieldName: FubenCoolDownMultiplier
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: FubenCoolDownMultiplier
+        IncludeInCommandLine: true
+        DefaultValue: '1.00'
+        Placeholder: '1.00'
+        EnumValues: {}
+    - key: KillNpcConflictValueMul
+      label: Guild Hostility Increase Multiplier
+      category: Myth of Empires
+      subcategory: Advanced
+      description: Sets the guild hostility increase multiplier
+      keywords: kill,npc,conflict,guild,hostility,multiplier,KillNpcConflictValueMul
+      input_type: number
+      param_field_name: KillNpcConflictValueMul
+      default: '1.00'
+      placeholder: '1.00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Guild Hostility Increase Multiplier
+        Category: Myth of Empires:stadia_controller
+        Subcategory: Advanced:tune:2
+        Description: Sets the guild hostility increase multiplier
+        Keywords: kill,npc,conflict,guild,hostility,multiplier,KillNpcConflictValueMul
+        FieldName: KillNpcConflictValueMul
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: KillNpcConflictValueMul
+        IncludeInCommandLine: true
+        DefaultValue: '1.00'
+        Placeholder: '1.00'
+        EnumValues: {}
+    - key: SpecificReleaseVersion
+      label: Proton GE Release Version (Linux)
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+        Empty = latest. Example: GE-Proton9-1
+      keywords: proton,release,version
+      input_type: text
+      param_field_name: SpecificReleaseVersion
+      default: ''
+      placeholder: GE-Proton9-1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Proton GE Release Version (Linux)
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+          Empty = latest. Example: GE-Proton9-1
+        Keywords: proton,release,version
+        FieldName: SpecificReleaseVersion
+        InputType: text
+        ParamFieldName: SpecificReleaseVersion
+        DefaultValue: ''
+        Placeholder: GE-Proton9-1
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerListId
+    label: Server List ID
+    default: '{{randomdigits(6)}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerId
+    label: Server ID
+    default: '100'
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: ClusterId
+    label: Cluster ID
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SessionName
+    label: Server Name
+    default: AMP Powered Myth of Empires Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Description
+    label: Server Description
+    default: A cool MOE server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoticeSelfEnable
+    label: Enable Welcome Message
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoticeSelfEnterServer
+    label: Welcome Message
+    default: Welcome to my Myth of Empires server!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PrivateServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: bUseServerAdmin
+    label: Enable Server Admins
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerAdminAccounts
+    label: Server Admins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseACE
+    label: Enable Anti Cheat Engine
+    default: '-UseACE '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableVACBan
+    label: Enable VAC Ban
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Map
+    label: Initial Map
+    default: LargeTerrain_Central_Main
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SteamModList
+    label: Load Steam Mods
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MapDifficultyRate
+    label: Difficulty Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GameServerPVPType
+    label: Enable PvE / Disable PvP
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ForceSteamNet
+    label: Enable Steam P2P
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OutAddress
+    label: Out IP Address
+    default: '{{$ExternalIP}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Additional Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bCanChat
+    label: Enable Text Chat
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bCanVoiceChat
+    label: Enable Voice Chat
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoticeAllEnable
+    label: Enable Join/Leave Messages
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoticeEnterServer
+    label: Join Message
+    default: ' has joined the server'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoticeLeaveServer
+    label: Leave Message
+    default: ' has left the server'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SaveGameIntervalMinute
+    label: Automatic Save Interval
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bUseDurable
+    label: Enable Durability
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bRiderUseShooterMovingCheck
+    label: Enable Horse Archery View Increase
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NpcSpawnMultiplier
+    label: NPC Spawn Multiplier
+    default: '1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InitCapitalCopper
+    label: Starting Copper Coins
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bDeadCorpseCreateBag
+    label: Enable Loot Drop On Death
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bOpenWillDead
+    label: Enable Wounded State
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllCanRescue
+    label: Allow Players To Rescue Everyone
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bCanDropItem
+    label: Enable Inventory Item Drop
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bShowFleshPhysicialMaterialEffect
+    label: Show Blood Effect
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AITurretTraceProjectileRatio
+    label: Chance of Turret Hitting Enemy
+    default: '-1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxActiveCharacterCountConfig
+    label: Character Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxActiveStructureCountConfig
+    label: Building Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NormalReduceDurableMultiplier
+    label: Durability Consumption Multiplier
+    default: '1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SleepPlayerCharacterDestroyDays
+    label: Offline Player Clearance Period
+    default: '7'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableServerLevel
+    label: Enable Server Level System
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerLevelAddMul
+    label: Server Level Upgrade Multiplier
+    default: '1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FoodBuffValueMulti
+    label: Food Restores Satiety Multiplier
+    default: '1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MedicineBuffValueMulti
+    label: Medicine Restores HP Multiplier
+    default: '1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ItemCDMulti
+    label: Food And Medicine Use Cooldown Multiplier
+    default: '1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FoodMedicineWineBuffTimeMulti
+    label: Food, Medicine And Wine Buff Time Multiplier
+    default: '1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ButterflyDropMul
+    label: Butterfly Drop Multiplier
+    default: '1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UnLockSkillPriceMul
+    label: Skill Breakthrough Copper Coin Multiplier
+    default: '1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FubenCoolDownMultiplier
+    label: Treasure Map Instance Cooldown Multiplier
+    default: '1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: KillNpcConflictValueMul
+    label: Guild Hostility Increase Multiplier
+    default: '1.00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificReleaseVersion
+    label: Proton GE Release Version (Linux)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1371580'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,18 @@ category: Imported
 summary: Voyagers of Nera Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '3937860'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: .proton/proton
+  startup: >-
+    .proton/proton {PlatformArgs} BoatGame -Port={GamePort} -log=BoatGame.log -LoggingInShippingEnabled=true
+    {FormattedArgs} {CustomArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,656 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 7777
     protocol: udp
     required: true
-config_files: []
+  - key: beaconport
+    name: Beacon Port
+    default: 7778
+    protocol: udp
+    required: true
+config_files:
+  - path: BoatGame/Saved/PersistedData/CustomConfig/CustomHostServerUserSettings.ini
+    type: ini
+    editable: true
+  - path: BoatGame/Saved/PersistedData/CustomConfig/CustomGameUserSettings.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: HostServerDisplayName
+      label: Server Name
+      category: Voyagers of Nera
+      subcategory: Server
+      description: Sets the name of the server as shown in the server browser. Maximum 30 characters
+      keywords: name,display,name,HostServerDisplayName
+      input_type: text
+      param_field_name: /Script/BoatGame.BGCustomHostServerSettings.HostServerDisplayName
+      default: AMP Voyagers of Nera Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as shown in the server browser. Maximum 30 characters
+        Keywords: name,display,name,HostServerDisplayName
+        FieldName: HostServerDisplayName
+        InputType: text
+        ParamFieldName: /Script/BoatGame.BGCustomHostServerSettings.HostServerDisplayName
+        DefaultValue: AMP Voyagers of Nera Server
+        EnumValues: {}
+    - key: HostServerPassword
+      label: Server Password
+      category: Voyagers of Nera
+      subcategory: Server
+      description: Sets the password for players to join the server. Default is no password
+      keywords: server,password,HostServerPassword
+      input_type: password
+      param_field_name: /Script/BoatGame.BGCustomHostServerSettings.HostServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for players to join the server. Default is no password
+        Keywords: server,password,HostServerPassword
+        FieldName: HostServerPassword
+        InputType: password
+        ParamFieldName: /Script/BoatGame.BGCustomHostServerSettings.HostServerPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Voyagers of Nera
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,limit,MaxPlayers
+      input_type: number
+      param_field_name: /Script/BoatGame.BGCustomHostServerSettings.MaxPlayers
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 10
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,limit,MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '10'
+        ParamFieldName: /Script/BoatGame.BGCustomHostServerSettings.MaxPlayers
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: players
+        EnumValues: {}
+    - key: AutosaveTimerSeconds
+      label: Autosave Interval
+      category: Voyagers of Nera
+      subcategory: Server
+      description: Sets often the server will automatically save
+      keywords: autosave,timer,interval,AutosaveTimerSeconds
+      input_type: number
+      param_field_name: /Script/BoatGame.BGCustomHostServerSettings.AutosaveTimerSeconds
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 10
+      max: 900
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Autosave Interval
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets often the server will automatically save
+        Keywords: autosave,timer,interval,AutosaveTimerSeconds
+        FieldName: AutosaveTimerSeconds
+        InputType: number
+        MinValue: '10'
+        MaxValue: '900'
+        ParamFieldName: /Script/BoatGame.BGCustomHostServerSettings.AutosaveTimerSeconds
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: EOS_OVERRIDE_HOST_IP
+      label: Public IP Selection Mode
+      category: Voyagers of Nera
+      subcategory: Server
+      description: >-
+        Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+        it should use the IP set under Server Public IP
+      keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
+      input_type: enum
+      param_field_name: EOS_OVERRIDE_HOST_IP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Server automatically selects (default)
+        '{{$ExternalIP}}': AMP automatically selects
+        '{{ManualPublicIP}}': Manual selection
+      raw:
+        DisplayName: Public IP Selection Mode
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+          it should use the IP set under Server Public IP
+        Keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
+        FieldName: EOS_OVERRIDE_HOST_IP
+        InputType: enum
+        ParamFieldName: EOS_OVERRIDE_HOST_IP
+        DefaultValue: ''
+        EnumValues:
+          '': Server automatically selects (default)
+          '{{$ExternalIP}}': AMP automatically selects
+          '{{ManualPublicIP}}': Manual selection
+    - key: ManualPublicIP
+      label: Server Public IP
+      category: Voyagers of Nera
+      subcategory: Server
+      description: >-
+        Sets the public IP advertised for the server, if "Manual selection" is selected as the Public IP Selection Mode.
+        Useful if the host network has multiple public IPs, or the server is behind a public proxy or VPN
+      keywords: manual,public,ip,eos,override,host,EOS_OVERRIDE_HOST_IP
+      input_type: text
+      param_field_name: ManualPublicIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Public IP
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public IP advertised for the server, if "Manual selection" is selected as the Public IP Selection
+          Mode. Useful if the host network has multiple public IPs, or the server is behind a public proxy or VPN
+        Keywords: manual,public,ip,eos,override,host,EOS_OVERRIDE_HOST_IP
+        FieldName: ManualPublicIP
+        InputType: text
+        ParamFieldName: ManualPublicIP
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomArgs
+      label: Additional Command Line Arguments
+      category: Voyagers of Nera
+      subcategory: Server
+      description: >-
+        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AMP.
+        Use with care
+      keywords: custom,server,arguments,parameters
+      input_type: text
+      param_field_name: CustomArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Arguments
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by
+          AMP. Use with care
+        Keywords: custom,server,arguments,parameters
+        FieldName: CustomArgs
+        InputType: text
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: GatheringRateMultiplier
+      label: Gathering Rate Multiplier
+      category: Voyagers of Nera
+      subcategory: Gameplay
+      description: Sets the resource yield multiplier, which determines the quantity gathered per gathering interaction
+      keywords: gathering,rate,multiplier,resources,GatheringRateMultiplier
+      input_type: number
+      param_field_name: /Script/BoatGame.BGCustomGameSettings.GatheringRateMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.01
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Gathering Rate Multiplier
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the resource yield multiplier, which determines the quantity gathered per gathering interaction
+        Keywords: gathering,rate,multiplier,resources,GatheringRateMultiplier
+        FieldName: GatheringRateMultiplier
+        InputType: number
+        MinValue: '0.01'
+        MaxValue: '10.0'
+        ParamFieldName: /Script/BoatGame.BGCustomGameSettings.GatheringRateMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: EnemyDamageMultiplier
+      label: Enemy Damage Multiplier
+      category: Voyagers of Nera
+      subcategory: Gameplay
+      description: Sets the enemy attack damage multiplier
+      keywords: enemy,damage,multiplier,EnemyDamageMultiplier
+      input_type: number
+      param_field_name: /Script/BoatGame.BGCustomGameSettings.EnemyDamageMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.01
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Damage Multiplier
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the enemy attack damage multiplier
+        Keywords: enemy,damage,multiplier,EnemyDamageMultiplier
+        FieldName: EnemyDamageMultiplier
+        InputType: number
+        MinValue: '0.01'
+        MaxValue: '10.0'
+        ParamFieldName: /Script/BoatGame.BGCustomGameSettings.EnemyDamageMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: PlayerDamageMultiplier
+      label: Player Damage Multiplier
+      category: Voyagers of Nera
+      subcategory: Gameplay
+      description: Sets the player attack damage multiplier
+      keywords: player,damage,multiplier,PlayerDamageMultiplier
+      input_type: number
+      param_field_name: /Script/BoatGame.BGCustomGameSettings.PlayerDamageMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.01
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Player Damage Multiplier
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the player attack damage multiplier
+        Keywords: player,damage,multiplier,PlayerDamageMultiplier
+        FieldName: PlayerDamageMultiplier
+        InputType: number
+        MinValue: '0.01'
+        MaxValue: '10.0'
+        ParamFieldName: /Script/BoatGame.BGCustomGameSettings.PlayerDamageMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: DisableEquipmentDurability
+      label: Disable Equipment Durability
+      category: Voyagers of Nera
+      subcategory: Gameplay
+      description: If set, equipment will never break or lose durability
+      keywords: disable,equipment,durability,DisableEquipmentDurability
+      input_type: checkbox
+      param_field_name: /Script/BoatGame.BGCustomGameSettings.DisableEquipmentDurability
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Disable Equipment Durability
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, equipment will never break or lose durability
+        Keywords: disable,equipment,durability,DisableEquipmentDurability
+        FieldName: DisableEquipmentDurability
+        InputType: checkbox
+        ParamFieldName: /Script/BoatGame.BGCustomGameSettings.DisableEquipmentDurability
+        DefaultValue: 'False'
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+    - key: DisableDropItemsOnDeath
+      label: Disable Items Dropping On Death
+      category: Voyagers of Nera
+      subcategory: Gameplay
+      description: If set, players will keep inventory items after death
+      keywords: disable,drop,items,death,DisableDropItemsOnDeath
+      input_type: checkbox
+      param_field_name: /Script/BoatGame.BGCustomGameSettings.DisableDropItemsOnDeath
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Disable Items Dropping On Death
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will keep inventory items after death
+        Keywords: disable,drop,items,death,DisableDropItemsOnDeath
+        FieldName: DisableDropItemsOnDeath
+        InputType: checkbox
+        ParamFieldName: /Script/BoatGame.BGCustomGameSettings.DisableDropItemsOnDeath
+        DefaultValue: 'False'
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+    - key: DisableEncumbrance
+      label: Disable Encumbrance
+      category: Voyagers of Nera
+      subcategory: Gameplay
+      description: If set, players will not become encumbered
+      keywords: disable,encumbrance,disableencumbrance
+      input_type: checkbox
+      param_field_name: /Script/BoatGame.BGCustomGameSettings.DisableEncumbrance
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Disable Encumbrance
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will not become encumbered
+        Keywords: disable,encumbrance,disableencumbrance
+        FieldName: DisableEncumbrance
+        InputType: checkbox
+        ParamFieldName: /Script/BoatGame.BGCustomGameSettings.DisableEncumbrance
+        DefaultValue: 'False'
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+    - key: DisableFogOfWar
+      label: Disable Fog Of War
+      category: Voyagers of Nera
+      subcategory: Gameplay
+      description: If set, fog of war will be disabled
+      keywords: disable,fog,war,disablefogofwar
+      input_type: checkbox
+      param_field_name: /Script/BoatGame.BGCustomGameSettings.DisableFogOfWar
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Disable Fog Of War
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, fog of war will be disabled
+        Keywords: disable,fog,war,disablefogofwar
+        FieldName: DisableFogOfWar
+        InputType: checkbox
+        ParamFieldName: /Script/BoatGame.BGCustomGameSettings.DisableFogOfWar
+        DefaultValue: 'False'
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+    - key: DisableWeather
+      label: Disable Weather
+      category: Voyagers of Nera
+      subcategory: Gameplay
+      description: If set, weather will be disabled
+      keywords: disable,weather,disableweather
+      input_type: checkbox
+      param_field_name: /Script/BoatGame.BGCustomGameSettings.DisableWeather
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Disable Weather
+        Category: Voyagers of Nera:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, weather will be disabled
+        Keywords: disable,weather,disableweather
+        FieldName: DisableWeather
+        InputType: checkbox
+        ParamFieldName: /Script/BoatGame.BGCustomGameSettings.DisableWeather
+        DefaultValue: 'False'
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+    - key: SpecificReleaseVersion
+      label: Proton GE Release Version (Linux)
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+        Empty = latest. Example: GE-Proton9-1
+      keywords: proton,release,version
+      input_type: text
+      param_field_name: SpecificReleaseVersion
+      default: ''
+      placeholder: GE-Proton9-1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Proton GE Release Version (Linux)
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+          Empty = latest. Example: GE-Proton9-1
+        Keywords: proton,release,version
+        FieldName: SpecificReleaseVersion
+        InputType: text
+        ParamFieldName: SpecificReleaseVersion
+        DefaultValue: ''
+        Placeholder: GE-Proton9-1
+        EnumValues: {}
+  files:
+    - path: BoatGame/Saved/PersistedData/CustomConfig/CustomHostServerUserSettings.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: BoatGame/Saved/PersistedData/CustomConfig/CustomHostServerUserSettings.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
+    - path: BoatGame/Saved/PersistedData/CustomConfig/CustomGameUserSettings.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: BoatGame/Saved/PersistedData/CustomConfig/CustomGameUserSettings.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: HostServerDisplayName
+    label: Server Name
+    default: AMP Voyagers of Nera Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HostServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AutosaveTimerSeconds
+    label: Autosave Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EOS_OVERRIDE_HOST_IP
+    label: Public IP Selection Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualPublicIP
+    label: Server Public IP
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Additional Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GatheringRateMultiplier
+    label: Gathering Rate Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnemyDamageMultiplier
+    label: Enemy Damage Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerDamageMultiplier
+    label: Player Damage Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisableEquipmentDurability
+    label: Disable Equipment Durability
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisableDropItemsOnDeath
+    label: Disable Items Dropping On Death
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisableEncumbrance
+    label: Disable Encumbrance
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisableFogOfWar
+    label: Disable Fog Of War
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisableWeather
+    label: Disable Weather
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificReleaseVersion
+    label: Proton GE Release Version (Linux)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '2686630'
+  collection_support: true
 backup:
   include:
     - /data

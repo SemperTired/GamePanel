@@ -5,13 +5,16 @@ category: Imported
 summary: ASKA Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '3246670'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: /usr/bin/xvfb-run {PlatformArgs} -propertiesPath "server properties.txt" {FormattedArgs} {CustomArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1063 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 7777
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: server properties.txt
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: ASKA
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: steam game port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        ParamFieldName: steam game port
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $QueryPort
+      label: Query Port
+      category: ASKA
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: steam query port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Port
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: steam query port
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: saveId
+      label: Save ID
+      category: ASKA
+      subcategory: Server
+      description: >-
+        Sets the ID of a save file in the 'server' directory to load. The ID comes after 'savegame_' in the save file
+        name. Empty = new save (the save ID that is populated in 'server properties.txt' for a new save can be imported
+        from that file into this setting)
+      keywords: save,id,saveId
+      input_type: text
+      param_field_name: save id
+      default: ''
+      placeholder: e111d_251124125819
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Save ID
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the ID of a save file in the 'server' directory to load. The ID comes after 'savegame_' in the save file
+          name. Empty = new save (the save ID that is populated in 'server properties.txt' for a new save can be
+          imported from that file into this setting)
+        Keywords: save,id,saveId
+        FieldName: saveId
+        InputType: text
+        ParamFieldName: save id
+        DefaultValue: ''
+        Placeholder: e111d_251124125819
+        EnumValues: {}
+    - key: displayName
+      label: Display Name
+      category: ASKA
+      subcategory: Server
+      description: >-
+        Sets the server name displayed in the session list for new saves. For old saves the name is taken from the save
+        itself. May be overridden by Server Name Override
+      keywords: display,name,displayName
+      input_type: text
+      param_field_name: display name
+      default: AMP Powered ASKA Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Display Name
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the server name displayed in the session list for new saves. For old saves the name is taken from the
+          save itself. May be overridden by Server Name Override
+        Keywords: display,name,displayName
+        FieldName: displayName
+        InputType: text
+        ParamFieldName: display name
+        DefaultValue: AMP Powered ASKA Server
+        EnumValues: {}
+    - key: serverName
+      label: Server Name Override
+      category: ASKA
+      subcategory: Server
+      description: If not empty, overrides the server name displayed in the session list
+      keywords: server,name,serverName
+      input_type: text
+      param_field_name: server name
+      default: AMP Powered ASKA Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name Override
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If not empty, overrides the server name displayed in the session list
+        Keywords: server,name,serverName
+        FieldName: serverName
+        InputType: text
+        ParamFieldName: server name
+        DefaultValue: AMP Powered ASKA Server
+        EnumValues: {}
+    - key: seed
+      label: Seed
+      category: ASKA
+      subcategory: Server
+      description: Sets the seed for a new save
+      keywords: seed
+      input_type: text
+      param_field_name: seed
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Seed
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the seed for a new save
+        Keywords: seed
+        FieldName: seed
+        InputType: text
+        ParamFieldName: seed
+        DefaultValue: ''
+        EnumValues: {}
+    - key: password
+      label: Server Password
+      category: ASKA
+      subcategory: Server
+      description: Sets the password to join the server
+      keywords: password
+      input_type: password
+      param_field_name: password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server
+        Keywords: password
+        FieldName: password
+        InputType: password
+        ParamFieldName: password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: authenticationToken
+      label: Game Server Login Token (GSLT)
+      category: ASKA
+      subcategory: Server
+      description: >-
+        Sets the [Steam Game Server Login Token](https://steamcommunity.com/dev/managegameservers) to authenticate the
+        server. Use app ID 1898300 when generating the token
+      keywords: steam,server,login,token,gslt,authentication,token,authenticationToken
+      input_type: password
+      param_field_name: authentication token
+      default: ''
+      placeholder: 6544F7E034119F113526E96474F559AH
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Server Login Token (GSLT)
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [Steam Game Server Login Token](https://steamcommunity.com/dev/managegameservers) to authenticate the
+          server. Use app ID 1898300 when generating the token
+        Keywords: steam,server,login,token,gslt,authentication,token,authenticationToken
+        FieldName: authenticationToken
+        InputType: password
+        ParamFieldName: authentication token
+        Required: true
+        DefaultValue: ''
+        Placeholder: 6544F7E034119F113526E96474F559AH
+        EnumValues: {}
+    - key: region
+      label: Region
+      category: ASKA
+      subcategory: Server
+      description: Sets the region for the server. Leave as Default to ping the best region
+      keywords: region
+      input_type: text
+      param_field_name: region
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        default: Default
+        asia: Asia
+        australia: Australia
+        canada east: Canada East
+        europe: Europe
+        hong kong: Hong Kong
+        india: India
+        japan: Japan
+        south america: South America
+        south korea: South Korea
+        turkey: Turkey
+        united arab emirates: United Arab Emirates
+        usa east: USA East
+        usa south central: USA South Central
+        usa west: USA West
+      raw:
+        DisplayName: Region
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the region for the server. Leave as Default to ping the best region
+        Keywords: region
+        FieldName: region
+        InputType: text
+        ParamFieldName: region
+        DefaultValue: default
+        EnumValues:
+          default: Default
+          asia: Asia
+          australia: Australia
+          canada east: Canada East
+          europe: Europe
+          hong kong: Hong Kong
+          india: India
+          japan: Japan
+          south america: South America
+          south korea: South Korea
+          turkey: Turkey
+          united arab emirates: United Arab Emirates
+          usa east: USA East
+          usa south central: USA South Central
+          usa west: USA West
+    - key: keepServerWorldAlive
+      label: Keep Server World Alive
+      category: ASKA
+      subcategory: Server
+      description: If set, the world will continue updating even without players
+      keywords: keep,server,world,alive,keepServerWorldAlive
+      input_type: checkbox
+      param_field_name: keep server world alive
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Keep Server World Alive
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the world will continue updating even without players
+        Keywords: keep,server,world,alive,keepServerWorldAlive
+        FieldName: keepServerWorldAlive
+        InputType: checkbox
+        ParamFieldName: keep server world alive
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: autosaveStyle
+      label: Autosave Interval
+      category: ASKA
+      subcategory: Server
+      description: Set the interval for the server autosave
+      keywords: autosave,save,saving,style,autosaveStyle
+      input_type: enum
+      param_field_name: autosave style
+      default: every morning
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        disabled: Disabled
+        every morning: Every morning (default)
+        every 5 minutes: Every 5 minutes
+        every 10 minutes: Every 10 minutes
+        every 15 minutes: Every 15 minutes
+        every 20 minutes: Every 20 minutes
+      raw:
+        DisplayName: Autosave Interval
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set the interval for the server autosave
+        Keywords: autosave,save,saving,style,autosaveStyle
+        FieldName: autosaveStyle
+        InputType: enum
+        ParamFieldName: autosave style
+        DefaultValue: every morning
+        EnumValues:
+          disabled: Disabled
+          every morning: Every morning (default)
+          every 5 minutes: Every 5 minutes
+          every 10 minutes: Every 10 minutes
+          every 15 minutes: Every 15 minutes
+          every 20 minutes: Every 20 minutes
+    - key: mode
+      label: Gameplay Mode
+      category: ASKA
+      subcategory: Server
+      description: Set to Normal for the standard way of playing or to Custom to customize certain aspects of gameplay
+      keywords: gameplay,mode
+      input_type: enum
+      param_field_name: mode
+      default: normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        normal: Normal
+        custom: Custom
+      raw:
+        DisplayName: Gameplay Mode
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set to Normal for the standard way of playing or to Custom to customize certain aspects of gameplay
+        Keywords: gameplay,mode
+        FieldName: mode
+        InputType: enum
+        ParamFieldName: mode
+        DefaultValue: normal
+        EnumValues:
+          normal: Normal
+          custom: Custom
+    - key: terrainAspect
+      label: Terrain Aspect
+      category: ASKA
+      subcategory: Server
+      description: Sets the terrain aspect. Only works in Custom gameplay mode
+      keywords: terrain,aspect,terrainAspect
+      input_type: enum
+      param_field_name: terrain aspect
+      default: normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        smooth: Smooth
+        normal: Normal
+        rocky: Rocky
+      raw:
+        DisplayName: Terrain Aspect
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the terrain aspect. Only works in Custom gameplay mode
+        Keywords: terrain,aspect,terrainAspect
+        FieldName: terrainAspect
+        InputType: enum
+        ParamFieldName: terrain aspect
+        DefaultValue: normal
+        EnumValues:
+          smooth: Smooth
+          normal: Normal
+          rocky: Rocky
+    - key: terrainHeight
+      label: Terrain Height
+      category: ASKA
+      subcategory: Server
+      description: Sets the terrain height. Only works in Custom gameplay mode
+      keywords: terrain,height,terrainHeight
+      input_type: enum
+      param_field_name: terrain height
+      default: normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        flat: Flat
+        normal: Normal
+        varied: Varied
+      raw:
+        DisplayName: Terrain Height
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the terrain height. Only works in Custom gameplay mode
+        Keywords: terrain,height,terrainHeight
+        FieldName: terrainHeight
+        InputType: enum
+        ParamFieldName: terrain height
+        DefaultValue: normal
+        EnumValues:
+          flat: Flat
+          normal: Normal
+          varied: Varied
+    - key: startingSeason
+      label: Starting Season
+      category: ASKA
+      subcategory: Server
+      description: Sets the starting season. Only works in Custom gameplay mode
+      keywords: starting,season,startingSeason
+      input_type: enum
+      param_field_name: starting season
+      default: spring
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        spring: Spring
+        summer: Summer
+        autumn: Autumn
+        winter: Winter
+      raw:
+        DisplayName: Starting Season
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the starting season. Only works in Custom gameplay mode
+        Keywords: starting,season,startingSeason
+        FieldName: startingSeason
+        InputType: enum
+        ParamFieldName: starting season
+        DefaultValue: spring
+        EnumValues:
+          spring: Spring
+          summer: Summer
+          autumn: Autumn
+          winter: Winter
+    - key: yearLength
+      label: Year Length
+      category: ASKA
+      subcategory: Server
+      description: Sets the year length. Only works in Custom gameplay mode
+      keywords: year,length,yearLength
+      input_type: enum
+      param_field_name: year length
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        minimum: Minimum
+        reduced: Reduced
+        default: Default
+        extended: Extended
+        maximum: Maximum
+      raw:
+        DisplayName: Year Length
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the year length. Only works in Custom gameplay mode
+        Keywords: year,length,yearLength
+        FieldName: yearLength
+        InputType: enum
+        ParamFieldName: year length
+        DefaultValue: default
+        EnumValues:
+          minimum: Minimum
+          reduced: Reduced
+          default: Default
+          extended: Extended
+          maximum: Maximum
+    - key: precipitation
+      label: Precipitation
+      category: ASKA
+      subcategory: Server
+      description: Sets the precipitation level. Only works in Custom gameplay mode
+      keywords: precipitation
+      input_type: enum
+      param_field_name: precipitation
+      default: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': 0 (sunny)
+        '1': '1'
+        '2': '2'
+        '3': 3 (default)
+        '4': '4'
+        '5': '5'
+        '6': 6 (soggy)
+      raw:
+        DisplayName: Precipitation
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the precipitation level. Only works in Custom gameplay mode
+        Keywords: precipitation
+        FieldName: precipitation
+        InputType: enum
+        ParamFieldName: precipitation
+        DefaultValue: '3'
+        EnumValues:
+          '0': 0 (sunny)
+          '1': '1'
+          '2': '2'
+          '3': 3 (default)
+          '4': '4'
+          '5': '5'
+          '6': 6 (soggy)
+    - key: dayLength
+      label: Day Length
+      category: ASKA
+      subcategory: Server
+      description: Sets the day length. Only works in Custom gameplay mode
+      keywords: day,length,dayLength
+      input_type: enum
+      param_field_name: day length
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        minimum: Minimum
+        reduced: Reduced
+        default: Default
+        extended: Extended
+        maximum: Maximum
+      raw:
+        DisplayName: Day Length
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the day length. Only works in Custom gameplay mode
+        Keywords: day,length,dayLength
+        FieldName: dayLength
+        InputType: enum
+        ParamFieldName: day length
+        DefaultValue: default
+        EnumValues:
+          minimum: Minimum
+          reduced: Reduced
+          default: Default
+          extended: Extended
+          maximum: Maximum
+    - key: structureDecay
+      label: Structure Decay
+      category: ASKA
+      subcategory: Server
+      description: Sets the structure decay rate. Only works in Custom gameplay mode
+      keywords: structure,decay,structureDecay
+      input_type: enum
+      param_field_name: structure decay
+      default: medium
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        low: Low
+        medium: Medium (default)
+        high: High
+      raw:
+        DisplayName: Structure Decay
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the structure decay rate. Only works in Custom gameplay mode
+        Keywords: structure,decay,structureDecay
+        FieldName: structureDecay
+        InputType: enum
+        ParamFieldName: structure decay
+        DefaultValue: medium
+        EnumValues:
+          low: Low
+          medium: Medium (default)
+          high: High
+    - key: invasionDifficulty
+      label: Invasion Difficulty
+      category: ASKA
+      subcategory: Server
+      description: Sets the invasion difficulty. Only works in Custom gameplay mode
+      keywords: invasion,difficulty,invasionDifficulty
+      input_type: enum
+      param_field_name: invasion difficulty
+      default: normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'off': 'Off'
+        easy: Easy
+        normal: Normal
+        hard: Hard
+      raw:
+        DisplayName: Invasion Difficulty
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the invasion difficulty. Only works in Custom gameplay mode
+        Keywords: invasion,difficulty,invasionDifficulty
+        FieldName: invasionDifficulty
+        InputType: enum
+        ParamFieldName: invasion difficulty
+        DefaultValue: normal
+        EnumValues:
+          'off': 'Off'
+          easy: Easy
+          normal: Normal
+          hard: Hard
+    - key: monsterDensity
+      label: Monster Density
+      category: ASKA
+      subcategory: Server
+      description: Sets the monster density. Only works in Custom gameplay mode
+      keywords: monster,density,monsterDensity
+      input_type: enum
+      param_field_name: monster density
+      default: medium
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'off': 'Off'
+        low: Low
+        medium: Medium (default)
+        high: High
+      raw:
+        DisplayName: Monster Density
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the monster density. Only works in Custom gameplay mode
+        Keywords: monster,density,monsterDensity
+        FieldName: monsterDensity
+        InputType: enum
+        ParamFieldName: monster density
+        DefaultValue: medium
+        EnumValues:
+          'off': 'Off'
+          low: Low
+          medium: Medium (default)
+          high: High
+    - key: monsterPopulation
+      label: Monster Population
+      category: ASKA
+      subcategory: Server
+      description: Sets the monster population. Only works in Custom gameplay mode
+      keywords: monster,population,monsterPopulation
+      input_type: enum
+      param_field_name: monster population
+      default: medium
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        low: Low
+        medium: Medium (default)
+        high: High
+      raw:
+        DisplayName: Monster Population
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the monster population. Only works in Custom gameplay mode
+        Keywords: monster,population,monsterPopulation
+        FieldName: monsterPopulation
+        InputType: enum
+        ParamFieldName: monster population
+        DefaultValue: medium
+        EnumValues:
+          low: Low
+          medium: Medium (default)
+          high: High
+    - key: wulfarPopulation
+      label: Wulfar Population
+      category: ASKA
+      subcategory: Server
+      description: Sets the wulfar population. Only works in Custom gameplay mode
+      keywords: wulfar,population,wulfarPopulation
+      input_type: enum
+      param_field_name: wulfar population
+      default: medium
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        low: Low
+        medium: Medium (default)
+        high: High
+      raw:
+        DisplayName: Wulfar Population
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the wulfar population. Only works in Custom gameplay mode
+        Keywords: wulfar,population,wulfarPopulation
+        FieldName: wulfarPopulation
+        InputType: enum
+        ParamFieldName: wulfar population
+        DefaultValue: medium
+        EnumValues:
+          low: Low
+          medium: Medium (default)
+          high: High
+    - key: herbivorePopulation
+      label: Herbivore Population
+      category: ASKA
+      subcategory: Server
+      description: Sets the herbivore population. Only works in Custom gameplay mode
+      keywords: herbivore,population,herbivorePopulation
+      input_type: enum
+      param_field_name: herbivore population
+      default: medium
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        low: Low
+        medium: Medium (default)
+        high: High
+      raw:
+        DisplayName: Herbivore Population
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the herbivore population. Only works in Custom gameplay mode
+        Keywords: herbivore,population,herbivorePopulation
+        FieldName: herbivorePopulation
+        InputType: enum
+        ParamFieldName: herbivore population
+        DefaultValue: medium
+        EnumValues:
+          low: Low
+          medium: Medium (default)
+          high: High
+    - key: bearPopulation
+      label: Bear Population
+      category: ASKA
+      subcategory: Server
+      description: Sets the bear population. Only works in Custom gameplay mode
+      keywords: bear,population,bearPopulation
+      input_type: enum
+      param_field_name: bear population
+      default: medium
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        low: Low
+        medium: Medium (default)
+        high: High
+      raw:
+        DisplayName: Bear Population
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the bear population. Only works in Custom gameplay mode
+        Keywords: bear,population,bearPopulation
+        FieldName: bearPopulation
+        InputType: enum
+        ParamFieldName: bear population
+        DefaultValue: medium
+        EnumValues:
+          low: Low
+          medium: Medium (default)
+          high: High
+    - key: CustomArgs
+      label: Custom Command Line Arguments
+      category: ASKA
+      subcategory: Server
+      description: >-
+        Sets custom command line arguments to start the server with. Format: -<key> "<value>". Don't use options already
+        in AMP's settings!
+      keywords: custom,command,line,arguments
+      input_type: text
+      param_field_name: CustomArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Command Line Arguments
+        Category: ASKA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets custom command line arguments to start the server with. Format: -<key> "<value>". Don't use options
+          already in AMP's settings!
+        Keywords: custom,command,line,arguments
+        FieldName: CustomArgs
+        InputType: text
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        EnumValues: {}
+  files:
+    - path: server properties.txt
+      type: kvp
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: server properties.txt
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: saveId
+    label: Save ID
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: displayName
+    label: Display Name
+    default: AMP Powered ASKA Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverName
+    label: Server Name Override
+    default: AMP Powered ASKA Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: seed
+    label: Seed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: authenticationToken
+    label: Game Server Login Token (GSLT)
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: region
+    label: Region
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: keepServerWorldAlive
+    label: Keep Server World Alive
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autosaveStyle
+    label: Autosave Interval
+    default: every morning
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mode
+    label: Gameplay Mode
+    default: normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: terrainAspect
+    label: Terrain Aspect
+    default: normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: terrainHeight
+    label: Terrain Height
+    default: normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: startingSeason
+    label: Starting Season
+    default: spring
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: yearLength
+    label: Year Length
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: precipitation
+    label: Precipitation
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dayLength
+    label: Day Length
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: structureDecay
+    label: Structure Decay
+    default: medium
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: invasionDifficulty
+    label: Invasion Difficulty
+    default: normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: monsterDensity
+    label: Monster Density
+    default: medium
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: monsterPopulation
+    label: Monster Population
+    default: medium
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: wulfarPopulation
+    label: Wulfar Population
+    default: medium
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: herbivorePopulation
+    label: Herbivore Population
+    default: medium
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bearPopulation
+    label: Bear Population
+    default: medium
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Custom Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1898300'
+  collection_support: true
 backup:
   include:
     - /data

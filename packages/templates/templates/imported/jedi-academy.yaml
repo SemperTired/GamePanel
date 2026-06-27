@@ -5,13 +5,18 @@ category: Imported
 summary: STAR WARS Jedi Knight - Jedi Academy Dedicated Server with OpenJK engine
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '6020'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/openjkded.x86_64
+  startup: >-
+    server/openjkded.x86_64 {PlatformArgs} +set fs_homepath "." +set net_port {ServerPort} +set net_ip
+    {ApplicationIPBinding} +set fs_game {mod} +{map_type} {map} {FormattedArgs} +exec base.cfg
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,1587 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 29070
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: '{{mod}}/base.cfg'
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: sv_hostname
+      label: Server Name
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets the name of the server that appears in the server list
+      keywords: server,name,sv_hostname
+      input_type: text
+      param_field_name: sv_hostname
+      default: AMP Powered Jedi Academy Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that appears in the server list
+        Keywords: server,name,sv_hostname
+        FieldName: sv_hostname
+        InputType: text
+        ParamFieldName: sv_hostname
+        DefaultValue: AMP Powered Jedi Academy Server
+        EnumValues: {}
+    - key: g_motd
+      label: Message Of The Day
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets the message of the day (MOTD) displayed when players join
+      keywords: message,motd,g_motd
+      input_type: text
+      param_field_name: g_motd
+      default: Welcome to STAR WARS Jedi Knight - Jedi Academy!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Message Of The Day
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the message of the day (MOTD) displayed when players join
+        Keywords: message,motd,g_motd
+        FieldName: g_motd
+        InputType: text
+        ParamFieldName: g_motd
+        DefaultValue: Welcome to STAR WARS Jedi Knight - Jedi Academy!
+        EnumValues: {}
+    - key: mod
+      label: Server Mod Name
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: >-
+        Sets the name of the mod directory to load, allowing the use of third-party JKA mods. Don't change this from the
+        default 'base' unless you know what you are doing!
+      keywords: server,mod,directory,game
+      input_type: text
+      param_field_name: mod
+      default: base
+      placeholder: base
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Mod Name
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the mod directory to load, allowing the use of third-party JKA mods. Don't change this from
+          the default 'base' unless you know what you are doing!
+        Keywords: server,mod,directory,game
+        FieldName: mod
+        InputType: text
+        ParamFieldName: mod
+        DefaultValue: base
+        Placeholder: base
+        EnumValues: {}
+    - key: dedicated
+      label: Make Server Public
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: If enabled, the server will be visible publicly. Otherwise it will only be accessible from the LAN
+      keywords: public,visible,dedicated
+      input_type: checkbox
+      param_field_name: dedicated
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '1'
+        'True': '2'
+      raw:
+        DisplayName: Make Server Public
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will be visible publicly. Otherwise it will only be accessible from the LAN
+        Keywords: public,visible,dedicated
+        FieldName: dedicated
+        InputType: checkbox
+        ParamFieldName: dedicated
+        IncludeInCommandLine: true
+        DefaultValue: '2'
+        EnumValues:
+          'False': '1'
+          'True': '2'
+    - key: g_needpass
+      label: Require Server Password
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: >-
+        If enabled, the server will notify clients that it requires a password to connect. The password must be set
+        under Server Password
+      keywords: server,password,g_needpass
+      input_type: checkbox
+      param_field_name: g_needpass
+      default: '0'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Require Server Password
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will notify clients that it requires a password to connect. The password must be set
+          under Server Password
+        Keywords: server,password,g_needpass
+        FieldName: g_needpass
+        InputType: checkbox
+        ParamFieldName: g_needpass
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_password
+      label: Server Password
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: >-
+        Sets the password required to connect to the server. Default is no password. Require Server Password must also
+        be enabled
+      keywords: server,password,g_password
+      input_type: password
+      param_field_name: g_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password required to connect to the server. Default is no password. Require Server Password must also
+          be enabled
+        Keywords: server,password,g_password
+        FieldName: g_password
+        InputType: password
+        ParamFieldName: g_password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_privatePassword
+      label: Private Client Password
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: >-
+        Sets the password for private clients, if any, to connect to the server. Specify the required number of private
+        clients under Private Client Number. Server Password should not be set
+      keywords: private,client,password,sv_privatepassword
+      input_type: password
+      param_field_name: sv_privatePassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Private Client Password
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password for private clients, if any, to connect to the server. Specify the required number of
+          private clients under Private Client Number. Server Password should not be set
+        Keywords: private,client,password,sv_privatepassword
+        FieldName: sv_privatePassword
+        InputType: password
+        ParamFieldName: sv_privatePassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_pure
+      label: Pure Server Mode
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets whether modified client files are allowed
+      keywords: pure,server,cheat,hack,integrity,sv_pure
+      input_type: enum
+      param_field_name: sv_pure
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Any modified files allowed
+        '1': Only modified textures, weapons and sounds allowed (default)
+        '2': No modified files allowed
+      raw:
+        DisplayName: Pure Server Mode
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether modified client files are allowed
+        Keywords: pure,server,cheat,hack,integrity,sv_pure
+        FieldName: sv_pure
+        InputType: enum
+        ParamFieldName: sv_pure
+        DefaultValue: '1'
+        EnumValues:
+          '0': Any modified files allowed
+          '1': Only modified textures, weapons and sounds allowed (default)
+          '2': No modified files allowed
+    - key: sv_cheats
+      label: Allow Cheats
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: If set, cheats will be allowed on the server
+      keywords: allow,cheat,hack,integrity,sv_cheats
+      input_type: checkbox
+      param_field_name: sv_cheats
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Cheats
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, cheats will be allowed on the server
+        Keywords: allow,cheat,hack,integrity,sv_cheats
+        FieldName: sv_cheats
+        InputType: checkbox
+        ParamFieldName: sv_cheats
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_gametype
+      label: Initial Game Type
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets the game type to start the server with
+      keywords: game,type,g_gametype
+      input_type: enum
+      param_field_name: g_gametype
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Deathmatch / Free For All (default)
+        '3': Duel / One On One Tournament
+        '4': Power Duel
+        '6': Team Deathmatch
+        '7': Siege
+        '8': Capture The Flag
+      raw:
+        DisplayName: Initial Game Type
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the game type to start the server with
+        Keywords: game,type,g_gametype
+        FieldName: g_gametype
+        InputType: enum
+        ParamFieldName: g_gametype
+        DefaultValue: '0'
+        EnumValues:
+          '0': Deathmatch / Free For All (default)
+          '3': Duel / One On One Tournament
+          '4': Power Duel
+          '6': Team Deathmatch
+          '7': Siege
+          '8': Capture The Flag
+    - key: map
+      label: Initial Map
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: >-
+        Sets the map to start the server with.  If "Custom" is selected, Custom Initial Map must also be specified. This
+        setting will be overridden if map rotation is configured in 'server.cfg'
+      keywords: map
+      input_type: enum
+      param_field_name: map
+      default: mp/ffa1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        mp/ffa1: Free For All 1
+        mp/ffa2: Free For All 2
+        mp/ffa3: Free For All 3
+        mp/ffa4: Free For All 4
+        mp/ffa5: Free For All 5
+        mp/ctf1: Capture The Flag 1
+        mp/ctf2: Capture The Flag 2
+        mp/ctf3: Capture The Flag 3
+        mp/ctf4: Capture The Flag 4
+        mp/ctf5: Capture The Flag 5
+        mp/duel1: Duel 1
+        mp/duel2: Duel 2
+        mp/duel3: Duel 3
+        mp/duel4: Duel 4
+        mp/duel5: Duel 5
+        mp/duel6: Duel 6
+        mp/duel7: Duel 7
+        mp/duel8: Duel 8
+        mp/duel9: Duel 9
+        mp/duel10: Duel 10
+        mp/siege_desert: Siege Desert
+        mp/siege_korriban: Siege Korriban
+        mp/siege_hoth: Siege Hoth
+        '{{CustomMap}}': '--Custom--'
+      raw:
+        DisplayName: Initial Map
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the map to start the server with.  If "Custom" is selected, Custom Initial Map must also be specified.
+          This setting will be overridden if map rotation is configured in 'server.cfg'
+        Keywords: map
+        FieldName: map
+        InputType: enum
+        ParamFieldName: map
+        DefaultValue: mp/ffa1
+        EnumValues:
+          mp/ffa1: Free For All 1
+          mp/ffa2: Free For All 2
+          mp/ffa3: Free For All 3
+          mp/ffa4: Free For All 4
+          mp/ffa5: Free For All 5
+          mp/ctf1: Capture The Flag 1
+          mp/ctf2: Capture The Flag 2
+          mp/ctf3: Capture The Flag 3
+          mp/ctf4: Capture The Flag 4
+          mp/ctf5: Capture The Flag 5
+          mp/duel1: Duel 1
+          mp/duel2: Duel 2
+          mp/duel3: Duel 3
+          mp/duel4: Duel 4
+          mp/duel5: Duel 5
+          mp/duel6: Duel 6
+          mp/duel7: Duel 7
+          mp/duel8: Duel 8
+          mp/duel9: Duel 9
+          mp/duel10: Duel 10
+          mp/siege_desert: Siege Desert
+          mp/siege_korriban: Siege Korriban
+          mp/siege_hoth: Siege Hoth
+          '{{CustomMap}}': '--Custom--'
+    - key: CustomMap
+      label: Custom Initial Map
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets a custom map to use for the Initial Map, if "Custom" is selected
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Initial Map
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom map to use for the Initial Map, if "Custom" is selected
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        ParamFieldName: CustomMap
+        DefaultValue: ''
+        EnumValues: {}
+    - key: map_type
+      label: Initial Map Type
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets whether the Initial Map allows cheats or not. Allow Cheats must also be enabled to use cheats
+      keywords: initial,map,type,devmap,cheats
+      input_type: enum
+      param_field_name: map_type
+      default: map
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        map: No cheats (default)
+        devmap: Allow cheats
+      raw:
+        DisplayName: Initial Map Type
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether the Initial Map allows cheats or not. Allow Cheats must also be enabled to use cheats
+        Keywords: initial,map,type,devmap,cheats
+        FieldName: map_type
+        InputType: enum
+        ParamFieldName: map_type
+        DefaultValue: map
+        EnumValues:
+          map: No cheats (default)
+          devmap: Allow cheats
+    - key: $MaxUsers
+      label: Client Limit
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets the maximum number of players and spectators allowed on the server at one time
+      keywords: max,maximum,players,spectators,clients,limit,sv_maxclients
+      input_type: number
+      param_field_name: sv_maxclients
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 32
+      suffix: clients
+      enum_values: {}
+      raw:
+        DisplayName: Client Limit
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players and spectators allowed on the server at one time
+        Keywords: max,maximum,players,spectators,clients,limit,sv_maxclients
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '32'
+        ParamFieldName: sv_maxclients
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: clients
+        EnumValues: {}
+    - key: g_maxGameClients
+      label: Game Player Limit
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: >-
+        Sets the maximum number of players (out of the Client Limit) that are able to join the game, while the rest will
+        be spectators. 0 = disabled
+      keywords: max,maximum,game,players,limit,g_maxgameclients
+      input_type: number
+      param_field_name: g_maxGameClients
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 32
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Game Player Limit
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of players (out of the Client Limit) that are able to join the game, while the rest
+          will be spectators. 0 = disabled
+        Keywords: max,maximum,game,players,limit,g_maxgameclients
+        FieldName: g_maxGameClients
+        InputType: number
+        MinValue: '0'
+        MaxValue: '32'
+        ParamFieldName: g_maxGameClients
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: players
+        EnumValues: {}
+    - key: sv_privateClients
+      label: Private Client Number
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: >-
+        Sets the number of slots (out of the Client Limit) reserved for private players on a public server. 0 =
+        disabled. Private Client Password must also be set
+      keywords: sv_privateClients
+      input_type: number
+      param_field_name: sv_privateClients
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 32
+      suffix: private players
+      enum_values: {}
+      raw:
+        DisplayName: Private Client Number
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the number of slots (out of the Client Limit) reserved for private players on a public server. 0 =
+          disabled. Private Client Password must also be set
+        Keywords: sv_privateClients
+        FieldName: sv_privateClients
+        InputType: number
+        MinValue: '0'
+        MaxValue: '32'
+        ParamFieldName: sv_privateClients
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: private players
+        EnumValues: {}
+    - key: sv_allowDownload
+      label: Allow Download From Server
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: If set, clients will be allowed to download content (maps, models, etc) from the server
+      keywords: allow,download,content,map,model,sv_allowdownload
+      input_type: checkbox
+      param_field_name: sv_allowDownload
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Download From Server
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be allowed to download content (maps, models, etc) from the server
+        Keywords: allow,download,content,map,model,sv_allowdownload
+        FieldName: sv_allowDownload
+        InputType: checkbox
+        ParamFieldName: sv_allowDownload
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_fps
+      label: Server FPS
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets the maximum frames per second (FPS) that the server sends to clients
+      keywords: frames,second,fps,sv_fps
+      input_type: number
+      param_field_name: sv_fps
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: frames/second
+      enum_values: {}
+      raw:
+        DisplayName: Server FPS
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum frames per second (FPS) that the server sends to clients
+        Keywords: frames,second,fps,sv_fps
+        FieldName: sv_fps
+        InputType: number
+        ParamFieldName: sv_fps
+        DefaultValue: '40'
+        Placeholder: '40'
+        Suffix: frames/second
+        EnumValues: {}
+    - key: sv_minRate
+      label: Minimum Client Rate
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets the minimum allowable rate a client may have set when connected to the server. 0 = no minimum (default)
+      keywords: minimum,bandwidth,rate,sv_minrate
+      input_type: number
+      param_field_name: sv_minRate
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: bytes/second
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Client Rate
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum allowable rate a client may have set when connected to the server. 0 = no minimum (default)
+        Keywords: minimum,bandwidth,rate,sv_minrate
+        FieldName: sv_minRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_minRate
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: bytes/second
+        EnumValues: {}
+    - key: sv_maxRate
+      label: Maximum Client Rate
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets the maximum allowable rate a client may have set when connected to the server. 0 = no limit
+      keywords: maximum,bandwidth,rate,sv_maxrate
+      input_type: number
+      param_field_name: sv_maxRate
+      default: '25000'
+      placeholder: '25000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: bytes/second
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Client Rate
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum allowable rate a client may have set when connected to the server. 0 = no limit
+        Keywords: maximum,bandwidth,rate,sv_maxrate
+        FieldName: sv_maxRate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_maxRate
+        DefaultValue: '25000'
+        Placeholder: '25000'
+        Suffix: bytes/second
+        EnumValues: {}
+    - key: sv_minPing
+      label: Minimum Client Ping
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets the minimum ping clients can have on the server. 0 = disabled
+      keywords: minimum,ping,sv_minPing
+      input_type: number
+      param_field_name: sv_minPing
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Client Ping
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum ping clients can have on the server. 0 = disabled
+        Keywords: minimum,ping,sv_minPing
+        FieldName: sv_minPing
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_minPing
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: sv_maxPing
+      label: Maximum Client Ping
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Sets the maximum ping clients can have on the server. 0 = disabled
+      keywords: maximum,ping,sv_maxPing
+      input_type: number
+      param_field_name: sv_maxPing
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Client Ping
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum ping clients can have on the server. 0 = disabled
+        Keywords: maximum,ping,sv_maxPing
+        FieldName: sv_maxPing
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_maxPing
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: CustomConVars
+      label: Additional Console Variables
+      category: Jedi Knight Academy
+      subcategory: Server
+      description: Additional console variables that are not otherwise set by AMP can be specified in 'server.cfg'
+      keywords: custom,server,variables,cvars,convars,parameters
+      input_type: hidden
+      param_field_name: CustomConVars
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Console Variables
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Additional console variables that are not otherwise set by AMP can be specified in 'server.cfg'
+        Keywords: custom,server,variables,cvars,convars,parameters
+        FieldName: CustomConVars
+        InputType: hidden
+        ParamFieldName: CustomConVars
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: bot_enable
+      label: Enable Bots
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: If set, bots will be enabled on the server
+      keywords: enable,bots,bot_enable
+      input_type: checkbox
+      param_field_name: bot_enable
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Bots
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, bots will be enabled on the server
+        Keywords: enable,bots,bot_enable
+        FieldName: bot_enable
+        InputType: checkbox
+        ParamFieldName: bot_enable
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: bot_minplayers
+      label: Bot Minimum Players
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: >-
+        Bots will added to or removed from the server to ensure that the number of players on the server meets the
+        minimum set (subject to client/player limits)
+      keywords: bot,minimum,players,bot_minplayers
+      input_type: number
+      param_field_name: bot_minplayers
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Bot Minimum Players
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Bots will added to or removed from the server to ensure that the number of players on the server meets the
+          minimum set (subject to client/player limits)
+        Keywords: bot,minimum,players,bot_minplayers
+        FieldName: bot_minplayers
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: bot_minplayers
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: bot_nochat
+      label: Disable Bot Chat
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: If set, bots will be silenced
+      keywords: bot,disable,chat,mute,silence,bot_nochat
+      input_type: checkbox
+      param_field_name: bot_nochat
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Bot Chat
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, bots will be silenced
+        Keywords: bot,disable,chat,mute,silence,bot_nochat
+        FieldName: bot_nochat
+        InputType: checkbox
+        ParamFieldName: bot_nochat
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_friendlyFire
+      label: Enable Friendly Fire
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: If enabled, friendly fire will be allowed, so players can damage their own teammates
+      keywords: friendly,fire,g_friendlyfire
+      input_type: checkbox
+      param_field_name: g_friendlyFire
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Friendly Fire
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, friendly fire will be allowed, so players can damage their own teammates
+        Keywords: friendly,fire,g_friendlyfire
+        FieldName: g_friendlyFire
+        InputType: checkbox
+        ParamFieldName: g_friendlyFire
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: fraglimit
+      label: Frag Limit
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: Sets the number of frags (or kills) that must be reached before a game ends and the next game starts
+      keywords: frag,limit,fraglimit
+      input_type: number
+      param_field_name: fraglimit
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: frags
+      enum_values: {}
+      raw:
+        DisplayName: Frag Limit
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of frags (or kills) that must be reached before a game ends and the next game starts
+        Keywords: frag,limit,fraglimit
+        FieldName: fraglimit
+        InputType: number
+        ParamFieldName: fraglimit
+        IncludeInCommandLine: false
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: frags
+        EnumValues: {}
+    - key: timelimit
+      label: Time Limit
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: Sets the game time limit, after which a game ends and the next game starts. 0 = no time limit
+      keywords: time,limit,timelimit
+      input_type: number
+      param_field_name: timelimit
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Time Limit
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the game time limit, after which a game ends and the next game starts. 0 = no time limit
+        Keywords: time,limit,timelimit
+        FieldName: timelimit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: timelimit
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: minutes
+        EnumValues: {}
+    - key: capturelimit
+      label: Capture Limit
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: Sets the number of flags that must be captured for the CTF game type before a game ends and the next game starts
+      keywords: capture,limit,ctf,flag,capturelimit
+      input_type: number
+      param_field_name: capturelimit
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: flags
+      enum_values: {}
+      raw:
+        DisplayName: Capture Limit
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the number of flags that must be captured for the CTF game type before a game ends and the next game
+          starts
+        Keywords: capture,limit,ctf,flag,capturelimit
+        FieldName: capturelimit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: capturelimit
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: flags
+        EnumValues: {}
+    - key: g_teamAutoJoin
+      label: Enable Auto Team Joining
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: >-
+        If set, a new player will automatically join a team when connecting to the server (for relevant game types).
+        Otherwise they will go into spectator mode
+      keywords: team,auto,join,joining,spectator,g_teamautojoin
+      input_type: checkbox
+      param_field_name: g_teamAutoJoin
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Auto Team Joining
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, a new player will automatically join a team when connecting to the server (for relevant game types).
+          Otherwise they will go into spectator mode
+        Keywords: team,auto,join,joining,spectator,g_teamautojoin
+        FieldName: g_teamAutoJoin
+        InputType: checkbox
+        ParamFieldName: g_teamAutoJoin
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_teamForceBalance
+      label: Enable Forced Team Balancing
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: >-
+        If set, forces a new player onto the smallest or losing team (for relevant game types). Otherwise, the player
+        can select freely which team to join
+      keywords: team,force,balance,balancing,selection,g_teamforcebalance
+      input_type: checkbox
+      param_field_name: g_teamForceBalance
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Forced Team Balancing
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, forces a new player onto the smallest or losing team (for relevant game types). Otherwise, the player
+          can select freely which team to join
+        Keywords: team,force,balance,balancing,selection,g_teamforcebalance
+        FieldName: g_teamForceBalance
+        InputType: checkbox
+        ParamFieldName: g_teamForceBalance
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_forcerespawn
+      label: Respawn Time Period
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: Sets the respawn time period. 0 = no forced respawn
+      keywords: force,respawn,time,period,manual,g_forcerespawn
+      input_type: number
+      param_field_name: g_forcerespawn
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Respawn Time Period
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the respawn time period. 0 = no forced respawn
+        Keywords: force,respawn,time,period,manual,g_forcerespawn
+        FieldName: g_forcerespawn
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: g_forcerespawn
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: seconds
+        EnumValues: {}
+    - key: g_allowVote
+      label: Allow Voting
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: 'If set, connected players can call for and vote on changes including: map, map restart, kick, and game type'
+      keywords: vote,voting,g_allowvote
+      input_type: checkbox
+      param_field_name: g_allowVote
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Voting
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: 'If set, connected players can call for and vote on changes including: map, map restart, kick, and game type'
+        Keywords: vote,voting,g_allowvote
+        FieldName: g_allowVote
+        InputType: checkbox
+        ParamFieldName: g_allowVote
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_weaponrespawn
+      label: Weapon Respawn Time Period
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: Sets the time period between when a weapon is picked up and when it respawns. 0 = weapons stay
+      keywords: weapon,respawn,time,available,g_weaponrespawn
+      input_type: number
+      param_field_name: g_weaponrespawn
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Weapon Respawn Time Period
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period between when a weapon is picked up and when it respawns. 0 = weapons stay
+        Keywords: weapon,respawn,time,available,g_weaponrespawn
+        FieldName: g_weaponrespawn
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: g_weaponrespawn
+        IncludeInCommandLine: false
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: seconds
+        EnumValues: {}
+    - key: g_inactivity
+      label: Inactivity Kick Time
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: Sets the time period after which inactive players will be kicked from the server. 0 = disabled
+      keywords: inactive,afk,idle,kick,g_inactivity
+      input_type: number
+      param_field_name: g_inactivity
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Inactivity Kick Time
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period after which inactive players will be kicked from the server. 0 = disabled
+        Keywords: inactive,afk,idle,kick,g_inactivity
+        FieldName: g_inactivity
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: g_inactivity
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: seconds
+        EnumValues: {}
+    - key: sv_floodProtect
+      label: Enable Flood Protection
+      category: Jedi Knight Academy
+      subcategory: Gameplay
+      description: If set, the server will be protected from being flooded by players via chat
+      keywords: flood,protect,protection,sv_floodprotect
+      input_type: checkbox
+      param_field_name: sv_floodProtect
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Flood Protection
+        Category: Jedi Knight Academy:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the server will be protected from being flooded by players via chat
+        Keywords: flood,protect,protection,sv_floodprotect
+        FieldName: sv_floodProtect
+        InputType: checkbox
+        ParamFieldName: sv_floodProtect
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+  files:
+    - path: '{{mod}}/base.cfg'
+      type: kvp
+      format: '{0} "{1}"'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            //: |-
+              This file is controlled by AMP
+              // Use server.cfg for any other desired settings
+            exec: server.cfg
+            set sv_hostname: sv_hostname
+            set g_motd: g_motd
+            set g_needpass: g_needpass
+            set g_password: g_password
+            rconpassword: $RemoteAdminPassword
+            set sv_privatePassword: sv_privatePassword
+            set sv_pure: sv_pure
+            set sv_cheats: sv_cheats
+            set g_gametype: g_gametype
+            set sv_maxclients: $MaxUsers
+            set g_maxGameClients: g_maxGameClients
+            set sv_privateClients: sv_privateClients
+            set sv_allowDownload: sv_allowDownload
+            set sv_fps: sv_fps
+            set sv_minRate: sv_minRate
+            set sv_maxRate: sv_maxRate
+            set sv_minPing: sv_minPing
+            set sv_maxPing: sv_maxPing
+            set logfile: '3'
+            set g_log: server.log
+            set bot_enable: bot_enable
+            set bot_minplayers: bot_minplayers
+            set bot_nochat: bot_nochat
+            set g_friendlyFire: g_friendlyFire
+            set fraglimit: fraglimit
+            set timelimit: timelimit
+            set capturelimit: capturelimit
+            set g_teamAutoJoin: g_teamAutoJoin
+            set g_teamForceBalance: g_teamForceBalance
+            set g_forcerespawn: g_forcerespawn
+            set g_allowVote: g_allowVote
+            set g_weaponrespawn: g_weaponrespawn
+            set g_inactivity: g_inactivity
+            set sv_floodProtect: sv_floodProtect
+      raw:
+        ConfigFile: '{{mod}}/base.cfg'
+        ConfigType: kvp
+        ConfigFormat: '{0} "{1}"'
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              //: |-
+                This file is controlled by AMP
+                // Use server.cfg for any other desired settings
+              exec: server.cfg
+              set sv_hostname: sv_hostname
+              set g_motd: g_motd
+              set g_needpass: g_needpass
+              set g_password: g_password
+              rconpassword: $RemoteAdminPassword
+              set sv_privatePassword: sv_privatePassword
+              set sv_pure: sv_pure
+              set sv_cheats: sv_cheats
+              set g_gametype: g_gametype
+              set sv_maxclients: $MaxUsers
+              set g_maxGameClients: g_maxGameClients
+              set sv_privateClients: sv_privateClients
+              set sv_allowDownload: sv_allowDownload
+              set sv_fps: sv_fps
+              set sv_minRate: sv_minRate
+              set sv_maxRate: sv_maxRate
+              set sv_minPing: sv_minPing
+              set sv_maxPing: sv_maxPing
+              set logfile: '3'
+              set g_log: server.log
+              set bot_enable: bot_enable
+              set bot_minplayers: bot_minplayers
+              set bot_nochat: bot_nochat
+              set g_friendlyFire: g_friendlyFire
+              set fraglimit: fraglimit
+              set timelimit: timelimit
+              set capturelimit: capturelimit
+              set g_teamAutoJoin: g_teamAutoJoin
+              set g_teamForceBalance: g_teamForceBalance
+              set g_forcerespawn: g_forcerespawn
+              set g_allowVote: g_allowVote
+              set g_weaponrespawn: g_weaponrespawn
+              set g_inactivity: g_inactivity
+              set sv_floodProtect: sv_floodProtect
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: sv_hostname
+    label: Server Name
+    default: AMP Powered Jedi Academy Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_motd
+    label: Message Of The Day
+    default: Welcome to STAR WARS Jedi Knight - Jedi Academy!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mod
+    label: Server Mod Name
+    default: base
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dedicated
+    label: Make Server Public
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_needpass
+    label: Require Server Password
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: g_password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: sv_privatePassword
+    label: Private Client Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: sv_pure
+    label: Pure Server Mode
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_cheats
+    label: Allow Cheats
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_gametype
+    label: Initial Game Type
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map
+    label: Initial Map
+    default: mp/ffa1
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Initial Map
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map_type
+    label: Initial Map Type
+    default: map
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_maxGameClients
+    label: Game Player Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_privateClients
+    label: Private Client Number
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowDownload
+    label: Allow Download From Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_fps
+    label: Server FPS
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_minRate
+    label: Minimum Client Rate
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maxRate
+    label: Maximum Client Rate
+    default: '25000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_minPing
+    label: Minimum Client Ping
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maxPing
+    label: Maximum Client Ping
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bot_enable
+    label: Enable Bots
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bot_minplayers
+    label: Bot Minimum Players
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bot_nochat
+    label: Disable Bot Chat
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_friendlyFire
+    label: Enable Friendly Fire
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fraglimit
+    label: Frag Limit
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: timelimit
+    label: Time Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: capturelimit
+    label: Capture Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_teamAutoJoin
+    label: Enable Auto Team Joining
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_teamForceBalance
+    label: Enable Forced Team Balancing
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_forcerespawn
+    label: Respawn Time Period
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_allowVote
+    label: Allow Voting
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_weaponrespawn
+    label: Weapon Respawn Time Period
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_inactivity
+    label: Inactivity Kick Time
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_floodProtect
+    label: Enable Flood Protection
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '6020'
+  collection_support: true
 backup:
   include:
     - /data

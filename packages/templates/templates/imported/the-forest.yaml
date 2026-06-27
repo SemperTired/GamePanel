@@ -5,13 +5,18 @@ category: Imported
 summary: The Forest Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '556450'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: >-
+    /usr/bin/xvfb-run {PlatformArgs} -showlogs -batchmode -configfilepath the-forestserver.cfg -savefolderpath saves
+    {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,974 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: gameport
+    name: Game Main Port
     default: 27015
-    protocol: udp
+    protocol: both
     required: true
-config_files: []
+  - key: steamport
+    name: Steam Main Port
+    default: 8766
+    protocol: both
+    required: true
+  - key: queryport
+    name: Steam Query Port
+    default: 27016
+    protocol: both
+    required: true
+config_files:
+  - path: the-forestserver.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $ApplicationIPBinding
+      label: serverIP
+      category: The Forest
+      subcategory: Server
+      description: serverIP is the binding IP
+      keywords: ''
+      input_type: text
+      param_field_name: serverIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: serverIP
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: serverIP is the binding IP
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: serverIP
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Hidden: true
+        EnumValues: {}
+    - key: $steamPort
+      label: serverSteamPort
+      category: The Forest
+      subcategory: Server
+      description: serverSteamPort is the main Steam port
+      keywords: ''
+      input_type: number
+      param_field_name: serverSteamPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: serverSteamPort
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: serverSteamPort is the main Steam port
+        Keywords: ''
+        FieldName: $steamPort
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: serverSteamPort
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Hidden: true
+        EnumValues: {}
+    - key: $gamePort
+      label: serverGamePort
+      category: The Forest
+      subcategory: Server
+      description: serverGamePort  is the main game port
+      keywords: ''
+      input_type: number
+      param_field_name: serverGamePort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: serverGamePort
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: serverGamePort  is the main game port
+        Keywords: ''
+        FieldName: $gamePort
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: serverGamePort
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Hidden: true
+        EnumValues: {}
+    - key: $queryPort
+      label: serverQueryPort
+      category: The Forest
+      subcategory: Server
+      description: serverQueryPort  is Steam's query port
+      keywords: ''
+      input_type: number
+      param_field_name: serverQueryPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: serverQueryPort
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: serverQueryPort  is Steam's query port
+        Keywords: ''
+        FieldName: $queryPort
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: serverQueryPort
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Hidden: true
+        EnumValues: {}
+    - key: serverName
+      label: Server Name
+      category: The Forest
+      subcategory: Server
+      description: Server display name.
+      keywords: server,Name
+      input_type: text
+      param_field_name: serverName
+      default: AMP Forest Server
+      placeholder: AMP Forest Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Server display name.
+        Keywords: server,Name
+        FieldName: serverName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: serverName
+        IncludeInCommandLine: false
+        DefaultValue: AMP Forest Server
+        Placeholder: AMP Forest Server
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Max Players
+      category: The Forest
+      subcategory: Server
+      description: Maximum number of players.
+      keywords: server,Players
+      input_type: number
+      param_field_name: serverPlayers
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: Players
+      enum_values: {}
+      raw:
+        DisplayName: Max Players
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Maximum number of players.
+        Keywords: server,Players
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: serverPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '4'
+        Placeholder: '4'
+        Suffix: Players
+        EnumValues: {}
+        MinValue: '1'
+    - key: serverPassword
+      label: Server Password
+      category: The Forest
+      subcategory: Server
+      description: Server password. Empty = no password.
+      keywords: server,password
+      input_type: password
+      param_field_name: serverPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Server password. Empty = no password.
+        Keywords: server,password
+        FieldName: serverPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: serverPassword
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: serverPasswordAdmin
+      label: Server Admin Password
+      category: The Forest
+      subcategory: Server
+      description: Server administration password. Empty = no password.
+      keywords: server,admin,password
+      input_type: password
+      param_field_name: serverPasswordAdmin
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Admin Password
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Server administration password. Empty = no password.
+        Keywords: server,admin,password
+        FieldName: serverPasswordAdmin
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: serverPasswordAdmin
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: serverSteamAccount
+      label: Server Steam Account
+      category: The Forest
+      subcategory: Server
+      description: Use appid 242760 to create a [Steam Server Login Token](https://steamcommunity.com/dev/managegameservers)
+      keywords: server,steam,account
+      input_type: text
+      param_field_name: serverSteamAccount
+      default: ''
+      placeholder: A375E0CE4E8AB079638DADA3871BEF1B
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Steam Account
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Use appid 242760 to create a [Steam Server Login Token](https://steamcommunity.com/dev/managegameservers)
+        Keywords: server,steam,account
+        FieldName: serverSteamAccount
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: serverSteamAccount
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: A375E0CE4E8AB079638DADA3871BEF1B
+        EnumValues: {}
+    - key: slot
+      label: Save Slot
+      category: The Forest
+      subcategory: Server
+      description: Slot to save the game.
+      keywords: save,slot
+      input_type: enum
+      param_field_name: slot
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': '1'
+        '2': '2'
+        '3': '3'
+        '4': '4'
+        '5': '5'
+      raw:
+        DisplayName: Save Slot
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Slot to save the game.
+        Keywords: save,slot
+        FieldName: slot
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: slot
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '1': '1'
+          '2': '2'
+          '3': '3'
+          '4': '4'
+          '5': '5'
+    - key: veganMode
+      label: Vegan Mode
+      category: The Forest
+      subcategory: Gameplay
+      description: No enemies.
+      keywords: vegan,mode
+      input_type: checkbox
+      param_field_name: veganMode
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Vegan Mode
+        Category: The Forest:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: No enemies.
+        Keywords: vegan,mode
+        FieldName: veganMode
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: veganMode
+        IncludeInCommandLine: false
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: vegetarianMode
+      label: Vegetarian Mode
+      category: The Forest
+      subcategory: Gameplay
+      description: No enemies during day time.
+      keywords: vegetarian,mode
+      input_type: checkbox
+      param_field_name: vegetarianMode
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Vegetarian Mode
+        Category: The Forest:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: No enemies during day time.
+        Keywords: vegetarian,mode
+        FieldName: vegetarianMode
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: vegetarianMode
+        IncludeInCommandLine: false
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: allowBuildingDestruction
+      label: Allow Building Destruction
+      category: The Forest
+      subcategory: Gameplay
+      description: Allow building destruction.
+      keywords: allow,building,destruction
+      input_type: checkbox
+      param_field_name: allowBuildingDestruction
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Allow Building Destruction
+        Category: The Forest:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Allow building destruction.
+        Keywords: allow,building,destruction
+        FieldName: allowBuildingDestruction
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: allowBuildingDestruction
+        IncludeInCommandLine: false
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: treeRegrowMode
+      label: Tree Regrow Mode
+      category: The Forest
+      subcategory: Gameplay
+      description: Regrow 10% of cut down trees when sleeping.
+      keywords: tree,regrow,mode
+      input_type: checkbox
+      param_field_name: treeRegrowMode
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Tree Regrow Mode
+        Category: The Forest:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Regrow 10% of cut down trees when sleeping.
+        Keywords: tree,regrow,mode
+        FieldName: treeRegrowMode
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: treeRegrowMode
+        IncludeInCommandLine: false
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: allowCheats
+      label: Allow Cheats
+      category: The Forest
+      subcategory: Gameplay
+      description: Allow clients to use the built in debug console.
+      keywords: allow,cheats
+      input_type: checkbox
+      param_field_name: allowCheats
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Allow Cheats
+        Category: The Forest:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Allow clients to use the built in debug console.
+        Keywords: allow,cheats
+        FieldName: allowCheats
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: allowCheats
+        IncludeInCommandLine: false
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: resetHolesMode
+      label: Reset Holes Mode
+      category: The Forest
+      subcategory: Gameplay
+      description: Reset all structure holes when loading a save.
+      keywords: reset,holes,mode
+      input_type: checkbox
+      param_field_name: resetHolesMode
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Reset Holes Mode
+        Category: The Forest:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Reset all structure holes when loading a save.
+        Keywords: reset,holes,mode
+        FieldName: resetHolesMode
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: resetHolesMode
+        IncludeInCommandLine: false
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: allowEnemiesCreativeMode
+      label: Allow Enemies in Creative Mode
+      category: The Forest
+      subcategory: Gameplay
+      description: Allow enemies in creative games.
+      keywords: allow,enemies,creative,mode
+      input_type: checkbox
+      param_field_name: allowEnemiesCreativeMode
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Allow Enemies in Creative Mode
+        Category: The Forest:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Allow enemies in creative games.
+        Keywords: allow,enemies,creative,mode
+        FieldName: allowEnemiesCreativeMode
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: allowEnemiesCreativeMode
+        IncludeInCommandLine: false
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: realisticPlayerDamage
+      label: Realistic Player Damage
+      category: The Forest
+      subcategory: Gameplay
+      description: Players take more damage.
+      keywords: realistic,player,damage
+      input_type: checkbox
+      param_field_name: realisticPlayerDamage
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Realistic Player Damage
+        Category: The Forest:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Players take more damage.
+        Keywords: realistic,player,damage
+        FieldName: realisticPlayerDamage
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: realisticPlayerDamage
+        IncludeInCommandLine: false
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: enableVAC
+      label: Enable VAC
+      category: The Forest
+      subcategory: Server
+      description: Enable VAC (Valve Anti-cheat System) on the server.
+      keywords: enable,vac,valve,anti,cheat
+      input_type: checkbox
+      param_field_name: enableVAC
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable VAC
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Enable VAC (Valve Anti-cheat System) on the server.
+        Keywords: enable,vac,valve,anti,cheat
+        FieldName: enableVAC
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: enableVAC
+        IncludeInCommandLine: false
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: serverAutoSaveInterval
+      label: Server Save Interval
+      category: The Forest
+      subcategory: Server
+      description: Time between server auto saves in minutes - The minumum time is 15 minutes, the default time is 30.
+      keywords: server,auto,save,interval
+      input_type: number
+      param_field_name: serverAutoSaveInterval
+      default: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: Minutes
+      enum_values: {}
+      raw:
+        DisplayName: Server Save Interval
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Time between server auto saves in minutes - The minumum time is 15 minutes, the default time is 30.
+        Keywords: server,auto,save,interval
+        FieldName: serverAutoSaveInterval
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: serverAutoSaveInterval
+        IncludeInCommandLine: false
+        DefaultValue: '30'
+        'Placeholder` ': '30'
+        Suffix: Minutes
+        EnumValues: {}
+    - key: difficulty
+      label: Game Difficulty
+      category: The Forest
+      subcategory: Server
+      description: Game difficulty mode.
+      keywords: game,difficulty
+      input_type: enum
+      param_field_name: difficulty
+      default: Normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Peaceful: Peaceful
+        Normal: Normal
+        Hard: Hard
+      raw:
+        DisplayName: Game Difficulty
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Game difficulty mode.
+        Keywords: game,difficulty
+        FieldName: difficulty
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty
+        IncludeInCommandLine: false
+        DefaultValue: Normal
+        EnumValues:
+          Peaceful: Peaceful
+          Normal: Normal
+          Hard: Hard
+    - key: showLogs
+      label: Show Logs
+      category: The Forest
+      subcategory: Server
+      description: Show event log.
+      keywords: Show,event,log
+      input_type: checkbox
+      param_field_name: showLogs
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Show Logs
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Show event log.
+        Keywords: Show,event,log
+        FieldName: showLogs
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: showLogs
+        IncludeInCommandLine: false
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: serverContact
+      label: Server Contact
+      category: The Forest
+      subcategory: Server
+      description: Contact email for server admin.
+      keywords: server,contact,email
+      input_type: text
+      param_field_name: serverContact
+      default: ''
+      placeholder: email@gmail.com
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Contact
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Contact email for server admin.
+        Keywords: server,contact,email
+        FieldName: serverContact
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: serverContact
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: email@gmail.com
+        EnumValues: {}
+    - key: targetFpsIdle
+      label: Target Idle FPS
+      category: The Forest
+      subcategory: Server
+      description: Target FPS when no client is connected.
+      keywords: target,idle,fps
+      input_type: number
+      param_field_name: targetFpsIdle
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: FPS
+      enum_values: {}
+      raw:
+        DisplayName: Target Idle FPS
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Target FPS when no client is connected.
+        Keywords: target,idle,fps
+        FieldName: targetFpsIdle
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: targetFpsIdle
+        IncludeInCommandLine: false
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: FPS
+        EnumValues: {}
+    - key: targetFpsActive
+      label: Target Active FPS
+      category: The Forest
+      subcategory: Server
+      description: Target FPS when there is at least one client connected.
+      keywords: target,active,fps
+      input_type: number
+      param_field_name: targetFpsActive
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: FPS
+      enum_values: {}
+      raw:
+        DisplayName: Target Active FPS
+        Category: The Forest:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Target FPS when there is at least one client connected.
+        Keywords: target,active,fps
+        FieldName: targetFpsActive
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: targetFpsActive
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: FPS
+        EnumValues: {}
+  files:
+    - path: the-forestserver.cfg
+      type: kvp
+      format: '{0} {1}'
+      subsections: []
+      raw:
+        ConfigFile: the-forestserver.cfg
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormat: '{0} {1}'
+        ConfigFormatRegex: ^(?<key>.+?) (?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: serverName
+    label: Server Name
+    default: AMP Forest Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: serverPasswordAdmin
+    label: Server Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: serverSteamAccount
+    label: Server Steam Account
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: slot
+    label: Save Slot
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: veganMode
+    label: Vegan Mode
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: vegetarianMode
+    label: Vegetarian Mode
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowBuildingDestruction
+    label: Allow Building Destruction
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: treeRegrowMode
+    label: Tree Regrow Mode
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowCheats
+    label: Allow Cheats
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resetHolesMode
+    label: Reset Holes Mode
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowEnemiesCreativeMode
+    label: Allow Enemies in Creative Mode
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: realisticPlayerDamage
+    label: Realistic Player Damage
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableVAC
+    label: Enable VAC
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverAutoSaveInterval
+    label: Server Save Interval
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: difficulty
+    label: Game Difficulty
+    default: Normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: showLogs
+    label: Show Logs
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverContact
+    label: Server Contact
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: targetFpsIdle
+    label: Target Idle FPS
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: targetFpsActive
+    label: Target Active FPS
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '242760'
+  collection_support: true
 backup:
   include:
     - /data

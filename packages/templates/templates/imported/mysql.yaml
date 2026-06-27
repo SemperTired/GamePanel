@@ -4,14 +4,16 @@ name: MySQL
 category: Imported
 summary: MySQL Service Instance
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: custom
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: mysql/bin/mysql
+  startup: mysql/bin/mysql {CustomClientOptions} {PlatformArgs} --reconnect --force {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +21,364 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 3306
+    protocol: tcp
     required: true
-config_files: []
+  - key: serverxport
+    name: Server X Port
+    default: 33060
+    protocol: tcp
+    required: true
+  - key: adminport
+    name: Admin Port
+    default: 33062
+    protocol: tcp
+    required: true
+config_files:
+  - path: my.cnf
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: WindowsSocketName
+      label: Windows Socket Name
+      category: MySQL
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: WindowsSocketName
+      default: '{{newguid()}}'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Windows Socket Name
+        Category: MySQL:database
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: WindowsSocketName
+        InputType: text
+        Hidden: true
+        ParamFieldName: WindowsSocketName
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: RootPassword
+      label: Root User Password (Windows)
+      category: MySQL
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: RootPassword
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Root User Password (Windows)
+        Category: MySQL:database
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: RootPassword
+        InputType: text
+        Hidden: true
+        ParamFieldName: RootPassword
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: database
+      label: Database Name
+      category: MySQL
+      subcategory: Server
+      description: >-
+        Optionally sets the initial database to connect to when the client run in AMP is started. The database must
+        exist on the server. Alternatively send the command 'use <database name>' in the AMP console to switch to a
+        specific database
+      keywords: database,name
+      input_type: text
+      param_field_name: database
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Database Name
+        Category: MySQL:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Optionally sets the initial database to connect to when the client run in AMP is started. The database must
+          exist on the server. Alternatively send the command 'use <database name>' in the AMP console to switch to a
+          specific database
+        Keywords: database,name
+        FieldName: database
+        InputType: text
+        ParamFieldName: database
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: admin_address
+      label: Admin Connection Interface IP Address
+      category: MySQL
+      subcategory: Server
+      description: >-
+        Sets the IP address for the [admin connection
+        interface](https://dev.mysql.com/doc/refman/8.4/en/administrative-connection-interface.html). Must be a single
+        IPv4 address, IPv6 address, host name, or network namespace identifier. Cannot be a wildcard address. Setting a
+        valid address enables the admin connection interface on the server
+      keywords: admin,connection,interface,admin-address
+      input_type: text
+      param_field_name: admin-address
+      default: ''
+      placeholder: 192.168.1.100
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Connection Interface IP Address
+        Category: MySQL:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the IP address for the [admin connection
+          interface](https://dev.mysql.com/doc/refman/8.4/en/administrative-connection-interface.html). Must be a single
+          IPv4 address, IPv6 address, host name, or network namespace identifier. Cannot be a wildcard address. Setting
+          a valid address enables the admin connection interface on the server
+        Keywords: admin,connection,interface,admin-address
+        FieldName: admin_address
+        InputType: text
+        ParamFieldName: admin-address
+        DefaultValue: ''
+        Placeholder: 192.168.1.100
+        EnumValues: {}
+    - key: OptionsFileSettings
+      label: Server Options File Settings
+      category: MySQL
+      subcategory: Server
+      description: >-
+        Specifies [options file settings](https://dev.mysql.com/doc/refman/8.4/en/option-files.html) to include in
+        'my.cnf' for the MySQL server that are not otherwise set by AMP. One setting per line, including the option
+        group heading. Additional information on [server
+        variables](https://dev.mysql.com/doc/refman/8.4/en/server-system-variables.html)
+      keywords: options,file,settings
+      input_type: Textarea
+      param_field_name: OptionsFileSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Options File Settings
+        Category: MySQL:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies [options file settings](https://dev.mysql.com/doc/refman/8.4/en/option-files.html) to include in
+          'my.cnf' for the MySQL server that are not otherwise set by AMP. One setting per line, including the option
+          group heading. Additional information on [server
+          variables](https://dev.mysql.com/doc/refman/8.4/en/server-system-variables.html)
+        Keywords: options,file,settings
+        FieldName: OptionsFileSettings
+        InputType: Textarea
+        ParamFieldName: OptionsFileSettings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomClientOptions
+      label: Additional Client Command Line Options
+      category: MySQL
+      subcategory: Server
+      description: >-
+        Specifies [additional command line options](https://mysql.com/kb/en/mysql-options/) for the MySQL client run by
+        AMP (a super user called 'amp' on Linux and 'root' on Windows) that are not otherwise set by AMP. Use with care
+      keywords: custom,client,options,arguments
+      input_type: Textarea
+      param_field_name: CustomClientOptions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Client Command Line Options
+        Category: MySQL:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies [additional command line options](https://mysql.com/kb/en/mysql-options/) for the MySQL client run
+          by AMP (a super user called 'amp' on Linux and 'root' on Windows) that are not otherwise set by AMP. Use with
+          care
+        Keywords: custom,client,options,arguments
+        FieldName: CustomClientOptions
+        InputType: Textarea
+        ParamFieldName: CustomClientOptions
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerVersion
+      label: MySQL Release Stream
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the MySQL release stream from which to install the latest version, unless a specific version is specified
+        under MySQL Version. WARNING: SWITCHING BETWEEN RELEASE STREAMS OR DOWNGRADING VERSIONS MAY CORRUPT DATA! Update
+        the server after changing this setting
+      keywords: mysql,release,stream,MySQLRelease
+      input_type: enum
+      param_field_name: MySQLRelease
+      default: '8.4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        latest: Latest innovation release
+        '9.7': 9.7 - LTS
+        '8.4': 8.4 - LTS (default)
+        '8.0': '8.0'
+      raw:
+        DisplayName: MySQL Release Stream
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the MySQL release stream from which to install the latest version, unless a specific version is specified
+          under MySQL Version. WARNING: SWITCHING BETWEEN RELEASE STREAMS OR DOWNGRADING VERSIONS MAY CORRUPT DATA!
+          Update the server after changing this setting
+        Keywords: mysql,release,stream,MySQLRelease
+        FieldName: ServerVersion
+        InputType: enum
+        ParamFieldName: MySQLRelease
+        DefaultValue: '8.4'
+        EnumValues:
+          latest: Latest innovation release
+          '9.7': 9.7 - LTS
+          '8.4': 8.4 - LTS (default)
+          '8.0': '8.0'
+    - key: CustomServerVersion
+      label: MySQL Version
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [MySQL version](https://downloads.mysql.com/archives/community/) to install. Empty = latest version for
+        the release stream specified under MySQL Release Stream. WARNING: SWITCHING BETWEEN RELEASE STREAMS OR
+        DOWNGRADING VERSIONS MAY CORRUPT DATA! Update the server after changing this setting
+      keywords: mysql,version,MySQLVersion
+      input_type: text
+      param_field_name: MySQLVersion
+      default: ''
+      placeholder: 8.4.4
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: MySQL Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [MySQL version](https://downloads.mysql.com/archives/community/) to install. Empty = latest version
+          for the release stream specified under MySQL Release Stream. WARNING: SWITCHING BETWEEN RELEASE STREAMS OR
+          DOWNGRADING VERSIONS MAY CORRUPT DATA! Update the server after changing this setting
+        Keywords: mysql,version,MySQLVersion
+        FieldName: CustomServerVersion
+        InputType: text
+        ParamFieldName: MySQLVersion
+        DefaultValue: ''
+        Placeholder: 8.4.4
+        EnumValues: {}
+  files:
+    - path: my.cnf
+      type: kvp
+      format: '{0}{1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            '': OptionsFileSettings
+      raw:
+        ConfigFile: my.cnf
+        ConfigType: kvp
+        ConfigFormat: '{0}{1}'
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              '': OptionsFileSettings
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: WindowsSocketName
+    label: Windows Socket Name
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RootPassword
+    label: Root User Password (Windows)
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: database
+    label: Database Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: admin_address
+    label: Admin Connection Interface IP Address
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OptionsFileSettings
+    label: Server Options File Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomClientOptions
+    label: Additional Client Command Line Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerVersion
+    label: MySQL Release Stream
+    default: '8.4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerVersion
+    label: MySQL Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

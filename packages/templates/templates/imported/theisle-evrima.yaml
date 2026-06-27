@@ -5,13 +5,20 @@ category: Imported
 summary: The Isle (EVRIMA) Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '412680'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 412680/TheIsle/Binaries/Linux/TheIsleServer-Linux-Shipping
+  startup: >-
+    412680/TheIsle/Binaries/Linux/TheIsleServer-Linux-Shipping TheIsle {PlatformArgs}
+    ?Port={GamePort}?QueryPort={QueryPort}?MaxPlayers={MaxUsers} {FormattedArgs} -stdout -FullStdOutLogOutput
+    -ini:Engine:[EpicOnlineServices]:DedicatedServerClientId=xyza7891gk5PRo3J7G9puCJGFJjmEguW
+    -ini:Engine:[EpicOnlineServices]:DedicatedServerClientSecret=pKWl6t5i9NJK8gTpVlAxzENZ65P8hYzodV8Dqe5Rlc8
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +26,1951 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 7777
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+  - key: queueport
+    name: Queue Port
+    default: 10000
+    protocol: tcp
+    required: true
+  - key: rconport
+    name: RCON Port
+    default: 8888
+    protocol: tcp
+    required: true
+config_files:
+  - path: TheIsle/Saved/Config/WindowsServer/Game.ini
+    type: text
+    editable: true
+  - path: TheIsle/Saved/Config/LinuxServer/Game.ini
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $QueuePort
+      label: Queue Port
+      category: The Isle
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: QueuePort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Queue Port
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueuePort
+        InputType: number
+        Hidden: true
+        ParamFieldName: QueuePort
+        EnumValues: {}
+    - key: $RCONPort
+      label: RCON Port
+      category: The Isle
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: RconPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Port
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RCONPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: RconPort
+        EnumValues: {}
+    - key: MapName
+      label: Server Map/Branch
+      category: The Isle
+      subcategory: Server
+      description: >-
+        Sets the server map to use, which determines the branch to install. NOTE: Update the server after changing this
+        setting!
+      keywords: beta,branch,map,gateway,spiro,MapName
+      input_type: enum
+      param_field_name: MapName
+      default: Gateway
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Gateway: Gateway (default)
+        Isla_Spiro: Isla Spiro
+      raw:
+        DisplayName: Server Map/Branch
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the server map to use, which determines the branch to install. NOTE: Update the server after changing
+          this setting!
+        Keywords: beta,branch,map,gateway,spiro,MapName
+        FieldName: MapName
+        InputType: enum
+        ParamFieldName: MapName
+        DefaultValue: Gateway
+        EnumValues:
+          Gateway: Gateway (default)
+          Isla_Spiro: Isla Spiro
+    - key: ServerName
+      label: Server Name
+      category: The Isle
+      subcategory: Server
+      description: The name of the server as it appears publicly
+      keywords: name
+      input_type: text
+      param_field_name: ServerName
+      default: The Isle Server - Powered by AMP
+      placeholder: The Isle Server - Powered by AMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The name of the server as it appears publicly
+        Keywords: name
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: ServerName
+        DefaultValue: The Isle Server - Powered by AMP
+        Placeholder: The Isle Server - Powered by AMP
+        EnumValues: {}
+    - key: MultiHome
+      label: Set MultiHome IP
+      category: The Isle
+      subcategory: Server
+      description: If needed, set a private or public IP to bind the server to, or 0.0.0.0 for all IPs
+      keywords: multihome,ip
+      input_type: text
+      param_field_name: MultiHome
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Set MultiHome IP
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If needed, set a private or public IP to bind the server to, or 0.0.0.0 for all IPs
+        Keywords: multihome,ip
+        FieldName: MultiHome
+        InputType: text
+        SkipIfEmpty: true
+        ParamFieldName: MultiHome
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: The Isle
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time. More than 100 not recommended
+      keywords: players,limit,maxplayers,maxplayercount
+      input_type: number
+      param_field_name: MaxPlayerCount
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time. More than 100 not recommended
+        Keywords: players,limit,maxplayers,maxplayercount
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: MaxPlayerCount
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: players
+        EnumValues: {}
+    - key: bServerPassword
+      label: Require Server Password
+      category: The Isle
+      subcategory: Server
+      description: If enabled, a password will be required to join the server. Specify the password under Server Password
+      keywords: server,password,enable,bServerPassword
+      input_type: checkbox
+      param_field_name: bServerPassword
+      default: 'false'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Server Password
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, a password will be required to join the server. Specify the password under Server Password
+        Keywords: server,password,enable,bServerPassword
+        FieldName: bServerPassword
+        InputType: checkbox
+        ParamFieldName: bServerPassword
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ServerPassword
+      label: Server Password
+      category: The Isle
+      subcategory: Server
+      description: >-
+        Sets the password to connect to the server. Default is a strong random password. Require Server Password must be
+        enabled. Even if Require Server Password is disabled, this setting must have a value for the server to appear in
+        the server browser
+      keywords: server,password,ServerPassword
+      input_type: password
+      param_field_name: ServerPassword
+      default: '{{newguid()}}'
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password to connect to the server. Default is a strong random password. Require Server Password must
+          be enabled. Even if Require Server Password is disabled, this setting must have a value for the server to
+          appear in the server browser
+        Keywords: server,password,ServerPassword
+        FieldName: ServerPassword
+        InputType: password
+        ParamFieldName: ServerPassword
+        DefaultValue: '{{newguid()}}'
+        Required: true
+        EnumValues: {}
+    - key: AdminsSteamIDs
+      label: Server Admins
+      category: The Isle
+      subcategory: Server
+      description: >-
+        Specifies the [Steam64 IDs](https://steamid.io/) of server admins. One line per admin. Format:
+        AdminsSteamIDs=71231XXXXXXXXXXXX
+      keywords: admins,AdminsSteamIDs
+      input_type: Textarea
+      param_field_name: AdminsSteamIDs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Admins
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies the [Steam64 IDs](https://steamid.io/) of server admins. One line per admin. Format:
+          AdminsSteamIDs=71231XXXXXXXXXXXX
+        Keywords: admins,AdminsSteamIDs
+        FieldName: AdminsSteamIDs
+        InputType: Textarea
+        ParamFieldName: AdminsSteamIDs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: bServerWhitelist
+      label: Enable Whitelist
+      category: The Isle
+      subcategory: Server
+      description: >-
+        If set, the server whitelist will be enabled, so that only players whose Steam64 IDs are listed under
+        Whitelisted Players will be able to join the server (in addition to server admins)
+      keywords: whitelist,enable,bServerWhitelist
+      input_type: checkbox
+      param_field_name: bServerWhitelist
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Whitelist
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server whitelist will be enabled, so that only players whose Steam64 IDs are listed under
+          Whitelisted Players will be able to join the server (in addition to server admins)
+        Keywords: whitelist,enable,bServerWhitelist
+        FieldName: bServerWhitelist
+        InputType: checkbox
+        ParamFieldName: bServerWhitelist
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: WhitelistIDs
+      label: Whitelisted Players
+      category: The Isle
+      subcategory: Server
+      description: >-
+        Specifies the [Steam64 IDs](https://steamid.io/) of whitelisted players. One line per player. Format:
+        WhitelistIDs=71231XXXXXXXXXXXX
+      keywords: whitelist,players,WhitelistIDs
+      input_type: Textarea
+      param_field_name: WhitelistIDs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Whitelisted Players
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies the [Steam64 IDs](https://steamid.io/) of whitelisted players. One line per player. Format:
+          WhitelistIDs=71231XXXXXXXXXXXX
+        Keywords: whitelist,players,WhitelistIDs
+        FieldName: WhitelistIDs
+        InputType: Textarea
+        ParamFieldName: WhitelistIDs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: VIPs
+      label: Server VIPs
+      category: The Isle
+      subcategory: Server
+      description: >-
+        Specifies the [Steam64 IDs](https://steamid.io/) of server VIPs. VIPs can skip the queue if the server is full.
+        One line per VIP. Format: VIPs=71231XXXXXXXXXXXX
+      keywords: VIPs,vip
+      input_type: Textarea
+      param_field_name: VIPs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server VIPs
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies the [Steam64 IDs](https://steamid.io/) of server VIPs. VIPs can skip the queue if the server is
+          full. One line per VIP. Format: VIPs=71231XXXXXXXXXXXX
+        Keywords: VIPs,vip
+        FieldName: VIPs
+        InputType: Textarea
+        ParamFieldName: VIPs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: bRconEnabled
+      label: Enable RCON
+      category: The Isle
+      subcategory: Server
+      description: If set, the server's RCON will be enabled. Specify the RCON password under RCON Password
+      keywords: rcon,enable,bRconEnabled
+      input_type: checkbox
+      param_field_name: bRconEnabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable RCON
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server's RCON will be enabled. Specify the RCON password under RCON Password
+        Keywords: rcon,enable,bRconEnabled
+        FieldName: bRconEnabled
+        InputType: checkbox
+        ParamFieldName: bRconEnabled
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: RconPassword
+      label: RCON Password
+      category: The Isle
+      subcategory: Server
+      description: Sets the password to connect to the server's RCON. Default is a strong, random password
+      keywords: rcon,password,RconPassword
+      input_type: password
+      param_field_name: RconPassword
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to connect to the server's RCON. Default is a strong, random password
+        Keywords: rcon,password,RconPassword
+        FieldName: RconPassword
+        InputType: password
+        ParamFieldName: RconPassword
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: bQueueEnabled
+      label: Enable Queue Server
+      category: The Isle
+      subcategory: Server
+      description: If enabled, players can queue to join a full server. Requires the Queue Port to be opened
+      keywords: queue,server,bQueueEnabled
+      input_type: checkbox
+      param_field_name: bQueueEnabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Queue Server
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, players can queue to join a full server. Requires the Queue Port to be opened
+        Keywords: queue,server,bQueueEnabled
+        FieldName: bQueueEnabled
+        InputType: checkbox
+        ParamFieldName: bQueueEnabled
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: Discord
+      label: Discord Invite URL
+      category: The Isle
+      subcategory: Server
+      description: >-
+        Sets the invite URL for a Discord server to which players will be taken when clicking on the Discord button in
+        the server
+      keywords: invite,url,Discord
+      input_type: url
+      param_field_name: Discord
+      default: ''
+      placeholder: https://discord.gg/yourdiscord
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Discord Invite URL
+        Category: The Isle:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the invite URL for a Discord server to which players will be taken when clicking on the Discord button in
+          the server
+        Keywords: invite,url,Discord
+        FieldName: Discord
+        InputType: url
+        ParamFieldName: Discord
+        DefaultValue: ''
+        Placeholder: https://discord.gg/yourdiscord
+        EnumValues: {}
+    - key: AllowedClasses
+      label: Allowed Classes
+      category: The Isle
+      subcategory: Gameplay
+      description: 'Specifies the names of enabled classes. One line per class. Format: AllowedClasses=Dryosaurus'
+      keywords: allowed,classes,AllowedClasses
+      input_type: Textarea
+      param_field_name: AllowedClasses
+      default: |-
+        AllowedClasses=Diabloceratops
+        AllowedClasses=Dryosaurus
+        AllowedClasses=Hypsilophodon
+        AllowedClasses=Maiasaura
+        AllowedClasses=Pachycephalosaurus
+        AllowedClasses=Stegosaurus
+        AllowedClasses=Tenontosaurus
+        AllowedClasses=Triceratops
+        AllowedClasses=Allosaurus
+        AllowedClasses=Carnotaurus
+        AllowedClasses=Ceratosaurus
+        AllowedClasses=Deinosuchus
+        AllowedClasses=Dilophosaurus
+        AllowedClasses=Herrerasaurus
+        AllowedClasses=Omniraptor
+        AllowedClasses=Pteranodon
+        AllowedClasses=Troodon
+        AllowedClasses=Tyrannosaurus
+        AllowedClasses=Beipiaosaurus
+        AllowedClasses=Gallimimus
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Allowed Classes
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: 'Specifies the names of enabled classes. One line per class. Format: AllowedClasses=Dryosaurus'
+        Keywords: allowed,classes,AllowedClasses
+        FieldName: AllowedClasses
+        InputType: Textarea
+        ParamFieldName: AllowedClasses
+        DefaultValue: |-
+          AllowedClasses=Diabloceratops
+          AllowedClasses=Dryosaurus
+          AllowedClasses=Hypsilophodon
+          AllowedClasses=Maiasaura
+          AllowedClasses=Pachycephalosaurus
+          AllowedClasses=Stegosaurus
+          AllowedClasses=Tenontosaurus
+          AllowedClasses=Triceratops
+          AllowedClasses=Allosaurus
+          AllowedClasses=Carnotaurus
+          AllowedClasses=Ceratosaurus
+          AllowedClasses=Deinosuchus
+          AllowedClasses=Dilophosaurus
+          AllowedClasses=Herrerasaurus
+          AllowedClasses=Omniraptor
+          AllowedClasses=Pteranodon
+          AllowedClasses=Troodon
+          AllowedClasses=Tyrannosaurus
+          AllowedClasses=Beipiaosaurus
+          AllowedClasses=Gallimimus
+        EnumValues: {}
+    - key: bEnableHumans
+      label: Enable Humans
+      category: The Isle
+      subcategory: Gameplay
+      description: If set, human characters will be enabled on the server
+      keywords: human,characters,bEnableHumans
+      input_type: checkbox
+      param_field_name: bEnableHumans
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Humans
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, human characters will be enabled on the server
+        Keywords: human,characters,bEnableHumans
+        FieldName: bEnableHumans
+        InputType: checkbox
+        ParamFieldName: bEnableHumans
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bServerDynamicWeather
+      label: Enable Dynamic Weather
+      category: The Isle
+      subcategory: Gameplay
+      description: If set, dynamic weather will be enabled on the server
+      keywords: dynamic,weather,bRandomWeatherEnabled
+      input_type: checkbox
+      param_field_name: bServerDynamicWeather
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Dynamic Weather
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, dynamic weather will be enabled on the server
+        Keywords: dynamic,weather,bRandomWeatherEnabled
+        FieldName: bServerDynamicWeather
+        InputType: checkbox
+        ParamFieldName: bServerDynamicWeather
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: MinWeatherVariationInterval
+      label: Minimum Weather Variation Interval
+      category: The Isle
+      subcategory: Gameplay
+      description: Sets the minimum interval for how often weather is switched. Dynamic Weather must be enabled
+      keywords: min,minimum,weather,variation,interval,MinWeatherVariationInterval
+      input_type: number
+      param_field_name: MinWeatherVariationInterval
+      default: '600'
+      placeholder: '600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Weather Variation Interval
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the minimum interval for how often weather is switched. Dynamic Weather must be enabled
+        Keywords: min,minimum,weather,variation,interval,MinWeatherVariationInterval
+        FieldName: MinWeatherVariationInterval
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: MinWeatherVariationInterval
+        DefaultValue: '600'
+        Placeholder: '600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: MaxWeatherVariationInterval
+      label: Maximum Weather Variation Interval
+      category: The Isle
+      subcategory: Gameplay
+      description: Sets the maximum interval for how often weather is switched. Dynamic Weather must be enabled
+      keywords: max,maximum,weather,variation,interval
+      input_type: number
+      param_field_name: MaxWeatherVariationInterval
+      default: '900'
+      placeholder: '900'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Weather Variation Interval
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum interval for how often weather is switched. Dynamic Weather must be enabled
+        Keywords: max,maximum,weather,variation,interval
+        FieldName: MaxWeatherVariationInterval
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: MaxWeatherVariationInterval
+        DefaultValue: '900'
+        Placeholder: '900'
+        Suffix: seconds
+        EnumValues: {}
+    - key: bServerFallDamage
+      label: Enable Fall Damage
+      category: The Isle
+      subcategory: Gameplay
+      description: If enabled, falls cause damage
+      keywords: fall,damage,bServerFallDamage
+      input_type: checkbox
+      param_field_name: bServerFallDamage
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Fall Damage
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, falls cause damage
+        Keywords: fall,damage,bServerFallDamage
+        FieldName: bServerFallDamage
+        InputType: checkbox
+        ParamFieldName: bServerFallDamage
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ServerDayLengthMinutes
+      label: Day Length
+      category: The Isle
+      subcategory: Gameplay
+      description: Sets the length of a day
+      keywords: day,length,ServerDayLengthMinutes
+      input_type: number
+      param_field_name: ServerDayLengthMinutes
+      default: '45'
+      placeholder: '45'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Day Length
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the length of a day
+        Keywords: day,length,ServerDayLengthMinutes
+        FieldName: ServerDayLengthMinutes
+        InputType: number
+        ParamFieldName: ServerDayLengthMinutes
+        DefaultValue: '45'
+        Placeholder: '45'
+        Suffix: minutes
+        EnumValues: {}
+    - key: ServerNightLengthMinutes
+      label: Night Length
+      category: The Isle
+      subcategory: Gameplay
+      description: Sets the length of a night
+      keywords: night,length,ServerNightLengthMinutes
+      input_type: number
+      param_field_name: ServerNightLengthMinutes
+      default: '25'
+      placeholder: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Night Length
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the length of a night
+        Keywords: night,length,ServerNightLengthMinutes
+        FieldName: ServerNightLengthMinutes
+        InputType: number
+        ParamFieldName: ServerNightLengthMinutes
+        DefaultValue: '25'
+        Placeholder: '25'
+        Suffix: minutes
+        EnumValues: {}
+    - key: bSpawnPlants
+      label: Enable Plant Spawning
+      category: The Isle
+      subcategory: Gameplay
+      description: If enabled, plants will be spawned
+      keywords: plant,spawn,bSpawnPlants
+      input_type: checkbox
+      param_field_name: bSpawnPlants
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Plant Spawning
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, plants will be spawned
+        Keywords: plant,spawn,bSpawnPlants
+        FieldName: bSpawnPlants
+        InputType: checkbox
+        ParamFieldName: bSpawnPlants
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PlantSpawnMultiplier
+      label: Plant Spawn Multiplier
+      category: The Isle
+      subcategory: Gameplay
+      description: Sets the multiplier for how many plants to spawn. Higher values = increased plant spawn amount
+      keywords: plant,spawn,multiplier,PlantSpawnMultiplier
+      input_type: number
+      param_field_name: PlantSpawnMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Plant Spawn Multiplier
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the multiplier for how many plants to spawn. Higher values = increased plant spawn amount
+        Keywords: plant,spawn,multiplier,PlantSpawnMultiplier
+        FieldName: PlantSpawnMultiplier
+        InputType: number
+        ParamFieldName: PlantSpawnMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: bEnableGlobalChat
+      label: Enable Global Chat
+      category: The Isle
+      subcategory: Gameplay
+      description: If set, global chat will be enabled on the server
+      keywords: global,chat,bEnableGlobalChat
+      input_type: checkbox
+      param_field_name: bEnableGlobalChat
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Global Chat
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, global chat will be enabled on the server
+        Keywords: global,chat,bEnableGlobalChat
+        FieldName: bEnableGlobalChat
+        InputType: checkbox
+        ParamFieldName: bEnableGlobalChat
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bSpawnAI
+      label: Spawn AI
+      category: The Isle
+      subcategory: Gameplay
+      description: If set, AI will be spawned on the server
+      keywords: spawn,ai,bSpawnAI
+      input_type: checkbox
+      param_field_name: bSpawnAI
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Spawn AI
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, AI will be spawned on the server
+        Keywords: spawn,ai,bSpawnAI
+        FieldName: bSpawnAI
+        InputType: checkbox
+        ParamFieldName: bSpawnAI
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AISpawnInterval
+      label: AI Spawn Interval
+      category: The Isle
+      subcategory: Gameplay
+      description: Sets how frequently the server checks to spawn new AI. Spawn AI must be enabled
+      keywords: spawn,ai,interval,AISpawnInterval
+      input_type: number
+      param_field_name: AISpawnInterval
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: AI Spawn Interval
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how frequently the server checks to spawn new AI. Spawn AI must be enabled
+        Keywords: spawn,ai,interval,AISpawnInterval
+        FieldName: AISpawnInterval
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: AISpawnInterval
+        DefaultValue: '40'
+        Placeholder: '40'
+        Suffix: seconds
+        EnumValues: {}
+    - key: DisallowedAIClasses
+      label: Disabled AI Classes
+      category: The Isle
+      subcategory: Gameplay
+      description: >-
+        Specifies the names of AI classes that should be disabled. One line per class. Format:
+        DisallowedAIClasses=Compsognathus
+      keywords: disabled,disallowed,classes,DisallowedAIClasses
+      input_type: Textarea
+      param_field_name: DisallowedAIClasses
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Disabled AI Classes
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Specifies the names of AI classes that should be disabled. One line per class. Format:
+          DisallowedAIClasses=Compsognathus
+        Keywords: disabled,disallowed,classes,DisallowedAIClasses
+        FieldName: DisallowedAIClasses
+        InputType: Textarea
+        ParamFieldName: DisallowedAIClasses
+        DefaultValue: ''
+        EnumValues: {}
+    - key: AIDensity
+      label: AI Density
+      category: The Isle
+      subcategory: Gameplay
+      description: Sets the multiplier for AI density. Spawn AI must be enabled
+      keywords: ai,density,AIDensity
+      input_type: number
+      param_field_name: AIDensity
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: AI Density
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the multiplier for AI density. Spawn AI must be enabled
+        Keywords: ai,density,AIDensity
+        FieldName: AIDensity
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: AIDensity
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: bEnableMigration
+      label: Enable Migration
+      category: The Isle
+      subcategory: Gameplay
+      description: If set, migration will be enabled, including patrols and mass migrations
+      keywords: migration,bEnableMigration
+      input_type: checkbox
+      param_field_name: bEnableMigration
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Migration
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, migration will be enabled, including patrols and mass migrations
+        Keywords: migration,bEnableMigration
+        FieldName: bEnableMigration
+        InputType: checkbox
+        ParamFieldName: bEnableMigration
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: SpeciesMigrationTime
+      label: Species Migration Zone Length
+      category: The Isle
+      subcategory: Gameplay
+      description: Sets how long a species migration zone will last. Enable Migration must be set
+      keywords: migration,zones,species,period,SpeciesMigrationTime
+      input_type: number
+      param_field_name: SpeciesMigrationTime
+      default: '10800'
+      placeholder: '10800'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Species Migration Zone Length
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how long a species migration zone will last. Enable Migration must be set
+        Keywords: migration,zones,species,period,SpeciesMigrationTime
+        FieldName: SpeciesMigrationTime
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: SpeciesMigrationTime
+        DefaultValue: '10800'
+        Placeholder: '10800'
+        Suffix: seconds
+        EnumValues: {}
+    - key: bEnableMassMigration
+      label: Enable Mass Migration
+      category: The Isle
+      subcategory: Gameplay
+      description: If set, mass migrations will be enabled
+      keywords: mass,migration,bEnableMassMigration
+      input_type: checkbox
+      param_field_name: bEnableMassMigration
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Mass Migration
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, mass migrations will be enabled
+        Keywords: mass,migration,bEnableMassMigration
+        FieldName: bEnableMassMigration
+        InputType: checkbox
+        ParamFieldName: bEnableMassMigration
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: MassMigrationTime
+      label: Mass Migration Interval
+      category: The Isle
+      subcategory: Gameplay
+      description: Sets how often a new mass migration is set
+      keywords: mass,migration,time
+      input_type: number
+      param_field_name: MassMigrationTime
+      default: '43200'
+      placeholder: '43200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Mass Migration Interval
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how often a new mass migration is set
+        Keywords: mass,migration,time
+        FieldName: MassMigrationTime
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: MassMigrationTime
+        DefaultValue: '43200'
+        Placeholder: '43200'
+        Suffix: seconds
+        EnumValues: {}
+    - key: MassMigrationDisableTime
+      label: Mass Migration Length
+      category: The Isle
+      subcategory: Gameplay
+      description: Sets how long a mass migration lasts once set
+      keywords: mass,migration,disable,time
+      input_type: number
+      param_field_name: MassMigrationDisableTime
+      default: '7200'
+      placeholder: '7200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Mass Migration Length
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how long a mass migration lasts once set
+        Keywords: mass,migration,disable,time
+        FieldName: MassMigrationDisableTime
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: MassMigrationDisableTime
+        DefaultValue: '7200'
+        Placeholder: '7200'
+        Suffix: seconds
+        EnumValues: {}
+    - key: bEnablePatrolZones
+      label: Enable Patrol Zones
+      category: The Isle
+      subcategory: Gameplay
+      description: If set, the PatrolZone system will be enabled
+      keywords: patrol,zones,zone,system,bEnablePatrolZones
+      input_type: checkbox
+      param_field_name: bEnablePatrolZones
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Patrol Zones
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the PatrolZone system will be enabled
+        Keywords: patrol,zones,zone,system,bEnablePatrolZones
+        FieldName: bEnablePatrolZones
+        InputType: checkbox
+        ParamFieldName: bEnablePatrolZones
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bEnableDiets
+      label: Enable Diets
+      category: The Isle
+      subcategory: Gameplay
+      description: If set, diets will be enabled
+      keywords: diets,bEnableDiets
+      input_type: checkbox
+      param_field_name: bEnableDiets
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Diets
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, diets will be enabled
+        Keywords: diets,bEnableDiets
+        FieldName: bEnableDiets
+        InputType: checkbox
+        ParamFieldName: bEnableDiets
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: GrowthMultiplier
+      label: Growth Multiplier
+      category: The Isle
+      subcategory: Gameplay
+      description: >-
+        Sets the universal multiplier for growth. Setting this too high will stop it working - recommendation is no
+        higher than 20
+      keywords: universal,growth,multiplier,GrowthMultiplier
+      input_type: number
+      param_field_name: GrowthMultiplier
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Growth Multiplier
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the universal multiplier for growth. Setting this too high will stop it working - recommendation is no
+          higher than 20
+        Keywords: universal,growth,multiplier,GrowthMultiplier
+        FieldName: GrowthMultiplier
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: GrowthMultiplier
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: bEnableMutations
+      label: Enable Mutations
+      category: The Isle
+      subcategory: Gameplay
+      description: If set, mutations will be enabled on the server. Set Enabled Mutations List as required
+      keywords: mutations,bEnableMutations
+      input_type: checkbox
+      param_field_name: bEnableMutations
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Mutations
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, mutations will be enabled on the server. Set Enabled Mutations List as required
+        Keywords: mutations,bEnableMutations
+        FieldName: bEnableMutations
+        InputType: checkbox
+        ParamFieldName: bEnableMutations
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnabledMutations
+      label: Enabled Mutations List
+      category: The Isle
+      subcategory: Gameplay
+      description: >-
+        Specifies the list of all enabled mutations and values. Keep fully commented out to have all mutations enabled.
+        Enabling any mutations means you must include all mutations you would like available on the server (one line per
+        mutation). Note that changing default values may produce unstable gameplay
+      keywords: enabled,mutations,EnabledMutations
+      input_type: Textarea
+      param_field_name: EnabledMutations
+      default: |-
+        // EnabledMutations=Hemomania, 0.05
+        // EnabledMutations=Hematophagy, 0.25
+        // EnabledMutations=Accelerated Prey Drive, 0.1
+        // EnabledMutations=Xerocole Adaptation, 0.2
+        // EnabledMutations=Hypervigilance, 0.5
+        // EnabledMutations=Truculency, 0.2
+        // EnabledMutations=Osteophagic, 0.15
+        // EnabledMutations=Photosynthetic Regeneration, 0.1
+        // EnabledMutations=Cellular Regeneration, 0.15
+        // EnabledMutations=Advanced Gestation, 0.5
+        // EnabledMutations=Sustained Hydration, 0.2
+        // EnabledMutations=Enlarged meniscus, 0.15
+        // EnabledMutations=Efficient Digestion, 0.2
+        // EnabledMutations=Featherweight, 0.5
+        // EnabledMutations=Osteosclerosis, 0.2
+        // EnabledMutations=Wader, 0.25
+        // EnabledMutations=Epidermal Fibrosis, 0.15
+        // EnabledMutations=Congenital Hypoalgesia, 0.15
+        // EnabledMutations=Photosynthetic Tissue, 0.05
+        // EnabledMutations=Nocturnal, 0.05
+        // EnabledMutations=Hydroregenerative, 0.25
+        // EnabledMutations=Increased Inspiratory Capacity, 0.15
+        // EnabledMutations=Hydrodynamic, 0.15
+        // EnabledMutations=Submerged Optical Retention, 0.05
+        // EnabledMutations=Infrasound Communication, 0.5
+        // EnabledMutations=Augmented Tapetum, 0.5
+        // EnabledMutations=Hypermetabolic Inanition, 0.15
+        // EnabledMutations=Tactile Endurance, 0.5
+        // EnabledMutations=Gastronomic Regeneration, 0.1
+        // EnabledMutations=Heightened Ghrelin, 0.25
+        // EnabledMutations=Prolific Reproduction, 0.1
+        // EnabledMutations=Enhanced Digestion, 0.1
+        // EnabledMutations=Reinforced Tendons, 0.1
+        // EnabledMutations=Multichambered Lungs, 0.05
+        // EnabledMutations=Reabsorption, 1 ****** // Value must be 1 or remove from this list to disable it.
+        // EnabledMutations=Pit Organ, 1 ******// Value must be 1 or remove from this list to disable it.
+        // EnabledMutations=Cannibalistic, 1 ******// Value must be 1 or remove from this list to disable it.
+        // EnabledMutations=Barometric Sensitivity, 1 ******// Value must be 1 or remove from this list to disable it.
+        // EnabledMutations=Social Behavior, 1 *****// Value must be 1 or remove from this list to disable it.
+        // EnabledMutations=Traumatic Thrombosis, 1 *****// Value must be 1 or remove from this list to disable it.
+        // EnabledMutations=Reniculate Kidneys, 1 *****// Value must be 1 or remove from this list to disable it.
+        // EnabledMutations=Paratrepsis, 1 ****// Value must be 1 or remove from this list to disable it.
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enabled Mutations List
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Specifies the list of all enabled mutations and values. Keep fully commented out to have all mutations
+          enabled. Enabling any mutations means you must include all mutations you would like available on the server
+          (one line per mutation). Note that changing default values may produce unstable gameplay
+        Keywords: enabled,mutations,EnabledMutations
+        FieldName: EnabledMutations
+        InputType: Textarea
+        ParamFieldName: EnabledMutations
+        DefaultValue: |-
+          // EnabledMutations=Hemomania, 0.05
+          // EnabledMutations=Hematophagy, 0.25
+          // EnabledMutations=Accelerated Prey Drive, 0.1
+          // EnabledMutations=Xerocole Adaptation, 0.2
+          // EnabledMutations=Hypervigilance, 0.5
+          // EnabledMutations=Truculency, 0.2
+          // EnabledMutations=Osteophagic, 0.15
+          // EnabledMutations=Photosynthetic Regeneration, 0.1
+          // EnabledMutations=Cellular Regeneration, 0.15
+          // EnabledMutations=Advanced Gestation, 0.5
+          // EnabledMutations=Sustained Hydration, 0.2
+          // EnabledMutations=Enlarged meniscus, 0.15
+          // EnabledMutations=Efficient Digestion, 0.2
+          // EnabledMutations=Featherweight, 0.5
+          // EnabledMutations=Osteosclerosis, 0.2
+          // EnabledMutations=Wader, 0.25
+          // EnabledMutations=Epidermal Fibrosis, 0.15
+          // EnabledMutations=Congenital Hypoalgesia, 0.15
+          // EnabledMutations=Photosynthetic Tissue, 0.05
+          // EnabledMutations=Nocturnal, 0.05
+          // EnabledMutations=Hydroregenerative, 0.25
+          // EnabledMutations=Increased Inspiratory Capacity, 0.15
+          // EnabledMutations=Hydrodynamic, 0.15
+          // EnabledMutations=Submerged Optical Retention, 0.05
+          // EnabledMutations=Infrasound Communication, 0.5
+          // EnabledMutations=Augmented Tapetum, 0.5
+          // EnabledMutations=Hypermetabolic Inanition, 0.15
+          // EnabledMutations=Tactile Endurance, 0.5
+          // EnabledMutations=Gastronomic Regeneration, 0.1
+          // EnabledMutations=Heightened Ghrelin, 0.25
+          // EnabledMutations=Prolific Reproduction, 0.1
+          // EnabledMutations=Enhanced Digestion, 0.1
+          // EnabledMutations=Reinforced Tendons, 0.1
+          // EnabledMutations=Multichambered Lungs, 0.05
+          // EnabledMutations=Reabsorption, 1 ****** // Value must be 1 or remove from this list to disable it.
+          // EnabledMutations=Pit Organ, 1 ******// Value must be 1 or remove from this list to disable it.
+          // EnabledMutations=Cannibalistic, 1 ******// Value must be 1 or remove from this list to disable it.
+          // EnabledMutations=Barometric Sensitivity, 1 ******// Value must be 1 or remove from this list to disable it.
+          // EnabledMutations=Social Behavior, 1 *****// Value must be 1 or remove from this list to disable it.
+          // EnabledMutations=Traumatic Thrombosis, 1 *****// Value must be 1 or remove from this list to disable it.
+          // EnabledMutations=Reniculate Kidneys, 1 *****// Value must be 1 or remove from this list to disable it.
+          // EnabledMutations=Paratrepsis, 1 ****// Value must be 1 or remove from this list to disable it.
+        EnumValues: {}
+    - key: bAllowReplay
+      label: Allow Replay
+      category: The Isle
+      subcategory: Gameplay
+      description: >-
+        If set, the server's replay system will be enabled. Recording can be started and stopped in-game via the F2 key.
+        Replays must be a minimum of 5 seconds and cannot be viewed until 30 minutes has passed
+      keywords: replay,system,recording,bAllowRecordingReplay
+      input_type: checkbox
+      param_field_name: bAllowReplay
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Replay
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, the server's replay system will be enabled. Recording can be started and stopped in-game via the F2
+          key. Replays must be a minimum of 5 seconds and cannot be viewed until 30 minutes has passed
+        Keywords: replay,system,recording,bAllowRecordingReplay
+        FieldName: bAllowReplay
+        InputType: checkbox
+        ParamFieldName: bAllowReplay
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bUseRegionSpawning
+      label: Use Region Spawning
+      category: The Isle
+      subcategory: Gameplay
+      description: If set, the region menu will be enabled when selecting a character
+      keywords: region,spawning,spawn,character,bUseRegionSpawning
+      input_type: checkbox
+      param_field_name: bUseRegionSpawning
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use Region Spawning
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the region menu will be enabled when selecting a character
+        Keywords: region,spawning,spawn,character,bUseRegionSpawning
+        FieldName: bUseRegionSpawning
+        InputType: checkbox
+        ParamFieldName: bUseRegionSpawning
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bUseRegionSpawnCooldown
+      label: Use Region Spawn Cooldown
+      category: The Isle
+      subcategory: Gameplay
+      description: If set, region cooldown will be enabled
+      keywords: region,spawning,spawn,character,cooldown,bUseRegionSpawnCooldown
+      input_type: checkbox
+      param_field_name: bUseRegionSpawnCooldown
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use Region Spawn Cooldown
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, region cooldown will be enabled
+        Keywords: region,spawning,spawn,character,cooldown,bUseRegionSpawnCooldown
+        FieldName: bUseRegionSpawnCooldown
+        InputType: checkbox
+        ParamFieldName: bUseRegionSpawnCooldown
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: RegionSpawnCooldownTimeSeconds
+      label: Region Spawn Cooldown Time
+      category: The Isle
+      subcategory: Gameplay
+      description: >-
+        Sets the cooldown time period that must pass before a player is able to select the relevant region again. Use
+        Region Spawning and Use Region Spawn Cooldown must be enabled. Adjust the period for your server's timezone
+        offset from UTC (positive or negative)
+      keywords: region,spawn,spawning,character,cooldown,time,RegionSpawnCooldownTimeSeconds
+      input_type: number
+      param_field_name: RegionSpawnCooldownTimeSeconds
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Region Spawn Cooldown Time
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the cooldown time period that must pass before a player is able to select the relevant region again. Use
+          Region Spawning and Use Region Spawn Cooldown must be enabled. Adjust the period for your server's timezone
+          offset from UTC (positive or negative)
+        Keywords: region,spawn,spawning,character,cooldown,time,RegionSpawnCooldownTimeSeconds
+        FieldName: RegionSpawnCooldownTimeSeconds
+        InputType: number
+        ParamFieldName: RegionSpawnCooldownTimeSeconds
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: seconds
+        EnumValues: {}
+    - key: CorpseDecayMultiplier
+      label: Corpse Decay Multiplier
+      category: The Isle
+      subcategory: Gameplay
+      description: Sets the multiplier for how fast corpses decay to despawn. Lower = faster
+      keywords: corpse,decay,multiplier,CorpseDecayMultiplier
+      input_type: number
+      param_field_name: CorpseDecayMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Corpse Decay Multiplier
+        Category: The Isle:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the multiplier for how fast corpses decay to despawn. Lower = faster
+        Keywords: corpse,decay,multiplier,CorpseDecayMultiplier
+        FieldName: CorpseDecayMultiplier
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: CorpseDecayMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+  files:
+    - path: TheIsle/Saved/Config/WindowsServer/Game.ini
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: TheIsle/Saved/Config/WindowsServer/Game.ini
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: theisle/AMP_Game.ini
+    - path: TheIsle/Saved/Config/LinuxServer/Game.ini
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: TheIsle/Saved/Config/LinuxServer/Game.ini
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: theisle/AMP_Game.ini
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: MapName
+    label: Server Map/Branch
+    default: Gateway
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: The Isle Server - Powered by AMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MultiHome
+    label: Set MultiHome IP
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bServerPassword
+    label: Require Server Password
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: ServerPassword
+    label: Server Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: AdminsSteamIDs
+    label: Server Admins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bServerWhitelist
+    label: Enable Whitelist
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WhitelistIDs
+    label: Whitelisted Players
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VIPs
+    label: Server VIPs
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bRconEnabled
+    label: Enable RCON
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RconPassword
+    label: RCON Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: bQueueEnabled
+    label: Enable Queue Server
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Discord
+    label: Discord Invite URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowedClasses
+    label: Allowed Classes
+    default: |-
+      AllowedClasses=Diabloceratops
+      AllowedClasses=Dryosaurus
+      AllowedClasses=Hypsilophodon
+      AllowedClasses=Maiasaura
+      AllowedClasses=Pachycephalosaurus
+      AllowedClasses=Stegosaurus
+      AllowedClasses=Tenontosaurus
+      AllowedClasses=Triceratops
+      AllowedClasses=Allosaurus
+      AllowedClasses=Carnotaurus
+      AllowedClasses=Ceratosaurus
+      AllowedClasses=Deinosuchus
+      AllowedClasses=Dilophosaurus
+      AllowedClasses=Herrerasaurus
+      AllowedClasses=Omniraptor
+      AllowedClasses=Pteranodon
+      AllowedClasses=Troodon
+      AllowedClasses=Tyrannosaurus
+      AllowedClasses=Beipiaosaurus
+      AllowedClasses=Gallimimus
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableHumans
+    label: Enable Humans
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bServerDynamicWeather
+    label: Enable Dynamic Weather
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MinWeatherVariationInterval
+    label: Minimum Weather Variation Interval
+    default: '600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxWeatherVariationInterval
+    label: Maximum Weather Variation Interval
+    default: '900'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bServerFallDamage
+    label: Enable Fall Damage
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerDayLengthMinutes
+    label: Day Length
+    default: '45'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerNightLengthMinutes
+    label: Night Length
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bSpawnPlants
+    label: Enable Plant Spawning
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlantSpawnMultiplier
+    label: Plant Spawn Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableGlobalChat
+    label: Enable Global Chat
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bSpawnAI
+    label: Spawn AI
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AISpawnInterval
+    label: AI Spawn Interval
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisallowedAIClasses
+    label: Disabled AI Classes
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AIDensity
+    label: AI Density
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableMigration
+    label: Enable Migration
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpeciesMigrationTime
+    label: Species Migration Zone Length
+    default: '10800'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableMassMigration
+    label: Enable Mass Migration
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MassMigrationTime
+    label: Mass Migration Interval
+    default: '43200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MassMigrationDisableTime
+    label: Mass Migration Length
+    default: '7200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnablePatrolZones
+    label: Enable Patrol Zones
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableDiets
+    label: Enable Diets
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GrowthMultiplier
+    label: Growth Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableMutations
+    label: Enable Mutations
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnabledMutations
+    label: Enabled Mutations List
+    default: |-
+      // EnabledMutations=Hemomania, 0.05
+      // EnabledMutations=Hematophagy, 0.25
+      // EnabledMutations=Accelerated Prey Drive, 0.1
+      // EnabledMutations=Xerocole Adaptation, 0.2
+      // EnabledMutations=Hypervigilance, 0.5
+      // EnabledMutations=Truculency, 0.2
+      // EnabledMutations=Osteophagic, 0.15
+      // EnabledMutations=Photosynthetic Regeneration, 0.1
+      // EnabledMutations=Cellular Regeneration, 0.15
+      // EnabledMutations=Advanced Gestation, 0.5
+      // EnabledMutations=Sustained Hydration, 0.2
+      // EnabledMutations=Enlarged meniscus, 0.15
+      // EnabledMutations=Efficient Digestion, 0.2
+      // EnabledMutations=Featherweight, 0.5
+      // EnabledMutations=Osteosclerosis, 0.2
+      // EnabledMutations=Wader, 0.25
+      // EnabledMutations=Epidermal Fibrosis, 0.15
+      // EnabledMutations=Congenital Hypoalgesia, 0.15
+      // EnabledMutations=Photosynthetic Tissue, 0.05
+      // EnabledMutations=Nocturnal, 0.05
+      // EnabledMutations=Hydroregenerative, 0.25
+      // EnabledMutations=Increased Inspiratory Capacity, 0.15
+      // EnabledMutations=Hydrodynamic, 0.15
+      // EnabledMutations=Submerged Optical Retention, 0.05
+      // EnabledMutations=Infrasound Communication, 0.5
+      // EnabledMutations=Augmented Tapetum, 0.5
+      // EnabledMutations=Hypermetabolic Inanition, 0.15
+      // EnabledMutations=Tactile Endurance, 0.5
+      // EnabledMutations=Gastronomic Regeneration, 0.1
+      // EnabledMutations=Heightened Ghrelin, 0.25
+      // EnabledMutations=Prolific Reproduction, 0.1
+      // EnabledMutations=Enhanced Digestion, 0.1
+      // EnabledMutations=Reinforced Tendons, 0.1
+      // EnabledMutations=Multichambered Lungs, 0.05
+      // EnabledMutations=Reabsorption, 1 ****** // Value must be 1 or remove from this list to disable it.
+      // EnabledMutations=Pit Organ, 1 ******// Value must be 1 or remove from this list to disable it.
+      // EnabledMutations=Cannibalistic, 1 ******// Value must be 1 or remove from this list to disable it.
+      // EnabledMutations=Barometric Sensitivity, 1 ******// Value must be 1 or remove from this list to disable it.
+      // EnabledMutations=Social Behavior, 1 *****// Value must be 1 or remove from this list to disable it.
+      // EnabledMutations=Traumatic Thrombosis, 1 *****// Value must be 1 or remove from this list to disable it.
+      // EnabledMutations=Reniculate Kidneys, 1 *****// Value must be 1 or remove from this list to disable it.
+      // EnabledMutations=Paratrepsis, 1 ****// Value must be 1 or remove from this list to disable it.
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowReplay
+    label: Allow Replay
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bUseRegionSpawning
+    label: Use Region Spawning
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bUseRegionSpawnCooldown
+    label: Use Region Spawn Cooldown
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RegionSpawnCooldownTimeSeconds
+    label: Region Spawn Cooldown Time
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CorpseDecayMultiplier
+    label: Corpse Decay Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '376210'
+  collection_support: true
 backup:
   include:
     - /data

@@ -4,14 +4,18 @@ name: Mindustry
 category: Imported
 summary: Mindustry Dedicated Server
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: custom
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: java/bin/java
+  startup: >-
+    java/bin/java {CustomJavaArgs} -jar server-release.jar config port {ServerPort},config socketInputPort
+    {SocketInputPort},{host}{FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +23,1372 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 6567
+    protocol: both
     required: true
-config_files: []
+  - key: socketinputport
+    name: Socket Input Port
+    default: 6569
+    protocol: tcp
+    required: true
+config_files:
+  - path: mindustryconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: logging
+      label: Enable Logging
+      category: Mindustry
+      subcategory: Server
+      description: Enables logging to files by default
+      keywords: ''
+      input_type: text
+      param_field_name: config logging
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable Logging
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Enables logging to files by default
+        Keywords: ''
+        FieldName: logging
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: config logging
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues: {}
+    - key: ServerVersion
+      label: Server Version
+      category: Mindustry
+      subcategory: Server
+      description: >-
+        Sets the [server version](https://github.com/Anuken/Mindustry/tags) to install. Empty = latest release
+        (default). NOTE: Update the server after changing this setting
+      keywords: server,version,release
+      input_type: text
+      param_field_name: ServerVersion
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Version
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [server version](https://github.com/Anuken/Mindustry/tags) to install. Empty = latest release
+          (default). NOTE: Update the server after changing this setting
+        Keywords: server,version,release
+        FieldName: ServerVersion
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: ServerVersion
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: name
+      label: Server Name
+      category: Mindustry
+      subcategory: Server
+      description: Sets the server name as displayed on clients. Don't include commas
+      keywords: server,name
+      input_type: text
+      param_field_name: config name
+      default: AMP Powered Mindustry Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server name as displayed on clients. Don't include commas
+        Keywords: server,name
+        FieldName: name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: config name
+        IncludeInCommandLine: true
+        DefaultValue: AMP Powered Mindustry Server
+        EnumValues: {}
+    - key: desc
+      label: Server Description
+      category: Mindustry
+      subcategory: Server
+      description: Sets the server description, displayed under the name. Maximum 100 characters. Don't include commas
+      keywords: server,description,desc
+      input_type: text
+      param_field_name: config desc
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Description
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server description, displayed under the name. Maximum 100 characters. Don't include commas
+        Keywords: server,description,desc
+        FieldName: desc
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: config desc
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: motd
+      label: Message Of The Day
+      category: Mindustry
+      subcategory: Server
+      description: Sets the message displayed to players on connection (MOTD). Don't include commas
+      keywords: motd,welcome,message
+      input_type: Textarea
+      param_field_name: config motd
+      default: Welcome to Mindustry!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Message Of The Day
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the message displayed to players on connection (MOTD). Don't include commas
+        Keywords: motd,welcome,message
+        FieldName: motd
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: config motd
+        IncludeInCommandLine: true
+        DefaultValue: Welcome to Mindustry!
+        EnumValues: {}
+    - key: host
+      label: Initial Map
+      category: Mindustry
+      subcategory: Server
+      description: >-
+        Sets the map to initially load, if any. None = server won't be "opened", and no game started (unless Load Saved
+        Slot is set). Random = random map started in Survival mode. If Custom is selected, you must also set the Custom
+        Map Name
+      keywords: host,map
+      input_type: enum
+      param_field_name: host
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': None (default)
+        host,: Random
+        host Ancient_Caldera {{Mode}},: Ancient Caldera
+        host Archipelago {{Mode}},: Archipelago
+        host Debris_Field {{Mode}},: Debris Field
+        host Domain {{Mode}},: Domain
+        host Fork {{Mode}},: Fork
+        host Fortress {{Mode}},: Fortress
+        host Glacier {{Mode}},: Glacier
+        host Islands {{Mode}},: Islands
+        host Labyrinth {{Mode}},: Labyrinth
+        host Maze {{Mode}},: Maze
+        host Molten_Lake {{Mode}},: Molten Lake
+        host Mud_Flats {{Mode}},: Mud Flats
+        host Passage {{Mode}},: Passage
+        host Shattered {{Mode}},: Shattered
+        host Tendrils {{Mode}},: Tendrils
+        host Triad {{Mode}},: Triad
+        host Veins {{Mode}},: Veins
+        host Wasteland {{Mode}},: Wasteland
+        host {{CustomMapName}} {{Mode}},: Custom
+      raw:
+        DisplayName: Initial Map
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the map to initially load, if any. None = server won't be "opened", and no game started (unless Load
+          Saved Slot is set). Random = random map started in Survival mode. If Custom is selected, you must also set the
+          Custom Map Name
+        Keywords: host,map
+        FieldName: host
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: host
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          '': None (default)
+          host,: Random
+          host Ancient_Caldera {{Mode}},: Ancient Caldera
+          host Archipelago {{Mode}},: Archipelago
+          host Debris_Field {{Mode}},: Debris Field
+          host Domain {{Mode}},: Domain
+          host Fork {{Mode}},: Fork
+          host Fortress {{Mode}},: Fortress
+          host Glacier {{Mode}},: Glacier
+          host Islands {{Mode}},: Islands
+          host Labyrinth {{Mode}},: Labyrinth
+          host Maze {{Mode}},: Maze
+          host Molten_Lake {{Mode}},: Molten Lake
+          host Mud_Flats {{Mode}},: Mud Flats
+          host Passage {{Mode}},: Passage
+          host Shattered {{Mode}},: Shattered
+          host Tendrils {{Mode}},: Tendrils
+          host Triad {{Mode}},: Triad
+          host Veins {{Mode}},: Veins
+          host Wasteland {{Mode}},: Wasteland
+          host {{CustomMapName}} {{Mode}},: Custom
+    - key: CustomMapName
+      label: Custom Map Name
+      category: Mindustry
+      subcategory: Server
+      description: >-
+        Sets the name of a custom map to initially load. The map must be included in config/maps. "Custom" must be
+        selected under Initial Map
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMapName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Map Name
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of a custom map to initially load. The map must be included in config/maps. "Custom" must be
+          selected under Initial Map
+        Keywords: custom,map
+        FieldName: CustomMapName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomMapName
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: shuffle
+      label: Map Shuffle Mode
+      category: Mindustry
+      subcategory: Server
+      description: Sets the map shuffling mode
+      keywords: map,shuffle
+      input_type: enum
+      param_field_name: shuffle
+      default: all
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        none: No shuffling
+        all: Shuffle all maps (default)
+        custom: Shuffle only custom maps
+        builtin: Shuffle only default maps
+      raw:
+        DisplayName: Map Shuffle Mode
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map shuffling mode
+        Keywords: map,shuffle
+        FieldName: shuffle
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: shuffle
+        IncludeInCommandLine: true
+        DefaultValue: all
+        EnumValues:
+          none: No shuffling
+          all: Shuffle all maps (default)
+          custom: Shuffle only custom maps
+          builtin: Shuffle only default maps
+    - key: Mode
+      label: Game Mode
+      category: Mindustry
+      subcategory: Server
+      description: Sets the initial game mode
+      keywords: game,mode
+      input_type: enum
+      param_field_name: Mode
+      default: survival
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        survival: Survival (default)
+        sandbox: Sandbox
+        attack: Attack
+        pvp: PvP
+      raw:
+        DisplayName: Game Mode
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the initial game mode
+        Keywords: game,mode
+        FieldName: Mode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: Mode
+        IncludeInCommandLine: false
+        DefaultValue: survival
+        EnumValues:
+          survival: Survival (default)
+          sandbox: Sandbox
+          attack: Attack
+          pvp: PvP
+    - key: load
+      label: Load Saved Slot
+      category: Mindustry
+      subcategory: Server
+      description: >-
+        Sets the saved slot (as included in config/saves, without the .msav extension) to initially load. The Initial
+        Map must be set to None for the saved slot to load, and a game cannot be running
+      keywords: load,save
+      input_type: text
+      param_field_name: load
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Load Saved Slot
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the saved slot (as included in config/saves, without the .msav extension) to initially load. The Initial
+          Map must be set to None for the saved slot to load, and a game cannot be running
+        Keywords: load,save
+        FieldName: load
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: load
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        SkipIfEmpty: true
+        EnumValues: {}
+    - key: Mods
+      label: Server Mods
+      category: Mindustry
+      subcategory: Server
+      description: Mods can be enabled by including them in config/mods
+      keywords: mods
+      input_type: hidden
+      param_field_name: Mods
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Mods
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Mods can be enabled by including them in config/mods
+        Keywords: mods
+        FieldName: Mods
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: Mods
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Mindustry
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,clients,limit,maxplayers
+      input_type: number
+      param_field_name: playerlimit
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,clients,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: playerlimit
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: players
+        EnumValues: {}
+    - key: whitelist
+      label: Enable Whitelist
+      category: Mindustry
+      subcategory: Server
+      description: >-
+        If set, the server whitelist will be enabled. Manage the whitelisted players from the console using "whitelist
+        [add/remove] [ID]"
+      keywords: whitelist
+      input_type: checkbox
+      param_field_name: config whitelist
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Whitelist
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server whitelist will be enabled. Manage the whitelisted players from the console using "whitelist
+          [add/remove] [ID]"
+        Keywords: whitelist
+        FieldName: whitelist
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: config whitelist
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: autoPause
+      label: Auto Pause When Empty
+      category: Mindustry
+      subcategory: Server
+      description: If set, any running game will be paused when no player is online
+      keywords: auto,pause,empty,autopause
+      input_type: checkbox
+      param_field_name: config autoPause
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Auto Pause When Empty
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, any running game will be paused when no player is online
+        Keywords: auto,pause,empty,autopause
+        FieldName: autoPause
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: config autoPause
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: autosave
+      label: Enable Autosave
+      category: Mindustry
+      subcategory: Server
+      description: If enabled, the server will periodically save the map during play
+      keywords: save,enable,autosave
+      input_type: checkbox
+      param_field_name: config autosave
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Autosave
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will periodically save the map during play
+        Keywords: save,enable,autosave
+        FieldName: autosave
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: config autosave
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: autosaveSpacing
+      label: Autosave Interval
+      category: Mindustry
+      subcategory: Server
+      description: Sets the time interval between autosaves, if autosave is enabled
+      keywords: save,autosave,interval,autosavespacing
+      input_type: number
+      param_field_name: config autosaveSpacing
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Autosave Interval
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time interval between autosaves, if autosave is enabled
+        Keywords: save,autosave,interval,autosavespacing
+        FieldName: autosaveSpacing
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: config autosaveSpacing
+        IncludeInCommandLine: true
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: autosaveAmount
+      label: Maximum Autosave Quantity
+      category: Mindustry
+      subcategory: Server
+      description: Sets the maximum quantity of autosaves to be retained. Older saves will be replaced when the limit is reached
+      keywords: maximum,autosaves,autosaveamount
+      input_type: number
+      param_field_name: config autosaveAmount
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: autosaves
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Autosave Quantity
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum quantity of autosaves to be retained. Older saves will be replaced when the limit is reached
+        Keywords: maximum,autosaves,autosaveamount
+        FieldName: autosaveAmount
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: config autosaveAmount
+        IncludeInCommandLine: true
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: autosaves
+        EnumValues: {}
+    - key: debug
+      label: Enable Debug Logging
+      category: Mindustry
+      subcategory: Server
+      description: If set, debug logging will be enabled on the server
+      keywords: log,logging,debug
+      input_type: checkbox
+      param_field_name: config debug
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Debug Logging
+        Category: Mindustry:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, debug logging will be enabled on the server
+        Keywords: log,logging,debug
+        FieldName: debug
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: config debug
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: strict
+      label: Enable Strict Mode
+      category: Mindustry
+      subcategory: Gameplay
+      description: If set, strict mode will be enabled - the server will correct positions and prevent duplicate UUIDs
+      keywords: strict,mode
+      input_type: checkbox
+      param_field_name: config strict
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Strict Mode
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, strict mode will be enabled - the server will correct positions and prevent duplicate UUIDs
+        Keywords: strict,mode
+        FieldName: strict
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: config strict
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: allowCustomClients
+      label: Allow Custom Clients
+      category: Mindustry
+      subcategory: Gameplay
+      description: If enabled, custom clients will be allowed to connect to the server
+      keywords: custom,clients,allowcustomclients
+      input_type: checkbox
+      param_field_name: config allowCustomClients
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Custom Clients
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, custom clients will be allowed to connect to the server
+        Keywords: custom,clients,allowcustomclients
+        FieldName: allowCustomClients
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: config allowCustomClients
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: showConnectMessages
+      label: Show Connect/Disconnect Messages
+      category: Mindustry
+      subcategory: Gameplay
+      description: If set, player connect and disconnect messages will be displayed
+      keywords: connect,disconnect,message,showconnectmessages
+      input_type: checkbox
+      param_field_name: config showConnectMessages
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Show Connect/Disconnect Messages
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, player connect and disconnect messages will be displayed
+        Keywords: connect,disconnect,message,showconnectmessages
+        FieldName: showConnectMessages
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: config showConnectMessages
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: enableVotekick
+      label: Enable Vote Kick
+      category: Mindustry
+      subcategory: Gameplay
+      description: If set, votekick will be enabled
+      keywords: vote,kick,enablevotekick
+      input_type: checkbox
+      param_field_name: config enableVotekick
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Vote Kick
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, votekick will be enabled
+        Keywords: vote,kick,enablevotekick
+        FieldName: enableVotekick
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: config enableVotekick
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: antiSpam
+      label: Enable Anti-spam
+      category: Mindustry
+      subcategory: Gameplay
+      description: If enabled, spammers will be automatically kicked and rate-limited
+      keywords: spam,spammers,antispam
+      input_type: checkbox
+      param_field_name: config antiSpam
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Anti-spam
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, spammers will be automatically kicked and rate-limited
+        Keywords: spam,spammers,antispam
+        FieldName: antiSpam
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: config antiSpam
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: messageRateLimit
+      label: Message Rate Limit
+      category: Mindustry
+      subcategory: Gameplay
+      description: Sets the message rate limit. 0 = disabled
+      keywords: message,rate,limit,messageratelimit
+      input_type: number
+      param_field_name: config messageRateLimit
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Message Rate Limit
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the message rate limit. 0 = disabled
+        Keywords: message,rate,limit,messageratelimit
+        FieldName: messageRateLimit
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: config messageRateLimit
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: seconds
+        EnumValues: {}
+    - key: messageSpamKick
+      label: Message Spam Kick
+      category: Mindustry
+      subcategory: Gameplay
+      description: Sets how many times a player must send a message before the cooldown to get kicked. 0 = disabled
+      keywords: message,spam,kick,messagespamkick
+      input_type: number
+      param_field_name: config messageSpamKick
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Message Spam Kick
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how many times a player must send a message before the cooldown to get kicked. 0 = disabled
+        Keywords: message,spam,kick,messagespamkick
+        FieldName: messageSpamKick
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: config messageSpamKick
+        IncludeInCommandLine: true
+        DefaultValue: '3'
+        Placeholder: '3'
+        EnumValues: {}
+    - key: chatSpamLimit
+      label: Chat Spam Limit
+      category: Mindustry
+      subcategory: Gameplay
+      description: >-
+        Sets the limit for the chat packet count sent within 2 seconds that will lead to a blacklist and kick. Not the
+        same as a rate limit
+      keywords: chat,spam,blacklist,kick,chatspamlimit
+      input_type: number
+      param_field_name: config chatSpamLimit
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Chat Spam Limit
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the limit for the chat packet count sent within 2 seconds that will lead to a blacklist and kick. Not the
+          same as a rate limit
+        Keywords: chat,spam,blacklist,kick,chatspamlimit
+        FieldName: chatSpamLimit
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: config chatSpamLimit
+        IncludeInCommandLine: true
+        DefaultValue: '20'
+        Placeholder: '20'
+        EnumValues: {}
+    - key: packetSpamLimit
+      label: Packet Spam Limit
+      category: Mindustry
+      subcategory: Gameplay
+      description: Sets the limit for the packet count sent within 3 seconds that will lead to a blacklist and kick
+      keywords: packet,spam,blacklist,kick,packetspamlimit
+      input_type: number
+      param_field_name: config packetSpamLimit
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Packet Spam Limit
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the limit for the packet count sent within 3 seconds that will lead to a blacklist and kick
+        Keywords: packet,spam,blacklist,kick,packetspamlimit
+        FieldName: packetSpamLimit
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: config packetSpamLimit
+        IncludeInCommandLine: true
+        DefaultValue: '300'
+        Placeholder: '300'
+        EnumValues: {}
+    - key: interactRateWindow
+      label: Block Interaction Rate Limit Window
+      category: Mindustry
+      subcategory: Gameplay
+      description: Sets the block interaction rate limit window
+      keywords: block,interaction,rate,limit,window,interactratewindow
+      input_type: number
+      param_field_name: config interactRateWindow
+      default: '6'
+      placeholder: '6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Block Interaction Rate Limit Window
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the block interaction rate limit window
+        Keywords: block,interaction,rate,limit,window,interactratewindow
+        FieldName: interactRateWindow
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: config interactRateWindow
+        IncludeInCommandLine: true
+        DefaultValue: '6'
+        Placeholder: '6'
+        Suffix: seconds
+        EnumValues: {}
+    - key: interactRateLimit
+      label: Block Interaction Rate Limit
+      category: Mindustry
+      subcategory: Gameplay
+      description: Sets the block interaction rate limit
+      keywords: block,interaction,rate,limit,interactratelimit
+      input_type: number
+      param_field_name: config interactRateLimit
+      default: '25'
+      placeholder: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Block Interaction Rate Limit
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the block interaction rate limit
+        Keywords: block,interaction,rate,limit,interactratelimit
+        FieldName: interactRateLimit
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: config interactRateLimit
+        IncludeInCommandLine: true
+        DefaultValue: '25'
+        Placeholder: '25'
+        EnumValues: {}
+    - key: interactRateKick
+      label: Minimum Interactions For Kick
+      category: Mindustry
+      subcategory: Gameplay
+      description: Sets how many times a player must interact inside the window to get kicked
+      keywords: block,interaction,window,kick,interactratekick
+      input_type: number
+      param_field_name: config interactRateKick
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Interactions For Kick
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how many times a player must interact inside the window to get kicked
+        Keywords: block,interaction,window,kick,interactratekick
+        FieldName: interactRateKick
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: config interactRateKick
+        IncludeInCommandLine: true
+        DefaultValue: '60'
+        Placeholder: '60'
+        EnumValues: {}
+    - key: snapshotInterval
+      label: Client Entity Snapshot Interval
+      category: Mindustry
+      subcategory: Gameplay
+      description: Sets the client entity snapshot interval
+      keywords: client,snapshot,interval,snapshotinterval
+      input_type: number
+      param_field_name: config snapshotInterval
+      default: '200'
+      placeholder: '200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Client Entity Snapshot Interval
+        Category: Mindustry:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the client entity snapshot interval
+        Keywords: client,snapshot,interval,snapshotinterval
+        FieldName: snapshotInterval
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: config snapshotInterval
+        IncludeInCommandLine: true
+        DefaultValue: '200'
+        Placeholder: '200'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: JavaVersion
+      label: Java Version
+      category: Mindustry
+      subcategory: Java
+      description: Sets the Eclipse Temurin Java version to install. Update the server after changing this setting
+      keywords: java,version
+      input_type: enum
+      param_field_name: JavaVersion
+      default: '17'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '17': 17 - LTS (default)
+        '18': '18'
+        '19': '19'
+        '20': '20'
+        '21': 21 - LTS
+        '22': '22'
+        '23': '23'
+        '24': '24'
+        '25': 25 - LTS
+      raw:
+        DisplayName: Java Version
+        Category: Mindustry:stadia_controller
+        Subcategory: Java:code:3
+        Description: Sets the Eclipse Temurin Java version to install. Update the server after changing this setting
+        Keywords: java,version
+        FieldName: JavaVersion
+        InputType: enum
+        ParamFieldName: JavaVersion
+        IncludeInCommandLine: false
+        DefaultValue: '17'
+        EnumValues:
+          '17': 17 - LTS (default)
+          '18': '18'
+          '19': '19'
+          '20': '20'
+          '21': 21 - LTS
+          '22': '22'
+          '23': '23'
+          '24': '24'
+          '25': 25 - LTS
+    - key: CustomJavaArgs
+      label: Additional Java Startup Parameters
+      category: Mindustry
+      subcategory: Java
+      description: >-
+        Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AMP. Use
+        with care
+      keywords: custom,java,arguments,parameters
+      input_type: text
+      param_field_name: CustomJavaArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Java Startup Parameters
+        Category: Mindustry:stadia_controller
+        Subcategory: Java:code:3
+        Description: >-
+          Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AMP. Use
+          with care
+        Keywords: custom,java,arguments,parameters
+        FieldName: CustomJavaArgs
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomJavaArgs
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: logging
+    label: Enable Logging
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerVersion
+    label: Server Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: name
+    label: Server Name
+    default: AMP Powered Mindustry Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: desc
+    label: Server Description
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: motd
+    label: Message Of The Day
+    default: Welcome to Mindustry!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: host
+    label: Initial Map
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMapName
+    label: Custom Map Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: shuffle
+    label: Map Shuffle Mode
+    default: all
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Mode
+    label: Game Mode
+    default: survival
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: load
+    label: Load Saved Slot
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: whitelist
+    label: Enable Whitelist
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autoPause
+    label: Auto Pause When Empty
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autosave
+    label: Enable Autosave
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autosaveSpacing
+    label: Autosave Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autosaveAmount
+    label: Maximum Autosave Quantity
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: debug
+    label: Enable Debug Logging
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: strict
+    label: Enable Strict Mode
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowCustomClients
+    label: Allow Custom Clients
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: showConnectMessages
+    label: Show Connect/Disconnect Messages
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableVotekick
+    label: Enable Vote Kick
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: antiSpam
+    label: Enable Anti-spam
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: messageRateLimit
+    label: Message Rate Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: messageSpamKick
+    label: Message Spam Kick
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: chatSpamLimit
+    label: Chat Spam Limit
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: packetSpamLimit
+    label: Packet Spam Limit
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: interactRateWindow
+    label: Block Interaction Rate Limit Window
+    default: '6'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: interactRateLimit
+    label: Block Interaction Rate Limit
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: interactRateKick
+    label: Minimum Interactions For Kick
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: snapshotInterval
+    label: Client Entity Snapshot Interval
+    default: '200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JavaVersion
+    label: Java Version
+    default: '17'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomJavaArgs
+    label: Additional Java Startup Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1127400'
+  collection_support: true
 backup:
   include:
     - /data

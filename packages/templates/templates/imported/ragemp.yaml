@@ -4,14 +4,17 @@ name: RAGE:MP - Grand Theft Auto V Server
 category: Imported
 summary: RAGE:MP Dedicated Server for GTA V
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://raw.githubusercontent.com/CubeCoders/AMPTemplates/main/ragempconf.json
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server-files/ragemp-server
+  startup: server-files/ragemp-server {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1416 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 22005
     protocol: udp
     required: true
-config_files: []
+  - key: httpport
+    name: HTTP Port
+    default: 22006
+    protocol: tcp
+    required: true
+config_files:
+  - path: conf.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Server Port
+      category: RAGE MP
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.port
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Bind Address
+      category: RAGE MP
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.bind
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Bind Address
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.bind
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: announce
+      label: Announce Server
+      category: RAGE MP
+      subcategory: Server
+      description: If set, the server will be announced to the master list so that it is visible in the server browser
+      keywords: announce,master,server,list
+      input_type: checkbox
+      param_field_name: $.announce
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Announce Server
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be announced to the master list so that it is visible in the server browser
+        Keywords: announce,master,server,list
+        FieldName: announce
+        InputType: checkbox
+        ParamFieldName: $.announce
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: name
+      label: Server Name
+      category: RAGE MP
+      subcategory: Server
+      description: >-
+        Sets the name of the server that is shown in the server browser. Use [] for tags, such as: 'Beast [Serious
+        Roleplay]'
+      keywords: name,server
+      input_type: text
+      param_field_name: $.name
+      default: AMP Powered RAGE:MP Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the server that is shown in the server browser. Use [] for tags, such as: 'Beast [Serious
+          Roleplay]'
+        Keywords: name,server
+        FieldName: name
+        InputType: text
+        ParamFieldName: $.name
+        DefaultValue: AMP Powered RAGE:MP Server
+        EnumValues: {}
+    - key: gamemode
+      label: Game Mode
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the game mode to run on the server
+      keywords: gamemode,mode
+      input_type: enum
+      param_field_name: $.gamemode
+      default: freeroam
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        roleplay: Roleplay
+        freeroam: Free Roam
+        deathmatch: Deathmatch
+        teamdeathmatch: Team Deathmatch
+        race: Race
+        drift: Drift
+        derby: Derby
+        trucking: Trucking
+        copsandrobbers: Cops and Robbers
+        gangwar: Gang War
+      raw:
+        DisplayName: Game Mode
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the game mode to run on the server
+        Keywords: gamemode,mode
+        FieldName: gamemode
+        InputType: enum
+        ParamFieldName: $.gamemode
+        DefaultValue: freeroam
+        EnumValues:
+          roleplay: Roleplay
+          freeroam: Free Roam
+          deathmatch: Deathmatch
+          teamdeathmatch: Team Deathmatch
+          race: Race
+          drift: Drift
+          derby: Derby
+          trucking: Trucking
+          copsandrobbers: Cops and Robbers
+          gangwar: Gang War
+    - key: encryption
+      label: Enable Encryption
+      category: RAGE MP
+      subcategory: Server
+      description: If set, connections to the server will be encrypted
+      keywords: encryption,connections,encrypt
+      input_type: checkbox
+      param_field_name: $.encryption
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Encryption
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, connections to the server will be encrypted
+        Keywords: encryption,connections,encrypt
+        FieldName: encryption
+        InputType: checkbox
+        ParamFieldName: $.encryption
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: maxplayers
+      label: Player Limit
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: maxplayers,players,limit,max
+      input_type: number
+      param_field_name: $.maxplayers
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: maxplayers,players,limit,max
+        FieldName: maxplayers
+        InputType: number
+        ParamFieldName: $.maxplayers
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: players
+        EnumValues: {}
+    - key: stream-distance
+      label: Stream Distance
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the distance on the X,Y plane that server entities will stream in for connected players
+      keywords: stream,distance
+      input_type: number
+      param_field_name: $.stream-distance
+      default: '500.0'
+      placeholder: '500.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Stream Distance
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the distance on the X,Y plane that server entities will stream in for connected players
+        Keywords: stream,distance
+        FieldName: stream-distance
+        InputType: number
+        ParamFieldName: $.stream-distance
+        DefaultValue: '500.0'
+        Placeholder: '500.0'
+        EnumValues: {}
+    - key: disallow-multiple-connections-per-ip
+      label: Disallow Multiple Connections Per IP
+      category: RAGE MP
+      subcategory: Server
+      description: If set, multiple connections from the same IP address will be disallowed
+      keywords: multiple,connections,ip,address,disallow
+      input_type: checkbox
+      param_field_name: $.disallow-multiple-connections-per-ip
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disallow Multiple Connections Per IP
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, multiple connections from the same IP address will be disallowed
+        Keywords: multiple,connections,ip,address,disallow
+        FieldName: disallow-multiple-connections-per-ip
+        InputType: checkbox
+        ParamFieldName: $.disallow-multiple-connections-per-ip
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: limit-time-of-connections-per-ip
+      label: Reconnection Time Limit
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the maximum time a player can try to reconnect before being timed out
+      keywords: limit,time,connections,ip,reconnection,timeout,maximum
+      input_type: number
+      param_field_name: $.limit-time-of-connections-per-ip
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Reconnection Time Limit
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum time a player can try to reconnect before being timed out
+        Keywords: limit,time,connections,ip,reconnection,timeout,maximum
+        FieldName: limit-time-of-connections-per-ip
+        InputType: number
+        ParamFieldName: $.limit-time-of-connections-per-ip
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: url
+      label: Server URL
+      category: RAGE MP
+      subcategory: Server
+      description: >-
+        Sets a website URL for the server. The URL will be truncated to 20 characters in the [RAGE:MP Master List
+        Web](https://rage.mp/masterlist)
+      keywords: url,website
+      input_type: url
+      param_field_name: $.url
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server URL
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a website URL for the server. The URL will be truncated to 20 characters in the [RAGE:MP Master List
+          Web](https://rage.mp/masterlist)
+        Keywords: url,website
+        FieldName: url
+        InputType: url
+        ParamFieldName: $.url
+        DefaultValue: ''
+        EnumValues: {}
+    - key: language
+      label: Server Language
+      category: RAGE MP
+      subcategory: Server
+      description: >-
+        Sets the language of the server. Must be a string. For example, 'us' will display the United States flag on the
+        server's name
+      keywords: language,country
+      input_type: text
+      param_field_name: $.language
+      default: us
+      placeholder: us
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Language
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the language of the server. Must be a string. For example, 'us' will display the United States flag on
+          the server's name
+        Keywords: language,country
+        FieldName: language
+        InputType: text
+        ParamFieldName: $.language
+        DefaultValue: us
+        Placeholder: us
+        EnumValues: {}
+    - key: sync-rate
+      label: Sync Rate
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the time interval for the server to synchronize its entities
+      keywords: sync,rate,time,interval,sync-rate,synchronize
+      input_type: number
+      param_field_name: $.sync-rate
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Sync Rate
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time interval for the server to synchronize its entities
+        Keywords: sync,rate,time,interval,sync-rate,synchronize
+        FieldName: sync-rate
+        InputType: number
+        ParamFieldName: $.sync-rate
+        DefaultValue: '40'
+        Placeholder: '40'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: resource-scan-thread-limit
+      label: Resource Scan Thread Limit
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the maximum number of threads used for resource scanning
+      keywords: resource,scan,thread,limit,resource-scan-thread-limit
+      input_type: number
+      param_field_name: $.resource-scan-thread-limit
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Resource Scan Thread Limit
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of threads used for resource scanning
+        Keywords: resource,scan,thread,limit,resource-scan-thread-limit
+        FieldName: resource-scan-thread-limit
+        InputType: number
+        ParamFieldName: $.resource-scan-thread-limit
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: max-ping
+      label: Maximum Ping
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the maximum ping allowed for clients connecting to the server
+      keywords: max,maximum,ping,max-ping
+      input_type: number
+      param_field_name: $.max-ping
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Ping
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum ping allowed for clients connecting to the server
+        Keywords: max,maximum,ping,max-ping
+        FieldName: max-ping
+        InputType: number
+        ParamFieldName: $.max-ping
+        DefaultValue: '500'
+        Placeholder: '500'
+        EnumValues: {}
+    - key: min-fps
+      label: Minimum Framerate
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the minimum framerate required for clients connecting to the server. 0 = no minimum
+      keywords: min,minimum,fps,frames,framerate,min-fps
+      input_type: number
+      param_field_name: $.min-fps
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: fps
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Framerate
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum framerate required for clients connecting to the server. 0 = no minimum
+        Keywords: min,minimum,fps,frames,framerate,min-fps
+        FieldName: min-fps
+        InputType: number
+        ParamFieldName: $.min-fps
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: fps
+        EnumValues: {}
+    - key: max-packet-loss
+      label: Maximum Packet Loss
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the maximum packet loss allowed for clients connecting to the server. -1 = no limit
+      keywords: max,maximum,packet,loss,max-packet-loss
+      input_type: number
+      param_field_name: $.max-packet-loss
+      default: '-1'
+      placeholder: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Packet Loss
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum packet loss allowed for clients connecting to the server. -1 = no limit
+        Keywords: max,maximum,packet,loss,max-packet-loss
+        FieldName: max-packet-loss
+        InputType: number
+        MinValue: '-1'
+        ParamFieldName: $.max-packet-loss
+        DefaultValue: '-1'
+        Placeholder: '-1'
+        EnumValues: {}
+    - key: allow-cef-debugging
+      label: Allow CEF Debugging
+      category: RAGE MP
+      subcategory: Server
+      description: If set, clients will be able to debug the server's CEF pages
+      keywords: cef,debugging,allow-cef-debugging
+      input_type: checkbox
+      param_field_name: $.allow-cef-debugging
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow CEF Debugging
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be able to debug the server's CEF pages
+        Keywords: cef,debugging,allow-cef-debugging
+        FieldName: allow-cef-debugging
+        InputType: checkbox
+        ParamFieldName: $.allow-cef-debugging
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: enable-nodejs
+      label: Enable NodeJS
+      category: RAGE MP
+      subcategory: Server
+      description: If set, NodeJS will be enabled serverside
+      keywords: nodejs,node,enable-nodejs
+      input_type: checkbox
+      param_field_name: $.enable-nodejs
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable NodeJS
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, NodeJS will be enabled serverside
+        Keywords: nodejs,node,enable-nodejs
+        FieldName: enable-nodejs
+        InputType: checkbox
+        ParamFieldName: $.enable-nodejs
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: csharp
+      label: Enable CSharp
+      category: RAGE MP
+      subcategory: Server
+      description: Sets whether the server will be using the C# bridge plugin
+      keywords: csharp,bridge,plugin
+      input_type: checkbox
+      param_field_name: $.csharp
+      default: disabled
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': disabled
+        'True': 'true'
+      raw:
+        DisplayName: Enable CSharp
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether the server will be using the C# bridge plugin
+        Keywords: csharp,bridge,plugin
+        FieldName: csharp
+        InputType: checkbox
+        ParamFieldName: $.csharp
+        DefaultValue: disabled
+        EnumValues:
+          'False': disabled
+          'True': 'true'
+    - key: enable-http-security
+      label: Enable HTTP Security
+      category: RAGE MP
+      subcategory: Server
+      description: If set, an extra security layer will be enabled to avoid the server being flooded by fake HTTP requests
+      keywords: http,security,enable-http-security
+      input_type: checkbox
+      param_field_name: $.enable-http-security
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable HTTP Security
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, an extra security layer will be enabled to avoid the server being flooded by fake HTTP requests
+        Keywords: http,security,enable-http-security
+        FieldName: enable-http-security
+        InputType: checkbox
+        ParamFieldName: $.enable-http-security
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: voice-chat
+      label: Enable Voice Chat
+      category: RAGE MP
+      subcategory: Server
+      description: If set, voice chat will be enabled
+      keywords: voice,chat,voice-chat
+      input_type: checkbox
+      param_field_name: $.voice-chat
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Voice Chat
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, voice chat will be enabled
+        Keywords: voice,chat,voice-chat
+        FieldName: voice-chat
+        InputType: checkbox
+        ParamFieldName: $.voice-chat
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: voice-chat-sample-rate
+      label: Voice Chat Sample Rate
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the voice chat sample rate
+      keywords: voice,chat,sample,rate,voice-chat-sample-rate
+      input_type: enum
+      param_field_name: $.voice-chat-sample-rate
+      default: '8000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '8000': '8000'
+        '16000': '16000'
+        '24000': '24000'
+        '48000': '48000'
+      raw:
+        DisplayName: Voice Chat Sample Rate
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the voice chat sample rate
+        Keywords: voice,chat,sample,rate,voice-chat-sample-rate
+        FieldName: voice-chat-sample-rate
+        InputType: enum
+        ParamFieldName: $.voice-chat-sample-rate
+        DefaultValue: '8000'
+        EnumValues:
+          '8000': '8000'
+          '16000': '16000'
+          '24000': '24000'
+          '48000': '48000'
+    - key: fastdl-host
+      label: FastDL Host URL
+      category: RAGE MP
+      subcategory: Server
+      description: >-
+        Sets an external URL from which clients will be able to download needed clientside packages. Otherwise they will
+        download them directly from the server
+      keywords: fastdl,host,url,download,packages,fastdl-host
+      input_type: url
+      param_field_name: $.fastdl-host
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: FastDL Host URL
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets an external URL from which clients will be able to download needed clientside packages. Otherwise they
+          will download them directly from the server
+        Keywords: fastdl,host,url,download,packages,fastdl-host
+        FieldName: fastdl-host
+        InputType: url
+        ParamFieldName: $.fastdl-host
+        DefaultValue: ''
+        EnumValues: {}
+    - key: create-fastdl-snapshot
+      label: Create FastDL Snapshot
+      category: RAGE MP
+      subcategory: Server
+      description: If set, clientside packages will be generated to a folder to be downloadable and used with the FastDL Host URL
+      keywords: create,fastdl,snapshot,create-fastdl-snapshot
+      input_type: checkbox
+      param_field_name: $.create-fastdl-snapshot
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Create FastDL Snapshot
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clientside packages will be generated to a folder to be downloadable and used with the FastDL Host URL
+        Keywords: create,fastdl,snapshot,create-fastdl-snapshot
+        FieldName: create-fastdl-snapshot
+        InputType: checkbox
+        ParamFieldName: $.create-fastdl-snapshot
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: server-side-weapons-only-mode
+      label: Allow Server Side Weapons Only
+      category: RAGE MP
+      subcategory: Server
+      description: If set, only weapons that are given from serverside will be synced
+      keywords: server,side,weapons,mode,server-side-weapons-only-mode
+      input_type: checkbox
+      param_field_name: $.server-side-weapons-only-mode
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Server Side Weapons Only
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, only weapons that are given from serverside will be synced
+        Keywords: server,side,weapons,mode,server-side-weapons-only-mode
+        FieldName: server-side-weapons-only-mode
+        InputType: checkbox
+        ParamFieldName: $.server-side-weapons-only-mode
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: api-threading-debugging
+      label: API Threading Debugging
+      category: RAGE MP
+      subcategory: Server
+      description: If set, every usage of the API out of a proper thread will be reported. Use only for debugging
+      keywords: api,threading,debugging,api-threading-debugging
+      input_type: checkbox
+      param_field_name: $.api-threading-debugging
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: API Threading Debugging
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, every usage of the API out of a proper thread will be reported. Use only for debugging
+        Keywords: api,threading,debugging,api-threading-debugging
+        FieldName: api-threading-debugging
+        InputType: checkbox
+        ParamFieldName: $.api-threading-debugging
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: fqdn
+      label: Server FQDN
+      category: RAGE MP
+      subcategory: Server
+      description: >-
+        Sets a fully qualified domain name for the server. When used, players won't notice any server IP change,
+        including the re-utilisation of downloaded packages
+      keywords: fqdn,domain,name
+      input_type: text
+      param_field_name: $.fqdn
+      default: ''
+      placeholder: game-srv.rage.mp
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server FQDN
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a fully qualified domain name for the server. When used, players won't notice any server IP change,
+          including the re-utilisation of downloaded packages
+        Keywords: fqdn,domain,name
+        FieldName: fqdn
+        InputType: text
+        ParamFieldName: $.fqdn
+        DefaultValue: ''
+        Placeholder: game-srv.rage.mp
+        EnumValues: {}
+    - key: resources-compression-level
+      label: Resources Compression Level
+      category: RAGE MP
+      subcategory: Server
+      description: >-
+        Sets the resources compression level. Use 0 for a local server, or a higher value for bandwidth optimisation.
+        Use -9 for fast compression
+      keywords: resources,compression,level,resources-compression-level
+      input_type: number
+      param_field_name: $.resources-compression-level
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -9
+      enum_values: {}
+      raw:
+        DisplayName: Resources Compression Level
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the resources compression level. Use 0 for a local server, or a higher value for bandwidth optimisation.
+          Use -9 for fast compression
+        Keywords: resources,compression,level,resources-compression-level
+        FieldName: resources-compression-level
+        InputType: number
+        MinValue: '-9'
+        ParamFieldName: $.resources-compression-level
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: node-commandline-flags
+      label: Node Command Line Flags
+      category: RAGE MP
+      subcategory: Server
+      description: Sets node command line flags
+      keywords: node,command,line,flags,node-commandline-flags
+      input_type: text
+      param_field_name: $.node-commandline-flags
+      default: ''
+      placeholder: '--inspect'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Node Command Line Flags
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets node command line flags
+        Keywords: node,command,line,flags,node-commandline-flags
+        FieldName: node-commandline-flags
+        InputType: text
+        ParamFieldName: $.node-commandline-flags
+        DefaultValue: ''
+        Placeholder: '--inspect'
+        EnumValues: {}
+    - key: synchronization-extrapolation-multiplier
+      label: Synchronization Extrapolation Multiplier
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the vehicle synchronization prediction disabling possible latency offset
+      keywords: synchronization,extrapolation,multiplier,synchronization-extrapolation-multiplier
+      input_type: number
+      param_field_name: $.synchronization-extrapolation-multiplier
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Synchronization Extrapolation Multiplier
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the vehicle synchronization prediction disabling possible latency offset
+        Keywords: synchronization,extrapolation,multiplier,synchronization-extrapolation-multiplier
+        FieldName: synchronization-extrapolation-multiplier
+        InputType: number
+        ParamFieldName: $.synchronization-extrapolation-multiplier
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: http-threads
+      label: HTTP Threads
+      category: RAGE MP
+      subcategory: Server
+      description: >-
+        Sets how many concurrent connections will be handled at the same time, with the rest queued. Increasing this
+        setting will increase bandwidth usage
+      keywords: http,threads,http-threads
+      input_type: number
+      param_field_name: $.http-threads
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: connections
+      enum_values: {}
+      raw:
+        DisplayName: HTTP Threads
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets how many concurrent connections will be handled at the same time, with the rest queued. Increasing this
+          setting will increase bandwidth usage
+        Keywords: http,threads,http-threads
+        FieldName: http-threads
+        InputType: number
+        ParamFieldName: $.http-threads
+        DefaultValue: '50'
+        Placeholder: '50'
+        Suffix: connections
+        EnumValues: {}
+    - key: trigger-compression-logging
+      label: Enable Trigger Compression Logging
+      category: RAGE MP
+      subcategory: Server
+      description: >-
+        If set, the compression rates of all outgoing client event triggers with the dictionary the server has been
+        initialized with will be logged
+      keywords: trigger,compression,logging,trigger-compression-logging
+      input_type: checkbox
+      param_field_name: $.trigger-compression-logging
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Trigger Compression Logging
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the compression rates of all outgoing client event triggers with the dictionary the server has been
+          initialized with will be logged
+        Keywords: trigger,compression,logging,trigger-compression-logging
+        FieldName: trigger-compression-logging
+        InputType: checkbox
+        ParamFieldName: $.trigger-compression-logging
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: trigger-compression-training
+      label: Enable Trigger Compression Training
+      category: RAGE MP
+      subcategory: Server
+      description: >-
+        If set, dictionary training will be enabled. The server will take data from all triggers and flush them to the
+        file specified under Trigger Compression Dictionary
+      keywords: trigger,compression,training,trigger-compression-training
+      input_type: checkbox
+      param_field_name: $.trigger-compression-training
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Trigger Compression Training
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, dictionary training will be enabled. The server will take data from all triggers and flush them to the
+          file specified under Trigger Compression Dictionary
+        Keywords: trigger,compression,training,trigger-compression-training
+        FieldName: trigger-compression-training
+        InputType: checkbox
+        ParamFieldName: $.trigger-compression-training
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: trigger-compression-dictionary
+      label: Trigger Compression Dictionary
+      category: RAGE MP
+      subcategory: Server
+      description: Sets the name of the file to load/save the compression dictionary
+      keywords: trigger,compression,dictionary,file,trigger-compression-dictionary
+      input_type: text
+      param_field_name: $.trigger-compression-dictionary
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Trigger Compression Dictionary
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the file to load/save the compression dictionary
+        Keywords: trigger,compression,dictionary,file,trigger-compression-dictionary
+        FieldName: trigger-compression-dictionary
+        InputType: text
+        ParamFieldName: $.trigger-compression-dictionary
+        DefaultValue: ''
+        EnumValues: {}
+    - key: disable-client-packages-ram-cache
+      label: Disable Client Packages RAM Cache
+      category: RAGE MP
+      subcategory: Server
+      description: If set, resources will not be cached in memory and instead will be streamed from storage
+      keywords: client,packages,ram,cache,disable-client-packages-ram-cache
+      input_type: checkbox
+      param_field_name: $.disable-client-packages-ram-cache
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable Client Packages RAM Cache
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, resources will not be cached in memory and instead will be streamed from storage
+        Keywords: client,packages,ram,cache,disable-client-packages-ram-cache
+        FieldName: disable-client-packages-ram-cache
+        InputType: checkbox
+        ParamFieldName: $.disable-client-packages-ram-cache
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: client-packages-shared-folder
+      label: Client Packages Shared Folder
+      category: RAGE MP
+      subcategory: Server
+      description: >-
+        Sets a shared folder name so that the same client resources can be used across different servers. The Server
+        FQDN must be a subdomain of the shared folder name, such as foo.domain.com, bar.domain.com => domain.com
+      keywords: client,packages,shared,folder,client-packages-shared-folder
+      input_type: text
+      param_field_name: $.client-packages-shared-folder
+      default: ''
+      placeholder: domain.com
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Client Packages Shared Folder
+        Category: RAGE MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a shared folder name so that the same client resources can be used across different servers. The Server
+          FQDN must be a subdomain of the shared folder name, such as foo.domain.com, bar.domain.com => domain.com
+        Keywords: client,packages,shared,folder,client-packages-shared-folder
+        FieldName: client-packages-shared-folder
+        InputType: text
+        ParamFieldName: $.client-packages-shared-folder
+        DefaultValue: ''
+        Placeholder: domain.com
+        EnumValues: {}
+  files:
+    - path: conf.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: conf.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: announce
+    label: Announce Server
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: name
+    label: Server Name
+    default: AMP Powered RAGE:MP Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gamemode
+    label: Game Mode
+    default: freeroam
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: encryption
+    label: Enable Encryption
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: maxplayers
+    label: Player Limit
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: stream-distance
+    label: Stream Distance
+    default: '500.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disallow-multiple-connections-per-ip
+    label: Disallow Multiple Connections Per IP
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: limit-time-of-connections-per-ip
+    label: Reconnection Time Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: url
+    label: Server URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: language
+    label: Server Language
+    default: us
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sync-rate
+    label: Sync Rate
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resource-scan-thread-limit
+    label: Resource Scan Thread Limit
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max-ping
+    label: Maximum Ping
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: min-fps
+    label: Minimum Framerate
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max-packet-loss
+    label: Maximum Packet Loss
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow-cef-debugging
+    label: Allow CEF Debugging
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enable-nodejs
+    label: Enable NodeJS
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: csharp
+    label: Enable CSharp
+    default: disabled
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enable-http-security
+    label: Enable HTTP Security
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: voice-chat
+    label: Enable Voice Chat
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: voice-chat-sample-rate
+    label: Voice Chat Sample Rate
+    default: '8000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fastdl-host
+    label: FastDL Host URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: create-fastdl-snapshot
+    label: Create FastDL Snapshot
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server-side-weapons-only-mode
+    label: Allow Server Side Weapons Only
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: api-threading-debugging
+    label: API Threading Debugging
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fqdn
+    label: Server FQDN
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resources-compression-level
+    label: Resources Compression Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: node-commandline-flags
+    label: Node Command Line Flags
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: synchronization-extrapolation-multiplier
+    label: Synchronization Extrapolation Multiplier
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: http-threads
+    label: HTTP Threads
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: trigger-compression-logging
+    label: Enable Trigger Compression Logging
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: trigger-compression-training
+    label: Enable Trigger Compression Training
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: trigger-compression-dictionary
+    label: Trigger Compression Dictionary
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disable-client-packages-ram-cache
+    label: Disable Client Packages RAM Cache
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: client-packages-shared-folder
+    label: Client Packages Shared Folder
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '271590'
+  collection_support: true
 backup:
   include:
     - /data

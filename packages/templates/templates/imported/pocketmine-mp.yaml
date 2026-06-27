@@ -4,14 +4,16 @@ name: PocketMine-MP
 category: Imported
 summary: PocketMine-MP Server for Minecraft Bedrock
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: custom
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: bin/php7/bin/php
+  startup: bin/php7/bin/php {PlatformArgs} PocketMine-MP.phar {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +21,902 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverportv4
+    name: Server IPv4 Port
+    default: 19132
     protocol: udp
     required: true
-config_files: []
+  - key: serverportv6
+    name: Server IPv6 Port
+    default: 19133
+    protocol: udp
+    required: true
+config_files:
+  - path: server.properties
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: motd
+      label: Server Name
+      category: PocketMine-MP
+      subcategory: Server
+      description: Sets the name of the server that is shown in the in-game server list. No semi-colons allowed
+      keywords: motd,server,name
+      input_type: text
+      param_field_name: motd
+      default: AMP Powered PocketMine-MP Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that is shown in the in-game server list. No semi-colons allowed
+        Keywords: motd,server,name
+        FieldName: motd
+        InputType: text
+        ParamFieldName: motd
+        DefaultValue: AMP Powered PocketMine-MP Server
+        EnumValues: {}
+    - key: gamemode
+      label: Game Mode
+      category: PocketMine-MP
+      subcategory: Server
+      description: Sets the game mode for new players
+      keywords: game,mode,gamemode
+      input_type: enum
+      param_field_name: gamemode
+      default: SURVIVAL
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        SURVIVAL: Survival (default)
+        CREATIVE: Creative
+        ADVENTURE: Adventure
+      raw:
+        DisplayName: Game Mode
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the game mode for new players
+        Keywords: game,mode,gamemode
+        FieldName: gamemode
+        InputType: enum
+        ParamFieldName: gamemode
+        DefaultValue: SURVIVAL
+        EnumValues:
+          SURVIVAL: Survival (default)
+          CREATIVE: Creative
+          ADVENTURE: Adventure
+    - key: force-gamemode
+      label: Force Game Mode
+      category: PocketMine-MP
+      subcategory: Server
+      description: >-
+        If set, the server will send game mode values to clients other than the one saved during world creation, if
+        those values are set in 'server.properties' after world creation
+      keywords: force,gamemode,force-gamemode
+      input_type: checkbox
+      param_field_name: force-gamemode
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Force Game Mode
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server will send game mode values to clients other than the one saved during world creation, if
+          those values are set in 'server.properties' after world creation
+        Keywords: force,gamemode,force-gamemode
+        FieldName: force-gamemode
+        InputType: checkbox
+        ParamFieldName: force-gamemode
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: generator-settings
+      label: Generator Settings
+      category: PocketMine-MP
+      subcategory: Server
+      description: Sets settings to customise the world generation process
+      keywords: generator,settings,generator-settings
+      input_type: text
+      param_field_name: generator-settings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Generator Settings
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets settings to customise the world generation process
+        Keywords: generator,settings,generator-settings
+        FieldName: generator-settings
+        InputType: text
+        ParamFieldName: generator-settings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: level-name
+      label: Level Name
+      category: PocketMine-MP
+      subcategory: Server
+      description: >-
+        Sets the name of the level (world) to load, or create if it does not exist. No semi-colons allowed, nor any
+        symbols that are illegal for file names. Levels are stored in the 'worlds' directory
+      keywords: level,world,name,level-name
+      input_type: text
+      param_field_name: level-name
+      default: world
+      placeholder: world
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Level Name
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the level (world) to load, or create if it does not exist. No semi-colons allowed, nor any
+          symbols that are illegal for file names. Levels are stored in the 'worlds' directory
+        Keywords: level,world,name,level-name
+        FieldName: level-name
+        InputType: text
+        ParamFieldName: level-name
+        DefaultValue: world
+        Placeholder: world
+        EnumValues: {}
+    - key: level-seed
+      label: Level Seed
+      category: PocketMine-MP
+      subcategory: Server
+      description: Sets the seed to randomise the generation of a new world. Empty = random seed
+      keywords: level,seed,level-seed
+      input_type: text
+      param_field_name: level-seed
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Level Seed
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the seed to randomise the generation of a new world. Empty = random seed
+        Keywords: level,seed,level-seed
+        FieldName: level-seed
+        InputType: text
+        ParamFieldName: level-seed
+        DefaultValue: ''
+        EnumValues: {}
+    - key: level-type
+      label: Level Type
+      category: PocketMine-MP
+      subcategory: Server
+      description: Sets the type of map that is generated for a new world
+      keywords: level,type,level-type
+      input_type: enum
+      param_field_name: level-type
+      default: DEFAULT
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        FLAT: Flat
+        LEGACY: Legacy
+        DEFAULT: Default
+      raw:
+        DisplayName: Level Type
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the type of map that is generated for a new world
+        Keywords: level,type,level-type
+        FieldName: level-type
+        InputType: enum
+        ParamFieldName: level-type
+        DefaultValue: DEFAULT
+        EnumValues:
+          FLAT: Flat
+          LEGACY: Legacy
+          DEFAULT: Default
+    - key: difficulty
+      label: Difficulty Level
+      category: PocketMine-MP
+      subcategory: Server
+      description: Sets the difficulty level of the world
+      keywords: difficulty,level
+      input_type: enum
+      param_field_name: difficulty
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Peaceful
+        '1': Easy (default)
+        '2': Normal
+        '3': Hard
+      raw:
+        DisplayName: Difficulty Level
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the difficulty level of the world
+        Keywords: difficulty,level
+        FieldName: difficulty
+        InputType: enum
+        ParamFieldName: difficulty
+        DefaultValue: '1'
+        EnumValues:
+          '0': Peaceful
+          '1': Easy (default)
+          '2': Normal
+          '3': Hard
+    - key: hardcore
+      label: Enable Hardcore Mode
+      category: PocketMine-MP
+      subcategory: Server
+      description: >-
+        If set, hardcode mode will be enabled. Difficulty Level is ignored and set to hard, and players are set to
+        spectator mode if they die
+      keywords: hardcore
+      input_type: checkbox
+      param_field_name: hardcore
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable Hardcore Mode
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, hardcode mode will be enabled. Difficulty Level is ignored and set to hard, and players are set to
+          spectator mode if they die
+        Keywords: hardcore
+        FieldName: hardcore
+        InputType: checkbox
+        ParamFieldName: hardcore
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: pvp
+      label: Enable PvP
+      category: PocketMine-MP
+      subcategory: Server
+      description: If set, player versus player combat will be allowed
+      keywords: pvp
+      input_type: checkbox
+      param_field_name: pvp
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable PvP
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, player versus player combat will be allowed
+        Keywords: pvp
+        FieldName: pvp
+        InputType: checkbox
+        ParamFieldName: pvp
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: $MaxUsers
+      label: Player Limit
+      category: PocketMine-MP
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,maximum,players,limit,max-players
+      input_type: number
+      param_field_name: max-players
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,maximum,players,limit,max-players
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: max-players
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: players
+        EnumValues: {}
+    - key: white-list
+      label: Enable White List
+      category: PocketMine-MP
+      subcategory: Server
+      description: If set, all connected players must be listed in 'white-list.txt'
+      keywords: white-list,whitelist
+      input_type: checkbox
+      param_field_name: white-list
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable White List
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, all connected players must be listed in 'white-list.txt'
+        Keywords: white-list,whitelist
+        FieldName: white-list
+        InputType: checkbox
+        ParamFieldName: white-list
+        DefaultValue: 'off'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: view-distance
+      label: View Distance
+      category: PocketMine-MP
+      subcategory: Server
+      description: Sets the maximum allowed view distance. Higher values have performance impact
+      keywords: view,distance,view-distance
+      input_type: number
+      param_field_name: view-distance
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 5
+      suffix: chunks
+      enum_values: {}
+      raw:
+        DisplayName: View Distance
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum allowed view distance. Higher values have performance impact
+        Keywords: view,distance,view-distance
+        FieldName: view-distance
+        InputType: number
+        MinValue: '5'
+        ParamFieldName: view-distance
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: chunks
+        EnumValues: {}
+    - key: language
+      label: Language
+      category: PocketMine-MP
+      subcategory: Server
+      description: Sets the language for the server
+      keywords: language
+      input_type: enum
+      param_field_name: language
+      default: eng
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        chs: 中文 (简体)
+        deu: Deutsch
+        ell: Ελληνικά
+        eng: English
+        fra: Français
+        hrv: Hrvatski
+        ita: Italiano
+        jpn: 日本語
+        kor: 한국어
+        lav: Latviešu
+        nld: Nederlands
+        rus: Русский
+        spa: Español
+        tur: Türkçe
+        vie: Tiếng Việt
+      raw:
+        DisplayName: Language
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the language for the server
+        Keywords: language
+        FieldName: language
+        InputType: enum
+        ParamFieldName: language
+        DefaultValue: eng
+        EnumValues:
+          chs: 中文 (简体)
+          deu: Deutsch
+          ell: Ελληνικά
+          eng: English
+          fra: Français
+          hrv: Hrvatski
+          ita: Italiano
+          jpn: 日本語
+          kor: 한국어
+          lav: Latviešu
+          nld: Nederlands
+          rus: Русский
+          spa: Español
+          tur: Türkçe
+          vie: Tiếng Việt
+    - key: enable-ipv6
+      label: Enable IPv6
+      category: PocketMine-MP
+      subcategory: Server
+      description: If set, IPv6 support will be enabled
+      keywords: ipv6,enable,enable-ipv6
+      input_type: checkbox
+      param_field_name: enable-ipv6
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable IPv6
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, IPv6 support will be enabled
+        Keywords: ipv6,enable,enable-ipv6
+        FieldName: enable-ipv6
+        InputType: checkbox
+        ParamFieldName: enable-ipv6
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: enable-query
+      label: Enable Query
+      category: PocketMine-MP
+      subcategory: Server
+      description: >-
+        If set, server query will be enabled (the GameSpy4 protocol server listener will be enabled). Used to get
+        information about the server
+      keywords: query,enable,enable-query
+      input_type: checkbox
+      param_field_name: enable-query
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable Query
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, server query will be enabled (the GameSpy4 protocol server listener will be enabled). Used to get
+          information about the server
+        Keywords: query,enable,enable-query
+        FieldName: enable-query
+        InputType: checkbox
+        ParamFieldName: enable-query
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: auto-save
+      label: Enable Auto Save
+      category: PocketMine-MP
+      subcategory: Server
+      description: If set, auto save will be enabled
+      keywords: auto,save,auto-save
+      input_type: checkbox
+      param_field_name: auto-save
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable Auto Save
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, auto save will be enabled
+        Keywords: auto,save,auto-save
+        FieldName: auto-save
+        InputType: checkbox
+        ParamFieldName: auto-save
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: xbox-auth
+      label: Enable Xbox Authentication
+      category: PocketMine-MP
+      subcategory: Server
+      description: If set, Xbox authentication will be enabled
+      keywords: xbox,auth,xbox-auth
+      input_type: checkbox
+      param_field_name: xbox-auth
+      default: 'on'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'off'
+        'True': 'on'
+      raw:
+        DisplayName: Enable Xbox Authentication
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, Xbox authentication will be enabled
+        Keywords: xbox,auth,xbox-auth
+        FieldName: xbox-auth
+        InputType: checkbox
+        ParamFieldName: xbox-auth
+        DefaultValue: 'on'
+        EnumValues:
+          'False': 'off'
+          'True': 'on'
+    - key: UserSettings
+      label: Additional Server Settings
+      category: PocketMine-MP
+      subcategory: Server
+      description: >-
+        Specifies additional settings to include in 'server.properties' that are not otherwise set by AMP. One setting
+        per line. Useful for new settings in beta server builds
+      keywords: additional,settings,custom
+      input_type: Textarea
+      param_field_name: UserSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Settings
+        Category: PocketMine-MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional settings to include in 'server.properties' that are not otherwise set by AMP. One setting
+          per line. Useful for new settings in beta server builds
+        Keywords: additional,settings,custom
+        FieldName: UserSettings
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: UserSettings
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: PMMPVersion
+      label: PocketMine-MP Version
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [Windows](https://github.com/pmmp/PocketMine-MP/releases) or
+        [Linux](https://github.com/pmmp/update.pmmp.io/tree/master/channels) version of PocketMine-MP to install.
+        Windows: specify the three part number identifier. Linux: specify the identifier without the .json extension.
+        Empty = latest
+      keywords: server,version,release
+      input_type: text
+      param_field_name: PMMPVersion
+      default: ''
+      placeholder: 5.24.0 | 5-beta | 4.15
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: PocketMine-MP Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [Windows](https://github.com/pmmp/PocketMine-MP/releases) or
+          [Linux](https://github.com/pmmp/update.pmmp.io/tree/master/channels) version of PocketMine-MP to install.
+          Windows: specify the three part number identifier. Linux: specify the identifier without the .json extension.
+          Empty = latest
+        Keywords: server,version,release
+        FieldName: PMMPVersion
+        InputType: text
+        ParamFieldName: PMMPVersion
+        DefaultValue: ''
+        Placeholder: 5.24.0 | 5-beta | 4.15
+        EnumValues: {}
+    - key: PHPVersion
+      label: PHP Binary Version (Windows)
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [PHP Binary release version](https://github.com/pmmp/PHP-Binaries/releases) to install. Specify the
+        full release tag identifier. Must be appropriate for the PocketMine-MP Version. Empty = latest
+      keywords: php,binary,version,release
+      input_type: text
+      param_field_name: PHPVersion
+      default: ''
+      placeholder: pm5-php-8.3-latest
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: PHP Binary Version (Windows)
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [PHP Binary release version](https://github.com/pmmp/PHP-Binaries/releases) to install. Specify the
+          full release tag identifier. Must be appropriate for the PocketMine-MP Version. Empty = latest
+        Keywords: php,binary,version,release
+        FieldName: PHPVersion
+        InputType: text
+        ParamFieldName: PHPVersion
+        DefaultValue: ''
+        Placeholder: pm5-php-8.3-latest
+        EnumValues: {}
+  files:
+    - path: server.properties
+      type: kvp
+      format: '{0}{1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            language=: language
+            motd=: motd
+            server-port=: $ServerPortv4
+            server-portv6=: $ServerPortv6
+            enable-ipv6=: enable-ipv6
+            white-list=: white-list
+            max-players=: $MaxUsers
+            gamemode=: gamemode
+            force-gamemode=: force-gamemode
+            hardcore=: hardcore
+            pvp=: pvp
+            difficulty=: difficulty
+            generator-settings=: generator-settings
+            level-name=: level-name
+            level-seed=: level-seed
+            level-type=: level-type
+            enable-query=: enable-query
+            auto-save=: auto-save
+            view-distance=: view-distance
+            xbox-auth=: xbox-auth
+            '': UserSettings
+      raw:
+        ConfigFile: server.properties
+        ConfigType: kvp
+        ConfigFormat: '{0}{1}'
+        Importable: true
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              language=: language
+              motd=: motd
+              server-port=: $ServerPortv4
+              server-portv6=: $ServerPortv6
+              enable-ipv6=: enable-ipv6
+              white-list=: white-list
+              max-players=: $MaxUsers
+              gamemode=: gamemode
+              force-gamemode=: force-gamemode
+              hardcore=: hardcore
+              pvp=: pvp
+              difficulty=: difficulty
+              generator-settings=: generator-settings
+              level-name=: level-name
+              level-seed=: level-seed
+              level-type=: level-type
+              enable-query=: enable-query
+              auto-save=: auto-save
+              view-distance=: view-distance
+              xbox-auth=: xbox-auth
+              '': UserSettings
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: motd
+    label: Server Name
+    default: AMP Powered PocketMine-MP Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gamemode
+    label: Game Mode
+    default: SURVIVAL
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: force-gamemode
+    label: Force Game Mode
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: generator-settings
+    label: Generator Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: level-name
+    label: Level Name
+    default: world
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: level-seed
+    label: Level Seed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: level-type
+    label: Level Type
+    default: DEFAULT
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: difficulty
+    label: Difficulty Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hardcore
+    label: Enable Hardcore Mode
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pvp
+    label: Enable PvP
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: white-list
+    label: Enable White List
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: view-distance
+    label: View Distance
+    default: '16'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: language
+    label: Language
+    default: eng
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enable-ipv6
+    label: Enable IPv6
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enable-query
+    label: Enable Query
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: auto-save
+    label: Enable Auto Save
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: xbox-auth
+    label: Enable Xbox Authentication
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: UserSettings
+    label: Additional Server Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PMMPVersion
+    label: PocketMine-MP Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PHPVersion
+    label: PHP Binary Version (Windows)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

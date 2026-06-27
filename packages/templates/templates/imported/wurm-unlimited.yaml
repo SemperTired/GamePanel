@@ -5,13 +5,18 @@ category: Imported
 summary: Wurm Unlimited Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '402370'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 402370/WurmServerLauncher
+  startup: >-
+    402370/WurmServerLauncher ip="{ApplicationIPBinding}" externalport="{ApplicationPort1}"
+    queryport="{ApplicationPort2}" {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,680 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: applicationport1
+    name: Server Port
+    default: 8766
     protocol: udp
     required: true
-config_files: []
+  - key: applicationport2
+    name: Query Port
+    default: 27016
+    protocol: udp
+    required: true
+config_files:
+  - path: ./LaunchConfig.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: servername
+      label: Server Name
+      category: Wurm Unlimited
+      subcategory: Server
+      description: The name of the server that will be visible in server browsers.
+      keywords: servername
+      input_type: text
+      param_field_name: servername
+      default: AMP Powered Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Description: The name of the server that will be visible in server browsers.
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: servername
+        FieldName: servername
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: servername
+        IncludeInCommandLine: true
+        DefaultValue: AMP Powered Server
+        EnumValues: {}
+    - key: serverpassword
+      label: Server Password
+      category: Wurm Unlimited
+      subcategory: Server
+      description: Sets the password that is used when trying to connect to the server.
+      keywords: admin,password
+      input_type: password
+      param_field_name: serverpassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password that is used when trying to connect to the server.
+        Keywords: admin,password
+        FieldName: serverpassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: serverpassword
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        SkipIfEmpty: true
+    - key: adminpwd
+      label: Admin Password
+      category: Wurm Unlimited
+      subcategory: Server
+      description: >-
+        Unlocks the admin commands from within the game, that can be used to change the gameplay settings of the server,
+        such as skill gain rate and field growth time.
+      keywords: admin,password
+      input_type: password
+      param_field_name: adminpwd
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Unlocks the admin commands from within the game, that can be used to change the gameplay settings of the
+          server, such as skill gain rate and field growth time.
+        Keywords: admin,password
+        FieldName: adminpwd
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: adminpwd
+        IncludeInCommandLine: true
+        DefaultValue: '{{newguid()}}'
+    - key: $MaxUsers
+      label: Max Players
+      category: Wurm Unlimited
+      subcategory: Server
+      description: >-
+        Sets the max number of players allowed on the server. This overrides the internal game commands to change the
+        player limit.
+      keywords: max,players
+      input_type: number
+      param_field_name: maxplayers
+      default: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Max Players
+        Description: >-
+          Sets the max number of players allowed on the server. This overrides the internal game commands to change the
+          player limit.
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: max,players
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: maxplayers
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        EnumValues: {}
+        MinValue: '1'
+    - key: start
+      label: Game Mode
+      category: Wurm Unlimited
+      subcategory: Server
+      description: >-
+        Starts the server with the configuration and world data from the subdirectory specified. If "Custom" is
+        selected, Custom Game Mode must also be specified.
+      keywords: game,mode
+      input_type: enum
+      param_field_name: start
+      default: dist/Adventure
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        dist/Adventure: Adventure
+        dist/Creative: Creative
+        '{{CustomGameMode}}': '--Custom--'
+      raw:
+        DisplayName: Game Mode
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Starts the server with the configuration and world data from the subdirectory specified. If "Custom" is
+          selected, Custom Game Mode must also be specified.
+        Keywords: game,mode
+        FieldName: start
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: start
+        IncludeInCommandLine: true
+        DefaultValue: dist/Adventure
+        EnumValues:
+          dist/Adventure: Adventure
+          dist/Creative: Creative
+          '{{CustomGameMode}}': '--Custom--'
+    - key: CustomGameMode
+      label: Custom Game Mode
+      category: Wurm Unlimited
+      subcategory: Server
+      description: Sets a custom subdirectory to use for the Game Mode, if "Custom" is selected.
+      keywords: custom,game,mode
+      input_type: text
+      param_field_name: CustomGameMode
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Game Mode
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom subdirectory to use for the Game Mode, if "Custom" is selected.
+        Keywords: custom,game,mode
+        FieldName: CustomGameMode
+        InputType: text
+        ParamFieldName: CustomGameMode
+        DefaultValue: ''
+        EnumValues: {}
+    - key: epicsettings
+      label: Enable Epic Settings
+      category: Wurm Unlimited
+      subcategory: Server
+      description: >-
+        If true the server will follow the rules from the Epic servers in Wurm Online. For instance it will use the
+        skill curve.
+      keywords: enable,epic,settings
+      input_type: checkbox
+      param_field_name: epicsettings
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable Epic Settings
+        Description: >-
+          If true the server will follow the rules from the Epic servers in Wurm Online. For instance it will use the
+          skill curve.
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: enable,epic,settings
+        FieldName: epicsettings
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: epicsettings
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: pvp
+      label: Enable PVP
+      category: Wurm Unlimited
+      subcategory: Server
+      description: Toggles PvP on or off on the server.
+      keywords: enable,pvp
+      input_type: checkbox
+      param_field_name: pvp
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable PVP
+        Description: Toggles PvP on or off on the server.
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: enable,pvp
+        FieldName: pvp
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: pvp
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: loginserver
+      label: Set as Login Server
+      category: Wurm Unlimited
+      subcategory: Server
+      description: >-
+        Defaults to On, should only be set to Off if the server is intended to be connected with another server that is
+        going to act as a loginserver.
+      keywords: login,server
+      input_type: checkbox
+      param_field_name: loginserver
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Set as Login Server
+        Description: >-
+          Defaults to On, should only be set to Off if the server is intended to be connected with another server that
+          is going to act as a loginserver.
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: login,server
+        FieldName: loginserver
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: loginserver
+        IncludeInCommandLine: true
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: homeserver
+      label: Enable Home Server
+      category: Wurm Unlimited
+      subcategory: Server
+      description: If the server is a home server (belongs to a single kingdom).
+      keywords: home,server
+      input_type: checkbox
+      param_field_name: homeserver
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable Home Server
+        Description: If the server is a home server (belongs to a single kingdom).
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: home,server
+        FieldName: homeserver
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: homeserver
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: homekingdom
+      label: Home Kingdom ID
+      category: Wurm Unlimited
+      subcategory: Server
+      description: The kingdom the server belongs to.
+      keywords: home,kingdom
+      input_type: number
+      param_field_name: homekingdom
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Home Kingdom ID
+        Description: The kingdom the server belongs to.
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: home,kingdom
+        FieldName: homekingdom
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: homekingdom
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+        SkipIfEmpty: true
+    - key: rmiport
+      label: RMI Port
+      category: Wurm Unlimited
+      subcategory: Server
+      description: Used for server to server communication. Must manually add the same port number under the ADS Edit Ports button.
+      keywords: rmi,port
+      input_type: number
+      param_field_name: rmiport
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: RMI Port
+        Description: >-
+          Used for server to server communication. Must manually add the same port number under the ADS Edit Ports
+          button.
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: rmi,port
+        FieldName: rmiport
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: rmiport
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+        SkipIfEmpty: true
+    - key: rmiregport
+      label: RMI REG Port
+      category: Wurm Unlimited
+      subcategory: Server
+      description: Used for server to server communication. Must manually add the same port number under the ADS Edit Ports button.
+      keywords: rmi,reg,port
+      input_type: number
+      param_field_name: rmiregport
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: RMI REG Port
+        Description: >-
+          Used for server to server communication. Must manually add the same port number under the ADS Edit Ports
+          button.
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: rmi,reg,port
+        FieldName: rmiregport
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: rmiregport
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+        SkipIfEmpty: true
+    - key: MaxHeapSize
+      label: Memory Limit
+      category: Wurm Unlimited
+      subcategory: Server
+      description: 'Java''s maximum heap size (Must include ####m at the end)'
+      keywords: maximum,memory,limit
+      input_type: text
+      param_field_name: Memory.MaxHeapSize
+      default: 2048m
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Memory Limit
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Java''s maximum heap size (Must include ####m at the end)'
+        Keywords: maximum,memory,limit
+        FieldName: MaxHeapSize
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: Memory.MaxHeapSize
+        IncludeInCommandLine: false
+        DefaultValue: 2048m
+    - key: JvmParam0
+      label: Custom Java Arguments
+      category: Wurm Unlimited
+      subcategory: Server
+      description: >-
+        Settings that will be appended to the Java arguments for the server. Only change this if you know what you're
+        doing!
+      keywords: custom,java,arguments,args
+      input_type: text
+      param_field_name: VMParams.JvmParam0
+      default: '-XX:+AggressiveOpts'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Java Arguments
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Settings that will be appended to the Java arguments for the server. Only change this if you know what you're
+          doing!
+        Keywords: custom,java,arguments,args
+        FieldName: JvmParam0
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: VMParams.JvmParam0
+        IncludeInCommandLine: false
+        DefaultValue: '-XX:+AggressiveOpts'
+    - key: OverrideDefaultJavaPath
+      label: Override Java Location
+      category: Wurm Unlimited
+      subcategory: Server
+      description: For "Failed to load jvm.dll", enables use of the Custom Java Location setting.
+      keywords: custom,java,arguments,args,location
+      input_type: checkbox
+      param_field_name: Runtime.OverrideDefaultJavaPath
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Override Java Location
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: For "Failed to load jvm.dll", enables use of the Custom Java Location setting.
+        Keywords: custom,java,arguments,args,location
+        FieldName: OverrideDefaultJavaPath
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: Runtime.OverrideDefaultJavaPath
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: JavaPath
+      label: Custom Java Location
+      category: Wurm Unlimited
+      subcategory: Server
+      description: For "Failed to load jvm.dll", specify a location where jvm.dll is located.
+      keywords: custom,java,arguments,args,location
+      input_type: text
+      param_field_name: Runtime.JavaPath
+      default: C:\Program Files\Java\jre1.8.0_321\bin\server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Java Location
+        Category: Wurm Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: For "Failed to load jvm.dll", specify a location where jvm.dll is located.
+        Keywords: custom,java,arguments,args,location
+        FieldName: JavaPath
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: Runtime.JavaPath
+        IncludeInCommandLine: false
+        DefaultValue: C:\Program Files\Java\jre1.8.0_321\bin\server
+  files:
+    - path: ./LaunchConfig.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: ./LaunchConfig.ini
+        AutoMap: true
+        ConfigType: ini
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: servername
+    label: Server Name
+    default: AMP Powered Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverpassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: adminpwd
+    label: Admin Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: start
+    label: Game Mode
+    default: dist/Adventure
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomGameMode
+    label: Custom Game Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: epicsettings
+    label: Enable Epic Settings
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pvp
+    label: Enable PVP
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: loginserver
+    label: Set as Login Server
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: homeserver
+    label: Enable Home Server
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: homekingdom
+    label: Home Kingdom ID
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rmiport
+    label: RMI Port
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rmiregport
+    label: RMI REG Port
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxHeapSize
+    label: Memory Limit
+    default: 2048m
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JvmParam0
+    label: Custom Java Arguments
+    default: '-XX:+AggressiveOpts'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OverrideDefaultJavaPath
+    label: Override Java Location
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JavaPath
+    label: Custom Java Location
+    default: C:\Program Files\Java\jre1.8.0_321\bin\server
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '366220'
+  collection_support: true
 backup:
   include:
     - /data

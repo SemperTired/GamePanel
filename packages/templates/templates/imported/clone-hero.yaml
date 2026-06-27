@@ -4,14 +4,18 @@ name: Clone Hero
 category: Imported
 summary: Clone Hero Dedicated Server
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/Server
+  startup: >-
+    server/Server {PlatformArgs} --port {ServerPort} --address {ApplicationIPBinding} --name "{name}"
+    {EnablePassword}{FormattedArgs} --logLevel 4
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +23,624 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 14242
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: settings.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: name
+      label: Server Name
+      category: Clone Hero
+      subcategory: Server
+      description: Sets the name of the server. Maximum 80 characters
+      keywords: server,name
+      input_type: text
+      param_field_name: name
+      default: AMP Powered Clone Hero Server
+      placeholder: AMP Powered Clone Hero Server
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server. Maximum 80 characters
+        Keywords: server,name
+        FieldName: name
+        InputType: text
+        ParamFieldName: name
+        Required: true
+        DefaultValue: AMP Powered Clone Hero Server
+        Placeholder: AMP Powered Clone Hero Server
+        EnumValues: {}
+    - key: EnablePassword
+      label: Enable Server Password
+      category: Clone Hero
+      subcategory: Server
+      description: If set, the password set under Server Password will be required to join the server
+      keywords: enable,server,password
+      input_type: checkbox
+      param_field_name: EnablePassword
+      default: '--password "{{password}}" '
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '--nopass '
+        'True': '--password "{{password}}" '
+      raw:
+        DisplayName: Enable Server Password
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password set under Server Password will be required to join the server
+        Keywords: enable,server,password
+        FieldName: EnablePassword
+        InputType: checkbox
+        ParamFieldName: EnablePassword
+        DefaultValue: '--password "{{password}}" '
+        EnumValues:
+          'False': '--nopass '
+          'True': '--password "{{password}}" '
+    - key: password
+      label: Server Password
+      category: Clone Hero
+      subcategory: Server
+      description: >-
+        Sets the password required to join the server, if Enable Server Password is set. Maximum 50 characters. Default
+        is a random secure password
+      keywords: server,password
+      input_type: password
+      param_field_name: password
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password required to join the server, if Enable Server Password is set. Maximum 50 characters.
+          Default is a random secure password
+        Keywords: server,password
+        FieldName: password
+        InputType: password
+        ParamFieldName: password
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Clone Hero
+      subcategory: Server
+      description: Sets the maximum number of players allowed in a game
+      keywords: online,max,players,maxplayers
+      input_type: number
+      param_field_name: online.maxplayers
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 4
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed in a game
+        Keywords: online,max,players,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '4'
+        ParamFieldName: online.maxplayers
+        DefaultValue: '4'
+        Placeholder: '4'
+        EnumValues: {}
+    - key: minrequiredplayers
+      label: Minimum Required Players
+      category: Clone Hero
+      subcategory: Server
+      description: Sets the minimum number of players required to start a game
+      keywords: online,min,required,players
+      input_type: number
+      param_field_name: online.minrequiredplayers
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 4
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Required Players
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum number of players required to start a game
+        Keywords: online,min,required,players
+        FieldName: minrequiredplayers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '4'
+        ParamFieldName: online.minrequiredplayers
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: onlyhostchoosesongs
+      label: Only Host Chooses Songs
+      category: Clone Hero
+      subcategory: Server
+      description: If set, only the host can choose songs
+      keywords: online,host,choose,songs,onlyhostchoosesongs
+      input_type: checkbox
+      param_field_name: online.onlyhostchoosesongs
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Only Host Chooses Songs
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, only the host can choose songs
+        Keywords: online,host,choose,songs,onlyhostchoosesongs
+        FieldName: onlyhostchoosesongs
+        InputType: checkbox
+        ParamFieldName: online.onlyhostchoosesongs
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: maxspectators
+      label: Maximum Spectators
+      category: Clone Hero
+      subcategory: Server
+      description: Sets the maximum number of spectators allowed in a game
+      keywords: online,max,spectators,maxspectators
+      input_type: number
+      param_field_name: online.maxspectators
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Spectators
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of spectators allowed in a game
+        Keywords: online,max,spectators,maxspectators
+        FieldName: maxspectators
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: online.maxspectators
+        DefaultValue: '4'
+        Placeholder: '4'
+        EnumValues: {}
+    - key: servertickrate
+      label: Server Tick Rate
+      category: Clone Hero
+      subcategory: Server
+      description: Sets the server tick rate
+      keywords: server,tick,rate,servertickrate
+      input_type: number
+      param_field_name: online.servertickrate
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: Hz
+      enum_values: {}
+      raw:
+        DisplayName: Server Tick Rate
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server tick rate
+        Keywords: server,tick,rate,servertickrate
+        FieldName: servertickrate
+        InputType: number
+        ParamFieldName: online.servertickrate
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: Hz
+        EnumValues: {}
+    - key: lowsongspeed
+      label: Low Song Speed
+      category: Clone Hero
+      subcategory: Server
+      description: Sets the minimum song speed players can choose
+      keywords: song,speed,low,lowsongspeed
+      input_type: number
+      param_field_name: online.lowsongspeed
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 5
+      max: 5000
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Low Song Speed
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum song speed players can choose
+        Keywords: song,speed,low,lowsongspeed
+        FieldName: lowsongspeed
+        InputType: number
+        MinValue: '5'
+        MaxValue: '5000'
+        ParamFieldName: online.lowsongspeed
+        DefaultValue: '50'
+        Placeholder: '50'
+        Suffix: '%'
+        EnumValues: {}
+    - key: maxsongspeed
+      label: Maximum Song Speed
+      category: Clone Hero
+      subcategory: Server
+      description: Sets the maximum song speed players can choose
+      keywords: song,speed,max,maxsongspeed
+      input_type: number
+      param_field_name: online.maxsongspeed
+      default: '250'
+      placeholder: '250'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 5
+      max: 5000
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Song Speed
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum song speed players can choose
+        Keywords: song,speed,max,maxsongspeed
+        FieldName: maxsongspeed
+        InputType: number
+        MinValue: '5'
+        MaxValue: '5000'
+        ParamFieldName: online.maxsongspeed
+        DefaultValue: '250'
+        Placeholder: '250'
+        Suffix: '%'
+        EnumValues: {}
+    - key: clientremovesongs
+      label: Allow Clients To Removes Songs
+      category: Clone Hero
+      subcategory: Server
+      description: If set, clients can remove songs
+      keywords: client,remove,songs,clientremovesongs
+      input_type: checkbox
+      param_field_name: online.clientremovesongs
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Clients To Removes Songs
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients can remove songs
+        Keywords: client,remove,songs,clientremovesongs
+        FieldName: clientremovesongs
+        InputType: checkbox
+        ParamFieldName: online.clientremovesongs
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: songsperclient
+      label: Songs Per Client
+      category: Clone Hero
+      subcategory: Server
+      description: Sets the number of songs each player can choose
+      keywords: songs,per,client,songsperclient
+      input_type: number
+      param_field_name: online.songsperclient
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 25
+      suffix: songs
+      enum_values: {}
+      raw:
+        DisplayName: Songs Per Client
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of songs each player can choose
+        Keywords: songs,per,client,songsperclient
+        FieldName: songsperclient
+        InputType: number
+        MinValue: '1'
+        MaxValue: '25'
+        ParamFieldName: online.songsperclient
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: songs
+        EnumValues: {}
+    - key: redis_enable
+      label: Enable Redis Database Use
+      category: Clone Hero
+      subcategory: Server
+      description: If set, enables the use of a Redis database by the server
+      keywords: redis,enable,enabled,redis_enable
+      input_type: checkbox
+      param_field_name: redis.redis_enable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Redis Database Use
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, enables the use of a Redis database by the server
+        Keywords: redis,enable,enabled,redis_enable
+        FieldName: redis_enable
+        InputType: checkbox
+        ParamFieldName: redis.redis_enable
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: redis_hostname
+      label: Redis Database Hostname
+      category: Clone Hero
+      subcategory: Server
+      description: Sets the hostname for the Redis database server
+      keywords: redis,hostname,host,redis_hostname
+      input_type: text
+      param_field_name: redis.redis_hostname
+      default: localhost
+      placeholder: localhost
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Redis Database Hostname
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the hostname for the Redis database server
+        Keywords: redis,hostname,host,redis_hostname
+        FieldName: redis_hostname
+        InputType: text
+        ParamFieldName: redis.redis_hostname
+        DefaultValue: localhost
+        Placeholder: localhost
+        EnumValues: {}
+    - key: redis_db_id
+      label: Redis Database ID
+      category: Clone Hero
+      subcategory: Server
+      description: Sets the Redis database ID to use
+      keywords: redis,db,id,database,redis_db_id
+      input_type: number
+      param_field_name: redis.redis_db_id
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Redis Database ID
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the Redis database ID to use
+        Keywords: redis,db,id,database,redis_db_id
+        FieldName: redis_db_id
+        InputType: number
+        ParamFieldName: redis.redis_db_id
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: redis_password
+      label: Redis Database Password
+      category: Clone Hero
+      subcategory: Server
+      description: Sets the password for Redis database authentication
+      keywords: redis,password,redis_password
+      input_type: password
+      param_field_name: redis.redis_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Redis Database Password
+        Category: Clone Hero:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for Redis database authentication
+        Keywords: redis,password,redis_password
+        FieldName: redis_password
+        InputType: password
+        ParamFieldName: redis.redis_password
+        DefaultValue: ''
+        EnumValues: {}
+  files:
+    - path: settings.ini
+      type: ini
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: settings.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: name
+    label: Server Name
+    default: AMP Powered Clone Hero Server
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: EnablePassword
+    label: Enable Server Password
+    default: '--password "{{password}}" '
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: password
+    label: Server Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: minrequiredplayers
+    label: Minimum Required Players
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: onlyhostchoosesongs
+    label: Only Host Chooses Songs
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: maxspectators
+    label: Maximum Spectators
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: servertickrate
+    label: Server Tick Rate
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lowsongspeed
+    label: Low Song Speed
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: maxsongspeed
+    label: Maximum Song Speed
+    default: '250'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: clientremovesongs
+    label: Allow Clients To Removes Songs
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: songsperclient
+    label: Songs Per Client
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: redis_enable
+    label: Enable Redis Database Use
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: redis_hostname
+    label: Redis Database Hostname
+    default: localhost
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: redis_db_id
+    label: Redis Database ID
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: redis_password
+    label: Redis Database Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
 workshop:
   enabled: false
   providers: []

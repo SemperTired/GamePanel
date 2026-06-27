@@ -4,14 +4,18 @@ name: txAdmin
 category: Imported
 summary: txAdmin Server Manager for FiveM and RedM
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: fivem
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/alpine/opt/cfx-server/ld-musl-x86_64.so.1
+  startup: >-
+    server/alpine/opt/cfx-server/ld-musl-x86_64.so.1 {PlatformArgs} +set txAdminPort {txAdminPort} +set txAdminInterface
+    {ApplicationIPBinding}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +23,122 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: txadminport
+    name: txAdmin Port
+    default: 40120
+    protocol: tcp
     required: true
-config_files: []
+  - key: serverport
+    name: Server Port
+    default: 30120
+    protocol: both
+    required: true
+config_files:
+  - path: txadminconfig.json
+    type: json
+    editable: true
+  - path: txadminmetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: ServerBuild
+      label: Server Build
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the server build to install. If "Specific version" is selected, the download URL for the relevant build
+        must be set under Specific Build Version Download URL. Update the server after changing this setting
+      keywords: server,build,artifact,recommended,latest,optional,critical,specific
+      input_type: enum
+      param_field_name: ServerBuild
+      default: recommended_download
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        recommended_download: Recommended (default)
+        optional_download: Optional
+        latest_download: Latest
+        critical_download: Critical
+        SpecificVersion: Specific version
+      raw:
+        DisplayName: Server Build
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the server build to install. If "Specific version" is selected, the download URL for the relevant build
+          must be set under Specific Build Version Download URL. Update the server after changing this setting
+        Keywords: server,build,artifact,recommended,latest,optional,critical,specific
+        FieldName: ServerBuild
+        InputType: enum
+        ParamFieldName: ServerBuild
+        DefaultValue: recommended_download
+        EnumValues:
+          recommended_download: Recommended (default)
+          optional_download: Optional
+          latest_download: Latest
+          critical_download: Critical
+          SpecificVersion: Specific version
+    - key: SpecificBuildVersionURL
+      label: Specific Build Version Download URL
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the download URL for a specific server build to install, if "Specific version" is selected under Server
+        Build. Select the relevant URL from the [Windows build
+        list](https://runtime.fivem.net/artifacts/fivem/build_server_windows/master/) or [Linux build
+        list](https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/). The Windows URL should end in .zip
+        rather than .7z
+      keywords: server,build,artifact,specific,version
+      input_type: url
+      param_field_name: SpecificBuildVersionURL
+      default: ''
+      placeholder: >-
+        https://runtime.fivem.net/artifacts/fivem/build_server_windows/master/6593-7672c8c849165dad70a1e82f89e31059d8fcf20d/server.zip
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Specific Build Version Download URL
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the download URL for a specific server build to install, if "Specific version" is selected under Server
+          Build. Select the relevant URL from the [Windows build
+          list](https://runtime.fivem.net/artifacts/fivem/build_server_windows/master/) or [Linux build
+          list](https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/). The Windows URL should end in .zip
+          rather than .7z
+        Keywords: server,build,artifact,specific,version
+        FieldName: SpecificBuildVersionURL
+        InputType: url
+        ParamFieldName: SpecificBuildVersionURL
+        DefaultValue: ''
+        Placeholder: >-
+          https://runtime.fivem.net/artifacts/fivem/build_server_windows/master/6593-7672c8c849165dad70a1e82f89e31059d8fcf20d/server.zip
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerBuild
+    label: Server Build
+    default: recommended_download
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificBuildVersionURL
+    label: Specific Build Version Download URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

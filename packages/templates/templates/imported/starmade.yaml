@@ -4,14 +4,19 @@ name: Starmade
 category: Imported
 summary: Starmade Dedicated Server
 install:
-  method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  method: custom
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 244770/dep/java/jre1.7.0_80/bin/java
+  startup: >-
+    {FullRootDir}java/bin/java -Xmx{MaxHeap}M --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED
+    --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED
+    -javaagent:StarMade.jar -jar StarMade.jar -server
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,102 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: applicationport1
+    name: Server Port
+    default: 4242
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: starmadeconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: MaxHeap
+      label: Memory Limit (MB)
+      category: Starmade
+      subcategory: Server
+      description: Java's maximum heap size
+      keywords: max ram heap
+      input_type: number
+      param_field_name: MaxHeap
+      default: '1024'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Memory Limit (MB)
+        Category: Starmade:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Java's maximum heap size
+        Keywords: max ram heap
+        FieldName: MaxHeap
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: MaxHeap
+        IncludeInCommandLine: false
+        DefaultValue: '1024'
+        EnumValues: {}
+    - key: ReleaseStream
+      label: Release Stream
+      category: Starmade
+      subcategory: Server
+      description: Which release stream of the game to download
+      keywords: release,stream,branch,version
+      input_type: enum
+      param_field_name: ReleaseStream
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Default
+        dev/: Dev
+        pre/: Preview
+      raw:
+        DisplayName: Release Stream
+        Category: Starmade:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Which release stream of the game to download
+        Keywords: release,stream,branch,version
+        FieldName: ReleaseStream
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ReleaseStream
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          '': Default
+          dev/: Dev
+          pre/: Preview
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: MaxHeap
+    label: Memory Limit (MB)
+    default: '1024'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ReleaseStream
+    label: Release Stream
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '244770'
+  collection_support: true
 backup:
   include:
     - /data

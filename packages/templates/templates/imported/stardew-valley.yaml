@@ -5,13 +5,16 @@ category: Imported
 summary: Stardew Valley Dedicated Server using SMAPI and Dedicated Server Mod
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '413150'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: /usr/bin/xvfb-run {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1560 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port (24642 only)
+    default: 24642
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: Mods/DedicatedServer/config.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: FarmName
+      label: Farm Name
+      category: Stardew Valley
+      subcategory: Server
+      description: Sets the name of the farm. If a farm with this name exists, it will automatically be loaded
+      keywords: farm,name,FarmName
+      input_type: text
+      param_field_name: $.FarmName
+      default: Stardew
+      placeholder: Stardew
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Farm Name
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the farm. If a farm with this name exists, it will automatically be loaded
+        Keywords: farm,name,FarmName
+        FieldName: FarmName
+        InputType: text
+        ParamFieldName: $.FarmName
+        DefaultValue: Stardew
+        Placeholder: Stardew
+        EnumValues: {}
+    - key: Password
+      label: Server Password
+      category: Stardew Valley
+      subcategory: Server
+      description: >-
+        Sets the password used to log in on the server, which enables [password-protected
+        commands](https://github.com/Chris82111/SMAPIDedicatedServerMod/tree/main#in-game-command) to be run in-game. To
+        log in a player must run '/message ServerBot LogIn' followed by the password. Default is no password
+      keywords: password,security
+      input_type: password
+      param_field_name: $.Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password used to log in on the server, which enables [password-protected
+          commands](https://github.com/Chris82111/SMAPIDedicatedServerMod/tree/main#in-game-command) to be run in-game.
+          To log in a player must run '/message ServerBot LogIn' followed by the password. Default is no password
+        Keywords: password,security
+        FieldName: Password
+        InputType: password
+        ParamFieldName: $.Password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: PasswordProtected.Pause
+      label: Require Password For Pause Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the Pause command
+      keywords: password,protected,pause,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.Pause
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For Pause Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the Pause command
+        Keywords: password,protected,pause,PasswordProtected
+        FieldName: PasswordProtected.Pause
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.Pause
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.Build
+      label: Require Password For Build Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the Build command
+      keywords: password,protected,build,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.Build
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For Build Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the Build command
+        Keywords: password,protected,build,PasswordProtected
+        FieldName: PasswordProtected.Build
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.Build
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.Demolish
+      label: Require Password For Demolish Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the Demolish command
+      keywords: password,protected,demolish,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.Demolish
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For Demolish Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the Demolish command
+        Keywords: password,protected,demolish,PasswordProtected
+        FieldName: PasswordProtected.Demolish
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.Demolish
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.LetMePlay
+      label: Require Password For LetMePlay Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the LetMePlay command
+      keywords: password,protected,letmeplay,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.LetMePlay
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For LetMePlay Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the LetMePlay command
+        Keywords: password,protected,letmeplay,PasswordProtected
+        FieldName: PasswordProtected.LetMePlay
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.LetMePlay
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.TakeOver
+      label: Require Password For TakeOver Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the TakeOver command
+      keywords: password,protected,takeover,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.TakeOver
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For TakeOver Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the TakeOver command
+        Keywords: password,protected,takeover,PasswordProtected
+        FieldName: PasswordProtected.TakeOver
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.TakeOver
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.SafeInviteCode
+      label: Require Password For SafeInviteCode Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the SafeInviteCode command
+      keywords: password,protected,safeinvitecode,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.SafeInviteCode
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For SafeInviteCode Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the SafeInviteCode command
+        Keywords: password,protected,safeinvitecode,PasswordProtected
+        FieldName: PasswordProtected.SafeInviteCode
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.SafeInviteCode
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.InviteCode
+      label: Require Password For InviteCode Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the InviteCode command
+      keywords: password,protected,invitecode,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.InviteCode
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For InviteCode Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the InviteCode command
+        Keywords: password,protected,invitecode,PasswordProtected
+        FieldName: PasswordProtected.InviteCode
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.InviteCode
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.ForceInviteCode
+      label: Require Password For ForceInviteCode Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the ForceInviteCode command
+      keywords: password,protected,forceinvitecode,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.ForceInviteCode
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For ForceInviteCode Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the ForceInviteCode command
+        Keywords: password,protected,forceinvitecode,PasswordProtected
+        FieldName: PasswordProtected.ForceInviteCode
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.ForceInviteCode
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.Invisible
+      label: Require Password For Invisible Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the Invisible command
+      keywords: password,protected,invisible,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.Invisible
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For Invisible Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the Invisible command
+        Keywords: password,protected,invisible,PasswordProtected
+        FieldName: PasswordProtected.Invisible
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.Invisible
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.Sleep
+      label: Require Password For Sleep Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the Sleep command
+      keywords: password,protected,sleep,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.Sleep
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For Sleep Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the Sleep command
+        Keywords: password,protected,sleep,PasswordProtected
+        FieldName: PasswordProtected.Sleep
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.Sleep
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.ForceSleep
+      label: Require Password For ForceSleep Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the ForceSleep command
+      keywords: password,protected,forcesleep,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.ForceSleep
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For ForceSleep Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the ForceSleep command
+        Keywords: password,protected,forcesleep,PasswordProtected
+        FieldName: PasswordProtected.ForceSleep
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.ForceSleep
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.ForceResetDay
+      label: Require Password For ForceResetDay Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the ForceResetDay command
+      keywords: password,protected,forceresetday,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.ForceResetDay
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For ForceResetDay Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the ForceResetDay command
+        Keywords: password,protected,forceresetday,PasswordProtected
+        FieldName: PasswordProtected.ForceResetDay
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.ForceResetDay
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.ForceShutdown
+      label: Require Password For ForceShutdown Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the ForceShutdown command
+      keywords: password,protected,forceshutdown,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.ForceShutdown
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For ForceShutdown Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the ForceShutdown command
+        Keywords: password,protected,forceshutdown,PasswordProtected
+        FieldName: PasswordProtected.ForceShutdown
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.ForceShutdown
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.Wallet
+      label: Require Password For Wallet Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the Wallet command
+      keywords: password,protected,wallet,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.Wallet
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For Wallet Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the Wallet command
+        Keywords: password,protected,wallet,PasswordProtected
+        FieldName: PasswordProtected.Wallet
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.Wallet
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.SpawnMonster
+      label: Require Password For SpawnMonster Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the SpawnMonster command
+      keywords: password,protected,spawnmonster,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.SpawnMonster
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For SpawnMonster Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the SpawnMonster command
+        Keywords: password,protected,spawnmonster,PasswordProtected
+        FieldName: PasswordProtected.SpawnMonster
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.SpawnMonster
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.MoveBuildPermission
+      label: Require Password For MoveBuildPermission Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the MoveBuildPermission command
+      keywords: password,protected,movebuildpermission,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.MoveBuildPermission
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For MoveBuildPermission Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the MoveBuildPermission command
+        Keywords: password,protected,movebuildpermission,PasswordProtected
+        FieldName: PasswordProtected.MoveBuildPermission
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.MoveBuildPermission
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PasswordProtected.UpgradeHouseLevelBasedOnFarmhand
+      label: Require Password For UpgradeHouseLevelBasedOnFarmhand Command
+      category: Stardew Valley
+      subcategory: Server
+      description: If set, the password will be required to use the UpgradeHouseLevelBasedOnFarmhand command
+      keywords: password,protected,upgradehouselevelbasedonfarmhand,PasswordProtected
+      input_type: checkbox
+      param_field_name: $.PasswordProtected.UpgradeHouseLevelBasedOnFarmhand
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Password For UpgradeHouseLevelBasedOnFarmhand Command
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the password will be required to use the UpgradeHouseLevelBasedOnFarmhand command
+        Keywords: password,protected,upgradehouselevelbasedonfarmhand,PasswordProtected
+        FieldName: PasswordProtected.UpgradeHouseLevelBasedOnFarmhand
+        InputType: checkbox
+        ParamFieldName: $.PasswordProtected.UpgradeHouseLevelBasedOnFarmhand
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: StartingCabins
+      label: Starting Cabins Number
+      category: Stardew Valley
+      subcategory: Farm Creation
+      description: Sets the number of initial cabins for the farm
+      keywords: starting,cabins,multiplayer,StartingCabins
+      input_type: enum
+      param_field_name: $.StartingCabins
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': '0'
+        '1': 1 (default)
+        '2': '2'
+        '3': '3'
+      raw:
+        DisplayName: Starting Cabins Number
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Farm Creation:landscape:2
+        Description: Sets the number of initial cabins for the farm
+        Keywords: starting,cabins,multiplayer,StartingCabins
+        FieldName: StartingCabins
+        InputType: enum
+        ParamFieldName: $.StartingCabins
+        DefaultValue: '1'
+        EnumValues:
+          '0': '0'
+          '1': 1 (default)
+          '2': '2'
+          '3': '3'
+    - key: CabinLayout
+      label: Starting Cabins Layout
+      category: Stardew Valley
+      subcategory: Farm Creation
+      description: Sets the starting cabins layout
+      keywords: cabin,layout,nearby,separate,CabinLayout
+      input_type: enum
+      param_field_name: $.CabinLayout
+      default: separate
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        nearby: Nearby
+        separate: Separate (default)
+      raw:
+        DisplayName: Starting Cabins Layout
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Farm Creation:landscape:2
+        Description: Sets the starting cabins layout
+        Keywords: cabin,layout,nearby,separate,CabinLayout
+        FieldName: CabinLayout
+        InputType: enum
+        ParamFieldName: $.CabinLayout
+        DefaultValue: separate
+        EnumValues:
+          nearby: Nearby
+          separate: Separate (default)
+    - key: ProfitMargin
+      label: Profit Margin
+      category: Stardew Valley
+      subcategory: Farm Creation
+      description: Sets the farm's profit margin
+      keywords: profit,margin,ProfitMargin
+      input_type: enum
+      param_field_name: $.ProfitMargin
+      default: normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        normal: Normal (default)
+        75%: 75%
+        50%: 50%
+        25%: 25%
+      raw:
+        DisplayName: Profit Margin
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Farm Creation:landscape:2
+        Description: Sets the farm's profit margin
+        Keywords: profit,margin,ProfitMargin
+        FieldName: ProfitMargin
+        InputType: enum
+        ParamFieldName: $.ProfitMargin
+        DefaultValue: normal
+        EnumValues:
+          normal: Normal (default)
+          75%: 75%
+          50%: 50%
+          25%: 25%
+    - key: MoneyStyle
+      label: Money Style
+      category: Stardew Valley
+      subcategory: Farm Creation
+      description: Sets whether money is shared or separate among farmers
+      keywords: money,style,shared,separate,wallet,MoneyStyle
+      input_type: enum
+      param_field_name: $.MoneyStyle
+      default: shared
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        shared: Shared (default)
+        separate: Separate
+      raw:
+        DisplayName: Money Style
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Farm Creation:landscape:2
+        Description: Sets whether money is shared or separate among farmers
+        Keywords: money,style,shared,separate,wallet,MoneyStyle
+        FieldName: MoneyStyle
+        InputType: enum
+        ParamFieldName: $.MoneyStyle
+        DefaultValue: shared
+        EnumValues:
+          shared: Shared (default)
+          separate: Separate
+    - key: FarmType
+      label: Farm Type
+      category: Stardew Valley
+      subcategory: Farm Creation
+      description: Sets the type of farm
+      keywords: farm,type,standard,riverland,forest,hilltop,wilderness,fourcorners,beach,meadowlands,FarmType
+      input_type: enum
+      param_field_name: $.FarmType
+      default: standard
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        standard: Standard (default)
+        riverland: Riverland
+        forest: Forest
+        hilltop: Hilltop
+        wilderness: Wilderness
+        fourcorners: Four Corners
+        beach: Beach
+        meadowlands: Meadowlands
+      raw:
+        DisplayName: Farm Type
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Farm Creation:landscape:2
+        Description: Sets the type of farm
+        Keywords: farm,type,standard,riverland,forest,hilltop,wilderness,fourcorners,beach,meadowlands,FarmType
+        FieldName: FarmType
+        InputType: enum
+        ParamFieldName: $.FarmType
+        DefaultValue: standard
+        EnumValues:
+          standard: Standard (default)
+          riverland: Riverland
+          forest: Forest
+          hilltop: Hilltop
+          wilderness: Wilderness
+          fourcorners: Four Corners
+          beach: Beach
+          meadowlands: Meadowlands
+    - key: CommunityCenterBundles
+      label: Community Center Bundles
+      category: Stardew Valley
+      subcategory: Farm Creation
+      description: Sets the community center bundle configuration
+      keywords: community,center,bundles,normal,remixed,CommunityCenterBundles
+      input_type: enum
+      param_field_name: $.CommunityCenterBundles
+      default: normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        normal: Normal (default)
+        remixed: Remixed
+      raw:
+        DisplayName: Community Center Bundles
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Farm Creation:landscape:2
+        Description: Sets the community center bundle configuration
+        Keywords: community,center,bundles,normal,remixed,CommunityCenterBundles
+        FieldName: CommunityCenterBundles
+        InputType: enum
+        ParamFieldName: $.CommunityCenterBundles
+        DefaultValue: normal
+        EnumValues:
+          normal: Normal (default)
+          remixed: Remixed
+    - key: GuaranteeYear1Completable
+      label: Guarantee First Year Completable
+      category: Stardew Valley
+      subcategory: Farm Creation
+      description: If set, ensures the community center can be completed in year one
+      keywords: guarantee,year,completable,community,GuaranteeYear1Completable
+      input_type: checkbox
+      param_field_name: $.GuaranteeYear1Completable
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Guarantee First Year Completable
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Farm Creation:landscape:2
+        Description: If set, ensures the community center can be completed in year one
+        Keywords: guarantee,year,completable,community,GuaranteeYear1Completable
+        FieldName: GuaranteeYear1Completable
+        InputType: checkbox
+        ParamFieldName: $.GuaranteeYear1Completable
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: MineRewards
+      label: Mine Rewards
+      category: Stardew Valley
+      subcategory: Farm Creation
+      description: Sets the mine rewards configuration
+      keywords: mine,rewards,normal,remixed,MineRewards
+      input_type: enum
+      param_field_name: $.MineRewards
+      default: normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        normal: Normal (default)
+        remixed: Remixed
+      raw:
+        DisplayName: Mine Rewards
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Farm Creation:landscape:2
+        Description: Sets the mine rewards configuration
+        Keywords: mine,rewards,normal,remixed,MineRewards
+        FieldName: MineRewards
+        InputType: enum
+        ParamFieldName: $.MineRewards
+        DefaultValue: normal
+        EnumValues:
+          normal: Normal (default)
+          remixed: Remixed
+    - key: SpawnMonstersOnFarmAtNight
+      label: Spawn Monsters On Farm At Night
+      category: Stardew Valley
+      subcategory: Farm Creation
+      description: If set, monsters will spawn on the farm at night
+      keywords: spawn,monsters,farm,night,SpawnMonstersOnFarmAtNight
+      input_type: checkbox
+      param_field_name: $.SpawnMonstersOnFarmAtNight
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Spawn Monsters On Farm At Night
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Farm Creation:landscape:2
+        Description: If set, monsters will spawn on the farm at night
+        Keywords: spawn,monsters,farm,night,SpawnMonstersOnFarmAtNight
+        FieldName: SpawnMonstersOnFarmAtNight
+        InputType: checkbox
+        ParamFieldName: $.SpawnMonstersOnFarmAtNight
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: RandomSeed
+      label: Random Seed
+      category: Stardew Valley
+      subcategory: Farm Creation
+      description: Sets the farm's random seed. Must be a number. Empty = randomly generated seed
+      keywords: random,seed,RandomSeed
+      input_type: text
+      param_field_name: $.RandomSeed
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Random Seed
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Farm Creation:landscape:2
+        Description: Sets the farm's random seed. Must be a number. Empty = randomly generated seed
+        Keywords: random,seed,RandomSeed
+        FieldName: RandomSeed
+        InputType: text
+        ParamFieldName: $.RandomSeed
+        DefaultValue: ''
+        EnumValues: {}
+    - key: PetBreed
+      label: Pet Breed
+      category: Stardew Valley
+      subcategory: Host Automation
+      description: Sets the pet breed index
+      keywords: pet,breed,PetBreed
+      input_type: enum
+      param_field_name: $.PetBreed
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': 0 (default)
+        '1': '1'
+        '2': '2'
+        '3': '3'
+        '4': '4'
+        '5': '5'
+        '6': '6'
+        '7': '7'
+        '8': '8'
+        '9': '9'
+        '-1': No pet
+      raw:
+        DisplayName: Pet Breed
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Host Automation:smart_toy:3
+        Description: Sets the pet breed index
+        Keywords: pet,breed,PetBreed
+        FieldName: PetBreed
+        InputType: enum
+        ParamFieldName: $.PetBreed
+        DefaultValue: '0'
+        EnumValues:
+          '0': 0 (default)
+          '1': '1'
+          '2': '2'
+          '3': '3'
+          '4': '4'
+          '5': '5'
+          '6': '6'
+          '7': '7'
+          '8': '8'
+          '9': '9'
+          '-1': No pet
+    - key: PetName
+      label: Pet Name
+      category: Stardew Valley
+      subcategory: Host Automation
+      description: Sets the name assigned to the host's pet
+      keywords: pet,name,PetName
+      input_type: text
+      param_field_name: $.PetName
+      default: Stella
+      placeholder: Stella
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Pet Name
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Host Automation:smart_toy:3
+        Description: Sets the name assigned to the host's pet
+        Keywords: pet,name,PetName
+        FieldName: PetName
+        InputType: text
+        ParamFieldName: $.PetName
+        DefaultValue: Stella
+        Placeholder: Stella
+        EnumValues: {}
+    - key: MushroomsOrBats
+      label: Cave Type
+      category: Stardew Valley
+      subcategory: Host Automation
+      description: Sets the cave type
+      keywords: mushrooms,bats,cave,MushroomsOrBats
+      input_type: enum
+      param_field_name: $.MushroomsOrBats
+      default: Mushrooms
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Mushrooms: Mushroom cave (default)
+        Bats: Bat cave
+      raw:
+        DisplayName: Cave Type
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Host Automation:smart_toy:3
+        Description: Sets the cave type
+        Keywords: mushrooms,bats,cave,MushroomsOrBats
+        FieldName: MushroomsOrBats
+        InputType: enum
+        ParamFieldName: $.MushroomsOrBats
+        DefaultValue: Mushrooms
+        EnumValues:
+          Mushrooms: Mushroom cave (default)
+          Bats: Bat cave
+    - key: PurchaseJojaMembership
+      label: Purchase Joja Membership
+      category: Stardew Valley
+      subcategory: Host Automation
+      description: If set, the host will automatically purchase a Joja membership
+      keywords: joja,membership,purchase,PurchaseJojaMembership
+      input_type: checkbox
+      param_field_name: $.PurchaseJojaMembership
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Purchase Joja Membership
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Host Automation:smart_toy:3
+        Description: If set, the host will automatically purchase a Joja membership
+        Keywords: joja,membership,purchase,PurchaseJojaMembership
+        FieldName: PurchaseJojaMembership
+        InputType: checkbox
+        ParamFieldName: $.PurchaseJojaMembership
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnableCropSaver
+      label: Enable Crop Saver
+      category: Stardew Valley
+      subcategory: Other
+      description: >-
+        If set, seasonal crops planted by players and fully grown before the season's end are guaranteed to give at
+        least one more harvest
+      keywords: crop,saver,harvest,seasonal,EnableCropSaver
+      input_type: checkbox
+      param_field_name: $.EnableCropSaver
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Crop Saver
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Other:tune:4
+        Description: >-
+          If set, seasonal crops planted by players and fully grown before the season's end are guaranteed to give at
+          least one more harvest
+        Keywords: crop,saver,harvest,seasonal,EnableCropSaver
+        FieldName: EnableCropSaver
+        InputType: checkbox
+        ParamFieldName: $.EnableCropSaver
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: MoveBuildPermission
+      label: Move Build Permission
+      category: Stardew Valley
+      subcategory: Other
+      description: Sets the farmhand building relocation privileges at the Carpenter's shop
+      keywords: move,build,permission,MoveBuildPermission
+      input_type: enum
+      param_field_name: $.MoveBuildPermission
+      default: 'off'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'off': Off (default)
+        owned: Owned
+        'on': 'On'
+      raw:
+        DisplayName: Move Build Permission
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Other:tune:4
+        Description: Sets the farmhand building relocation privileges at the Carpenter's shop
+        Keywords: move,build,permission,MoveBuildPermission
+        FieldName: MoveBuildPermission
+        InputType: enum
+        ParamFieldName: $.MoveBuildPermission
+        DefaultValue: 'off'
+        EnumValues:
+          'off': Off (default)
+          owned: Owned
+          'on': 'On'
+    - key: TryActivatingInviteCode
+      label: Try Activating Invite Code
+      category: Stardew Valley
+      subcategory: Other
+      description: If set, the server will attempt to activate the invite code on startup
+      keywords: invite,code,activate,TryActivatingInviteCode
+      input_type: checkbox
+      param_field_name: $.TryActivatingInviteCode
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Try Activating Invite Code
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Other:tune:4
+        Description: If set, the server will attempt to activate the invite code on startup
+        Keywords: invite,code,activate,TryActivatingInviteCode
+        FieldName: TryActivatingInviteCode
+        InputType: checkbox
+        ParamFieldName: $.TryActivatingInviteCode
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: UpgradeHouseLevelBasedOnFarmhand
+      label: Upgrade House Level Based On Farmhand
+      category: Stardew Valley
+      subcategory: Other
+      description: If set, enables automatic host farmhouse upgrades matching the highest farmhand level
+      keywords: upgrade,house,level,farmhand,UpgradeHouseLevelBasedOnFarmhand
+      input_type: checkbox
+      param_field_name: $.UpgradeHouseLevelBasedOnFarmhand
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Upgrade House Level Based On Farmhand
+        Category: Stardew Valley:stadia_controller
+        Subcategory: Other:tune:4
+        Description: If set, enables automatic host farmhouse upgrades matching the highest farmhand level
+        Keywords: upgrade,house,level,farmhand,UpgradeHouseLevelBasedOnFarmhand
+        FieldName: UpgradeHouseLevelBasedOnFarmhand
+        InputType: checkbox
+        ParamFieldName: $.UpgradeHouseLevelBasedOnFarmhand
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: GameBranch
+      label: Game Branch
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the game branch to install. The SMAPI Version and Dedicated Server Mod Version should be set appropriately.
+        Update the server after changing this setting
+      keywords: game,branch,public,previous_version,beta,GameBranch
+      input_type: enum
+      param_field_name: GameBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        previous_version: Previous version
+      raw:
+        DisplayName: Game Branch
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the game branch to install. The SMAPI Version and Dedicated Server Mod Version should be set
+          appropriately. Update the server after changing this setting
+        Keywords: game,branch,public,previous_version,beta,GameBranch
+        FieldName: GameBranch
+        InputType: enum
+        ParamFieldName: GameBranch
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          previous_version: Previous version
+    - key: SMAPIVersion
+      label: SMAPI Version
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [SMAPI release version](https://github.com/Pathoschild/SMAPI/releases) to install. Empty = latest.
+        Update the server after changing this setting
+      keywords: smapi,release,version,SMAPIVersion
+      input_type: text
+      param_field_name: SMAPIVersion
+      default: ''
+      placeholder: 4.5.2
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: SMAPI Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [SMAPI release version](https://github.com/Pathoschild/SMAPI/releases) to install. Empty = latest.
+          Update the server after changing this setting
+        Keywords: smapi,release,version,SMAPIVersion
+        FieldName: SMAPIVersion
+        InputType: text
+        ParamFieldName: SMAPIVersion
+        DefaultValue: ''
+        Placeholder: 4.5.2
+        EnumValues: {}
+    - key: DedicatedServerModVersion
+      label: Dedicated Server Mod Version
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [Dedicated Server Mod version](https://github.com/Chris82111/SMAPIDedicatedServerMod/releases) to
+        install. Empty = latest. Update the server after changing this setting
+      keywords: dedicated,server,mod,version,DedicatedServerModVersion
+      input_type: text
+      param_field_name: DedicatedServerModVersion
+      default: ''
+      placeholder: 1.2.2
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Dedicated Server Mod Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [Dedicated Server Mod version](https://github.com/Chris82111/SMAPIDedicatedServerMod/releases) to
+          install. Empty = latest. Update the server after changing this setting
+        Keywords: dedicated,server,mod,version,DedicatedServerModVersion
+        FieldName: DedicatedServerModVersion
+        InputType: text
+        ParamFieldName: DedicatedServerModVersion
+        DefaultValue: ''
+        Placeholder: 1.2.2
+        EnumValues: {}
+  files:
+    - path: Mods/DedicatedServer/config.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Mods/DedicatedServer/config.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: FarmName
+    label: Farm Name
+    default: Stardew
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.Pause
+    label: Require Password For Pause Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.Build
+    label: Require Password For Build Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.Demolish
+    label: Require Password For Demolish Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.LetMePlay
+    label: Require Password For LetMePlay Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.TakeOver
+    label: Require Password For TakeOver Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.SafeInviteCode
+    label: Require Password For SafeInviteCode Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.InviteCode
+    label: Require Password For InviteCode Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.ForceInviteCode
+    label: Require Password For ForceInviteCode Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.Invisible
+    label: Require Password For Invisible Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.Sleep
+    label: Require Password For Sleep Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.ForceSleep
+    label: Require Password For ForceSleep Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.ForceResetDay
+    label: Require Password For ForceResetDay Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.ForceShutdown
+    label: Require Password For ForceShutdown Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.Wallet
+    label: Require Password For Wallet Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.SpawnMonster
+    label: Require Password For SpawnMonster Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.MoveBuildPermission
+    label: Require Password For MoveBuildPermission Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PasswordProtected.UpgradeHouseLevelBasedOnFarmhand
+    label: Require Password For UpgradeHouseLevelBasedOnFarmhand Command
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: StartingCabins
+    label: Starting Cabins Number
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CabinLayout
+    label: Starting Cabins Layout
+    default: separate
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ProfitMargin
+    label: Profit Margin
+    default: normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MoneyStyle
+    label: Money Style
+    default: shared
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FarmType
+    label: Farm Type
+    default: standard
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CommunityCenterBundles
+    label: Community Center Bundles
+    default: normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GuaranteeYear1Completable
+    label: Guarantee First Year Completable
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MineRewards
+    label: Mine Rewards
+    default: normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpawnMonstersOnFarmAtNight
+    label: Spawn Monsters On Farm At Night
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RandomSeed
+    label: Random Seed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PetBreed
+    label: Pet Breed
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PetName
+    label: Pet Name
+    default: Stella
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MushroomsOrBats
+    label: Cave Type
+    default: Mushrooms
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PurchaseJojaMembership
+    label: Purchase Joja Membership
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableCropSaver
+    label: Enable Crop Saver
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MoveBuildPermission
+    label: Move Build Permission
+    default: 'off'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TryActivatingInviteCode
+    label: Try Activating Invite Code
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UpgradeHouseLevelBasedOnFarmhand
+    label: Upgrade House Level Based On Farmhand
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GameBranch
+    label: Game Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SMAPIVersion
+    label: SMAPI Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DedicatedServerModVersion
+    label: Dedicated Server Mod Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '413150'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,16 @@ category: Imported
 summary: Nuclear Option Dedicated Server
 install:
   method: steamcmd
-  app_id: NotMods
+  app_id: '3930080'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 3930080/NuclearOptionServer.x86_64
+  startup: 3930080/NuclearOptionServer.x86_64 {PlatformArgs} -logFile - {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,508 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 7777
     protocol: udp
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 7778
+    protocol: udp
+    required: true
+config_files:
+  - path: DedicatedServerConfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Port
+      category: Nuclear Option
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.Port.Value
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Port
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.Port.Value
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: Port.IsOverride
+      label: Override Port
+      category: Nuclear Option
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.Port.IsOverride
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Override Port
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: Port.IsOverride
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.Port.IsOverride
+        DefaultValue: 'true'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $QueryPort
+      label: Query Port
+      category: Nuclear Option
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.QueryPort.Value
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Port
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.QueryPort.Value
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: QueryPort.IsOverride
+      label: Override Query Port
+      category: Nuclear Option
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.QueryPort.IsOverride
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Override Query Port
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: QueryPort.IsOverride
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.QueryPort.IsOverride
+        ExcludeFromImport: true
+        DefaultValue: 'true'
+        EnumValues: {}
+    - key: MissionDirectory
+      label: Mission Directory
+      category: Nuclear Option
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.MissionDirectory
+      default: '{{$FullBaseDir}}Missions'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Mission Directory
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: MissionDirectory
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.MissionDirectory
+        DefaultValue: '{{$FullBaseDir}}Missions'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Nuclear Option
+      subcategory: Server
+      description: Sets the name of the server as it appears in the server list
+      keywords: server,name,ServerName
+      input_type: text
+      param_field_name: $.ServerName
+      default: AMP Powered Nuclear Option Server
+      placeholder: AMP Powered Nuclear Option Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as it appears in the server list
+        Keywords: server,name,ServerName
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: $.ServerName
+        DefaultValue: AMP Powered Nuclear Option Server
+        Placeholder: AMP Powered Nuclear Option Server
+        EnumValues: {}
+    - key: Password
+      label: Server Password
+      category: Nuclear Option
+      subcategory: Server
+      description: Sets the password required to join the server
+      keywords: server,password
+      input_type: password
+      param_field_name: $.Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to join the server
+        Keywords: server,password
+        FieldName: Password
+        InputType: password
+        ParamFieldName: $.Password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ModdedServer
+      label: Modded Server
+      category: Nuclear Option
+      subcategory: Server
+      description: If set, the server will be specified as a modded server
+      keywords: modded,server,ModdedServer
+      input_type: checkbox
+      param_field_name: $.ModdedServer
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Modded Server
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be specified as a modded server
+        Keywords: modded,server,ModdedServer
+        FieldName: ModdedServer
+        InputType: checkbox
+        ParamFieldName: $.ModdedServer
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: MaxPlayers
+      label: Player Limit
+      category: Nuclear Option
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,player,limit,MaxPlayers
+      input_type: number
+      param_field_name: $.MaxPlayers
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,player,limit,MaxPlayers
+        FieldName: MaxPlayers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: $.MaxPlayers
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: players
+        EnumValues: {}
+    - key: NoPlayerStopTime
+      label: No Player Stop Time
+      category: Nuclear Option
+      subcategory: Server
+      description: Sets the time before the server stops when no players are connected
+      keywords: no,player,stop,time,NoPlayerStopTime
+      input_type: number
+      param_field_name: $.NoPlayerStopTime
+      default: '30.0'
+      placeholder: '30.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: No Player Stop Time
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time before the server stops when no players are connected
+        Keywords: no,player,stop,time,NoPlayerStopTime
+        FieldName: NoPlayerStopTime
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.NoPlayerStopTime
+        DefaultValue: '30.0'
+        Placeholder: '30.0'
+        Suffix: seconds
+        EnumValues: {}
+    - key: RotationType
+      label: Mission Rotation Mode
+      category: Nuclear Option
+      subcategory: Server
+      description: >-
+        Sets the mission rotation mode. Missions can be
+        [configured](https://gist.github.com/James-Frowen/fb12f73c28ff455430dcc288b7010319#loading-missions) in
+        'DedicatedServerConfig.json'
+      keywords: rotation,type,mission,RotationType
+      input_type: enum
+      param_field_name: $.RotationType
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Sequential (default)
+        '1': Random
+      raw:
+        DisplayName: Mission Rotation Mode
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the mission rotation mode. Missions can be
+          [configured](https://gist.github.com/James-Frowen/fb12f73c28ff455430dcc288b7010319#loading-missions) in
+          'DedicatedServerConfig.json'
+        Keywords: rotation,type,mission,RotationType
+        FieldName: RotationType
+        InputType: enum
+        ParamFieldName: $.RotationType
+        DefaultValue: '0'
+        EnumValues:
+          '0': Sequential (default)
+          '1': Random
+    - key: limitframerate
+      label: Frame Rate Limit
+      category: Nuclear Option
+      subcategory: Server
+      description: Sets the server frame rate limit (FPS)
+      keywords: frame,rate,limit,limitframerate
+      input_type: number
+      param_field_name: limitframerate
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 0
+      suffix: FPS
+      enum_values: {}
+      raw:
+        DisplayName: Frame Rate Limit
+        Category: Nuclear Option:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server frame rate limit (FPS)
+        Keywords: frame,rate,limit,limitframerate
+        FieldName: limitframerate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: limitframerate
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: FPS
+        EnumValues: {}
+    - key: InstallBepInEx
+      label: Install BepInEx
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        If set, the latest [BepInEx release](https://github.com/BepInEx/BepInEx/releases) will be installed when the
+        server is updated
+      keywords: install,BepInEx,InstallBepInEx
+      input_type: checkbox
+      param_field_name: InstallBepInEx
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Install BepInEx
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          If set, the latest [BepInEx release](https://github.com/BepInEx/BepInEx/releases) will be installed when the
+          server is updated
+        Keywords: install,BepInEx,InstallBepInEx
+        FieldName: InstallBepInEx
+        InputType: checkbox
+        ParamFieldName: InstallBepInEx
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: DedicatedServerConfig.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: DedicatedServerConfig.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: Port.IsOverride
+    label: Override Port
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: QueryPort.IsOverride
+    label: Override Query Port
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MissionDirectory
+    label: Mission Directory
+    default: '{{$FullBaseDir}}Missions'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered Nuclear Option Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: ModdedServer
+    label: Modded Server
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxPlayers
+    label: Player Limit
+    default: '16'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoPlayerStopTime
+    label: No Player Stop Time
+    default: '30.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RotationType
+    label: Mission Rotation Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: limitframerate
+    label: Frame Rate Limit
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InstallBepInEx
+    label: Install BepInEx
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '2168680'
+  collection_support: true
 backup:
   include:
     - /data

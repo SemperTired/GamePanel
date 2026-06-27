@@ -5,13 +5,16 @@ category: Imported
 summary: Cubic Odyssey Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '3858450'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: /usr/bin/wine {PlatformArgs} -Gamemode={Gamemode} -MaxNumPlayers={MaxUsers} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,503 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 27000
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: config/server_config.txt
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: startingPort
+      label: Server Port
+      category: Cubic Odyssey
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: startingPort
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: startingPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: startingPort
+        ExcludeFromImport: true
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: endingPort
+      label: Max Port
+      category: Cubic Odyssey
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: endingPort
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Max Port
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: endingPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: endingPort
+        ExcludeFromImport: true
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: serverNetworking
+      label: Server Networking
+      category: Cubic Odyssey
+      subcategory: Server
+      description: >-
+        NOTE: The server uses EOS for networking. This means that the Server Port will not show as listening, and no
+        port forwarding is required. Connect through the server browser
+      keywords: server,networking
+      input_type: hidden
+      param_field_name: serverNetworking
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Networking
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          NOTE: The server uses EOS for networking. This means that the Server Port will not show as listening, and no
+          port forwarding is required. Connect through the server browser
+        Keywords: server,networking
+        FieldName: serverNetworking
+        InputType: hidden
+        ParamFieldName: serverNetworking
+        DefaultValue: ''
+        EnumValues: {}
+    - key: serverName
+      label: Server Name
+      category: Cubic Odyssey
+      subcategory: Server
+      description: Sets the name of the server as it appears on the server list
+      keywords: server,name,serverName
+      input_type: text
+      param_field_name: serverName
+      default: AMP Powered Cubic Odyssey Server
+      placeholder: AMP Powered Cubic Odyssey Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as it appears on the server list
+        Keywords: server,name,serverName
+        FieldName: serverName
+        InputType: text
+        ParamFieldName: serverName
+        DefaultValue: AMP Powered Cubic Odyssey Server
+        Placeholder: AMP Powered Cubic Odyssey Server
+        EnumValues: {}
+    - key: galaxySeed
+      label: Galaxy Seed
+      category: Cubic Odyssey
+      subcategory: Server
+      description: Sets the seed for galaxy generation. 0 = random seed
+      keywords: galaxy,seed,galaxySeed
+      input_type: number
+      param_field_name: galaxySeed
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Galaxy Seed
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the seed for galaxy generation. 0 = random seed
+        Keywords: galaxy,seed,galaxySeed
+        FieldName: galaxySeed
+        InputType: number
+        ParamFieldName: galaxySeed
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: Gamemode
+      label: Game Mode
+      category: Cubic Odyssey
+      subcategory: Server
+      description: Sets the game mode
+      keywords: gamemode,mode,creative,adventure
+      input_type: enum
+      param_field_name: Gamemode
+      default: adventure
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        adventure: Adventure (default)
+        creative: Creative
+      raw:
+        DisplayName: Game Mode
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the game mode
+        Keywords: gamemode,mode,creative,adventure
+        FieldName: Gamemode
+        InputType: enum
+        ParamFieldName: Gamemode
+        DefaultValue: adventure
+        EnumValues:
+          adventure: Adventure (default)
+          creative: Creative
+    - key: privateServer
+      label: Make Server Private
+      category: Cubic Odyssey
+      subcategory: Server
+      description: If set, the server will not appear in public server lists
+      keywords: private,server,privateServer
+      input_type: checkbox
+      param_field_name: privateServer
+      default: 'FALSE'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'TRUE'
+        'False': 'FALSE'
+      raw:
+        DisplayName: Make Server Private
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will not appear in public server lists
+        Keywords: private,server,privateServer
+        FieldName: privateServer
+        InputType: checkbox
+        ParamFieldName: privateServer
+        DefaultValue: 'FALSE'
+        EnumValues:
+          'True': 'TRUE'
+          'False': 'FALSE'
+    - key: $MaxUsers
+      label: Player Limit
+      category: Cubic Odyssey
+      subcategory: Server
+      description: Sets the maximum number of players able to join the server at one time
+      keywords: max,maximum,players,limit,MaxNumPlayers,maxPlayers
+      input_type: number
+      param_field_name: maxPlayers
+      default: '48'
+      placeholder: '48'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players able to join the server at one time
+        Keywords: max,maximum,players,limit,MaxNumPlayers,maxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        ParamFieldName: maxPlayers
+        DefaultValue: '48'
+        Placeholder: '48'
+        Suffix: players
+        EnumValues: {}
+    - key: serverPassword
+      label: Server Password
+      category: Cubic Odyssey
+      subcategory: Server
+      description: Sets the password needed to join the server. Maximum 32 characters. Default is no password
+      keywords: password,server,Password,serverPassword
+      input_type: password
+      param_field_name: serverPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password needed to join the server. Maximum 32 characters. Default is no password
+        Keywords: password,server,Password,serverPassword
+        FieldName: serverPassword
+        InputType: password
+        ParamFieldName: serverPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: serverPassword
+      label: Server Password
+      category: Cubic Odyssey
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: serverPassword
+        InputType: text
+        Hidden: true
+        ParamFieldName: Password
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        EnumValues: {}
+    - key: enableCrashDumps
+      label: Enable Crash Dumps
+      category: Cubic Odyssey
+      subcategory: Server
+      description: If set, crash dumps will be enabled for debugging
+      keywords: crash,dumps,enableCrashDumps
+      input_type: checkbox
+      param_field_name: enableCrashDumps
+      default: 'TRUE'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'TRUE'
+        'False': 'FALSE'
+      raw:
+        DisplayName: Enable Crash Dumps
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, crash dumps will be enabled for debugging
+        Keywords: crash,dumps,enableCrashDumps
+        FieldName: enableCrashDumps
+        InputType: checkbox
+        ParamFieldName: enableCrashDumps
+        DefaultValue: 'TRUE'
+        EnumValues:
+          'True': 'TRUE'
+          'False': 'FALSE'
+    - key: allowRelaying
+      label: Allow Relaying
+      category: Cubic Odyssey
+      subcategory: Server
+      description: If set, EOS relay of connections will be allowed
+      keywords: relay,allowRelaying
+      input_type: checkbox
+      param_field_name: allowRelaying
+      default: 'TRUE'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'TRUE'
+        'False': 'FALSE'
+      raw:
+        DisplayName: Allow Relaying
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, EOS relay of connections will be allowed
+        Keywords: relay,allowRelaying
+        FieldName: allowRelaying
+        InputType: checkbox
+        ParamFieldName: allowRelaying
+        DefaultValue: 'TRUE'
+        EnumValues:
+          'True': 'TRUE'
+          'False': 'FALSE'
+    - key: enableLogging
+      label: Enable Logging
+      category: Cubic Odyssey
+      subcategory: Server
+      description: If set, logging will be enabled for the server
+      keywords: logging,enableLogging
+      input_type: checkbox
+      param_field_name: enableLogging
+      default: 'TRUE'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'TRUE'
+        'False': 'FALSE'
+      raw:
+        DisplayName: Enable Logging
+        Category: Cubic Odyssey:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, logging will be enabled for the server
+        Keywords: logging,enableLogging
+        FieldName: enableLogging
+        InputType: checkbox
+        ParamFieldName: enableLogging
+        DefaultValue: 'TRUE'
+        EnumValues:
+          'True': 'TRUE'
+          'False': 'FALSE'
+  files:
+    - path: config/server_config.txt
+      type: kvp
+      format: "\t\t{0} \"{1}\""
+      subsections: []
+      raw:
+        ConfigFile: config/server_config.txt
+        ConfigType: kvp
+        AutoMap: true
+        Importable: true
+        ConfigFormat: "\t\t{0} \"{1}\""
+        ConfigFormatRegex: ^\s+(?<key>.+?)\s+"(?<value>.*?)"$
+    - path: config/server_config.txt
+      type: kvp
+      format: "\t\t{0} {1}"
+      subsections: []
+      raw:
+        ConfigFile: config/server_config.txt
+        ConfigType: kvp
+        AutoMap: true
+        Importable: true
+        ConfigFormat: "\t\t{0} {1}"
+        ConfigFormatRegex: ^\s+(?<key>.+?)\s+(?<value>[^"]*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: startingPort
+    label: Server Port
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: endingPort
+    label: Max Port
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverName
+    label: Server Name
+    default: AMP Powered Cubic Odyssey Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: galaxySeed
+    label: Galaxy Seed
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Gamemode
+    label: Game Mode
+    default: adventure
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: privateServer
+    label: Make Server Private
+    default: 'FALSE'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: serverPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: enableCrashDumps
+    label: Enable Crash Dumps
+    default: 'TRUE'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowRelaying
+    label: Allow Relaying
+    default: 'TRUE'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableLogging
+    label: Enable Logging
+    default: 'TRUE'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '3400000'
+  collection_support: true
 backup:
   include:
     - /data

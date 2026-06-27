@@ -5,13 +5,20 @@ category: Imported
 summary: 'Rising Storm 2: Vietnam Dedicated Server'
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '418480'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: >-
+    /usr/bin/xvfb-run {PlatformArgs}
+    {ServerMap}?AdminName={AdminName}?AdminPassword={AdminPassword}?MaxPlayers={MaxUsers}?Difficulty={Difficulty}?{FormattedArgs}{CustomServerOptions}
+    -Port={GamePort} -QueryPort={QueryPort} -WebAdminPort={WebAdminPort} -MultiHome={ApplicationIPBinding}
+    {CustomServerSwitches} -stdout -FullStdOutLogOutput
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +26,555 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
-    protocol: udp
+    default: 7787
+    protocol: both
     required: true
-config_files: []
+  - key: webadminport
+    name: Web Admin Port
+    default: 8190
+    protocol: tcp
+    required: true
+  - key: queryport
+    name: Query Port
+    default: 27015
+    protocol: both
+    required: true
+config_files:
+  - path: ROGame/Config/ROGame.ini
+    type: ini
+    editable: true
+  - path: ROGame/Config/ROWeb.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $WebAdminPort
+      label: Web Admin Port
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: IpDrv.WebServer.ListenPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Web Admin Port
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $WebAdminPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: IpDrv.WebServer.ListenPort
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: Sets the name of the server as shown in the server browser
+      keywords: name,servername
+      input_type: text
+      param_field_name: Engine.GameReplicationInfo.ServerName
+      default: 'AMP Powered Rising Storm 2: Vietnam Server'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as shown in the server browser
+        Keywords: name,servername
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: Engine.GameReplicationInfo.ServerName
+        DefaultValue: 'AMP Powered Rising Storm 2: Vietnam Server'
+        EnumValues: {}
+    - key: GamePassword
+      label: Server Password
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: Sets the password for players to join the server. Alpha-numeric characters only. Default is no password
+      keywords: server,password,gamepassword
+      input_type: password
+      param_field_name: Engine.AccessControl.GamePassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for players to join the server. Alpha-numeric characters only. Default is no password
+        Keywords: server,password,gamepassword
+        FieldName: GamePassword
+        InputType: password
+        ParamFieldName: Engine.AccessControl.GamePassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: AdminPassword
+      label: Admin Password
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: >-
+        Sets the master server administrator password. Alpha-numeric characters only. Default is a strong random
+        password
+      keywords: admin,administrator,password,adminpassword
+      input_type: password
+      param_field_name: Engine.AccessControl.AdminPassword
+      default: '{{randomdigits(16)}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the master server administrator password. Alpha-numeric characters only. Default is a strong random
+          password
+        Keywords: admin,administrator,password,adminpassword
+        FieldName: AdminPassword
+        InputType: password
+        ParamFieldName: Engine.AccessControl.AdminPassword
+        DefaultValue: '{{randomdigits(16)}}'
+        EnumValues: {}
+    - key: ServerMap
+      label: Initial Server Map
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: >-
+        Sets the initial map for the server. To use a map not listed in the dropdown, select Custom and set the "Custom
+        Map Name"
+      keywords: map
+      input_type: enum
+      param_field_name: ServerMap
+      default: VNSU-SongBe
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        VNTE-AnlaoValley: Territories - Anlao Valley
+        VNTE-ApacheSnow: Territories - Apache Snow
+        VNTE-ASau: Territories - A Sau
+        VNTE-BorderWatch: Territories - Border Watch
+        VNTE-Compound: Territories - Compound
+        VNTE-CuaViet: Territories - Cua Viet
+        VNTE-CuChi: Territories - Cu Chi
+        VNTE-DaNangAirBase: Territories - Da Nang Air Base
+        VNTE-DemilitarizedZone: Territories - Demilitarized Zone
+        VNTE-DongHa: Territories - Dong Ha
+        VNTE-Firebase: Territories - Firebase
+        VNTE-FirebaseGeorgina: Territories - Firebase Georgina
+        VNTE-Highway14: Territories - Highway 14
+        VNTE-Hill937: Territories - Hill 937
+        VNTE-HueCity: Territories - Hue City
+        VNTE-KheSanh: Territories - Khe Sanh
+        VNTE-LongTan: Territories - Long Tan
+        VNTE-Mekong: Territories - Mekong
+        VNTE-NinhPhu: Territories - Ninh Phu
+        VNTE-OperationForrest: Territories - Operation Forrest
+        VNTE-QuangTri: Territories - Quang Tri
+        VNTE-Resort: Territories - Resort
+        VNTE-RungSac: Territories - Rung Sac
+        VNTE-Saigon: Territories - Saigon
+        VNTE-SongBe: Territories - Song Be
+        VNSU-AnlaoValley: Supremacy - Anlao Valley
+        VNSU-HueCity: Supremacy - Hue City
+        VNSU-OperationForrest: Supremacy - Operation Forrest
+        VNSU-QuangTri: Supremacy - Quang Tri
+        VNSU-SongBe: Supremacy - Song Be (default)
+        VNSK-Compound: Skirmish - Compound
+        VNSK-Firebase: Skirmish - Firebase
+        VNSK-JungleCamp: Skirmish - Jungle Camp
+        VNSK-Riverbed: Skirmish - Riverbed
+        VNSK-Temple: Skirmish - Temple
+        VNSP-HelicopterRange: Training - Helicopter Range
+        VNSP-ShootingRange: Training - Shooting Range
+        '{{CustomMap}}': '--Custom--'
+      raw:
+        DisplayName: Initial Server Map
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the initial map for the server. To use a map not listed in the dropdown, select Custom and set the
+          "Custom Map Name"
+        Keywords: map
+        FieldName: ServerMap
+        InputType: enum
+        ParamFieldName: ServerMap
+        DefaultValue: VNSU-SongBe
+        EnumValues:
+          VNTE-AnlaoValley: Territories - Anlao Valley
+          VNTE-ApacheSnow: Territories - Apache Snow
+          VNTE-ASau: Territories - A Sau
+          VNTE-BorderWatch: Territories - Border Watch
+          VNTE-Compound: Territories - Compound
+          VNTE-CuaViet: Territories - Cua Viet
+          VNTE-CuChi: Territories - Cu Chi
+          VNTE-DaNangAirBase: Territories - Da Nang Air Base
+          VNTE-DemilitarizedZone: Territories - Demilitarized Zone
+          VNTE-DongHa: Territories - Dong Ha
+          VNTE-Firebase: Territories - Firebase
+          VNTE-FirebaseGeorgina: Territories - Firebase Georgina
+          VNTE-Highway14: Territories - Highway 14
+          VNTE-Hill937: Territories - Hill 937
+          VNTE-HueCity: Territories - Hue City
+          VNTE-KheSanh: Territories - Khe Sanh
+          VNTE-LongTan: Territories - Long Tan
+          VNTE-Mekong: Territories - Mekong
+          VNTE-NinhPhu: Territories - Ninh Phu
+          VNTE-OperationForrest: Territories - Operation Forrest
+          VNTE-QuangTri: Territories - Quang Tri
+          VNTE-Resort: Territories - Resort
+          VNTE-RungSac: Territories - Rung Sac
+          VNTE-Saigon: Territories - Saigon
+          VNTE-SongBe: Territories - Song Be
+          VNSU-AnlaoValley: Supremacy - Anlao Valley
+          VNSU-HueCity: Supremacy - Hue City
+          VNSU-OperationForrest: Supremacy - Operation Forrest
+          VNSU-QuangTri: Supremacy - Quang Tri
+          VNSU-SongBe: Supremacy - Song Be (default)
+          VNSK-Compound: Skirmish - Compound
+          VNSK-Firebase: Skirmish - Firebase
+          VNSK-JungleCamp: Skirmish - Jungle Camp
+          VNSK-Riverbed: Skirmish - Riverbed
+          VNSK-Temple: Skirmish - Temple
+          VNSP-HelicopterRange: Training - Helicopter Range
+          VNSP-ShootingRange: Training - Shooting Range
+          '{{CustomMap}}': '--Custom--'
+    - key: CustomMap
+      label: Custom Map Name
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: Sets a custom map for the server. Custom type must be selected under "Server Map"
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Map Name
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom map for the server. Custom type must be selected under "Server Map"
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        ParamFieldName: CustomMap
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Difficulty
+      label: Difficulty Level
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: Sets the server difficulty level
+      keywords: difficulty,level
+      input_type: enum
+      param_field_name: Difficulty
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Normal (default)
+        '1': Hard
+        '2': Suicidal
+        '3': Hell on Earth
+      raw:
+        DisplayName: Difficulty Level
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server difficulty level
+        Keywords: difficulty,level
+        FieldName: Difficulty
+        InputType: enum
+        ParamFieldName: Difficulty
+        DefaultValue: '0'
+        EnumValues:
+          '0': Normal (default)
+          '1': Hard
+          '2': Suicidal
+          '3': Hell on Earth
+    - key: $MaxUsers
+      label: Player Limit
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,limit,maxplayers
+      input_type: number
+      param_field_name: Engine.GameInfo.MaxPlayers
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 64
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '64'
+        ParamFieldName: Engine.GameInfo.MaxPlayers
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: players
+        EnumValues: {}
+    - key: WebServerbEnabled
+      label: Enable Web Admin Panel
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: If set, the web admin panel for the server will be enabled
+      keywords: web,admin,panel
+      input_type: checkbox
+      param_field_name: IpDrv.WebServer.bEnabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Web Admin Panel
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the web admin panel for the server will be enabled
+        Keywords: web,admin,panel
+        FieldName: WebServerbEnabled
+        InputType: checkbox
+        ParamFieldName: IpDrv.WebServer.bEnabled
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AdminName
+      label: Web Admin Panel Username
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: Sets the admin username for the web admin panel
+      keywords: web,admin,panel,username
+      input_type: text
+      param_field_name: AdminName
+      default: Admin
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Web Admin Panel Username
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the admin username for the web admin panel
+        Keywords: web,admin,panel,username
+        FieldName: AdminName
+        InputType: text
+        ParamFieldName: AdminName
+        DefaultValue: Admin
+        EnumValues: {}
+    - key: CustomServerOptions
+      label: Additional Command Line Options
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: >-
+        Specifies additional command line options (URL arguments) that are not otherwise set by AMP. ONE LINE ONLY!
+        Format: ?<setting>=<value> (with no spaces between settings). Use with care
+      keywords: custom,server,options,url,arguments
+      input_type: Textarea
+      param_field_name: CustomServerOptions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Options
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line options (URL arguments) that are not otherwise set by AMP. ONE LINE ONLY!
+          Format: ?<setting>=<value> (with no spaces between settings). Use with care
+        Keywords: custom,server,options,url,arguments
+        FieldName: CustomServerOptions
+        InputType: Textarea
+        ParamFieldName: CustomServerOptions
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomServerSwitches
+      label: Additional Command Line Switches
+      category: Rising Storm 2 Vietnam
+      subcategory: Server
+      description: >-
+        Specifies additional command line switches that are not otherwise set by AMP. ONE LINE ONLY! Format:
+        -<setting>=<value> (with spaces between settings). Use with care
+      keywords: custom,server,switches
+      input_type: Textarea
+      param_field_name: CustomServerSwitches
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Switches
+        Category: Rising Storm 2 Vietnam:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line switches that are not otherwise set by AMP. ONE LINE ONLY! Format:
+          -<setting>=<value> (with spaces between settings). Use with care
+        Keywords: custom,server,switches
+        FieldName: CustomServerSwitches
+        InputType: Textarea
+        ParamFieldName: CustomServerSwitches
+        DefaultValue: ''
+        EnumValues: {}
+  files:
+    - path: ROGame/Config/ROGame.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: ROGame/Config/ROGame.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: ROGame/Config/ROWeb.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: ROGame/Config/ROWeb.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: 'AMP Powered Rising Storm 2: Vietnam Server'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GamePassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AdminPassword
+    label: Admin Password
+    default: '{{randomdigits(16)}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: ServerMap
+    label: Initial Server Map
+    default: VNSU-SongBe
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Map Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Difficulty
+    label: Difficulty Level
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WebServerbEnabled
+    label: Enable Web Admin Panel
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AdminName
+    label: Web Admin Panel Username
+    default: Admin
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerOptions
+    label: Additional Command Line Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerSwitches
+    label: Additional Command Line Switches
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '418460'
+  collection_support: true
 backup:
   include:
     - /data

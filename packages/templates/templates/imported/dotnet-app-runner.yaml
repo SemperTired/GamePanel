@@ -4,14 +4,16 @@ name: Dotnet App Runner
 category: Imported
 summary: Dotnet App Runner
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: dotnet/dotnet
+  startup: dotnet/dotnet {DotnetArgs} {ApplicationName} {CommandLineArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +21,691 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Main Port
+    default: 7777
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: dotnet-app-runnerconfig.json
+    type: json
+    editable: true
+  - path: dotnet-app-runnermetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: DownloadType
+      label: App Download Type
+      category: Dotnet App Runner
+      subcategory: Download
+      description: >-
+        Sets how to download the app. Specify the App Download Source and the relevant Git repo or GitHub release
+        settings accordingly. Update the app after changing this setting
+      keywords: download,type,DownloadType
+      input_type: enum
+      param_field_name: DownloadType
+      default: ''
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': '--Please select--'
+        DownloadURL: Download URL
+        GithubRelease: GitHub release
+        GitRepo: Git repo
+        None: None
+      raw:
+        DisplayName: App Download Type
+        Category: Dotnet App Runner:code
+        Subcategory: Download:download:2
+        Description: >-
+          Sets how to download the app. Specify the App Download Source and the relevant Git repo or GitHub release
+          settings accordingly. Update the app after changing this setting
+        Keywords: download,type,DownloadType
+        FieldName: DownloadType
+        InputType: enum
+        ParamFieldName: DownloadType
+        DefaultValue: ''
+        Required: true
+        EnumValues:
+          '': '--Please select--'
+          DownloadURL: Download URL
+          GithubRelease: GitHub release
+          GitRepo: Git repo
+          None: None
+    - key: DownloadSource
+      label: App Download Source
+      category: Dotnet App Runner
+      subcategory: Download
+      description: >-
+        Sets the source for the App Download Type. Git repo = URL that ends in .git. GitHub release = User/Repo.
+        Download URL = URL to a zip file. Update the app after changing this setting
+      keywords: download,source,DownloadSource
+      input_type: text
+      param_field_name: DownloadSource
+      default: ''
+      placeholder: https://github.com/User/Repo.git
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Download Source
+        Category: Dotnet App Runner:code
+        Subcategory: Download:download:2
+        Description: >-
+          Sets the source for the App Download Type. Git repo = URL that ends in .git. GitHub release = User/Repo.
+          Download URL = URL to a zip file. Update the app after changing this setting
+        Keywords: download,source,DownloadSource
+        FieldName: DownloadSource
+        InputType: text
+        ParamFieldName: DownloadSource
+        DefaultValue: ''
+        Placeholder: https://github.com/User/Repo.git
+        EnumValues: {}
+    - key: DownloadBranch
+      label: Git Repo Branch
+      category: Dotnet App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the branch if required. Empty = default branch
+      keywords: git,repo,branch,DownloadBranch
+      input_type: text
+      param_field_name: DownloadBranch
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Branch
+        Category: Dotnet App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the branch if required. Empty = default branch
+        Keywords: git,repo,branch,DownloadBranch
+        FieldName: DownloadBranch
+        InputType: text
+        ParamFieldName: DownloadBranch
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadUsername
+      label: Git Repo Username
+      category: Dotnet App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the username if login is required
+      keywords: git,repo,username,DownloadUsername
+      input_type: text
+      param_field_name: DownloadUsername
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Username
+        Category: Dotnet App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the username if login is required
+        Keywords: git,repo,username,DownloadUsername
+        FieldName: DownloadUsername
+        InputType: text
+        ParamFieldName: DownloadUsername
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadPassword
+      label: Git Repo Password/Token
+      category: Dotnet App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the password/token if login is required
+      keywords: git,repo,password,token,DownloadPassword
+      input_type: password
+      param_field_name: DownloadPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Password/Token
+        Category: Dotnet App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the password/token if login is required
+        Keywords: git,repo,password,token,DownloadPassword
+        FieldName: DownloadPassword
+        InputType: password
+        ParamFieldName: DownloadPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadFilename
+      label: GitHub Release Filename
+      category: Dotnet App Runner
+      subcategory: Download
+      description: If "GitHub release" is selected under App Download Type, sets the name of the zip file to download
+      keywords: github,release,filename,DownloadFilename
+      input_type: text
+      param_field_name: DownloadFilename
+      default: ''
+      placeholder: app.zip
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GitHub Release Filename
+        Category: Dotnet App Runner:code
+        Subcategory: Download:download:2
+        Description: If "GitHub release" is selected under App Download Type, sets the name of the zip file to download
+        Keywords: github,release,filename,DownloadFilename
+        FieldName: DownloadFilename
+        InputType: text
+        ParamFieldName: DownloadFilename
+        DefaultValue: ''
+        Placeholder: app.zip
+        EnumValues: {}
+    - key: DownloadVersion
+      label: GitHub Release Version
+      category: Dotnet App Runner
+      subcategory: Download
+      description: If "GitHub release" is selected under App Download Type, sets the release version to download. Empty = latest
+      keywords: github,release,version,DownloadVersion
+      input_type: text
+      param_field_name: DownloadVersion
+      default: ''
+      placeholder: 1.0.0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GitHub Release Version
+        Category: Dotnet App Runner:code
+        Subcategory: Download:download:2
+        Description: If "GitHub release" is selected under App Download Type, sets the release version to download. Empty = latest
+        Keywords: github,release,version,DownloadVersion
+        FieldName: DownloadVersion
+        InputType: text
+        ParamFieldName: DownloadVersion
+        DefaultValue: ''
+        Placeholder: 1.0.0
+        EnumValues: {}
+    - key: DotnetRelease
+      label: .NET Release Stream
+      category: Dotnet App Runner
+      subcategory: App
+      description: >-
+        Sets the .NET release stream from which to install the latest .NET SDK version, unless a specific version is
+        specified under .NET SDK Version. Update the server after changing this setting
+      keywords: dotnet,release,stream,DotnetRelease
+      input_type: enum
+      param_field_name: DotnetRelease
+      default: '8.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '11.0': '11.0'
+        '10.0': '10.0'
+        '9.0': '9.0'
+        '8.0': 8.0 (default)
+        '7.0': '7.0'
+        '6.0': '6.0'
+        '3.1': '3.1'
+        '3.0': '3.0'
+      raw:
+        DisplayName: .NET Release Stream
+        Category: Dotnet App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the .NET release stream from which to install the latest .NET SDK version, unless a specific version is
+          specified under .NET SDK Version. Update the server after changing this setting
+        Keywords: dotnet,release,stream,DotnetRelease
+        FieldName: DotnetRelease
+        InputType: enum
+        ParamFieldName: DotnetRelease
+        IncludeInCommandLine: false
+        DefaultValue: '8.0'
+        EnumValues:
+          '11.0': '11.0'
+          '10.0': '10.0'
+          '9.0': '9.0'
+          '8.0': 8.0 (default)
+          '7.0': '7.0'
+          '6.0': '6.0'
+          '3.1': '3.1'
+          '3.0': '3.0'
+    - key: DotnetVersion
+      label: .NET SDK Version
+      category: Dotnet App Runner
+      subcategory: App
+      description: >-
+        Sets the [.NET SDK version](https://dotnet.microsoft.com/en-us/download/dotnet) to install. Empty = latest
+        version for the release stream specified under .NET Release Stream. Update the server after changing this
+        setting
+      keywords: dotnet,version,DotnetVersion
+      input_type: text
+      param_field_name: DotnetVersion
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: .NET SDK Version
+        Category: Dotnet App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the [.NET SDK version](https://dotnet.microsoft.com/en-us/download/dotnet) to install. Empty = latest
+          version for the release stream specified under .NET Release Stream. Update the server after changing this
+          setting
+        Keywords: dotnet,version,DotnetVersion
+        FieldName: DotnetVersion
+        InputType: text
+        ParamFieldName: DotnetVersion
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CompileMode
+      label: App Compilation Mode
+      category: Dotnet App Runner
+      subcategory: App
+      description: >-
+        Sets whether and how the app is compiled. Set the App Download Location, App Compilation Arguments and App
+        Compilation Target accordingly
+      keywords: app,compile,compilation,mode,build,publish,CompileMode
+      input_type: enum
+      param_field_name: CompileMode
+      default: publish
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        none: No compilation
+        build: Build
+        publish: Publish (default)
+      raw:
+        DisplayName: App Compilation Mode
+        Category: Dotnet App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets whether and how the app is compiled. Set the App Download Location, App Compilation Arguments and App
+          Compilation Target accordingly
+        Keywords: app,compile,compilation,mode,build,publish,CompileMode
+        FieldName: CompileMode
+        InputType: enum
+        ParamFieldName: CompileMode
+        DefaultValue: publish
+        EnumValues:
+          none: No compilation
+          build: Build
+          publish: Publish (default)
+    - key: DownloadLocation
+      label: App Download Location
+      category: Dotnet App Runner
+      subcategory: App
+      description: >-
+        Sets any applicable subdirectory path (under the base directory) that the app is downloaded in. This will set
+        the working directory for compiling the app
+      keywords: app,application,download,location,directory,subdirectory,path,DownloadLocation
+      input_type: text
+      param_field_name: DownloadLocation
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Download Location
+        Category: Dotnet App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets any applicable subdirectory path (under the base directory) that the app is downloaded in. This will set
+          the working directory for compiling the app
+        Keywords: app,application,download,location,directory,subdirectory,path,DownloadLocation
+        FieldName: DownloadLocation
+        InputType: text
+        ParamFieldName: DownloadLocation
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CompileArgs
+      label: App Compilation Arguments
+      category: Dotnet App Runner
+      subcategory: App
+      description: >-
+        Sets .NET command line arguments for
+        [building](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build#options) or
+        [publishing](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish#options) the app
+      keywords: dotnet,net,command,line,arguments,args,compilation,compile,CompileArgs
+      input_type: text
+      param_field_name: CompileArgs
+      default: ''
+      placeholder: '--value1 foo --value2 bar'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Compilation Arguments
+        Category: Dotnet App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets .NET command line arguments for
+          [building](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build#options) or
+          [publishing](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish#options) the app
+        Keywords: dotnet,net,command,line,arguments,args,compilation,compile,CompileArgs
+        FieldName: CompileArgs
+        InputType: text
+        ParamFieldName: CompileArgs
+        DefaultValue: ''
+        Placeholder: '--value1 foo --value2 bar'
+        EnumValues: {}
+    - key: CompileTarget
+      label: App Compilation Target
+      category: Dotnet App Runner
+      subcategory: App
+      description: >-
+        Sets the .csproj or .sln file to compile. Include any relative path from the base directory or App Download
+        Location, if applicable
+      keywords: app,compilation,compile,target,proj,sln,project,solution,CompileTarget
+      input_type: text
+      param_field_name: CompileTarget
+      default: ''
+      placeholder: app.csproj | app.sln
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Compilation Target
+        Category: Dotnet App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the .csproj or .sln file to compile. Include any relative path from the base directory or App Download
+          Location, if applicable
+        Keywords: app,compilation,compile,target,proj,sln,project,solution,CompileTarget
+        FieldName: CompileTarget
+        InputType: text
+        ParamFieldName: CompileTarget
+        DefaultValue: ''
+        Placeholder: app.csproj | app.sln
+        EnumValues: {}
+    - key: ApplicationName
+      label: App Build Name
+      category: Dotnet App Runner
+      subcategory: App
+      description: >-
+        Sets the name of the compiled .NET app to execute (assumed to be framework-dependent). Do not include "dotnet"
+        in front. Include any relative path from the base directory or App Build Location, if applicable
+      keywords: app,application,name,ApplicationName
+      input_type: text
+      param_field_name: ApplicationName
+      default: ''
+      placeholder: app.dll
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Build Name
+        Category: Dotnet App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the name of the compiled .NET app to execute (assumed to be framework-dependent). Do not include "dotnet"
+          in front. Include any relative path from the base directory or App Build Location, if applicable
+        Keywords: app,application,name,ApplicationName
+        FieldName: ApplicationName
+        InputType: text
+        ParamFieldName: ApplicationName
+        DefaultValue: ''
+        Placeholder: app.dll
+        EnumValues: {}
+    - key: BuildLocation
+      label: App Build Location
+      category: Dotnet App Runner
+      subcategory: App
+      description: >-
+        Sets any applicable subdirectory path (under the base directory) that the app is built in. This will set the
+        working directory for running the app accordingly
+      keywords: app,application,location,directory,subdirectory,path,BuildLocation
+      input_type: text
+      param_field_name: BuildLocation
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Build Location
+        Category: Dotnet App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets any applicable subdirectory path (under the base directory) that the app is built in. This will set the
+          working directory for running the app accordingly
+        Keywords: app,application,location,directory,subdirectory,path,BuildLocation
+        FieldName: BuildLocation
+        InputType: text
+        ParamFieldName: BuildLocation
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DotnetArgs
+      label: .NET Command Line Arguments
+      category: Dotnet App Runner
+      subcategory: App
+      description: >-
+        Sets .NET [command line
+        arguments](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet#options-for-running-an-application) (not
+        app command line arguments) to include as startup parameters for running the app
+      keywords: dotnet,net,command,line,arguments,args
+      input_type: text
+      param_field_name: DotnetArgs
+      default: ''
+      placeholder: '--value1 foo --value2 bar'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: .NET Command Line Arguments
+        Category: Dotnet App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets .NET [command line
+          arguments](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet#options-for-running-an-application) (not
+          app command line arguments) to include as startup parameters for running the app
+        Keywords: dotnet,net,command,line,arguments,args
+        FieldName: DotnetArgs
+        InputType: text
+        ParamFieldName: DotnetArgs
+        DefaultValue: ''
+        Placeholder: '--value1 foo --value2 bar'
+        EnumValues: {}
+    - key: CommandLineArgs
+      label: App Command Line Arguments
+      category: Dotnet App Runner
+      subcategory: App
+      description: >-
+        Sets app command line arguments (not .NET command line arguments) to include as startup parameters for running
+        the app
+      keywords: app,command,line,arguments,args,CommandLineArgs
+      input_type: text
+      param_field_name: CommandLineArgs
+      default: ''
+      placeholder: value1=foo value2=bar
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Command Line Arguments
+        Category: Dotnet App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets app command line arguments (not .NET command line arguments) to include as startup parameters for running
+          the app
+        Keywords: app,command,line,arguments,args,CommandLineArgs
+        FieldName: CommandLineArgs
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CommandLineArgs
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: value1=foo value2=bar
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: DownloadType
+    label: App Download Type
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: DownloadSource
+    label: App Download Source
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadBranch
+    label: Git Repo Branch
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadUsername
+    label: Git Repo Username
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadPassword
+    label: Git Repo Password/Token
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: DownloadFilename
+    label: GitHub Release Filename
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadVersion
+    label: GitHub Release Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DotnetRelease
+    label: .NET Release Stream
+    default: '8.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DotnetVersion
+    label: .NET SDK Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CompileMode
+    label: App Compilation Mode
+    default: publish
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadLocation
+    label: App Download Location
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CompileArgs
+    label: App Compilation Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CompileTarget
+    label: App Compilation Target
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ApplicationName
+    label: App Build Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BuildLocation
+    label: App Build Location
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DotnetArgs
+    label: .NET Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CommandLineArgs
+    label: App Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

@@ -5,13 +5,18 @@ category: Imported
 summary: 'RuneScape: Dragonwilds Dedicated Server'
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '4019830'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 4019830/RSDragonwilds/Binaries/Linux/RSDragonwildsServer-Linux-Shipping
+  startup: >-
+    4019830/RSDragonwilds/Binaries/Linux/RSDragonwildsServer-Linux-Shipping {PlatformArgs} RSDragonwilds
+    -Port={GamePort} {FormattedArgs} -stdout -FullStdOutLogOutput
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,228 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 7777
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: RSDragonwilds/Saved/Config/LinuxServer/DedicatedServer.ini
+    type: ini
+    editable: true
+  - path: RSDragonwilds/Saved/Config/WindowsServer/DedicatedServer.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: OwnerID
+      label: Owner ID
+      category: RuneScape Dragonwilds
+      subcategory: Server
+      description: >-
+        Sets the server owner's RuneScape: Dragonwilds EOS Player ID. This can be found in-game at the bottom of the
+        Settings Menu
+      keywords: owner,id,ownerid,playerid
+      input_type: text
+      param_field_name: /Script/Dominion.DedicatedServerSettings.OwnerId
+      default: ''
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Owner ID
+        Category: RuneScape Dragonwilds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the server owner's RuneScape: Dragonwilds EOS Player ID. This can be found in-game at the bottom of the
+          Settings Menu
+        Keywords: owner,id,ownerid,playerid
+        FieldName: OwnerID
+        InputType: text
+        ParamFieldName: /Script/Dominion.DedicatedServerSettings.OwnerId
+        DefaultValue: ''
+        Required: true
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: RuneScape Dragonwilds
+      subcategory: Server
+      description: Sets the 'CREATED BY' name for the server shown in the client server list. Maximum 64 characters
+      keywords: server,name,servername
+      input_type: text
+      param_field_name: /Script/Dominion.DedicatedServerSettings.ServerName
+      default: 'AMP Powered RuneScape: Dragonwilds Server'
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: RuneScape Dragonwilds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the 'CREATED BY' name for the server shown in the client server list. Maximum 64 characters
+        Keywords: server,name,servername
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: /Script/Dominion.DedicatedServerSettings.ServerName
+        DefaultValue: 'AMP Powered RuneScape: Dragonwilds Server'
+        Required: true
+        EnumValues: {}
+    - key: DefaultWorldName
+      label: Default World Name
+      category: RuneScape Dragonwilds
+      subcategory: Server
+      description: >-
+        Sets the name of the default world that is created on start. This is shown as the server name in the client
+        server list and is used for search. Case-sensitive. Maximum 64 characters
+      keywords: default,world,name,defaultworldname
+      input_type: text
+      param_field_name: /Script/Dominion.DedicatedServerSettings.DefaultWorldName
+      default: World-12345
+      placeholder: World-12345
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Default World Name
+        Category: RuneScape Dragonwilds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the default world that is created on start. This is shown as the server name in the client
+          server list and is used for search. Case-sensitive. Maximum 64 characters
+        Keywords: default,world,name,defaultworldname
+        FieldName: DefaultWorldName
+        InputType: text
+        ParamFieldName: /Script/Dominion.DedicatedServerSettings.DefaultWorldName
+        DefaultValue: World-12345
+        Placeholder: World-12345
+        Required: true
+        EnumValues: {}
+    - key: AdminPassword
+      label: Admin Password
+      category: RuneScape Dragonwilds
+      subcategory: Server
+      description: >-
+        Sets the admin password, allowing access to the Server Management tab in-game. Default is a secure random
+        password
+      keywords: admin,password,adminpassword
+      input_type: password
+      param_field_name: /Script/Dominion.DedicatedServerSettings.AdminPassword
+      default: '{{newguid()}}'
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: RuneScape Dragonwilds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the admin password, allowing access to the Server Management tab in-game. Default is a secure random
+          password
+        Keywords: admin,password,adminpassword
+        FieldName: AdminPassword
+        InputType: password
+        ParamFieldName: /Script/Dominion.DedicatedServerSettings.AdminPassword
+        DefaultValue: '{{newguid()}}'
+        Required: true
+        EnumValues: {}
+    - key: WorldPassword
+      label: World Password
+      category: RuneScape Dragonwilds
+      subcategory: Server
+      description: Sets the password required to join the server. Empty = no password
+      keywords: world,password,worldpassword
+      input_type: password
+      param_field_name: /Script/Dominion.DedicatedServerSettings.WorldPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Password
+        Category: RuneScape Dragonwilds:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to join the server. Empty = no password
+        Keywords: world,password,worldpassword
+        FieldName: WorldPassword
+        InputType: password
+        ParamFieldName: /Script/Dominion.DedicatedServerSettings.WorldPassword
+        DefaultValue: ''
+        EnumValues: {}
+  files:
+    - path: RSDragonwilds/Saved/Config/LinuxServer/DedicatedServer.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: RSDragonwilds/Saved/Config/LinuxServer/DedicatedServer.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+    - path: RSDragonwilds/Saved/Config/WindowsServer/DedicatedServer.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: RSDragonwilds/Saved/Config/WindowsServer/DedicatedServer.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: OwnerID
+    label: Owner ID
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: 'AMP Powered RuneScape: Dragonwilds Server'
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: DefaultWorldName
+    label: Default World Name
+    default: World-12345
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: AdminPassword
+    label: Admin Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: WorldPassword
+    label: World Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1374490'
+  collection_support: true
 backup:
   include:
     - /data

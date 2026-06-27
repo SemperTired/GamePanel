@@ -4,14 +4,16 @@ name: 'Cube 2: Sauerbraten'
 category: Imported
 summary: 'Cube 2: Sauerbraten Dedicated Server'
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: custom
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: bin_unix/linux_64_server
+  startup: bin_unix/linux_64_server {PlatformArgs} "-q{FullBaseDir}" {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +21,418 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 28785
     protocol: udp
     required: true
-config_files: []
+  - key: pingport
+    name: Ping Port
+    default: 28786
+    protocol: udp
+    required: true
+config_files:
+  - path: server-init.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Server Port
+      category: Cube 2 Sauerbraten
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: serverport
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: Cube 2 Sauerbraten:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        ParamFieldName: serverport
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Server IP
+      category: Cube 2 Sauerbraten
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: serverip
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server IP
+        Category: Cube 2 Sauerbraten:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        ParamFieldName: serverip
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: serverdesc
+      label: Server Description
+      category: Cube 2 Sauerbraten
+      subcategory: Server
+      description: Sets the server description shown in the server browser. Keep it short or it may be truncated
+      keywords: server,description,serverdesc
+      input_type: text
+      param_field_name: serverdesc
+      default: AMP Sauerbraten Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Description
+        Category: Cube 2 Sauerbraten:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server description shown in the server browser. Keep it short or it may be truncated
+        Keywords: server,description,serverdesc
+        FieldName: serverdesc
+        InputType: text
+        ParamFieldName: serverdesc
+        DefaultValue: AMP Sauerbraten Server
+        EnumValues: {}
+    - key: servermotd
+      label: Server Message of the Day
+      category: Cube 2 Sauerbraten
+      subcategory: Server
+      description: Sets an optional message of the day to send to players on connect
+      keywords: server,motd,message,servermotd
+      input_type: text
+      param_field_name: servermotd
+      default: Welcome to the server!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Message of the Day
+        Category: Cube 2 Sauerbraten:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets an optional message of the day to send to players on connect
+        Keywords: server,motd,message,servermotd
+        FieldName: servermotd
+        InputType: text
+        ParamFieldName: servermotd
+        DefaultValue: Welcome to the server!
+        EnumValues: {}
+    - key: publicserver
+      label: Public Server Status
+      category: Cube 2 Sauerbraten
+      subcategory: Server
+      description: Sets whether or not the server is intended for 'public' use
+      keywords: public,server,publicserver
+      input_type: enum
+      param_field_name: publicserver
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Allow 'setmaster 1' and locked/private mastermodes (default)
+        '1': Only gain master by 'auth' or admin, and disallow locked/private mastermodes
+        '2': Allow 'setmaster 1' but disallow private mastermode
+      raw:
+        DisplayName: Public Server Status
+        Category: Cube 2 Sauerbraten:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether or not the server is intended for 'public' use
+        Keywords: public,server,publicserver
+        FieldName: publicserver
+        InputType: enum
+        ParamFieldName: publicserver
+        DefaultValue: '0'
+        EnumValues:
+          '0': Allow 'setmaster 1' and locked/private mastermodes (default)
+          '1': Only gain master by 'auth' or admin, and disallow locked/private mastermodes
+          '2': Allow 'setmaster 1' but disallow private mastermode
+    - key: updatemaster
+      label: Update Master Server
+      category: Cube 2 Sauerbraten
+      subcategory: Server
+      description: If set, the server will report to the master server
+      keywords: update,master,server,updatemaster
+      input_type: checkbox
+      param_field_name: updatemaster
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Update Master Server
+        Category: Cube 2 Sauerbraten:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will report to the master server
+        Keywords: update,master,server,updatemaster
+        FieldName: updatemaster
+        InputType: checkbox
+        ParamFieldName: updatemaster
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: serverpass
+      label: Server Password
+      category: Cube 2 Sauerbraten
+      subcategory: Server
+      description: Sets the password required to connect to the server. Default is no password
+      keywords: server,password,serverpass
+      input_type: password
+      param_field_name: serverpass
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Cube 2 Sauerbraten:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server. Default is no password
+        Keywords: server,password,serverpass
+        FieldName: serverpass
+        InputType: password
+        ParamFieldName: serverpass
+        DefaultValue: ''
+        EnumValues: {}
+    - key: adminpass
+      label: Admin Password
+      category: Cube 2 Sauerbraten
+      subcategory: Server
+      description: >-
+        Sets the password that allows a player to gain admin by using 'setmaster password_here' in-game. Local auth keys
+        are more secure and preferred
+      keywords: admin,password,adminpass
+      input_type: password
+      param_field_name: adminpass
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Cube 2 Sauerbraten:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password that allows a player to gain admin by using 'setmaster password_here' in-game. Local auth
+          keys are more secure and preferred
+        Keywords: admin,password,adminpass
+        FieldName: adminpass
+        InputType: password
+        ParamFieldName: adminpass
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Cube 2 Sauerbraten
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,maximum,clients,player,limit,maxclients
+      input_type: number
+      param_field_name: maxclients
+      default: '8'
+      placeholder: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Cube 2 Sauerbraten:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,maximum,clients,player,limit,maxclients
+        FieldName: $MaxUsers
+        InputType: number
+        ParamFieldName: maxclients
+        DefaultValue: '8'
+        Placeholder: '8'
+        Suffix: players
+        EnumValues: {}
+    - key: serverbotlimit
+      label: Bot Limit
+      category: Cube 2 Sauerbraten
+      subcategory: Server
+      description: Sets the maximum number of bots a master can add. Admins are unaffected by this limit. 0 = disallow bots
+      keywords: server,bot,limit,serverbotlimit
+      input_type: number
+      param_field_name: serverbotlimit
+      default: '8'
+      placeholder: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: bots
+      enum_values: {}
+      raw:
+        DisplayName: Bot Limit
+        Category: Cube 2 Sauerbraten:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of bots a master can add. Admins are unaffected by this limit. 0 = disallow bots
+        Keywords: server,bot,limit,serverbotlimit
+        FieldName: serverbotlimit
+        InputType: number
+        ParamFieldName: serverbotlimit
+        DefaultValue: '8'
+        Placeholder: '8'
+        Suffix: bots
+        EnumValues: {}
+    - key: serverauth
+      label: Server Auth Domain
+      category: Cube 2 Sauerbraten
+      subcategory: Server
+      description: >-
+        Sets the domain to use for local authkeys to the server to allow authentication by 'auth domain_here'. Should be
+        unique to the server to prevent clashes with other servers
+      keywords: server,auth,domain,serverauth
+      input_type: text
+      param_field_name: serverauth
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Auth Domain
+        Category: Cube 2 Sauerbraten:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the domain to use for local authkeys to the server to allow authentication by 'auth domain_here'. Should
+          be unique to the server to prevent clashes with other servers
+        Keywords: server,auth,domain,serverauth
+        FieldName: serverauth
+        InputType: text
+        ParamFieldName: serverauth
+        DefaultValue: ''
+        EnumValues: {}
+  files:
+    - path: server-init.cfg
+      type: kvp
+      format: '{0} "{1}"'
+      subsections: []
+      raw:
+        ConfigFile: server-init.cfg
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormat: '{0} "{1}"'
+        ConfigFormatRegex: ^(?:// )?(?<key>.+?) "(?<value>.*?)"$
+    - path: server-init.cfg
+      type: kvp
+      format: '{0} {1}'
+      subsections: []
+      raw:
+        ConfigFile: server-init.cfg
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormat: '{0} {1}'
+        ConfigFormatRegex: ^(?:// )?(?<key>.+?) (?<value>[^"]*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: serverdesc
+    label: Server Description
+    default: AMP Sauerbraten Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: servermotd
+    label: Server Message of the Day
+    default: Welcome to the server!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: publicserver
+    label: Public Server Status
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: updatemaster
+    label: Update Master Server
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverpass
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: adminpass
+    label: Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: serverbotlimit
+    label: Bot Limit
+    default: '8'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverauth
+    label: Server Auth Domain
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
 workshop:
   enabled: false
   providers: []

@@ -5,13 +5,20 @@ category: Imported
 summary: Satisfactory Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1690800'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1690800/Engine/Binaries/Linux/FactoryServer-Linux-Shipping
+  startup: >-
+    1690800/Engine/Binaries/Linux/FactoryServer-Linux-Shipping {PlatformArgs} FactoryGame -Port={ApplicationPort1}
+    -ReliablePort={ApplicationPort2} -MultiHome={ApplicationIPBinding}
+    -ini:Engine:[HTTPServer.Listeners]:DefaultBindAddress={ApplicationIPBinding}{DisableSeasonalEvents} {FormattedArgs}
+    {CustomArgs} -stdout -FullStdOutLogOutput -unattended
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +26,614 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: applicationport1
     name: Game Port
-    default: 27015
-    protocol: udp
+    default: 7777
+    protocol: both
     required: true
-config_files: []
+  - key: applicationport2
+    name: Reliable Port
+    default: 8888
+    protocol: tcp
+    required: true
+config_files:
+  - path: satisfactoryconfig.json
+    type: json
+    editable: true
+  - path: satisfactorymetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $MaxUsers
+      label: Player Limit
+      category: Satisfactory
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,limit,maxplayers
+      input_type: number
+      param_field_name: ini:Game:[/Script/Engine.GameSession]:MaxPlayers
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: ini:Game:[/Script/Engine.GameSession]:MaxPlayers
+        IncludeInCommandLine: true
+        DefaultValue: '4'
+        Placeholder: '4'
+        Suffix: players
+        EnumValues: {}
+    - key: DisableSeasonalEvents
+      label: Disable Seasonal Events
+      category: Satisfactory
+      subcategory: Server
+      description: If set, seasonal events will be disabled on the server
+      keywords: disable,seasonal,events,disableseasonalevents
+      input_type: checkbox
+      param_field_name: DisableSeasonalEvents
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': ' -DisableSeasonalEvents'
+      raw:
+        DisplayName: Disable Seasonal Events
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, seasonal events will be disabled on the server
+        Keywords: disable,seasonal,events,disableseasonalevents
+        FieldName: DisableSeasonalEvents
+        InputType: checkbox
+        ParamFieldName: DisableSeasonalEvents
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': ' -DisableSeasonalEvents'
+    - key: MultiHome
+      label: MultiHome IP Binding
+      category: Satisfactory
+      subcategory: Server
+      description: >-
+        If required, you can change the binding of the server by changing the Application IP Binding for this instance.
+        Binding to :: will make the server accessible on all IPv4 and IPv6 interfaces
+      keywords: ip,binding,address,multihome
+      input_type: hidden
+      param_field_name: MultiHome
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: MultiHome IP Binding
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If required, you can change the binding of the server by changing the Application IP Binding for this
+          instance. Binding to :: will make the server accessible on all IPv4 and IPv6 interfaces
+        Keywords: ip,binding,address,multihome
+        FieldName: MultiHome
+        InputType: hidden
+        ParamFieldName: MultiHome
+        EnumValues: {}
+    - key: InitialConnectTimeout
+      label: Initial Connection Timeout
+      category: Satisfactory
+      subcategory: Server
+      description: >-
+        Sets the amount of time to wait for a new network connection to be established before destroying the connection.
+        May assist with connection issues for client systems with older hardware or slower networks
+      keywords: initial,connect,connection,timeout,initialconnecttimeout
+      input_type: number
+      param_field_name: ini:Engine:[/Script/OnlineSubsystemUtils.IpNetDriver]:InitialConnectTimeout
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Initial Connection Timeout
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the amount of time to wait for a new network connection to be established before destroying the
+          connection. May assist with connection issues for client systems with older hardware or slower networks
+        Keywords: initial,connect,connection,timeout,initialconnecttimeout
+        FieldName: InitialConnectTimeout
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: ini:Engine:[/Script/OnlineSubsystemUtils.IpNetDriver]:InitialConnectTimeout
+        IncludeInCommandLine: true
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: seconds
+        EnumValues: {}
+    - key: ConnectionTimeout
+      label: Established Connection Timeout
+      category: Satisfactory
+      subcategory: Server
+      description: >-
+        Sets the amount of time to wait before considering an established connection timed out. Typically shorter than
+        the Initial Connection Timeout. May assist with connection issues for client systems with older hardware or
+        slower networks
+      keywords: established,connection,timeout,connectiontimeout
+      input_type: number
+      param_field_name: ini:Engine:[/Script/OnlineSubsystemUtils.IpNetDriver]:ConnectionTimeout
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Established Connection Timeout
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the amount of time to wait before considering an established connection timed out. Typically shorter than
+          the Initial Connection Timeout. May assist with connection issues for client systems with older hardware or
+          slower networks
+        Keywords: established,connection,timeout,connectiontimeout
+        FieldName: ConnectionTimeout
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: ini:Engine:[/Script/OnlineSubsystemUtils.IpNetDriver]:ConnectionTimeout
+        IncludeInCommandLine: true
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: seconds
+        EnumValues: {}
+    - key: MaxTickRate
+      label: Maximum Tick Rate
+      category: Satisfactory
+      subcategory: Server
+      description: Sets the maximum tick rate for the server
+      keywords: maximum,tick,rate,netmaxtickrate,lanmaxtickrate
+      input_type: number
+      param_field_name: ini:Engine:[/Script/OnlineSubsystemUtils.IpNetDriver]:NetServerMaxTickRate
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: ticks per second
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Tick Rate
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum tick rate for the server
+        Keywords: maximum,tick,rate,netmaxtickrate,lanmaxtickrate
+        FieldName: MaxTickRate
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: ini:Engine:[/Script/OnlineSubsystemUtils.IpNetDriver]:NetServerMaxTickRate
+        IncludeInCommandLine: true
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: ticks per second
+        EnumValues: {}
+    - key: MaxTickRate
+      label: Maximum Tick Rate
+      category: Satisfactory
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: hidden
+      param_field_name: ini:Engine:[/Script/OnlineSubsystemUtils.IpNetDriver]:LanServerMaxTickRate
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Tick Rate
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: MaxTickRate
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ini:Engine:[/Script/OnlineSubsystemUtils.IpNetDriver]:LanServerMaxTickRate
+        IncludeInCommandLine: true
+        EnumValues: {}
+    - key: MaxTickRate
+      label: Maximum Tick Rate
+      category: Satisfactory
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: hidden
+      param_field_name: ini:Engine:[/Script/SocketSubsystemEpic.EpicNetDriver]:NetServerMaxTickRate
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Tick Rate
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: MaxTickRate
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ini:Engine:[/Script/SocketSubsystemEpic.EpicNetDriver]:NetServerMaxTickRate
+        IncludeInCommandLine: true
+        EnumValues: {}
+    - key: MaxTickRate
+      label: Maximum Tick Rate
+      category: Satisfactory
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: hidden
+      param_field_name: ini:Engine:[/Script/SocketSubsystemEpic.EpicNetDriver]:LanServerMaxTickRate
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Tick Rate
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: MaxTickRate
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ini:Engine:[/Script/SocketSubsystemEpic.EpicNetDriver]:LanServerMaxTickRate
+        IncludeInCommandLine: true
+        EnumValues: {}
+    - key: MaxTickRate
+      label: Maximum Tick Rate
+      category: Satisfactory
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: hidden
+      param_field_name: ini:Engine:[/Script/Engine.Engine]:NetClientTicksPerSecond
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Tick Rate
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: MaxTickRate
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ini:Engine:[/Script/Engine.Engine]:NetClientTicksPerSecond
+        IncludeInCommandLine: true
+        EnumValues: {}
+    - key: mNumRotatingAutosaves
+      label: Maximum Autosaves
+      category: Satisfactory
+      subcategory: Server
+      description: Sets the maximum number of autosaves created before rotation by the server
+      keywords: maximum,autosaves,rotation,mnumrotatingautosaves
+      input_type: number
+      param_field_name: ini:Engine:[/Script/FactoryGame.FGSaveSession]:mNumRotatingAutosaves
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: autosaves
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Autosaves
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of autosaves created before rotation by the server
+        Keywords: maximum,autosaves,rotation,mnumrotatingautosaves
+        FieldName: mNumRotatingAutosaves
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: ini:Engine:[/Script/FactoryGame.FGSaveSession]:mNumRotatingAutosaves
+        IncludeInCommandLine: true
+        DefaultValue: '3'
+        Placeholder: '3'
+        Suffix: autosaves
+        EnumValues: {}
+    - key: mAutoPause
+      label: Auto Pause Server
+      category: Satisfactory
+      subcategory: Server
+      description: If enabled, the server will be automatically paused when the player count reaches zero
+      keywords: auto,pause,mAutoPause
+      input_type: checkbox
+      param_field_name: ini:ServerSettings:[/Script/FactoryGame.FGServerSubsystem]:mAutoPause
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Auto Pause Server
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will be automatically paused when the player count reaches zero
+        Keywords: auto,pause,mAutoPause
+        FieldName: mAutoPause
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: ini:ServerSettings:[/Script/FactoryGame.FGServerSubsystem]:mAutoPause
+        IncludeInCommandLine: true
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: mAutoSaveOnDisconnect
+      label: Auto Save On Player Disconnect
+      category: Satisfactory
+      subcategory: Server
+      description: If enabled, the server will automatically save the game when a player disconnects
+      keywords: auto,save,player,disconnect,mAutoSaveOnDisconnect
+      input_type: checkbox
+      param_field_name: ini:ServerSettings:[/Script/FactoryGame.FGServerSubsystem]:mAutoSaveOnDisconnect
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Auto Save On Player Disconnect
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will automatically save the game when a player disconnects
+        Keywords: auto,save,player,disconnect,mAutoSaveOnDisconnect
+        FieldName: mAutoSaveOnDisconnect
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: ini:ServerSettings:[/Script/FactoryGame.FGServerSubsystem]:mAutoSaveOnDisconnect
+        IncludeInCommandLine: true
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bImplicitSend
+      label: Enable Crash Reports Upload (Linux Only)
+      category: Satisfactory
+      subcategory: Server
+      description: If enabled, crash reports will be automatically uploaded to the Satisfactory developers
+      keywords: crash,reports,upload,bimplicitsend
+      input_type: checkbox
+      param_field_name: ini:Engine:[CrashReportClient]:bImplicitSend
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Crash Reports Upload (Linux Only)
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, crash reports will be automatically uploaded to the Satisfactory developers
+        Keywords: crash,reports,upload,bimplicitsend
+        FieldName: bImplicitSend
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: ini:Engine:[CrashReportClient]:bImplicitSend
+        IncludeInCommandLine: true
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: CustomArgs
+      label: Additional Command Line Arguments
+      category: Satisfactory
+      subcategory: Server
+      description: >-
+        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AMP.
+        Use with care
+      keywords: custom,server,arguments,parameters
+      input_type: text
+      param_field_name: CustomArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Arguments
+        Category: Satisfactory:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by
+          AMP. Use with care
+        Keywords: custom,server,arguments,parameters
+        FieldName: CustomArgs
+        InputType: text
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: releasestream
+      label: Server Release Stream
+      category: Updates
+      subcategory: Steam Downloads
+      description: Sets the server release stream to install. Update the server after changing this setting
+      keywords: release,stream,beta,version,public,experimental
+      input_type: enum
+      param_field_name: releasestream
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        experimental: Experimental
+      raw:
+        DisplayName: Server Release Stream
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: Sets the server release stream to install. Update the server after changing this setting
+        Keywords: release,stream,beta,version,public,experimental
+        FieldName: releasestream
+        InputType: enum
+        ParamFieldName: releasestream
+        IncludeInCommandLine: false
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          experimental: Experimental
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: DisableSeasonalEvents
+    label: Disable Seasonal Events
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InitialConnectTimeout
+    label: Initial Connection Timeout
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ConnectionTimeout
+    label: Established Connection Timeout
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxTickRate
+    label: Maximum Tick Rate
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mNumRotatingAutosaves
+    label: Maximum Autosaves
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mAutoPause
+    label: Auto Pause Server
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mAutoSaveOnDisconnect
+    label: Auto Save On Player Disconnect
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bImplicitSend
+    label: Enable Crash Reports Upload (Linux Only)
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Additional Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: releasestream
+    label: Server Release Stream
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '526870'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,18 @@ category: Imported
 summary: 'Call of Duty: Modern Warfare 3 (2011) Dedicated Server using the Plutonium mod launcher'
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '42750'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: >-
+    /usr/bin/wine {PlatformArgs} iw5mp "{FullBaseDir}IW5" -dedicated +set key {ServerKey} +set fs_game "{fs_game}" +set
+    sv_config server.cfg +net_port {ServerPort} +rcon_password "{RemoteAdminPassword}" {FormattedArgs} +start_map_rotate
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,1299 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 27016
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: IW5/admin/server.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: rcon_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RemoteAdminPassword
+        InputType: text
+        Hidden: true
+        ParamFieldName: rcon_password
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: logfile
+      label: Logfile
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: logfile
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Logfile
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: logfile
+        InputType: text
+        Hidden: true
+        ParamFieldName: logfile
+        IncludeInCommandLine: true
+        DefaultValue: '2'
+        EnumValues: {}
+    - key: g_logSync
+      label: Continuous Log
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: g_logSync
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Continuous Log
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: g_logSync
+        InputType: number
+        Hidden: true
+        ParamFieldName: g_logSync
+        DefaultValue: '1'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: g_log
+      label: Log File Name
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: g_log
+      default: logs\games_mp.log
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Log File Name
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: g_log
+        InputType: text
+        Hidden: true
+        ParamFieldName: g_log
+        DefaultValue: logs\games_mp.log
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: ServerKey
+      label: Server Key
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: >-
+        Sets the [server key](https://platform.plutonium.pw/serverkeys) required to run the server. This also sets the
+        server name. A Plutonium account must be at least one week old to create a key, and game ownership must be
+        [verified](https://forum.plutonium.pw/topic/32250/an-update-on-game-ownership-verification)
+      keywords: server,key,serverkey
+      input_type: password
+      param_field_name: ServerKey
+      default: ''
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Key
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [server key](https://platform.plutonium.pw/serverkeys) required to run the server. This also sets the
+          server name. A Plutonium account must be at least one week old to create a key, and game ownership must be
+          [verified](https://forum.plutonium.pw/topic/32250/an-update-on-game-ownership-verification)
+        Keywords: server,key,serverkey
+        FieldName: ServerKey
+        InputType: password
+        ParamFieldName: ServerKey
+        DefaultValue: ''
+        Required: true
+        EnumValues: {}
+    - key: sv_motd
+      label: Server MOTD
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: >-
+        Sets a custom message of the day which is shown on the intel message loading screen when a player joins. Leave
+        blank for default intel messages
+      keywords: motd,message,day,sv_motd
+      input_type: text
+      param_field_name: sv_motd
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server MOTD
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a custom message of the day which is shown on the intel message loading screen when a player joins. Leave
+          blank for default intel messages
+        Keywords: motd,message,day,sv_motd
+        FieldName: sv_motd
+        InputType: text
+        ParamFieldName: sv_motd
+        DefaultValue: ''
+        EnumValues: {}
+    - key: g_password
+      label: Server Password
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: Sets the password to join the server. Default is no password
+      keywords: password,g_password
+      input_type: password
+      param_field_name: g_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server. Default is no password
+        Keywords: password,g_password
+        FieldName: g_password
+        InputType: password
+        ParamFieldName: g_password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: fs_game
+      label: Mod Name
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: Sets the mod name to load
+      keywords: mod,fs_game
+      input_type: text
+      param_field_name: fs_game
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Mod Name
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the mod name to load
+        Keywords: mod,fs_game
+        FieldName: fs_game
+        InputType: text
+        ParamFieldName: fs_game
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_maprotation
+      label: Map Rotation List
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: Sets the map rotation list. See 'server.cfg' for gametypes and map names
+      keywords: map,rotation,list,sv_maprotation
+      input_type: text
+      param_field_name: sv_maprotation
+      default: >-
+        dsr TDM_default map mp_rust map mp_terminal_cls map mp_alpha map mp_bootleg map mp_bravo map mp_carbon map
+        mp_dome map mp_exchange map mp_hardhat map mp_interchange map mp_lambeth map mp_mogadishu map mp_paris map
+        mp_plaza2 map mp_radar map mp_seatown map mp_underground map mp_village
+      placeholder: >-
+        dsr TDM_default map mp_rust map mp_terminal_cls map mp_alpha map mp_bootleg map mp_bravo map mp_carbon map
+        mp_dome map mp_exchange map mp_hardhat map mp_interchange map mp_lambeth map mp_mogadishu map mp_paris map
+        mp_plaza2 map mp_radar map mp_seatown map mp_underground map mp_village
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Map Rotation List
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map rotation list. See 'server.cfg' for gametypes and map names
+        Keywords: map,rotation,list,sv_maprotation
+        FieldName: sv_maprotation
+        InputType: text
+        ParamFieldName: sv_maprotation
+        DefaultValue: >-
+          dsr TDM_default map mp_rust map mp_terminal_cls map mp_alpha map mp_bootleg map mp_bravo map mp_carbon map
+          mp_dome map mp_exchange map mp_hardhat map mp_interchange map mp_lambeth map mp_mogadishu map mp_paris map
+          mp_plaza2 map mp_radar map mp_seatown map mp_underground map mp_village
+        Placeholder: >-
+          dsr TDM_default map mp_rust map mp_terminal_cls map mp_alpha map mp_bootleg map mp_bravo map mp_carbon map
+          mp_dome map mp_exchange map mp_hardhat map mp_interchange map mp_lambeth map mp_mogadishu map mp_paris map
+          mp_plaza2 map mp_radar map mp_seatown map mp_underground map mp_village
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,limit,sv_maxclients
+      input_type: number
+      param_field_name: sv_maxclients
+      default: '18'
+      placeholder: '18'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 18
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,limit,sv_maxclients
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '18'
+        ParamFieldName: sv_maxclients
+        DefaultValue: '18'
+        Placeholder: '18'
+        Suffix: players
+        EnumValues: {}
+    - key: sv_privateClients
+      label: Private Player Limit
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: >-
+        The maximum number of private players allowed on the server (those that can use non-public reserved slots). Will
+        be limited to the Player Limit
+      keywords: max,private,players,limit
+      input_type: number
+      param_field_name: sv_privateClients
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 18
+      enum_values: {}
+      raw:
+        DisplayName: Private Player Limit
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          The maximum number of private players allowed on the server (those that can use non-public reserved slots).
+          Will be limited to the Player Limit
+        Keywords: max,private,players,limit
+        FieldName: sv_privateClients
+        InputType: number
+        MinValue: '0'
+        MaxValue: '18'
+        ParamFieldName: sv_privateClients
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: sv_privatePassword
+      label: Private Player Password
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: >-
+        Sets the password for private players to join the server. Private players entering this password have access to
+        all slots on the server, otherwise the players only have access to the public slots (Player Limit less Private
+        Player Limit)
+      keywords: private,player,password
+      input_type: password
+      param_field_name: sv_privatePassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Private Player Password
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password for private players to join the server. Private players entering this password have access
+          to all slots on the server, otherwise the players only have access to the public slots (Player Limit less
+          Private Player Limit)
+        Keywords: private,player,password
+        FieldName: sv_privatePassword
+        InputType: password
+        ParamFieldName: sv_privatePassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_pure
+      label: Enable Pure Server
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: If set, client files will be verified to ensure integrity and prevent cheating
+      keywords: pure,verify,client,files,sv_pure
+      input_type: checkbox
+      param_field_name: sv_pure
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Pure Server
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, client files will be verified to ensure integrity and prevent cheating
+        Keywords: pure,verify,client,files,sv_pure
+        FieldName: sv_pure
+        InputType: checkbox
+        ParamFieldName: sv_pure
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_timeout
+      label: Connection Timeout
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: >-
+        Sets the connection timeout period. Players will timeout after this duration when attempting to connect or
+        experiencing connection interruptions
+      keywords: timeout,connection,sv_timeout
+      input_type: number
+      param_field_name: sv_timeout
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Connection Timeout
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the connection timeout period. Players will timeout after this duration when attempting to connect or
+          experiencing connection interruptions
+        Keywords: timeout,connection,sv_timeout
+        FieldName: sv_timeout
+        InputType: number
+        ParamFieldName: sv_timeout
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: seconds
+        EnumValues: {}
+    - key: sv_reconnectlimit
+      label: Reconnection Limit
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: Sets the maximum number of times a player can attempt to reconnect to the server
+      keywords: reconnect,limit,attempts,sv_reconnectlimit
+      input_type: number
+      param_field_name: sv_reconnectlimit
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Reconnection Limit
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of times a player can attempt to reconnect to the server
+        Keywords: reconnect,limit,attempts,sv_reconnectlimit
+        FieldName: sv_reconnectlimit
+        InputType: number
+        ParamFieldName: sv_reconnectlimit
+        DefaultValue: '3'
+        Placeholder: '3'
+        EnumValues: {}
+    - key: sv_wwwBaseURL
+      label: Fast Download URL
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: Sets the base URL for [fast download](https://plutonium.pw/docs/server/iw5/fastdl/) of mods
+      keywords: base,url,download,redirection,sv_wwwBaseURL
+      input_type: url
+      param_field_name: sv_wwwBaseURL
+      default: ''
+      placeholder: http://domain.tld/iw5
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Fast Download URL
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the base URL for [fast download](https://plutonium.pw/docs/server/iw5/fastdl/) of mods
+        Keywords: base,url,download,redirection,sv_wwwBaseURL
+        FieldName: sv_wwwBaseURL
+        InputType: url
+        ParamFieldName: sv_wwwBaseURL
+        DefaultValue: ''
+        Placeholder: http://domain.tld/iw5
+        EnumValues: {}
+    - key: rcon_rate_limit
+      label: RCON Rate Limit
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: Sets the RCON rate limit (per IP). Localhost RCON commands are not rate limited
+      keywords: rcon,rate,limit,rcon_rate_limit
+      input_type: number
+      param_field_name: rcon_rate_limit
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: RCON Rate Limit
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the RCON rate limit (per IP). Localhost RCON commands are not rate limited
+        Keywords: rcon,rate,limit,rcon_rate_limit
+        FieldName: rcon_rate_limit
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10000'
+        ParamFieldName: rcon_rate_limit
+        DefaultValue: '500'
+        Placeholder: '500'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: sv_sayName
+      label: Server Say Name
+      category: Call of Duty Modern Warfare 3
+      subcategory: Server
+      description: Sets the name that server-side 'say' commands show up as. Colour tags are supported
+      keywords: server,say,name,sv_sayName
+      input_type: text
+      param_field_name: sv_sayName
+      default: ^7Server^7
+      placeholder: ^7Server^7
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Say Name
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name that server-side 'say' commands show up as. Colour tags are supported
+        Keywords: server,say,name,sv_sayName
+        FieldName: sv_sayName
+        InputType: text
+        ParamFieldName: sv_sayName
+        DefaultValue: ^7Server^7
+        Placeholder: ^7Server^7
+        EnumValues: {}
+    - key: sv_allowClientConsole
+      label: Allow Client Console
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: If set, players have access to server commands through their client console
+      keywords: client,console,commands,sv_allowClientConsole
+      input_type: checkbox
+      param_field_name: sv_allowClientConsole
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Client Console
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players have access to server commands through their client console
+        Keywords: client,console,commands,sv_allowClientConsole
+        FieldName: sv_allowClientConsole
+        InputType: checkbox
+        ParamFieldName: sv_allowClientConsole
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_floodProtect
+      label: Enable Flood Protection
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: >-
+        If enabled, flood protection applies, so user commands are throttled. Should be enabled on
+        non-password-protected public servers
+      keywords: flood,protection
+      input_type: checkbox
+      param_field_name: sv_floodProtect
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Flood Protection
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, flood protection applies, so user commands are throttled. Should be enabled on
+          non-password-protected public servers
+        Keywords: flood,protection
+        FieldName: sv_floodProtect
+        InputType: checkbox
+        ParamFieldName: sv_floodProtect
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: g_allowVote
+      label: Enable Voting
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: If enabled, voting is allowed for player kick, map restart and next map
+      keywords: vote,voting
+      input_type: checkbox
+      param_field_name: g_allowVote
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Voting
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, voting is allowed for player kick, map restart and next map
+        Keywords: vote,voting
+        FieldName: g_allowVote
+        InputType: checkbox
+        ParamFieldName: g_allowVote
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: g_inactivity
+      label: Inactivity Kick Period
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: Sets the time before the server will kick a player for inactivity
+      keywords: inactivity,afk,period
+      input_type: number
+      param_field_name: g_inactivity
+      default: '120'
+      placeholder: '120'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10000
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Inactivity Kick Period
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time before the server will kick a player for inactivity
+        Keywords: inactivity,afk,period
+        FieldName: g_inactivity
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10000'
+        ParamFieldName: g_inactivity
+        DefaultValue: '120'
+        Placeholder: '120'
+        Suffix: seconds
+        EnumValues: {}
+    - key: sv_kickBanTime
+      label: Temporary Ban Period
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: Sets the time for a player temporary ban (on kick/tempban)
+      keywords: ban,period,temporary
+      input_type: number
+      param_field_name: sv_kickBanTime
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 3600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Temporary Ban Period
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time for a player temporary ban (on kick/tempban)
+        Keywords: ban,period,temporary
+        FieldName: sv_kickBanTime
+        InputType: number
+        MinValue: '0'
+        MaxValue: '3600'
+        ParamFieldName: sv_kickBanTime
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: sv_voice
+      label: Voice Chat Mode
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: Sets the server voice chat mode
+      keywords: voice,chat
+      input_type: enum
+      param_field_name: sv_voice
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Disabled
+        '1': Everyone hears
+        '2': Teams only (default)
+      raw:
+        DisplayName: Voice Chat Mode
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the server voice chat mode
+        Keywords: voice,chat
+        FieldName: sv_voice
+        InputType: enum
+        ParamFieldName: sv_voice
+        DefaultValue: '2'
+        EnumValues:
+          '0': Disabled
+          '1': Everyone hears
+          '2': Teams only (default)
+    - key: sv_voicequality
+      label: Server Voice Chat Quality
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: Sets the server voice quality level
+      keywords: voice,chat,quality,sv_voicequality
+      input_type: number
+      param_field_name: sv_voicequality
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 9
+      enum_values: {}
+      raw:
+        DisplayName: Server Voice Chat Quality
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the server voice quality level
+        Keywords: voice,chat,quality,sv_voicequality
+        FieldName: sv_voicequality
+        InputType: number
+        MinValue: '0'
+        MaxValue: '9'
+        ParamFieldName: sv_voicequality
+        DefaultValue: '3'
+        Placeholder: '3'
+        EnumValues: {}
+    - key: g_deadChat
+      label: Enable Dead Chat
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: If enabled, dead players will be allowed to chat with living players
+      keywords: dead,chat
+      input_type: checkbox
+      param_field_name: g_deadChat
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Dead Chat
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, dead players will be allowed to chat with living players
+        Keywords: dead,chat
+        FieldName: g_deadChat
+        InputType: checkbox
+        ParamFieldName: g_deadChat
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: sv_allowAimAssist
+      label: Allow Aim Assist
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: If set, Aim Assist will be allowed on gamepads
+      keywords: aim,assist,sv_allowAimAssist
+      input_type: checkbox
+      param_field_name: sv_allowAimAssist
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Aim Assist
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, Aim Assist will be allowed on gamepads
+        Keywords: aim,assist,sv_allowAimAssist
+        FieldName: sv_allowAimAssist
+        InputType: checkbox
+        ParamFieldName: sv_allowAimAssist
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_playerCollision
+      label: Player Collision Mode
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: Sets whom player collision applies to
+      keywords: collision,players,g_playerCollision
+      input_type: enum
+      param_field_name: g_playerCollision
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Everyone (default)
+        '1': Enemies
+        '2': Nobody
+      raw:
+        DisplayName: Player Collision Mode
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets whom player collision applies to
+        Keywords: collision,players,g_playerCollision
+        FieldName: g_playerCollision
+        InputType: enum
+        ParamFieldName: g_playerCollision
+        DefaultValue: '0'
+        EnumValues:
+          '0': Everyone (default)
+          '1': Enemies
+          '2': Nobody
+    - key: g_playerEjection
+      label: Player Ejection Mode
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: Sets whom player ejection applies to
+      keywords: ejection,players,g_playerEjection
+      input_type: enum
+      param_field_name: g_playerEjection
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Everyone (default)
+        '1': Enemies
+        '2': Nobody
+      raw:
+        DisplayName: Player Ejection Mode
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets whom player ejection applies to
+        Keywords: ejection,players,g_playerEjection
+        FieldName: g_playerEjection
+        InputType: enum
+        ParamFieldName: g_playerEjection
+        DefaultValue: '0'
+        EnumValues:
+          '0': Everyone (default)
+          '1': Enemies
+          '2': Nobody
+    - key: scr_teambalance
+      label: Enable Team Balance
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: If set, players will be automatically balanced between teams in team-based games for fair play
+      keywords: team,balance,fair,play,scr_teambalance
+      input_type: checkbox
+      param_field_name: scr_teambalance
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Team Balance
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will be automatically balanced between teams in team-based games for fair play
+        Keywords: team,balance,fair,play,scr_teambalance
+        FieldName: scr_teambalance
+        InputType: checkbox
+        ParamFieldName: scr_teambalance
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_enableBounces
+      label: Enable Bounces
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: If set, bouncing mechanics will be allowed on the server
+      keywords: bounce,bouncing,sv_enableBounces
+      input_type: checkbox
+      param_field_name: sv_enableBounces
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Bounces
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, bouncing mechanics will be allowed on the server
+        Keywords: bounce,bouncing,sv_enableBounces
+        FieldName: sv_enableBounces
+        InputType: checkbox
+        ParamFieldName: sv_enableBounces
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_enableDoubleTaps
+      label: Enable Double Taps
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: If set, double tap functionality will be allowed on weapon switching
+      keywords: double,tap,weapon,switching,sv_enableDoubleTaps
+      input_type: checkbox
+      param_field_name: sv_enableDoubleTaps
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Double Taps
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, double tap functionality will be allowed on weapon switching
+        Keywords: double,tap,weapon,switching,sv_enableDoubleTaps
+        FieldName: sv_enableDoubleTaps
+        InputType: checkbox
+        ParamFieldName: sv_enableDoubleTaps
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_allowThirdPersonSpectator
+      label: Allow Third Person Spectator
+      category: Call of Duty Modern Warfare 3
+      subcategory: Gameplay
+      description: If set, clients will be allowed to spectate players in third-person view
+      keywords: third,person,spectator,sv_allowThirdPersonSpectator
+      input_type: checkbox
+      param_field_name: sv_allowThirdPersonSpectator
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Third Person Spectator
+        Category: Call of Duty Modern Warfare 3:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, clients will be allowed to spectate players in third-person view
+        Keywords: third,person,spectator,sv_allowThirdPersonSpectator
+        FieldName: sv_allowThirdPersonSpectator
+        InputType: checkbox
+        ParamFieldName: sv_allowThirdPersonSpectator
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+  files:
+    - path: IW5/admin/server.cfg
+      type: kvp
+      format: set {0} "{1}"
+      subsections: []
+      raw:
+        ConfigFile: IW5/admin/server.cfg
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
+        ConfigFormat: set {0} "{1}"
+        ConfigFormatRegex: ^set (?<key>.+?) "(?<value>.*?)".*$
+    - path: IW5/admin/server.cfg
+      type: kvp
+      format: seta {0} "{1}"
+      subsections: []
+      raw:
+        ConfigFile: IW5/admin/server.cfg
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
+        ConfigFormat: seta {0} "{1}"
+        ConfigFormatRegex: ^seta (?<key>.+?) "(?<value>.*?)".*$
+    - path: IW5/admin/server.cfg
+      type: kvp
+      format: seta {0} {1}
+      subsections: []
+      raw:
+        ConfigFile: IW5/admin/server.cfg
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
+        ConfigFormat: seta {0} {1}
+        ConfigFormatRegex: ^seta (?<key>.+?) (?<value>[^"\s]+?).*$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: logfile
+    label: Logfile
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_logSync
+    label: Continuous Log
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_log
+    label: Log File Name
+    default: logs\games_mp.log
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerKey
+    label: Server Key
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: sv_motd
+    label: Server MOTD
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: fs_game
+    label: Mod Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maprotation
+    label: Map Rotation List
+    default: >-
+      dsr TDM_default map mp_rust map mp_terminal_cls map mp_alpha map mp_bootleg map mp_bravo map mp_carbon map mp_dome
+      map mp_exchange map mp_hardhat map mp_interchange map mp_lambeth map mp_mogadishu map mp_paris map mp_plaza2 map
+      mp_radar map mp_seatown map mp_underground map mp_village
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_privateClients
+    label: Private Player Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_privatePassword
+    label: Private Player Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: sv_pure
+    label: Enable Pure Server
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_timeout
+    label: Connection Timeout
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_reconnectlimit
+    label: Reconnection Limit
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_wwwBaseURL
+    label: Fast Download URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rcon_rate_limit
+    label: RCON Rate Limit
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_sayName
+    label: Server Say Name
+    default: ^7Server^7
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowClientConsole
+    label: Allow Client Console
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_floodProtect
+    label: Enable Flood Protection
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_allowVote
+    label: Enable Voting
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_inactivity
+    label: Inactivity Kick Period
+    default: '120'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_kickBanTime
+    label: Temporary Ban Period
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_voice
+    label: Voice Chat Mode
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_voicequality
+    label: Server Voice Chat Quality
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_deadChat
+    label: Enable Dead Chat
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowAimAssist
+    label: Allow Aim Assist
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_playerCollision
+    label: Player Collision Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_playerEjection
+    label: Player Ejection Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scr_teambalance
+    label: Enable Team Balance
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_enableBounces
+    label: Enable Bounces
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_enableDoubleTaps
+    label: Enable Double Taps
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowThirdPersonSpectator
+    label: Allow Third Person Spectator
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '42690'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,18 @@ category: Imported
 summary: StarRupture Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '3809400'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: >-
+    /usr/bin/wine {PlatformArgs} StarRupture -port={ServerPort} {multihome}-stdout -FullStdOutLogOutput {FormattedArgs}
+    -RCWebControlDisable -RCWebInterfaceDisable
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,457 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 7777
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: DSSettings.txt
+    type: json
+    editable: true
+  - path: Password.json
+    type: text
+    editable: true
+  - path: PlayerPassword.json
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: SessionName
+      label: Session Name
+      category: StarRupture
+      subcategory: Server
+      description: Sets the save game session name, as stored in 'StarRupture/Saved/SaveGames'. Maximum 20 characters
+      keywords: session,name,save,game,sessionname
+      input_type: text
+      param_field_name: $.SessionName
+      default: MySaveGame
+      placeholder: MySaveGame
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Session Name
+        Category: StarRupture:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the save game session name, as stored in 'StarRupture/Saved/SaveGames'. Maximum 20 characters
+        Keywords: session,name,save,game,sessionname
+        FieldName: SessionName
+        InputType: text
+        ParamFieldName: $.SessionName
+        DefaultValue: MySaveGame
+        Placeholder: MySaveGame
+        EnumValues: {}
+    - key: SaveGameInterval
+      label: Save Game Interval
+      category: StarRupture
+      subcategory: Server
+      description: >-
+        Sets the server's auto-save interval. The Session Name must have been saved at least once from in-game for
+        auto-saving to work. [More
+        information](https://wiki.starrupture-utilities.com/en/dedicated-server/configuration#creating-a-new-save-new-world)
+      keywords: save,game,interval,auto,seconds,savegameinterval
+      input_type: number
+      param_field_name: $.SaveGameInterval
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Save Game Interval
+        Category: StarRupture:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the server's auto-save interval. The Session Name must have been saved at least once from in-game for
+          auto-saving to work. [More
+          information](https://wiki.starrupture-utilities.com/en/dedicated-server/configuration#creating-a-new-save-new-world)
+        Keywords: save,game,interval,auto,seconds,savegameinterval
+        FieldName: SaveGameInterval
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.SaveGameInterval
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: StartNewGame
+      label: Start New Game
+      category: StarRupture
+      subcategory: Server
+      description: >-
+        If set, creates a new world when the server starts. [More
+        information](https://wiki.starrupture-utilities.com/en/dedicated-server/configuration#creating-a-new-save-new-world)
+      keywords: start,new,game,world,create,startnewgame
+      input_type: checkbox
+      param_field_name: $.StartNewGame
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Start New Game
+        Category: StarRupture:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, creates a new world when the server starts. [More
+          information](https://wiki.starrupture-utilities.com/en/dedicated-server/configuration#creating-a-new-save-new-world)
+        Keywords: start,new,game,world,create,startnewgame
+        FieldName: StartNewGame
+        InputType: checkbox
+        ParamFieldName: $.StartNewGame
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: LoadSavedGame
+      label: Load Saved Game
+      category: StarRupture
+      subcategory: Server
+      description: >-
+        If set, loads an existing save game when the server starts, as specified under Save Game Name. The Session Name
+        and Save Game Name must already exist on the server. [More
+        information](https://wiki.starrupture-utilities.com/en/dedicated-server/configuration#loading-an-existing-save)
+      keywords: load,saved,game,existing,save,loadsavedgame
+      input_type: checkbox
+      param_field_name: $.LoadSavedGame
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Load Saved Game
+        Category: StarRupture:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, loads an existing save game when the server starts, as specified under Save Game Name. The Session
+          Name and Save Game Name must already exist on the server. [More
+          information](https://wiki.starrupture-utilities.com/en/dedicated-server/configuration#loading-an-existing-save)
+        Keywords: load,saved,game,existing,save,loadsavedgame
+        FieldName: LoadSavedGame
+        InputType: checkbox
+        ParamFieldName: $.LoadSavedGame
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: SaveGameName
+      label: Save Game Name
+      category: StarRupture
+      subcategory: Server
+      description: Sets the save file name to load when Load Saved Game is enabled
+      keywords: save,game,name,file,load,savegamename
+      input_type: text
+      param_field_name: $.SaveGameName
+      default: AutoSave0.sav
+      placeholder: AutoSave0.sav
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Save Game Name
+        Category: StarRupture:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the save file name to load when Load Saved Game is enabled
+        Keywords: save,game,name,file,load,savegamename
+        FieldName: SaveGameName
+        InputType: text
+        ParamFieldName: $.SaveGameName
+        DefaultValue: AutoSave0.sav
+        Placeholder: AutoSave0.sav
+        EnumValues: {}
+    - key: adminpassword
+      label: Admin Password Hash
+      category: StarRupture
+      subcategory: Server
+      description: >-
+        Sets the hash of the server's admin password. Generate the hash
+        [here](https://starrupture-utilities.com/passwords/) (click 'Copy Hash Only' to copy only the password hash, not
+        the full JSON blob). Empty = no admin password
+      keywords: admin,password,hash,adminpassword
+      input_type: password
+      param_field_name: adminpassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password Hash
+        Category: StarRupture:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the hash of the server's admin password. Generate the hash
+          [here](https://starrupture-utilities.com/passwords/) (click 'Copy Hash Only' to copy only the password hash,
+          not the full JSON blob). Empty = no admin password
+        Keywords: admin,password,hash,adminpassword
+        FieldName: adminpassword
+        InputType: password
+        Hidden: true
+        ParamFieldName: adminpassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: playerpassword
+      label: Player Password Hash
+      category: StarRupture
+      subcategory: Server
+      description: >-
+        Sets the hash of the server's player password. Generate the hash
+        [here](https://starrupture-utilities.com/passwords/) (click 'Copy Hash Only' to copy only the password hash, not
+        the full JSON blob). Empty = no player password
+      keywords: player,password,hash,playerpassword
+      input_type: password
+      param_field_name: playerpassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Player Password Hash
+        Category: StarRupture:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the hash of the server's player password. Generate the hash
+          [here](https://starrupture-utilities.com/passwords/) (click 'Copy Hash Only' to copy only the password hash,
+          not the full JSON blob). Empty = no player password
+        Keywords: player,password,hash,playerpassword
+        FieldName: playerpassword
+        InputType: password
+        ParamFieldName: playerpassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: multihome
+      label: Enable MultiHome (Windows)
+      category: StarRupture
+      subcategory: Server
+      description: >-
+        If set, the '-multihome' command line argument will be set to the instance's Application IP Binding. [More
+        information](https://starrupture.just4dns.co.uk/dedicated-server/configuration-multihome). Windows only; on
+        Linux the Application IP Binding must be 0.0.0.0
+      keywords: multihome,binding
+      input_type: checkbox
+      param_field_name: multihome
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-multihome={{$ApplicationIPBinding}} '
+      raw:
+        DisplayName: Enable MultiHome (Windows)
+        Category: StarRupture:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the '-multihome' command line argument will be set to the instance's Application IP Binding. [More
+          information](https://starrupture.just4dns.co.uk/dedicated-server/configuration-multihome). Windows only; on
+          Linux the Application IP Binding must be 0.0.0.0
+        Keywords: multihome,binding
+        FieldName: multihome
+        InputType: checkbox
+        ParamFieldName: multihome
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-multihome={{$ApplicationIPBinding}} '
+    - key: EOS_OVERRIDE_HOST_IP
+      label: Public IP Selection Mode
+      category: StarRupture
+      subcategory: Server
+      description: >-
+        Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+        it should use the IP set under Server Public IP. Experimental
+      keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
+      input_type: enum
+      param_field_name: EOS_OVERRIDE_HOST_IP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Server automatically selects (default)
+        '{{$ExternalIP}}': AMP automatically selects
+        '{{ManualPublicIP}}': Manual selection
+      raw:
+        DisplayName: Public IP Selection Mode
+        Category: StarRupture:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+          it should use the IP set under Server Public IP. Experimental
+        Keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
+        FieldName: EOS_OVERRIDE_HOST_IP
+        InputType: enum
+        ParamFieldName: EOS_OVERRIDE_HOST_IP
+        DefaultValue: ''
+        EnumValues:
+          '': Server automatically selects (default)
+          '{{$ExternalIP}}': AMP automatically selects
+          '{{ManualPublicIP}}': Manual selection
+    - key: ManualPublicIP
+      label: Server Public IP
+      category: StarRupture
+      subcategory: Server
+      description: >-
+        Sets the public IP advertised for the server, if "Manual selection" is selected as the Public IP Selection Mode.
+        Useful if the host network has multiple public IPs, or the server is behind a public proxy or VPN
+      keywords: manual,public,ip,eos,override,host,EOS_OVERRIDE_HOST_IP
+      input_type: text
+      param_field_name: ManualPublicIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Public IP
+        Category: StarRupture:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public IP advertised for the server, if "Manual selection" is selected as the Public IP Selection
+          Mode. Useful if the host network has multiple public IPs, or the server is behind a public proxy or VPN
+        Keywords: manual,public,ip,eos,override,host,EOS_OVERRIDE_HOST_IP
+        FieldName: ManualPublicIP
+        InputType: text
+        ParamFieldName: ManualPublicIP
+        DefaultValue: ''
+        EnumValues: {}
+  files:
+    - path: DSSettings.txt
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: DSSettings.txt
+        AutoMap: true
+        Importable: true
+        ConfigType: json
+    - path: Password.json
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: Password.json
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: star-rupture/AMP_Password.json
+    - path: PlayerPassword.json
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: PlayerPassword.json
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: star-rupture/AMP_PlayerPassword.json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: SessionName
+    label: Session Name
+    default: MySaveGame
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SaveGameInterval
+    label: Save Game Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: StartNewGame
+    label: Start New Game
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LoadSavedGame
+    label: Load Saved Game
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SaveGameName
+    label: Save Game Name
+    default: AutoSave0.sav
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminpassword
+    label: Admin Password Hash
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: playerpassword
+    label: Player Password Hash
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: multihome
+    label: Enable MultiHome (Windows)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EOS_OVERRIDE_HOST_IP
+    label: Public IP Selection Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualPublicIP
+    label: Server Public IP
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1631270'
+  collection_support: true
 backup:
   include:
     - /data

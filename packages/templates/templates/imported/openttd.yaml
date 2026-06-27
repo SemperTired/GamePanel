@@ -5,13 +5,16 @@ category: Imported
 summary: OpenTTD Dedicated Server
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '1536610'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1536610/openttd
+  startup: 1536610/openttd -D {ApplicationIPBinding}:{ServerPort} -c config/openttd.cfg {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,5500 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 3979
+    protocol: both
     required: true
-config_files: []
+  - key: serveradminport
+    name: Server Admin Port
+    default: 3977
+    protocol: tcp
+    required: true
+config_files:
+  - path: config/openttd.cfg
+    type: ini
+    editable: true
+  - path: config/private.cfg
+    type: ini
+    editable: true
+  - path: config/secrets.cfg
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Server Port
+      category: OpenTTD
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: network.server_port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: network.server_port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $ServerAdminPort
+      label: Server Admin Port
+      category: OpenTTD
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: network.server_admin_port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Admin Port
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerAdminPort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: network.server_admin_port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: server_game_type
+      label: Server Public Status
+      category: OpenTTD
+      subcategory: Server
+      description: >-
+        Sets whether the server is local or public and, if public, whether it is included on the server list or is
+        invite-only
+      keywords: local,public,invite,list,game,type,server_game_type
+      input_type: enum
+      param_field_name: network.server_game_type
+      default: local
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        local: Local (default)
+        invite-only: Public (invite only)
+        public: Public
+      raw:
+        DisplayName: Server Public Status
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether the server is local or public and, if public, whether it is included on the server list or is
+          invite-only
+        Keywords: local,public,invite,list,game,type,server_game_type
+        FieldName: server_game_type
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: network.server_game_type
+        IncludeInCommandLine: false
+        DefaultValue: local
+        EnumValues:
+          local: Local (default)
+          invite-only: Public (invite only)
+          public: Public
+    - key: server_name
+      label: Server Name
+      category: OpenTTD
+      subcategory: Server
+      description: Sets the name of the server as shown on the server list
+      keywords: server,name,server_name
+      input_type: text
+      param_field_name: network.server_name
+      default: AMP Powered OpenTTD Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as shown on the server list
+        Keywords: server,name,server_name
+        FieldName: server_name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: network.server_name
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered OpenTTD Server
+        EnumValues: {}
+    - key: client_name
+      label: Client Name
+      category: OpenTTD
+      subcategory: Server
+      description: Name that the server uses in-game (for example, for chat messages)
+      keywords: client,name,client_name
+      input_type: text
+      param_field_name: network.client_name
+      default: AMPServer
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Client Name
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Name that the server uses in-game (for example, for chat messages)
+        Keywords: client,name,client_name
+        FieldName: client_name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: network.client_name
+        IncludeInCommandLine: false
+        DefaultValue: AMPServer
+        EnumValues: {}
+    - key: server_password
+      label: Server Password
+      category: OpenTTD
+      subcategory: Server
+      description: Sets the password for clients to connect to the server. Empty = no password (default)
+      keywords: server,password,server_password
+      input_type: password
+      param_field_name: network.server_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for clients to connect to the server. Empty = no password (default)
+        Keywords: server,password,server_password
+        FieldName: server_password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: network.server_password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: admin_password
+      label: Admin Password
+      category: OpenTTD
+      subcategory: Server
+      description: >-
+        Sets the password that clients of the [admin
+        interface](https://github.com/OpenTTD/OpenTTD/blob/master/docs/admin_network.md) need to use it. Empty = no
+        password (default), meaning the admin interface is disabled
+      keywords: admin,password,admin_password
+      input_type: password
+      param_field_name: network.admin_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password that clients of the [admin
+          interface](https://github.com/OpenTTD/OpenTTD/blob/master/docs/admin_network.md) need to use it. Empty = no
+          password (default), meaning the admin interface is disabled
+        Keywords: admin,password,admin_password
+        FieldName: admin_password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: network.admin_password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: autosave
+      label: Autosave Interval
+      category: OpenTTD
+      subcategory: Server
+      description: Sets the time interval between automatic game saves
+      keywords: autosave
+      input_type: enum
+      param_field_name: gui.autosave
+      default: monthly
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        never: Never (autosave disabled)
+        monthly: Monthly (1st day of month) (default)
+        quarterly: Quarterly (1st day of quarter)
+        2x yearly: Twice yearly (1 January and 1 July)
+        yearly: Yearly (1 January)
+      raw:
+        DisplayName: Autosave Interval
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time interval between automatic game saves
+        Keywords: autosave
+        FieldName: autosave
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: gui.autosave
+        IncludeInCommandLine: false
+        DefaultValue: monthly
+        EnumValues:
+          never: Never (autosave disabled)
+          monthly: Monthly (1st day of month) (default)
+          quarterly: Quarterly (1st day of quarter)
+          2x yearly: Twice yearly (1 January and 1 July)
+          yearly: Yearly (1 January)
+    - key: autosave_on_exit
+      label: Autosave On Exit
+      category: OpenTTD
+      subcategory: Server
+      description: If set, the server will autosave on exit
+      keywords: autosave,exit,autosave_on_exit
+      input_type: checkbox
+      param_field_name: gui.autosave_on_exit
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Autosave On Exit
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will autosave on exit
+        Keywords: autosave,exit,autosave_on_exit
+        FieldName: autosave_on_exit
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: gui.autosave_on_exit
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: g
+      label: Save Name
+      category: OpenTTD
+      subcategory: Server
+      description: >-
+        Sets the savename of a game to load on server start. Both saved games and scenarios can be loaded. If no game
+        savename is specified, a new game is started. If desired, set this value to "config/save/autosave/exit.sav" to
+        load the default autosave after the server has started and autosaved once
+      keywords: load,savegame
+      input_type: text
+      param_field_name: g
+      default: ''
+      placeholder: config/save/autosave/exit.sav
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Save Name
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the savename of a game to load on server start. Both saved games and scenarios can be loaded. If no game
+          savename is specified, a new game is started. If desired, set this value to "config/save/autosave/exit.sav" to
+          load the default autosave after the server has started and autosaved once
+        Keywords: load,savegame
+        FieldName: g
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: g
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: config/save/autosave/exit.sav
+        EnumValues: {}
+    - key: max_clients
+      label: Player Limit
+      category: OpenTTD
+      subcategory: Server
+      description: Maximum number of players that may connect to the server at one time
+      keywords: maximum,players,limit,max_clients
+      input_type: number
+      param_field_name: network.max_clients
+      default: '25'
+      placeholder: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,limit,max_clients
+        FieldName: max_clients
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: network.max_clients
+        IncludeInCommandLine: false
+        DefaultValue: '25'
+        Placeholder: '25'
+        Suffix: players
+        EnumValues: {}
+    - key: min_active_clients
+      label: Minimum Active Players
+      category: OpenTTD
+      subcategory: Server
+      description: Sets the minimum number of active players, below which the server will be automatically paused
+      keywords: minimum,active,players,min_active_clients
+      input_type: number
+      param_field_name: network.min_active_clients
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 255
+      suffix: active players
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Active Players
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum number of active players, below which the server will be automatically paused
+        Keywords: minimum,active,players,min_active_clients
+        FieldName: min_active_clients
+        InputType: number
+        MinValue: '0'
+        MaxValue: '255'
+        IsFlagArgument: false
+        ParamFieldName: network.min_active_clients
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: active players
+        EnumValues: {}
+    - key: max_companies
+      label: Maximum Companies
+      category: OpenTTD
+      subcategory: Server
+      description: Sets the maximum number of companies on the server
+      keywords: maximum,companies,max_companies
+      input_type: number
+      param_field_name: network.max_companies
+      default: '15'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 15
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Companies
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of companies on the server
+        Keywords: maximum,companies,max_companies
+        FieldName: max_companies
+        InputType: number
+        MinValue: '1'
+        MaxValue: '15'
+        IsFlagArgument: false
+        ParamFieldName: network.max_companies
+        IncludeInCommandLine: false
+        DefaultValue: '15'
+        EnumValues: {}
+    - key: server_admin_chat
+      label: Enable Admin Chat
+      category: OpenTTD
+      subcategory: Server
+      description: Enables admin chat on the server
+      keywords: admin,chat,server_admin_chat
+      input_type: checkbox
+      param_field_name: network.server_admin_chat
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Admin Chat
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Enables admin chat on the server
+        Keywords: admin,chat,server_admin_chat
+        FieldName: server_admin_chat
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: network.server_admin_chat
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: max_join_time
+      label: Maximum Join Time
+      category: OpenTTD
+      subcategory: Server
+      description: >-
+        Sets the maximum amount of time allowed for a client to join the server. Increasing this can help clients with
+        slower download speeds to join servers with larger maps
+      keywords: maximum,join,time
+      input_type: number
+      param_field_name: network.max_join_time
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: ticks
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Join Time
+        Category: OpenTTD:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum amount of time allowed for a client to join the server. Increasing this can help clients with
+          slower download speeds to join servers with larger maps
+        Keywords: maximum,join,time
+        FieldName: max_join_time
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: network.max_join_time
+        IncludeInCommandLine: false
+        DefaultValue: '500'
+        Placeholder: '500'
+        Suffix: ticks
+        EnumValues: {}
+    - key: inflation
+      label: Allow Inflation
+      category: OpenTTD
+      subcategory: Accounting
+      description: If set, inflation will be enabled in the economy, where costs rise slightly faster than payments
+      keywords: inflation
+      input_type: checkbox
+      param_field_name: economy.inflation
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Inflation
+        Category: OpenTTD:stadia_controller
+        Subcategory: Accounting:payments:2
+        Description: If set, inflation will be enabled in the economy, where costs rise slightly faster than payments
+        Keywords: inflation
+        FieldName: inflation
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.inflation
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: max_loan
+      label: Maximum Initial Loan
+      category: OpenTTD
+      subcategory: Accounting
+      description: >-
+        Sets the maximum initial amount a company can loan (in GBP), in multiples of £50,000. If the Server Currency is
+        different, the amount will be converted at the relevant exchange rate. The maximum loan amount will increase
+        over time if Inflation is enabled
+      keywords: maximum,initial,loan,max_loan
+      input_type: number
+      param_field_name: difficulty.max_loan
+      default: '300000'
+      placeholder: '300000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: GBP
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Initial Loan
+        Category: OpenTTD:stadia_controller
+        Subcategory: Accounting:payments:2
+        Description: >-
+          Sets the maximum initial amount a company can loan (in GBP), in multiples of £50,000. If the Server Currency
+          is different, the amount will be converted at the relevant exchange rate. The maximum loan amount will
+          increase over time if Inflation is enabled
+        Keywords: maximum,initial,loan,max_loan
+        FieldName: max_loan
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: difficulty.max_loan
+        IncludeInCommandLine: false
+        DefaultValue: '300000'
+        Placeholder: '300000'
+        Suffix: GBP
+        EnumValues: {}
+    - key: initial_interest
+      label: Initial Interest Rate
+      category: OpenTTD
+      subcategory: Accounting
+      description: Sets the initial interest rate charged on loans for a new map
+      keywords: initial,interest,initial_interest
+      input_type: enum
+      param_field_name: difficulty.initial_interest
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '2': 2% (default)
+        '3': 3%
+        '4': 4%
+      raw:
+        DisplayName: Initial Interest Rate
+        Category: OpenTTD:stadia_controller
+        Subcategory: Accounting:payments:2
+        Description: Sets the initial interest rate charged on loans for a new map
+        Keywords: initial,interest,initial_interest
+        FieldName: initial_interest
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty.initial_interest
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues:
+          '2': 2% (default)
+          '3': 3%
+          '4': 4%
+    - key: subsidy_multiplier
+      label: Subsidy Multiplier
+      category: OpenTTD
+      subcategory: Accounting
+      description: Sets the bonus multiplier for subsidies offered in-game (assuming they are not disabled)
+      keywords: subsidy,multiplier,subsidy_multiplier
+      input_type: enum
+      param_field_name: difficulty.subsidy_multiplier
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': 1.5x normal rate
+        '1': 2.0x normal rate
+        '2': 3.0x normal rate (default)
+        '3': 4.0x normal rate
+      raw:
+        DisplayName: Subsidy Multiplier
+        Category: OpenTTD:stadia_controller
+        Subcategory: Accounting:payments:2
+        Description: Sets the bonus multiplier for subsidies offered in-game (assuming they are not disabled)
+        Keywords: subsidy,multiplier,subsidy_multiplier
+        FieldName: subsidy_multiplier
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty.subsidy_multiplier
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues:
+          '0': 1.5x normal rate
+          '1': 2.0x normal rate
+          '2': 3.0x normal rate (default)
+          '3': 4.0x normal rate
+    - key: subsidy_duration
+      label: Subsidy Duration
+      category: OpenTTD
+      subcategory: Accounting
+      description: Sets the number of years for which subsidies are awarded. 0 = subsidies disabled
+      keywords: subsidy,duration,subsidy_duration
+      input_type: number
+      param_field_name: difficulty.subsidy_duration
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5000
+      suffix: years
+      enum_values: {}
+      raw:
+        DisplayName: Subsidy Duration
+        Category: OpenTTD:stadia_controller
+        Subcategory: Accounting:payments:2
+        Description: Sets the number of years for which subsidies are awarded. 0 = subsidies disabled
+        Keywords: subsidy,duration,subsidy_duration
+        FieldName: subsidy_duration
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5000'
+        IsFlagArgument: false
+        ParamFieldName: difficulty.subsidy_duration
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: years
+        EnumValues: {}
+    - key: infrastructure_maintenance
+      label: Infrastructure Maintenance
+      category: OpenTTD
+      subcategory: Accounting
+      description: >-
+        If enabled, infrastructure causes maintenance costs. The cost grows in proportion to the network size, thus
+        affecting larger companie more than smaller ones
+      keywords: infrastructure,maintenance,infrastructure_maintenance
+      input_type: checkbox
+      param_field_name: economy.infrastructure_maintenance
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Infrastructure Maintenance
+        Category: OpenTTD:stadia_controller
+        Subcategory: Accounting:payments:2
+        Description: >-
+          If enabled, infrastructure causes maintenance costs. The cost grows in proportion to the network size, thus
+          affecting larger companie more than smaller ones
+        Keywords: infrastructure,maintenance,infrastructure_maintenance
+        FieldName: infrastructure_maintenance
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.infrastructure_maintenance
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: vehicle_costs
+      label: Running Costs
+      category: OpenTTD
+      subcategory: Accounting
+      description: Sets the level of maintenance and running costs of vehicles and infrastructure
+      keywords: vehicle,infrastructure,costs,vehicle_costs
+      input_type: enum
+      param_field_name: difficulty.vehicle_costs
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Low (default)
+        '1': Medium
+        '2': High
+      raw:
+        DisplayName: Running Costs
+        Category: OpenTTD:stadia_controller
+        Subcategory: Accounting:payments:2
+        Description: Sets the level of maintenance and running costs of vehicles and infrastructure
+        Keywords: vehicle,infrastructure,costs,vehicle_costs
+        FieldName: vehicle_costs
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty.vehicle_costs
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Low (default)
+          '1': Medium
+          '2': High
+    - key: construction_cost
+      label: Construction Costs
+      category: OpenTTD
+      subcategory: Accounting
+      description: Sets the level of construction and purchase costs
+      keywords: construction,purchase,cost,construction_cost
+      input_type: enum
+      param_field_name: difficulty.construction_cost
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Low (default)
+        '1': Medium
+        '2': High
+      raw:
+        DisplayName: Construction Costs
+        Category: OpenTTD:stadia_controller
+        Subcategory: Accounting:payments:2
+        Description: Sets the level of construction and purchase costs
+        Keywords: construction,purchase,cost,construction_cost
+        FieldName: construction_cost
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty.construction_cost
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Low (default)
+          '1': Medium
+          '2': High
+    - key: disasters
+      label: Allow Disasters
+      category: OpenTTD
+      subcategory: Incidents
+      description: If enabled, disasters can occur on a new map, which may occasionally block or destroy vehicles or infrastructure
+      keywords: disasters
+      input_type: checkbox
+      param_field_name: difficulty.disasters
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Disasters
+        Category: OpenTTD:stadia_controller
+        Subcategory: Incidents:warning:3
+        Description: >-
+          If enabled, disasters can occur on a new map, which may occasionally block or destroy vehicles or
+          infrastructure
+        Keywords: disasters
+        FieldName: disasters
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: difficulty.disasters
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: economy
+      label: Allow Economic Recessions
+      category: OpenTTD
+      subcategory: Incidents
+      description: >-
+        If enabled, economic recessions can occur on new maps every few years. During recessions, all production is
+        significantly lower
+      keywords: economy,recession
+      input_type: checkbox
+      param_field_name: difficulty.economy
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Economic Recessions
+        Category: OpenTTD:stadia_controller
+        Subcategory: Incidents:warning:3
+        Description: >-
+          If enabled, economic recessions can occur on new maps every few years. During recessions, all production is
+          significantly lower
+        Keywords: economy,recession
+        FieldName: economy
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: difficulty.economy
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: vehicle_breakdowns
+      label: Vehicle Breakdown Frequency
+      category: OpenTTD
+      subcategory: Incidents
+      description: Sets the frequency at which inadequately serviced vehicles break down
+      keywords: vehicle,breakdowns,frequency,vehicle_breakdowns
+      input_type: enum
+      param_field_name: difficulty.vehicle_breakdowns
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No breakdowns
+        '1': Reduced breakdowns (default)
+        '2': Normal breakdowns
+      raw:
+        DisplayName: Vehicle Breakdown Frequency
+        Category: OpenTTD:stadia_controller
+        Subcategory: Incidents:warning:3
+        Description: Sets the frequency at which inadequately serviced vehicles break down
+        Keywords: vehicle,breakdowns,frequency,vehicle_breakdowns
+        FieldName: vehicle_breakdowns
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty.vehicle_breakdowns
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': No breakdowns
+          '1': Reduced breakdowns (default)
+          '2': Normal breakdowns
+    - key: plane_crashes
+      label: Aircraft Crash Probability
+      category: OpenTTD
+      subcategory: Incidents
+      description: Sets the probability of aircraft crashes
+      keywords: plane,aircraft,crashes,plane_crashes
+      input_type: enum
+      param_field_name: vehicle.plane_crashes
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None
+        '1': Reduced
+        '2': Normal (default)
+      raw:
+        DisplayName: Aircraft Crash Probability
+        Category: OpenTTD:stadia_controller
+        Subcategory: Incidents:warning:3
+        Description: Sets the probability of aircraft crashes
+        Keywords: plane,aircraft,crashes,plane_crashes
+        FieldName: plane_crashes
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: vehicle.plane_crashes
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues:
+          '0': None
+          '1': Reduced
+          '2': Normal (default)
+    - key: dist_local_authority
+      label: Local Authority Distance
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Sets how far in tiles an object has to be from a town centre before it comes under the local authority
+        jurisdiction
+      keywords: distance,local,authority,dist_local_authority
+      input_type: number
+      param_field_name: economy.dist_local_authority
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: tiles
+      enum_values: {}
+      raw:
+        DisplayName: Local Authority Distance
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Sets how far in tiles an object has to be from a town centre before it comes under the local authority
+          jurisdiction
+        Keywords: distance,local,authority,dist_local_authority
+        FieldName: dist_local_authority
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: economy.dist_local_authority
+        IncludeInCommandLine: false
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: tiles
+        EnumValues: {}
+    - key: town_council_tolerance
+      label: Town Council Tolerance
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Sets how much noise and environmental damage by companies affect their town rating and therefore further
+        construction activity in the area
+      keywords: town,council,tolerance,town_council_tolerance
+      input_type: enum
+      param_field_name: difficulty.town_council_tolerance
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Lenient (default)
+        '1': Tolerant
+        '2': Hostile
+        '3': Permissive
+      raw:
+        DisplayName: Town Council Tolerance
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Sets how much noise and environmental damage by companies affect their town rating and therefore further
+          construction activity in the area
+        Keywords: town,council,tolerance,town_council_tolerance
+        FieldName: town_council_tolerance
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty.town_council_tolerance
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Lenient (default)
+          '1': Tolerant
+          '2': Hostile
+          '3': Permissive
+    - key: town_noise_population0
+      label: Town Population Noise Level Increase - Lenient
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If Town Council Tolerance is lenient, then the town noise limit will increase from the default for every
+        specified number of inhabitants
+      keywords: town,noise,population,permissive,town_noise_population[0]
+      input_type: number
+      param_field_name: economy.town_noise_population[0]
+      default: '800'
+      placeholder: '800'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Town Population Noise Level Increase - Lenient
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If Town Council Tolerance is lenient, then the town noise limit will increase from the default for every
+          specified number of inhabitants
+        Keywords: town,noise,population,permissive,town_noise_population[0]
+        FieldName: town_noise_population0
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: economy.town_noise_population[0]
+        IncludeInCommandLine: false
+        DefaultValue: '800'
+        Placeholder: '800'
+        EnumValues: {}
+    - key: town_noise_population1
+      label: Town Population Noise Level Increase - Tolerant
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If Town Council Tolerance is tolerant, then the town noise limit will increase from the default for every
+        specified number of inhabitants
+      keywords: town,noise,population,tolerant,town_noise_population[1]
+      input_type: number
+      param_field_name: economy.town_noise_population[1]
+      default: '2000'
+      placeholder: '2000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Town Population Noise Level Increase - Tolerant
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If Town Council Tolerance is tolerant, then the town noise limit will increase from the default for every
+          specified number of inhabitants
+        Keywords: town,noise,population,tolerant,town_noise_population[1]
+        FieldName: town_noise_population1
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: economy.town_noise_population[1]
+        IncludeInCommandLine: false
+        DefaultValue: '2000'
+        Placeholder: '2000'
+        EnumValues: {}
+    - key: town_noise_population2
+      label: Town Population Noise Level Increase - Hostile
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If Town Council Tolerance is hostile, then the town noise limit will increase from the default for every
+        specified number of inhabitants
+      keywords: town,noise,population,hostile,town_noise_population[2]
+      input_type: number
+      param_field_name: economy.town_noise_population[2]
+      default: '4000'
+      placeholder: '4000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Town Population Noise Level Increase - Hostile
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If Town Council Tolerance is hostile, then the town noise limit will increase from the default for every
+          specified number of inhabitants
+        Keywords: town,noise,population,hostile,town_noise_population[2]
+        FieldName: town_noise_population2
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: economy.town_noise_population[2]
+        IncludeInCommandLine: false
+        DefaultValue: '4000'
+        Placeholder: '4000'
+        EnumValues: {}
+    - key: town_noise_population3
+      label: Town Population Noise Level Increase - Permissive
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If Town Council Tolerance is permissive, then the town noise limit will increase from the default for every
+        specified number of inhabitants
+      keywords: town,noise,population,permissive,town_noise_population[3]
+      input_type: number
+      param_field_name: economy.town_noise_population[3]
+      default: '400'
+      placeholder: '400'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Town Population Noise Level Increase - Permissive
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If Town Council Tolerance is permissive, then the town noise limit will increase from the default for every
+          specified number of inhabitants
+        Keywords: town,noise,population,permissive,town_noise_population[3]
+        FieldName: town_noise_population3
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: economy.town_noise_population[3]
+        IncludeInCommandLine: false
+        DefaultValue: '400'
+        Placeholder: '400'
+        EnumValues: {}
+    - key: bribe
+      label: Allow Bribes
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If enabled, companies can try to bribe local authorities to increase their rating. If noticed by an inspector,
+        the company will not be able to act in the town for six months
+      keywords: bribe
+      input_type: checkbox
+      param_field_name: economy.bribe
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Bribes
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If enabled, companies can try to bribe local authorities to increase their rating. If noticed by an inspector,
+          the company will not be able to act in the town for six months
+        Keywords: bribe
+        FieldName: bribe
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.bribe
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: exclusive_rights
+      label: Allow Exclusive Rights
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If enabled, allows buying of exclusive transport rights in the area of a local authority. Opponents' stations
+        (passenger and cargo) will not receive any cargo for a whole year
+      keywords: exclusive,rights,exclusive_rights
+      input_type: checkbox
+      param_field_name: economy.exclusive_rights
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Exclusive Rights
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If enabled, allows buying of exclusive transport rights in the area of a local authority. Opponents' stations
+          (passenger and cargo) will not receive any cargo for a whole year
+        Keywords: exclusive,rights,exclusive_rights
+        FieldName: exclusive_rights
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.exclusive_rights
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: fund_roads
+      label: Allow Funding Of Roads
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If enabled, allows companies to give money to towns to fund road reconstruction, in order to sabotage road-based
+        services in the town
+      keywords: fund,roads,fund_roads
+      input_type: checkbox
+      param_field_name: economy.fund_roads
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Funding Of Roads
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If enabled, allows companies to give money to towns to fund road reconstruction, in order to sabotage
+          road-based services in the town
+        Keywords: fund,roads,fund_roads
+        FieldName: fund_roads
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.fund_roads
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: fund_buildings
+      label: Allow Funding Of Buildings
+      category: OpenTTD
+      subcategory: Environment
+      description: If enabled, allows companies to give money to towns to fund new houses
+      keywords: fund,buildings,fund_buildings
+      input_type: checkbox
+      param_field_name: economy.fund_buildings
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Funding Of Buildings
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: If enabled, allows companies to give money to towns to fund new houses
+        Keywords: fund,buildings,fund_buildings
+        FieldName: fund_buildings
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.fund_buildings
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: station_noise_level
+      label: Enable Airport Noise Level
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If disabled, there can only be two airports in each town. If enabled, the number of airports is limited instead
+        by the noise acceptance of the town, which depends on population, airport size and distance
+      keywords: station,noise,level,station_noise_level
+      input_type: checkbox
+      param_field_name: economy.station_noise_level
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Airport Noise Level
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If disabled, there can only be two airports in each town. If enabled, the number of airports is limited
+          instead by the noise acceptance of the town, which depends on population, airport size and distance
+        Keywords: station,noise,level,station_noise_level
+        FieldName: station_noise_level
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.station_noise_level
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: town_growth_rate
+      label: Town Growth Rate
+      category: OpenTTD
+      subcategory: Environment
+      description: Sets the speed of town growth
+      keywords: town,growth,rate,speed,town_growth_rate
+      input_type: enum
+      param_field_name: economy.town_growth_rate
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None
+        '1': Slow
+        '2': Normal (default)
+        '3': Fast
+        '4': Very fast
+      raw:
+        DisplayName: Town Growth Rate
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: Sets the speed of town growth
+        Keywords: town,growth,rate,speed,town_growth_rate
+        FieldName: town_growth_rate
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: economy.town_growth_rate
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues:
+          '0': None
+          '1': Slow
+          '2': Normal (default)
+          '3': Fast
+          '4': Very fast
+    - key: allow_town_roads
+      label: Allow Town Roads
+      category: OpenTTD
+      subcategory: Environment
+      description: If enabled, towns are allowed to build roads. Otherwise, players must build roads for a town to grow
+      keywords: town,roads,allow_town_roads
+      input_type: checkbox
+      param_field_name: economy.allow_town_roads
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Town Roads
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: If enabled, towns are allowed to build roads. Otherwise, players must build roads for a town to grow
+        Keywords: town,roads,allow_town_roads
+        FieldName: allow_town_roads
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.allow_town_roads
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: allow_town_level_crossings
+      label: Allow Town Level Crossings
+      category: OpenTTD
+      subcategory: Environment
+      description: If enabled, towns are allowed to build level crossings
+      keywords: town,level,crossings,allow_town_level_crossings
+      input_type: checkbox
+      param_field_name: economy.allow_town_level_crossings
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Town Level Crossings
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: If enabled, towns are allowed to build level crossings
+        Keywords: town,level,crossings,allow_town_level_crossings
+        FieldName: allow_town_level_crossings
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.allow_town_level_crossings
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: mod_road_rebuild
+      label: Remove Useless Road Elements
+      category: OpenTTD
+      subcategory: Environment
+      description: If enabled, towns will remove useless road elements during construction to clean up dead-ends
+      keywords: mod,road,rebuild,mod_road_rebuild
+      input_type: checkbox
+      param_field_name: economy.mod_road_rebuild
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Remove Useless Road Elements
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: If enabled, towns will remove useless road elements during construction to clean up dead-ends
+        Keywords: mod,road,rebuild,mod_road_rebuild
+        FieldName: mod_road_rebuild
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.mod_road_rebuild
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: found_town
+      label: Allow Founding Of Towns
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Sets whether towns can be founded by players during the game and, if so, whether they will use the road layout
+        used by other towns in the game, or can have a custom layout
+      keywords: found,town,found_town
+      input_type: enum
+      param_field_name: economy.found_town
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Forbidden (default)
+        '1': Allowed
+        '2': Allowed with custom town layout
+      raw:
+        DisplayName: Allow Founding Of Towns
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Sets whether towns can be founded by players during the game and, if so, whether they will use the road layout
+          used by other towns in the game, or can have a custom layout
+        Keywords: found,town,found_town
+        FieldName: found_town
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: economy.found_town
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Forbidden (default)
+          '1': Allowed
+          '2': Allowed with custom town layout
+    - key: town_cargo_scale
+      label: Town Cargo Production Scale
+      category: OpenTTD
+      subcategory: Environment
+      description: Scales the cargo production of towns by the set percentage. Minimum OpenTTD v14.0
+      keywords: town,cargo,production,scale,town_cargo_scale
+      input_type: number
+      param_field_name: economy.town_cargo_scale
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Town Cargo Production Scale
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: Scales the cargo production of towns by the set percentage. Minimum OpenTTD v14.0
+        Keywords: town,cargo,production,scale,town_cargo_scale
+        FieldName: town_cargo_scale
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: economy.town_cargo_scale
+        IncludeInCommandLine: false
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: '%'
+        EnumValues: {}
+    - key: industry_cargo_scale
+      label: Industry Production Scale
+      category: OpenTTD
+      subcategory: Environment
+      description: Scales the cargo production of industries by the set percentage. Minimum OpenTTD v14.0
+      keywords: industry,cargo,production,scale,industry_cargo_scale
+      input_type: number
+      param_field_name: economy.industry_cargo_scale
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Industry Production Scale
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: Scales the cargo production of industries by the set percentage. Minimum OpenTTD v14.0
+        Keywords: industry,cargo,production,scale,industry_cargo_scale
+        FieldName: industry_cargo_scale
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: economy.industry_cargo_scale
+        IncludeInCommandLine: false
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: '%'
+        EnumValues: {}
+    - key: town_cargogen_mode
+      label: Town Cargo Generation Mode
+      category: OpenTTD
+      subcategory: Environment
+      description: Sets how much cargo is produced by houses in towns, relative to the overall town population
+      keywords: town,cargo,generation,mode,town_cargogen_mode
+      input_type: enum
+      param_field_name: economy.town_cargogen_mode
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Quadratic growth (original)
+        '1': Linear growth (default)
+      raw:
+        DisplayName: Town Cargo Generation Mode
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: Sets how much cargo is produced by houses in towns, relative to the overall town population
+        Keywords: town,cargo,generation,mode,town_cargogen_mode
+        FieldName: town_cargogen_mode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: economy.town_cargogen_mode
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': Quadratic growth (original)
+          '1': Linear growth (default)
+    - key: selectgoods
+      label: Enable Demand-Only Cargo Generation
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If set, cargo will only be generated at a station when a vehicle with the capacity to pick up that cargo has
+        visited. Affects station ratings
+      keywords: cargo,demand,generation,selectgoods
+      input_type: checkbox
+      param_field_name: order.selectgoods
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Demand-Only Cargo Generation
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If set, cargo will only be generated at a station when a vehicle with the capacity to pick up that cargo has
+          visited. Affects station ratings
+        Keywords: cargo,demand,generation,selectgoods
+        FieldName: selectgoods
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: order.selectgoods
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: multiple_industry_per_town
+      label: Allow Multiple Industries Per Town
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If enabled, two or more industries of the same type can be built on land that comes under the jurisdiction of
+        one town. Normally only one of each type is allowed
+      keywords: multiple,industry,town,multiple_industry_per_town
+      input_type: checkbox
+      param_field_name: economy.multiple_industry_per_town
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Multiple Industries Per Town
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If enabled, two or more industries of the same type can be built on land that comes under the jurisdiction of
+          one town. Normally only one of each type is allowed
+        Keywords: multiple,industry,town,multiple_industry_per_town
+        FieldName: multiple_industry_per_town
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.multiple_industry_per_town
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: oil_refinery_limit
+      label: Oil Refinery Limit
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Oil refineries are only constructed near the map border (the coast for island maps). This sets the maximum
+        allowed distance (in an even number of tiles) from the edge of the map for refineries
+      keywords: oil,refinery,limit,oil_refinery_limit
+      input_type: number
+      param_field_name: game_creation.oil_refinery_limit
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 12
+      suffix: tiles
+      enum_values: {}
+      raw:
+        DisplayName: Oil Refinery Limit
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Oil refineries are only constructed near the map border (the coast for island maps). This sets the maximum
+          allowed distance (in an even number of tiles) from the edge of the map for refineries
+        Keywords: oil,refinery,limit,oil_refinery_limit
+        FieldName: oil_refinery_limit
+        InputType: number
+        MinValue: '12'
+        IsFlagArgument: false
+        ParamFieldName: game_creation.oil_refinery_limit
+        IncludeInCommandLine: false
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: tiles
+        EnumValues: {}
+    - key: serve_neutral_industries
+      label: Allow Serving Neutral Industries
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If enabled, industries with attached stations may also be served by company-owned stations built nearby.
+        Otherwise, they can only be served by their own attached stations
+      keywords: serve,neutral,industries,serve_neutral_industries
+      input_type: checkbox
+      param_field_name: station.serve_neutral_industries
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Serving Neutral Industries
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If enabled, industries with attached stations may also be served by company-owned stations built nearby.
+          Otherwise, they can only be served by their own attached stations
+        Keywords: serve,neutral,industries,serve_neutral_industries
+        FieldName: serve_neutral_industries
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: station.serve_neutral_industries
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: modified_catchment
+      label: Modified Catchment Areas
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If enabled, catchment areas will be differently sized for different types of stations and airports, and as a
+        result be more realistic. For example, train stations have a larger catchment area than bus stations and airport
+        catchment areas are bigger still
+      keywords: modified,catchment,modified_catchment
+      input_type: checkbox
+      param_field_name: station.modified_catchment
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Modified Catchment Areas
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If enabled, catchment areas will be differently sized for different types of stations and airports, and as a
+          result be more realistic. For example, train stations have a larger catchment area than bus stations and
+          airport catchment areas are bigger still
+        Keywords: modified,catchment,modified_catchment
+        FieldName: modified_catchment
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: station.modified_catchment
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: improved_load
+      label: Enable Improved Loading
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If set, only one vehicle is loaded at a time until full, before loading the next vehicle. When disabled, all
+        vehicles in a station are loaded simultaneously, possibly needlessly blocking multiple platforms
+      keywords: improved,load,improved_load
+      input_type: checkbox
+      param_field_name: order.improved_load
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Improved Loading
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If set, only one vehicle is loaded at a time until full, before loading the next vehicle. When disabled, all
+          vehicles in a station are loaded simultaneously, possibly needlessly blocking multiple platforms
+        Keywords: improved,load,improved_load
+        FieldName: improved_load
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: order.improved_load
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: gradual_loading
+      label: Enable Gradual Loading
+      category: OpenTTD
+      subcategory: Environment
+      description: If set, vehicles will load cargo over a period of time, not full load instantly
+      keywords: gradual,loading,gradual_loading
+      input_type: checkbox
+      param_field_name: order.gradual_loading
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Gradual Loading
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: If set, vehicles will load cargo over a period of time, not full load instantly
+        Keywords: gradual,loading,gradual_loading
+        FieldName: gradual_loading
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: order.gradual_loading
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: timekeeping_units
+      label: Timekeeping Units
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Sets the timekeeping units of the game. Calendar = classic OpenTTD, with year of 12 months. Wallclock =
+        clock-based time, with cargo production and financials based on one-minute increments, about equal to a month in
+        Calendar mode. Minimum OpenTTD v14.0
+      keywords: time,keeping,units,timekeeping,timekeeping_units,calendar,wallclock
+      input_type: enum
+      param_field_name: economy.timekeeping_units
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Calendar (default)
+        '1': Wallclock
+      raw:
+        DisplayName: Timekeeping Units
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Sets the timekeeping units of the game. Calendar = classic OpenTTD, with year of 12 months. Wallclock =
+          clock-based time, with cargo production and financials based on one-minute increments, about equal to a month
+          in Calendar mode. Minimum OpenTTD v14.0
+        Keywords: time,keeping,units,timekeeping,timekeeping_units,calendar,wallclock
+        FieldName: timekeeping_units
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: economy.timekeeping_units
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Calendar (default)
+          '1': Wallclock
+    - key: minutes_per_calendar_year
+      label: Minutes Per Year
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Sets the number of minutes in a calendar year for Wallclock timekeeping units. 0 = stop calendar time from
+        changing. Minimum OpenTTD v14.0
+      keywords: time,keeping,minutes,year,calendar,minutes_per_calendar_year
+      input_type: number
+      param_field_name: economy.minutes_per_calendar_year
+      default: '12'
+      placeholder: '12'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10080
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Minutes Per Year
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Sets the number of minutes in a calendar year for Wallclock timekeeping units. 0 = stop calendar time from
+          changing. Minimum OpenTTD v14.0
+        Keywords: time,keeping,minutes,year,calendar,minutes_per_calendar_year
+        FieldName: minutes_per_calendar_year
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10080'
+        IsFlagArgument: false
+        ParamFieldName: economy.minutes_per_calendar_year
+        IncludeInCommandLine: false
+        DefaultValue: '12'
+        Placeholder: '12'
+        Suffix: minutes
+        EnumValues: {}
+    - key: recalc_time
+      label: Recalculation Time
+      category: OpenTTD
+      subcategory: Environment
+      description: Sets the time taken for each recalculation of a link graph component. Only affects new games
+      keywords: cargo,distribution,recalculation,time,recalc_time
+      input_type: number
+      param_field_name: linkgraph.recalc_time
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Recalculation Time
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: Sets the time taken for each recalculation of a link graph component. Only affects new games
+        Keywords: cargo,distribution,recalculation,time,recalc_time
+        FieldName: recalc_time
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: linkgraph.recalc_time
+        IncludeInCommandLine: false
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: seconds
+        EnumValues: {}
+    - key: recalc_interval
+      label: Recalculation Interval
+      category: OpenTTD
+      subcategory: Environment
+      description: Sets the time between subsequent recalculations of the link graph. Only affects new games
+      keywords: cargo,distribution,recalculation,interval,recalc_interval
+      input_type: number
+      param_field_name: linkgraph.recalc_interval
+      default: '8'
+      placeholder: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 4
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Recalculation Interval
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: Sets the time between subsequent recalculations of the link graph. Only affects new games
+        Keywords: cargo,distribution,recalculation,interval,recalc_interval
+        FieldName: recalc_interval
+        InputType: number
+        MinValue: '4'
+        IsFlagArgument: false
+        ParamFieldName: linkgraph.recalc_interval
+        IncludeInCommandLine: false
+        DefaultValue: '8'
+        Placeholder: '8'
+        Suffix: seconds
+        EnumValues: {}
+    - key: distribution_pax
+      label: Distribution Mode For Passengers
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Sets the passenger distribution mode. "Manual" = no auto distribution, "Asymmetric" = arbitrary number in either
+        direction between stations, "Symmetric" = roughly same number in each direction. Only affects new games
+      keywords: cargo,distribution,passengers,distribution_pax
+      input_type: enum
+      param_field_name: linkgraph.distribution_pax
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Manual (default)
+        '1': Asymmetric
+        '2': Symmetric
+      raw:
+        DisplayName: Distribution Mode For Passengers
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Sets the passenger distribution mode. "Manual" = no auto distribution, "Asymmetric" = arbitrary number in
+          either direction between stations, "Symmetric" = roughly same number in each direction. Only affects new games
+        Keywords: cargo,distribution,passengers,distribution_pax
+        FieldName: distribution_pax
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: linkgraph.distribution_pax
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Manual (default)
+          '1': Asymmetric
+          '2': Symmetric
+    - key: distribution_mail
+      label: Distribution Mode For Mail
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Sets the mail distribution mode. "Manual" = no auto distribution, "Asymmetric" = arbitrary amount in either
+        direction between stations, "Symmetric" = roughly same amount in each direction. Only affects new games
+      keywords: cargo,distribution,mail,distribution_mail
+      input_type: enum
+      param_field_name: linkgraph.distribution_mail
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Manual (default)
+        '1': Asymmetric
+        '2': Symmetric
+      raw:
+        DisplayName: Distribution Mode For Mail
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Sets the mail distribution mode. "Manual" = no auto distribution, "Asymmetric" = arbitrary amount in either
+          direction between stations, "Symmetric" = roughly same amount in each direction. Only affects new games
+        Keywords: cargo,distribution,mail,distribution_mail
+        FieldName: distribution_mail
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: linkgraph.distribution_mail
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Manual (default)
+          '1': Asymmetric
+          '2': Symmetric
+    - key: distribution_armoured
+      label: Distribution Mode For ARMOURED Cargo
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Sets the ARMOURED cargo distribution mode. "Manual" = no auto distribution, "Asymmetric" = arbitrary amount in
+        either direction between stations, "Symmetric" = roughly same amount in each direction. Only affects new games
+      keywords: cargo,distribution,armoured,distribution_armoured
+      input_type: enum
+      param_field_name: linkgraph.distribution_armoured
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Manual (default)
+        '1': Asymmetric
+        '2': Symmetric
+      raw:
+        DisplayName: Distribution Mode For ARMOURED Cargo
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Sets the ARMOURED cargo distribution mode. "Manual" = no auto distribution, "Asymmetric" = arbitrary amount in
+          either direction between stations, "Symmetric" = roughly same amount in each direction. Only affects new games
+        Keywords: cargo,distribution,armoured,distribution_armoured
+        FieldName: distribution_armoured
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: linkgraph.distribution_armoured
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Manual (default)
+          '1': Asymmetric
+          '2': Symmetric
+    - key: distribution_default
+      label: Distribution Mode For Other Cargo
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Sets the distribution mode for other cargo. "Manual" = no auto distribution, "Asymmetric" = arbitrary amount in
+        either direction between stations, "Symmetric" = roughly same amount in each direction. Only affects new games
+      keywords: cargo,distribution,distribution_default
+      input_type: enum
+      param_field_name: linkgraph.distribution_default
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Manual (default)
+        '1': Asymmetric
+        '2': Symmetric
+      raw:
+        DisplayName: Distribution Mode For Other Cargo
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Sets the distribution mode for other cargo. "Manual" = no auto distribution, "Asymmetric" = arbitrary amount
+          in either direction between stations, "Symmetric" = roughly same amount in each direction. Only affects new
+          games
+        Keywords: cargo,distribution,distribution_default
+        FieldName: distribution_default
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: linkgraph.distribution_default
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Manual (default)
+          '1': Asymmetric
+          '2': Symmetric
+    - key: accuracy
+      label: Distribution Accuracy
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Sets the accuracy of distribution. Higher values will increase CPU time for the link graph calculation. Only
+        affects new games
+      keywords: cargo,distribution,accuracy
+      input_type: number
+      param_field_name: linkgraph.accuracy
+      default: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 2
+      enum_values: {}
+      raw:
+        DisplayName: Distribution Accuracy
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Sets the accuracy of distribution. Higher values will increase CPU time for the link graph calculation. Only
+          affects new games
+        Keywords: cargo,distribution,accuracy
+        FieldName: accuracy
+        InputType: number
+        MinValue: '2'
+        IsFlagArgument: false
+        ParamFieldName: linkgraph.accuracy
+        IncludeInCommandLine: false
+        DefaultValue: '16'
+        EnumValues: {}
+    - key: demand_distance
+      label: Effect Of Distance On Demand
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If set higher than 0, the distance between stations will affect how much cargo is sent - the higher the value,
+        the less cargo is sent far away. Only affects new games
+      keywords: cargo,distribution,demand_distance
+      input_type: number
+      param_field_name: linkgraph.demand_distance
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 255
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Effect Of Distance On Demand
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If set higher than 0, the distance between stations will affect how much cargo is sent - the higher the value,
+          the less cargo is sent far away. Only affects new games
+        Keywords: cargo,distribution,demand_distance
+        FieldName: demand_distance
+        InputType: number
+        MinValue: '0'
+        MaxValue: '255'
+        IsFlagArgument: false
+        ParamFieldName: linkgraph.demand_distance
+        IncludeInCommandLine: false
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: '%'
+        EnumValues: {}
+    - key: demand_size
+      label: Symmetric Mode Returning Cargo
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        If set to less than 100%, the symmetric distribution will behave more like the asymmetric one, and less cargo
+        will be forcibly sent back than received. 0% = symmetric distribution behaves like asymmetric distribution. Only
+        affects new games
+      keywords: cargo,distribution,demand_size
+      input_type: number
+      param_field_name: linkgraph.demand_size
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Symmetric Mode Returning Cargo
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          If set to less than 100%, the symmetric distribution will behave more like the asymmetric one, and less cargo
+          will be forcibly sent back than received. 0% = symmetric distribution behaves like asymmetric distribution.
+          Only affects new games
+        Keywords: cargo,distribution,demand_size
+        FieldName: demand_size
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: linkgraph.demand_size
+        IncludeInCommandLine: false
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: '%'
+        EnumValues: {}
+    - key: short_path_saturation
+      label: Saturation Limit
+      category: OpenTTD
+      subcategory: Environment
+      description: >-
+        Where there are multiple paths between two stations, the shortest path will be saturated to the set limit first,
+        then the second shortest path, and so on. Saturation is estimated from capacity and planned usage. Use
+        increments of 5%. Only affects new games
+      keywords: cargo,distribution,short_path_saturation
+      input_type: number
+      param_field_name: linkgraph.short_path_saturation
+      default: '80'
+      placeholder: '80'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 250
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Saturation Limit
+        Category: OpenTTD:stadia_controller
+        Subcategory: Environment:eco:4
+        Description: >-
+          Where there are multiple paths between two stations, the shortest path will be saturated to the set limit
+          first, then the second shortest path, and so on. Saturation is estimated from capacity and planned usage. Use
+          increments of 5%. Only affects new games
+        Keywords: cargo,distribution,short_path_saturation
+        FieldName: short_path_saturation
+        InputType: number
+        MinValue: '0'
+        MaxValue: '250'
+        IsFlagArgument: false
+        ParamFieldName: linkgraph.short_path_saturation
+        IncludeInCommandLine: false
+        DefaultValue: '80'
+        Placeholder: '80'
+        Suffix: '%'
+        EnumValues: {}
+    - key: max_no_competitors
+      label: AI Competitors
+      category: OpenTTD
+      subcategory: Competitors
+      description: Sets the number of AI competitors to be created on the server
+      keywords: competitors,ai,max_no_competitors
+      input_type: number
+      param_field_name: difficulty.max_no_competitors
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 14
+      enum_values: {}
+      raw:
+        DisplayName: AI Competitors
+        Category: OpenTTD:stadia_controller
+        Subcategory: Competitors:leaderboard:5
+        Description: Sets the number of AI competitors to be created on the server
+        Keywords: competitors,ai,max_no_competitors
+        FieldName: max_no_competitors
+        InputType: number
+        MinValue: '0'
+        MaxValue: '14'
+        IsFlagArgument: false
+        ParamFieldName: difficulty.max_no_competitors
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: competitor_speed
+      label: Competitor Speed
+      category: OpenTTD
+      subcategory: Competitors
+      description: Sets the speed at which the AI competitors will build (assuming AI competitors are not disabled)
+      keywords: competitor,speed,ai,competitor_speed
+      input_type: enum
+      param_field_name: difficulty.competitor_speed
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Very slow
+        '1': Slow
+        '2': Medium (default)
+        '3': Fast
+        '4': Very fast
+      raw:
+        DisplayName: Competitor Speed
+        Category: OpenTTD:stadia_controller
+        Subcategory: Competitors:leaderboard:5
+        Description: Sets the speed at which the AI competitors will build (assuming AI competitors are not disabled)
+        Keywords: competitor,speed,ai,competitor_speed
+        FieldName: competitor_speed
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty.competitor_speed
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues:
+          '0': Very slow
+          '1': Slow
+          '2': Medium (default)
+          '3': Fast
+          '4': Very fast
+    - key: give_money
+      label: Allow Giving Of Money
+      category: OpenTTD
+      subcategory: Competitors
+      description: If enabled, allows transfer of money between companies
+      keywords: give,money,give_money
+      input_type: checkbox
+      param_field_name: economy.give_money
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Giving Of Money
+        Category: OpenTTD:stadia_controller
+        Subcategory: Competitors:leaderboard:5
+        Description: If enabled, allows transfer of money between companies
+        Keywords: give,money,give_money
+        FieldName: give_money
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.give_money
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: allow_shares
+      label: Allow Buying Of Shares
+      category: OpenTTD
+      subcategory: Competitors
+      description: >-
+        If enabled, allows buying and selling of company shares. Shares will only be available for companies reaching a
+        certain age
+      keywords: allow,shares,allow_shares
+      input_type: checkbox
+      param_field_name: economy.allow_shares
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Buying Of Shares
+        Category: OpenTTD:stadia_controller
+        Subcategory: Competitors:leaderboard:5
+        Description: >-
+          If enabled, allows buying and selling of company shares. Shares will only be available for companies reaching
+          a certain age
+        Keywords: allow,shares,allow_shares
+        FieldName: allow_shares
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: economy.allow_shares
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: min_years_for_shares
+      label: Minimum Age For Buying Shares
+      category: OpenTTD
+      subcategory: Competitors
+      description: Sets the minimum age of a company for others to be able to buy and sell shares from them
+      keywords: minimum,years,age,shares,min_years_for_shares
+      input_type: number
+      param_field_name: economy.min_years_for_shares
+      default: '6'
+      placeholder: '6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: years
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Age For Buying Shares
+        Category: OpenTTD:stadia_controller
+        Subcategory: Competitors:leaderboard:5
+        Description: Sets the minimum age of a company for others to be able to buy and sell shares from them
+        Keywords: minimum,years,age,shares,min_years_for_shares
+        FieldName: min_years_for_shares
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: economy.min_years_for_shares
+        IncludeInCommandLine: false
+        DefaultValue: '6'
+        Placeholder: '6'
+        Suffix: years
+        EnumValues: {}
+    - key: train_acceleration_model
+      label: Train Acceleration Model
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        Sets the physics model for train acceleration. "Original" penalises slopes equally for all vehicles. "Realistic"
+        penalises slopes depending on various properties, like length and tractive effort
+      keywords: train,acceleration,model,train_acceleration_model
+      input_type: enum
+      param_field_name: vehicle.train_acceleration_model
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Original
+        '1': Realistic (default)
+      raw:
+        DisplayName: Train Acceleration Model
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          Sets the physics model for train acceleration. "Original" penalises slopes equally for all vehicles.
+          "Realistic" penalises slopes depending on various properties, like length and tractive effort
+        Keywords: train,acceleration,model,train_acceleration_model
+        FieldName: train_acceleration_model
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: vehicle.train_acceleration_model
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': Original
+          '1': Realistic (default)
+    - key: train_slope_steepness
+      label: Train Slope Steepness
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        Sets the steepness of slopes for trains. Higher values make it more difficult to climb a hill. It only applies
+        if the Realistic acceleration model is selected
+      keywords: train,slope,steepness,train_slope_steepness
+      input_type: number
+      param_field_name: vehicle.train_slope_steepness
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Train Slope Steepness
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          Sets the steepness of slopes for trains. Higher values make it more difficult to climb a hill. It only applies
+          if the Realistic acceleration model is selected
+        Keywords: train,slope,steepness,train_slope_steepness
+        FieldName: train_slope_steepness
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.train_slope_steepness
+        IncludeInCommandLine: false
+        DefaultValue: '3'
+        Placeholder: '3'
+        Suffix: '%'
+        EnumValues: {}
+    - key: wagon_speed_limits
+      label: Enable Wagon Speed Limits
+      category: OpenTTD
+      subcategory: Vehicles
+      description: If enabled, the speed limits of wagons (if any) are also used to determine the maximum speed of a train
+      keywords: wagon,speed,limits,wagon_speed_limits
+      input_type: checkbox
+      param_field_name: vehicle.wagon_speed_limits
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Wagon Speed Limits
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: If enabled, the speed limits of wagons (if any) are also used to determine the maximum speed of a train
+        Keywords: wagon,speed,limits,wagon_speed_limits
+        FieldName: wagon_speed_limits
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: vehicle.wagon_speed_limits
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: freight_trains
+      label: Freight Trains Multiplier
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        Sets the impact of carrying freight in trains. The weight of freight trains is multiplied by this multiplier to
+        simulate very heavy trains for more realism
+      keywords: freight,trains,multiplier,freight_trains
+      input_type: number
+      param_field_name: vehicle.freight_trains
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Freight Trains Multiplier
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          Sets the impact of carrying freight in trains. The weight of freight trains is multiplied by this multiplier
+          to simulate very heavy trains for more realism
+        Keywords: freight,trains,multiplier,freight_trains
+        FieldName: freight_trains
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.freight_trains
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: roadveh_acceleration_model
+      label: Road Vehicle Acceleration Model
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        Sets the physics model for road vehicle acceleration. "Original" penalises slopes equally for all vehicles.
+        "Realistic" penalises slopes depending on various properties of the engine, like tractive effort
+      keywords: road,vehicle,acceleration,model,roadveh_acceleration_model
+      input_type: enum
+      param_field_name: vehicle.roadveh_acceleration_model
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Original
+        '1': Realistic (default)
+      raw:
+        DisplayName: Road Vehicle Acceleration Model
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          Sets the physics model for road vehicle acceleration. "Original" penalises slopes equally for all vehicles.
+          "Realistic" penalises slopes depending on various properties of the engine, like tractive effort
+        Keywords: road,vehicle,acceleration,model,roadveh_acceleration_model
+        FieldName: roadveh_acceleration_model
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: vehicle.roadveh_acceleration_model
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': Original
+          '1': Realistic (default)
+    - key: roadveh_slope_steepness
+      label: Road Vehicle Slope Steepness
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        Sets the steepness of slopes for road vehicles. Higher values make it more difficult to climb a hill. It only
+        applies if the Realistic acceleration model is selected
+      keywords: road,vehicle,slope,steepness,roadveh_slope_steepness
+      input_type: number
+      param_field_name: vehicle.roadveh_slope_steepness
+      default: '7'
+      placeholder: '7'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Road Vehicle Slope Steepness
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          Sets the steepness of slopes for road vehicles. Higher values make it more difficult to climb a hill. It only
+          applies if the Realistic acceleration model is selected
+        Keywords: road,vehicle,slope,steepness,roadveh_slope_steepness
+        FieldName: roadveh_slope_steepness
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.roadveh_slope_steepness
+        IncludeInCommandLine: false
+        DefaultValue: '7'
+        Placeholder: '7'
+        Suffix: '%'
+        EnumValues: {}
+    - key: plane_speed
+      label: Aircraft Speed Factor
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        Sets the relative speed of aircraft compared to other vehicle types, to reduce the amount of income of transport
+        by aircraft
+      keywords: plane,aircraft,speed,plane_speed
+      input_type: enum
+      param_field_name: vehicle.plane_speed
+      default: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': '1:1'
+        '2': '1:2'
+        '3': '1:3'
+        '4': 1:4 (default)
+      raw:
+        DisplayName: Aircraft Speed Factor
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          Sets the relative speed of aircraft compared to other vehicle types, to reduce the amount of income of
+          transport by aircraft
+        Keywords: plane,aircraft,speed,plane_speed
+        FieldName: plane_speed
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: vehicle.plane_speed
+        IncludeInCommandLine: false
+        DefaultValue: '4'
+        EnumValues:
+          '1': '1:1'
+          '2': '1:2'
+          '3': '1:3'
+          '4': 1:4 (default)
+    - key: line_reverse_mode
+      label: Disallow Train Reversing
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        If enabled, trains can reverse at the end of line only, and not at non-terminus stations, even if there is a
+        shorter path to their next destination when reversing
+      keywords: line,reverse,mode,train,line_reverse_mode
+      input_type: checkbox
+      param_field_name: difficulty.line_reverse_mode
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disallow Train Reversing
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          If enabled, trains can reverse at the end of line only, and not at non-terminus stations, even if there is a
+          shorter path to their next destination when reversing
+        Keywords: line,reverse,mode,train,line_reverse_mode
+        FieldName: line_reverse_mode
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: difficulty.line_reverse_mode
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: no_servicing_if_no_breakdowns
+      label: Disable Servicing If No Breakdowns
+      category: OpenTTD
+      subcategory: Vehicles
+      description: If set, and vehicle breakdowns are disabled, vehicles will not go to depots or hangars for servicing
+      keywords: servicing,breakdowns,no_servicing_if_no_breakdowns
+      input_type: checkbox
+      param_field_name: order.no_servicing_if_no_breakdowns
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable Servicing If No Breakdowns
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: If set, and vehicle breakdowns are disabled, vehicles will not go to depots or hangars for servicing
+        Keywords: servicing,breakdowns,no_servicing_if_no_breakdowns
+        FieldName: no_servicing_if_no_breakdowns
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: order.no_servicing_if_no_breakdowns
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: serviceathelipad
+      label: Enable Helicopter Servicing
+      category: OpenTTD
+      subcategory: Vehicles
+      description: If enabled, a helicopter landing on a heliport or helipad will automatically be serviced
+      keywords: service,helicopter,heliport,helipad,serviceathelipad
+      input_type: checkbox
+      param_field_name: order.serviceathelipad
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Helicopter Servicing
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: If enabled, a helicopter landing on a heliport or helipad will automatically be serviced
+        Keywords: service,helicopter,heliport,helipad,serviceathelipad
+        FieldName: serviceathelipad
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: order.serviceathelipad
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: dynamic_engines
+      label: Enable Dynamic Engines
+      category: OpenTTD
+      subcategory: Vehicles
+      description: If enabled, multiple NewGRF vehicle sets will be able to exist side-by-side
+      keywords: dynamic,engines,dynamic_engines
+      input_type: checkbox
+      param_field_name: vehicle.dynamic_engines
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Dynamic Engines
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: If enabled, multiple NewGRF vehicle sets will be able to exist side-by-side
+        Keywords: dynamic,engines,dynamic_engines
+        FieldName: dynamic_engines
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: vehicle.dynamic_engines
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: extend_vehicle_life
+      label: Extend Vehicle Life
+      category: OpenTTD
+      subcategory: Vehicles
+      description: Extends every vehicle's life by the number of years specified
+      keywords: extend,vehicle,life,extend_vehicle_life
+      input_type: number
+      param_field_name: vehicle.extend_vehicle_life
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Extend Vehicle Life
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: Extends every vehicle's life by the number of years specified
+        Keywords: extend,vehicle,life,extend_vehicle_life
+        FieldName: extend_vehicle_life
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.extend_vehicle_life
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: servint_ispercent
+      label: Enable Service Interval Percentage
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        If enabled, servicing of vehicles will be triggered by reliability dropping to a certain percentage of the
+        maximum reliability, rather than by the time passed since the last service
+      keywords: service,interval,percent,servint_ispercent
+      input_type: checkbox
+      param_field_name: vehicle.servint_ispercent
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Service Interval Percentage
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          If enabled, servicing of vehicles will be triggered by reliability dropping to a certain percentage of the
+          maximum reliability, rather than by the time passed since the last service
+        Keywords: service,interval,percent,servint_ispercent
+        FieldName: servint_ispercent
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: vehicle.servint_ispercent
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: servint_trains
+      label: Train Service Interval
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        Sets the default service interval for new trains, if no explicit service interval is set for the vehicle.
+        Increment by 15 from minimum 30
+      keywords: service,interval,trains,servint_trains
+      input_type: number
+      param_field_name: vehicle.servint_trains
+      default: '150'
+      placeholder: '150'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 30
+      enum_values: {}
+      raw:
+        DisplayName: Train Service Interval
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          Sets the default service interval for new trains, if no explicit service interval is set for the vehicle.
+          Increment by 15 from minimum 30
+        Keywords: service,interval,trains,servint_trains
+        FieldName: servint_trains
+        InputType: number
+        MinValue: '30'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.servint_trains
+        IncludeInCommandLine: false
+        DefaultValue: '150'
+        Placeholder: '150'
+        EnumValues: {}
+    - key: servint_roadveh
+      label: Road Vehicle Service Interval
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        Sets the default service interval for new road vehicles, if no explicit service interval is set for the vehicle.
+        Increment by 15 from minimum 30
+      keywords: service,interval,road,vehicles,servint_roadveh
+      input_type: number
+      param_field_name: vehicle.servint_roadveh
+      default: '150'
+      placeholder: '150'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 30
+      enum_values: {}
+      raw:
+        DisplayName: Road Vehicle Service Interval
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          Sets the default service interval for new road vehicles, if no explicit service interval is set for the
+          vehicle. Increment by 15 from minimum 30
+        Keywords: service,interval,road,vehicles,servint_roadveh
+        FieldName: servint_roadveh
+        InputType: number
+        MinValue: '30'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.servint_roadveh
+        IncludeInCommandLine: false
+        DefaultValue: '150'
+        Placeholder: '150'
+        EnumValues: {}
+    - key: servint_ships
+      label: Ship Service Interval
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        Sets the default service interval for new ships, if no explicit service interval is set for the vehicle.
+        Increment by 15 from minimum 30
+      keywords: service,interval,ships,servint_ships
+      input_type: number
+      param_field_name: vehicle.servint_ships
+      default: '360'
+      placeholder: '360'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 30
+      enum_values: {}
+      raw:
+        DisplayName: Ship Service Interval
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          Sets the default service interval for new ships, if no explicit service interval is set for the vehicle.
+          Increment by 15 from minimum 30
+        Keywords: service,interval,ships,servint_ships
+        FieldName: servint_ships
+        InputType: number
+        MinValue: '30'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.servint_ships
+        IncludeInCommandLine: false
+        DefaultValue: '360'
+        Placeholder: '360'
+        EnumValues: {}
+    - key: servint_aircraft
+      label: Aircraft Service Interval
+      category: OpenTTD
+      subcategory: Vehicles
+      description: >-
+        Sets the default service interval for new aircraft, if no explicit service interval is set for the vehicle.
+        Increment by 15 from minimum 40
+      keywords: service,interval,aircraft,servint_aircraft
+      input_type: number
+      param_field_name: vehicle.servint_aircraft
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 40
+      enum_values: {}
+      raw:
+        DisplayName: Aircraft Service Interval
+        Category: OpenTTD:stadia_controller
+        Subcategory: Vehicles:directions_car:6
+        Description: >-
+          Sets the default service interval for new aircraft, if no explicit service interval is set for the vehicle.
+          Increment by 15 from minimum 40
+        Keywords: service,interval,aircraft,servint_aircraft
+        FieldName: servint_aircraft
+        InputType: number
+        MinValue: '40'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.servint_aircraft
+        IncludeInCommandLine: false
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: never_expire_airports
+      label: Disable Airport Expiry
+      category: OpenTTD
+      subcategory: Limits
+      description: If set, each airport type will stay available forever after its introduction
+      keywords: never,expire,airports,never_expire_airports
+      input_type: checkbox
+      param_field_name: station.never_expire_airports
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable Airport Expiry
+        Category: OpenTTD:stadia_controller
+        Subcategory: Limits:speed:7
+        Description: If set, each airport type will stay available forever after its introduction
+        Keywords: never,expire,airports,never_expire_airports
+        FieldName: never_expire_airports
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: station.never_expire_airports
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: never_expire_vehicles
+      label: Disable Vehicle Expiry
+      category: OpenTTD
+      subcategory: Limits
+      description: If set, each vehicle model will stay available forever after its introduction
+      keywords: never,expire,vehicles,never_expire_vehicles
+      input_type: checkbox
+      param_field_name: vehicle.never_expire_vehicles
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable Vehicle Expiry
+        Category: OpenTTD:stadia_controller
+        Subcategory: Limits:speed:7
+        Description: If set, each vehicle model will stay available forever after its introduction
+        Keywords: never,expire,vehicles,never_expire_vehicles
+        FieldName: never_expire_vehicles
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: vehicle.never_expire_vehicles
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: max_trains
+      label: Maximum Trains
+      category: OpenTTD
+      subcategory: Limits
+      description: Sets the maximum number of trains that a company can have
+      keywords: maximum,trains,limit,max_trains
+      input_type: number
+      param_field_name: vehicle.max_trains
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Trains
+        Category: OpenTTD:stadia_controller
+        Subcategory: Limits:speed:7
+        Description: Sets the maximum number of trains that a company can have
+        Keywords: maximum,trains,limit,max_trains
+        FieldName: max_trains
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.max_trains
+        IncludeInCommandLine: false
+        DefaultValue: '500'
+        Placeholder: '500'
+        EnumValues: {}
+    - key: max_roadveh
+      label: Maximum Road Vehicles
+      category: OpenTTD
+      subcategory: Limits
+      description: Sets the maximum number of road vehicles that a company can have
+      keywords: maximum,road,vehicles,limit,max_roadveh
+      input_type: number
+      param_field_name: vehicle.max_roadveh
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Road Vehicles
+        Category: OpenTTD:stadia_controller
+        Subcategory: Limits:speed:7
+        Description: Sets the maximum number of road vehicles that a company can have
+        Keywords: maximum,road,vehicles,limit,max_roadveh
+        FieldName: max_roadveh
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.max_roadveh
+        IncludeInCommandLine: false
+        DefaultValue: '500'
+        Placeholder: '500'
+        EnumValues: {}
+    - key: max_aircraft
+      label: Maximum Aircraft
+      category: OpenTTD
+      subcategory: Limits
+      description: Sets the maximum number of aircraft that a company can have
+      keywords: maximum,aircraft,limit,max_aircraft
+      input_type: number
+      param_field_name: vehicle.max_aircraft
+      default: '200'
+      placeholder: '200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Aircraft
+        Category: OpenTTD:stadia_controller
+        Subcategory: Limits:speed:7
+        Description: Sets the maximum number of aircraft that a company can have
+        Keywords: maximum,aircraft,limit,max_aircraft
+        FieldName: max_aircraft
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.max_aircraft
+        IncludeInCommandLine: false
+        DefaultValue: '200'
+        Placeholder: '200'
+        EnumValues: {}
+    - key: max_ships
+      label: Maximum Ships
+      category: OpenTTD
+      subcategory: Limits
+      description: Sets the maximum number of ships that a company can have
+      keywords: maximum,ships,limit,max_ships
+      input_type: number
+      param_field_name: vehicle.max_ships
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Ships
+        Category: OpenTTD:stadia_controller
+        Subcategory: Limits:speed:7
+        Description: Sets the maximum number of ships that a company can have
+        Keywords: maximum,ships,limit,max_ships
+        FieldName: max_ships
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: vehicle.max_ships
+        IncludeInCommandLine: false
+        DefaultValue: '300'
+        Placeholder: '300'
+        EnumValues: {}
+    - key: max_train_length
+      label: Maximum Train Length
+      category: OpenTTD
+      subcategory: Limits
+      description: Sets the maximum length of a train
+      keywords: maximum,train,length,max_train_length
+      input_type: number
+      param_field_name: vehicle.max_train_length
+      default: '7'
+      placeholder: '7'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: tiles
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Train Length
+        Category: OpenTTD:stadia_controller
+        Subcategory: Limits:speed:7
+        Description: Sets the maximum length of a train
+        Keywords: maximum,train,length,max_train_length
+        FieldName: max_train_length
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: vehicle.max_train_length
+        IncludeInCommandLine: false
+        DefaultValue: '7'
+        Placeholder: '7'
+        Suffix: tiles
+        EnumValues: {}
+    - key: station_spread
+      label: Station Spread
+      category: OpenTTD
+      subcategory: Limits
+      description: Sets the maximum area that parts of a station may be spread out over. High values will slow the game
+      keywords: station,spread,station_spread
+      input_type: number
+      param_field_name: station.station_spread
+      default: '12'
+      placeholder: '12'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: tiles
+      enum_values: {}
+      raw:
+        DisplayName: Station Spread
+        Category: OpenTTD:stadia_controller
+        Subcategory: Limits:speed:7
+        Description: Sets the maximum area that parts of a station may be spread out over. High values will slow the game
+        Keywords: station,spread,station_spread
+        FieldName: station_spread
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: station.station_spread
+        IncludeInCommandLine: false
+        DefaultValue: '12'
+        Placeholder: '12'
+        Suffix: tiles
+        EnumValues: {}
+    - key: adjacent_stations
+      label: Allow Building Adjacent Stations
+      category: OpenTTD
+      subcategory: Limits
+      description: >-
+        If enabled, allows building a station directly adjacent to another one to create a new station instead of
+        merging the new tile(s) with the existing station
+      keywords: adjacent,stations,adjacent_stations
+      input_type: checkbox
+      param_field_name: station.adjacent_stations
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Building Adjacent Stations
+        Category: OpenTTD:stadia_controller
+        Subcategory: Limits:speed:7
+        Description: >-
+          If enabled, allows building a station directly adjacent to another one to create a new station instead of
+          merging the new tile(s) with the existing station
+        Keywords: adjacent,stations,adjacent_stations
+        FieldName: adjacent_stations
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: station.adjacent_stations
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: distant_join_stations
+      label: Allow Joining Distant Stations
+      category: OpenTTD
+      subcategory: Limits
+      description: >-
+        If enabled, players building a new station have the option of merging it with an existing station within the
+        catchment area or creating a new station
+      keywords: distant,join,stations,distant_join_stations
+      input_type: checkbox
+      param_field_name: station.distant_join_stations
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Joining Distant Stations
+        Category: OpenTTD:stadia_controller
+        Subcategory: Limits:speed:7
+        Description: >-
+          If enabled, players building a new station have the option of merging it with an existing station within the
+          catchment area or creating a new station
+        Keywords: distant,join,stations,distant_join_stations
+        FieldName: distant_join_stations
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: station.distant_join_stations
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: disable_elrails
+      label: Disable Electric Tracks Requirement
+      category: OpenTTD
+      subcategory: Limits
+      description: If set, tracks will not be required to be electrified to enable electric engines to run on them
+      keywords: disable,electric,rails,tracks,disable_elrails
+      input_type: checkbox
+      param_field_name: vehicle.disable_elrails
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable Electric Tracks Requirement
+        Category: OpenTTD:stadia_controller
+        Subcategory: Limits:speed:7
+        Description: If set, tracks will not be required to be electrified to enable electric engines to run on them
+        Keywords: disable,electric,rails,tracks,disable_elrails
+        FieldName: disable_elrails
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: vehicle.disable_elrails
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: G
+      label: Map Seed
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the random seed for creating a new map
+      keywords: map,seed,generation_seed
+      input_type: number
+      param_field_name: G
+      default: '970327061'
+      placeholder: '970327061'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Map Seed
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the random seed for creating a new map
+        Keywords: map,seed,generation_seed
+        FieldName: G
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: G
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '970327061'
+        Placeholder: '970327061'
+        EnumValues: {}
+    - key: G
+      label: Map Seed
+      category: OpenTTD
+      subcategory: Creation
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: game_creation.generation_seed
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Map Seed
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: ''
+        Keywords: ''
+        FieldName: G
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: game_creation.generation_seed
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: map_x
+      label: Map Size - X Axis
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the size of the map's X axis (in tiles)
+      keywords: map,x,axis
+      input_type: enum
+      param_field_name: game_creation.map_x
+      default: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '6': '64'
+        '7': '128'
+        '8': 256 (default)
+        '9': '512'
+        '10': '1024'
+        '11': '2048'
+        '12': '4096'
+      raw:
+        DisplayName: Map Size - X Axis
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the size of the map's X axis (in tiles)
+        Keywords: map,x,axis
+        FieldName: map_x
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_creation.map_x
+        IncludeInCommandLine: false
+        DefaultValue: '8'
+        EnumValues:
+          '6': '64'
+          '7': '128'
+          '8': 256 (default)
+          '9': '512'
+          '10': '1024'
+          '11': '2048'
+          '12': '4096'
+    - key: map_y
+      label: Map Size - Y Axis
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the size of the map's Y axis (in tiles)
+      keywords: map,y,axis
+      input_type: enum
+      param_field_name: game_creation.map_y
+      default: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '6': '64'
+        '7': '128'
+        '8': 256 (default)
+        '9': '512'
+        '10': '1024'
+        '11': '2048'
+        '12': '4096'
+      raw:
+        DisplayName: Map Size - Y Axis
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the size of the map's Y axis (in tiles)
+        Keywords: map,y,axis
+        FieldName: map_y
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_creation.map_y
+        IncludeInCommandLine: false
+        DefaultValue: '8'
+        EnumValues:
+          '6': '64'
+          '7': '128'
+          '8': 256 (default)
+          '9': '512'
+          '10': '1024'
+          '11': '2048'
+          '12': '4096'
+    - key: landscape
+      label: Landscape
+      category: OpenTTD
+      subcategory: Creation
+      description: >-
+        Sets the landscape for the server, which determines basic gameplay scenarios with different cargoes and town
+        growth requirements
+      keywords: landscape
+      input_type: enum
+      param_field_name: game_creation.landscape
+      default: temperate
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        arctic: Arctic
+        temperate: Temperate (default)
+        toyland: Toyland
+        tropic: Tropic
+      raw:
+        DisplayName: Landscape
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: >-
+          Sets the landscape for the server, which determines basic gameplay scenarios with different cargoes and town
+          growth requirements
+        Keywords: landscape
+        FieldName: landscape
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_creation.landscape
+        IncludeInCommandLine: false
+        DefaultValue: temperate
+        EnumValues:
+          arctic: Arctic
+          temperate: Temperate (default)
+          toyland: Toyland
+          tropic: Tropic
+    - key: land_generator
+      label: Land Generation System
+      category: OpenTTD
+      subcategory: Creation
+      description: >-
+        Sets the land generation system for the server. The Original generator depends on the base graphics set, and
+        composes fixed landscape shapes. TerraGeneris is a Perlin noise-based generator with finer control settings
+      keywords: land,generator,generation,system,land_generator
+      input_type: enum
+      param_field_name: game_creation.land_generator
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Original
+        '1': TerraGenesis Perlin (TGP) (default)
+      raw:
+        DisplayName: Land Generation System
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: >-
+          Sets the land generation system for the server. The Original generator depends on the base graphics set, and
+          composes fixed landscape shapes. TerraGeneris is a Perlin noise-based generator with finer control settings
+        Keywords: land,generator,generation,system,land_generator
+        FieldName: land_generator
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_creation.land_generator
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': Original
+          '1': TerraGenesis Perlin (TGP) (default)
+    - key: terrain_type
+      label: Terrain Type (TGP Only)
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the terrain type (hilliness of the landscape) for generating a new map
+      keywords: terrain,type,tgp,terrain_type
+      input_type: enum
+      param_field_name: difficulty.terrain_type
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Very flat
+        '1': Flat (default)
+        '2': Hilly
+        '3': Mountainous
+        '4': Alpinist
+        '5': Custom height
+      raw:
+        DisplayName: Terrain Type (TGP Only)
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the terrain type (hilliness of the landscape) for generating a new map
+        Keywords: terrain,type,tgp,terrain_type
+        FieldName: terrain_type
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty.terrain_type
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': Very flat
+          '1': Flat (default)
+          '2': Hilly
+          '3': Mountainous
+          '4': Alpinist
+          '5': Custom height
+    - key: tgen_smoothness
+      label: Terrain Smoothness (TGP Only)
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the smoothness of the map, ie the frequency of hills
+      keywords: tgen,tgp,terrain,smoothness,tgen_smoothness
+      input_type: enum
+      param_field_name: game_creation.tgen_smoothness
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Very smooth
+        '1': Smooth (default)
+        '2': Rough
+        '3': Very rough
+      raw:
+        DisplayName: Terrain Smoothness (TGP Only)
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the smoothness of the map, ie the frequency of hills
+        Keywords: tgen,tgp,terrain,smoothness,tgen_smoothness
+        FieldName: tgen_smoothness
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_creation.tgen_smoothness
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': Very smooth
+          '1': Smooth (default)
+          '2': Rough
+          '3': Very rough
+    - key: variety
+      label: Variety Distribution (TGP Only)
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the extent to which the map should contain mountainous areas in addition to flat areas
+      keywords: variety,tgp
+      input_type: enum
+      param_field_name: game_creation.variety
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None (default)
+        '1': Very low
+        '2': Low
+        '3': Medium
+        '4': High
+        '5': Very high
+      raw:
+        DisplayName: Variety Distribution (TGP Only)
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the extent to which the map should contain mountainous areas in addition to flat areas
+        Keywords: variety,tgp
+        FieldName: variety
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_creation.variety
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': None (default)
+          '1': Very low
+          '2': Low
+          '3': Medium
+          '4': High
+          '5': Very high
+    - key: snow_coverage
+      label: Snow Coverage
+      category: OpenTTD
+      subcategory: Creation
+      description: >-
+        Sets the approximate amount of snow on the sub-arctic landscape. Snow affects industry generation and town
+        growth requirements. Land just above sea level is always without snow
+      keywords: snow,coverage,snow_coverage
+      input_type: enum
+      param_field_name: game_creation.snow_coverage
+      default: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None
+        '10': 10%
+        '20': 20%
+        '30': 30%
+        '40': 40% (default)
+        '50': 50%
+        '60': 60%
+        '70': 70%
+        '80': 80%
+        '90': 90%
+        '100': 100%
+      raw:
+        DisplayName: Snow Coverage
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: >-
+          Sets the approximate amount of snow on the sub-arctic landscape. Snow affects industry generation and town
+          growth requirements. Land just above sea level is always without snow
+        Keywords: snow,coverage,snow_coverage
+        FieldName: snow_coverage
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_creation.snow_coverage
+        IncludeInCommandLine: false
+        DefaultValue: '40'
+        EnumValues:
+          '0': None
+          '10': 10%
+          '20': 20%
+          '30': 30%
+          '40': 40% (default)
+          '50': 50%
+          '60': 60%
+          '70': 70%
+          '80': 80%
+          '90': 90%
+          '100': 100%
+    - key: snow_line_height
+      label: Snow Line Height
+      category: OpenTTD
+      subcategory: Creation
+      description: >-
+        Sets the altitude (in tiles) at which snow starts in sub-arctic landscapes. Snow affects industry generation and
+        town growth requirements
+      keywords: snow,line,height,altitude,snow_line_height
+      input_type: number
+      param_field_name: game_creation.snow_line_height
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 2
+      max: 253
+      enum_values: {}
+      raw:
+        DisplayName: Snow Line Height
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: >-
+          Sets the altitude (in tiles) at which snow starts in sub-arctic landscapes. Snow affects industry generation
+          and town growth requirements
+        Keywords: snow,line,height,altitude,snow_line_height
+        FieldName: snow_line_height
+        InputType: number
+        MinValue: '2'
+        MaxValue: '253'
+        IsFlagArgument: false
+        ParamFieldName: game_creation.snow_line_height
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+    - key: desert_coverage
+      label: Desert Coverage
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the approximate amount of desert on the tropical landscape. Desert affects industry generation
+      keywords: desert,coverage,desert_coverage
+      input_type: enum
+      param_field_name: game_creation.desert_coverage
+      default: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None
+        '10': 10%
+        '20': 20%
+        '30': 30%
+        '40': 40%
+        '50': 50% (default)
+        '60': 60%
+        '70': 70%
+        '80': 80%
+        '90': 90%
+        '100': 100%
+      raw:
+        DisplayName: Desert Coverage
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the approximate amount of desert on the tropical landscape. Desert affects industry generation
+        Keywords: desert,coverage,desert_coverage
+        FieldName: desert_coverage
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_creation.desert_coverage
+        IncludeInCommandLine: false
+        DefaultValue: '50'
+        EnumValues:
+          '0': None
+          '10': 10%
+          '20': 20%
+          '30': 30%
+          '40': 40%
+          '50': 50% (default)
+          '60': 60%
+          '70': 70%
+          '80': 80%
+          '90': 90%
+          '100': 100%
+    - key: quantity_sea_lakes
+      label: Sea Level (TGP Only)
+      category: OpenTTD
+      subcategory: Creation
+      description: >-
+        Sets the sea level, and as a result the size of the area covered by seas and lakes on a new map. If "Custom" is
+        selected, Custom Sea Level must also be set
+      keywords: quantity,sea,lakes,level,tgp,quantity_sea_lakes
+      input_type: enum
+      param_field_name: difficulty.quantity_sea_lakes
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Very low (default)
+        '1': Low
+        '2': Medium
+        '3': High
+        '4': Custom
+      raw:
+        DisplayName: Sea Level (TGP Only)
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: >-
+          Sets the sea level, and as a result the size of the area covered by seas and lakes on a new map. If "Custom"
+          is selected, Custom Sea Level must also be set
+        Keywords: quantity,sea,lakes,level,tgp,quantity_sea_lakes
+        FieldName: quantity_sea_lakes
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty.quantity_sea_lakes
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Very low (default)
+          '1': Low
+          '2': Medium
+          '3': High
+          '4': Custom
+    - key: custom_sea_level
+      label: Custom Sea Level
+      category: OpenTTD
+      subcategory: Creation
+      description: If "Custom" is selected for Sea Level, sets roughly the percentage area covered by seas and lakes on a new map
+      keywords: custom,sea,level,custom_sea_level
+      input_type: number
+      param_field_name: game_creation.custom_sea_level
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 90
+      enum_values: {}
+      raw:
+        DisplayName: Custom Sea Level
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: If "Custom" is selected for Sea Level, sets roughly the percentage area covered by seas and lakes on a new map
+        Keywords: custom,sea,level,custom_sea_level
+        FieldName: custom_sea_level
+        InputType: number
+        MinValue: '1'
+        MaxValue: '90'
+        IsFlagArgument: false
+        ParamFieldName: game_creation.custom_sea_level
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: amount_of_rivers
+      label: Quantity Of Rivers
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets how many rivers are generated
+      keywords: amount,rivers,amount_of_rivers
+      input_type: enum
+      param_field_name: game_creation.amount_of_rivers
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None
+        '1': Few
+        '2': Medium (default)
+        '3': Many
+      raw:
+        DisplayName: Quantity Of Rivers
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets how many rivers are generated
+        Keywords: amount,rivers,amount_of_rivers
+        FieldName: amount_of_rivers
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_creation.amount_of_rivers
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues:
+          '0': None
+          '1': Few
+          '2': Medium (default)
+          '3': Many
+    - key: min_river_length
+      label: Minimum River Length
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the minimum length (in tiles) of rivers
+      keywords: minimum,river,length,min_river_length
+      input_type: number
+      param_field_name: game_creation.min_river_length
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: tiles
+      enum_values: {}
+      raw:
+        DisplayName: Minimum River Length
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the minimum length (in tiles) of rivers
+        Keywords: minimum,river,length,min_river_length
+        FieldName: min_river_length
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: game_creation.min_river_length
+        IncludeInCommandLine: false
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: tiles
+        EnumValues: {}
+    - key: tree_placer
+      label: Tree Placing
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets how trees are distributed on the map. Original = uniformly scattered. Improved = planted in groups
+      keywords: tree,placer,placing,tree_placer
+      input_type: enum
+      param_field_name: game_creation.tree_placer
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No tree placing
+        '1': Original tree placing
+        '2': Improved tree placing (default)
+      raw:
+        DisplayName: Tree Placing
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets how trees are distributed on the map. Original = uniformly scattered. Improved = planted in groups
+        Keywords: tree,placer,placing,tree_placer
+        FieldName: tree_placer
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_creation.tree_placer
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues:
+          '0': No tree placing
+          '1': Original tree placing
+          '2': Improved tree placing (default)
+    - key: number_towns
+      label: Town Quantity
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the quantity of towns created on a new map. If "Custom" is selected, Custom Town Quantity must also be set
+      keywords: number,towns,number_towns
+      input_type: enum
+      param_field_name: difficulty.number_towns
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Very low
+        '1': Low
+        '2': Normal (default)
+        '3': High
+        '4': Custom
+      raw:
+        DisplayName: Town Quantity
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: >-
+          Sets the quantity of towns created on a new map. If "Custom" is selected, Custom Town Quantity must also be
+          set
+        Keywords: number,towns,number_towns
+        FieldName: number_towns
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty.number_towns
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues:
+          '0': Very low
+          '1': Low
+          '2': Normal (default)
+          '3': High
+          '4': Custom
+    - key: custom_town_number
+      label: Custom Town Quantity
+      category: OpenTTD
+      subcategory: Creation
+      description: If "Custom" is selected for Town Quantity, sets the exact number of towns to be created on a new map
+      keywords: custom,town,number,custom_town_number
+      input_type: number
+      param_field_name: game_creation.custom_town_number
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 5000
+      enum_values: {}
+      raw:
+        DisplayName: Custom Town Quantity
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: If "Custom" is selected for Town Quantity, sets the exact number of towns to be created on a new map
+        Keywords: custom,town,number,custom_town_number
+        FieldName: custom_town_number
+        InputType: number
+        MinValue: '1'
+        MaxValue: '5000'
+        IsFlagArgument: false
+        ParamFieldName: game_creation.custom_town_number
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: larger_towns
+      label: Larger Towns Proportion
+      category: OpenTTD
+      subcategory: Creation
+      description: >-
+        Sets the proportion of towns that will grow to become cities. For example, if 4 is specified, 1 in 4 (25%) will
+        become cities. 0 = disabled
+      keywords: larger,towns,larger_towns
+      input_type: number
+      param_field_name: economy.larger_towns
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Larger Towns Proportion
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: >-
+          Sets the proportion of towns that will grow to become cities. For example, if 4 is specified, 1 in 4 (25%)
+          will become cities. 0 = disabled
+        Keywords: larger,towns,larger_towns
+        FieldName: larger_towns
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: economy.larger_towns
+        IncludeInCommandLine: false
+        DefaultValue: '4'
+        Placeholder: '4'
+        EnumValues: {}
+    - key: initial_city_size
+      label: Initial City Size Multiplier
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the average initial size of cities relative to towns
+      keywords: initial,city,size,multiplier,initial_city_size
+      input_type: number
+      param_field_name: economy.initial_city_size
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Initial City Size Multiplier
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the average initial size of cities relative to towns
+        Keywords: initial,city,size,multiplier,initial_city_size
+        FieldName: initial_city_size
+        InputType: number
+        MinValue: '1'
+        MaxValue: '10'
+        IsFlagArgument: false
+        ParamFieldName: economy.initial_city_size
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues: {}
+    - key: industry_density
+      label: Industry Density
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets how many industries should be generated and what level should be maintained during the game
+      keywords: industry,density,industry_density
+      input_type: enum
+      param_field_name: difficulty.industry_density
+      default: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None (funding only)
+        '1': Minimal
+        '2': Very low
+        '3': Low
+        '4': Normal (default)
+        '5': High
+      raw:
+        DisplayName: Industry Density
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets how many industries should be generated and what level should be maintained during the game
+        Keywords: industry,density,industry_density
+        FieldName: industry_density
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: difficulty.industry_density
+        IncludeInCommandLine: false
+        DefaultValue: '4'
+        EnumValues:
+          '0': None (funding only)
+          '1': Minimal
+          '2': Very low
+          '3': Low
+          '4': Normal (default)
+          '5': High
+    - key: town_layout
+      label: Town Layout
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the layout for the road network of towns
+      keywords: town,layout,road,town_layout
+      input_type: enum
+      param_field_name: economy.town_layout
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Original (default)
+        '1': Better roads
+        '2': 2x2 grid
+        '3': 3x3 grid
+        '4': Random
+      raw:
+        DisplayName: Town Layout
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the layout for the road network of towns
+        Keywords: town,layout,road,town_layout
+        FieldName: town_layout
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: economy.town_layout
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Original (default)
+          '1': Better roads
+          '2': 2x2 grid
+          '3': 3x3 grid
+          '4': Random
+    - key: road_side
+      label: Vehicle Driving Side
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets which side of the road vehicles drive on
+      keywords: road,side,drive,road_side
+      input_type: enum
+      param_field_name: vehicle.road_side
+      default: right
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        right: Drive on right (default)
+        left: Drive on left
+      raw:
+        DisplayName: Vehicle Driving Side
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets which side of the road vehicles drive on
+        Keywords: road,side,drive,road_side
+        FieldName: road_side
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: vehicle.road_side
+        IncludeInCommandLine: false
+        DefaultValue: right
+        EnumValues:
+          right: Drive on right (default)
+          left: Drive on left
+    - key: t
+      label: Starting Year
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the starting year for the game. 1925 appears to be the earliest year
+      keywords: starting,year,starting_year
+      input_type: number
+      param_field_name: t
+      default: '1950'
+      placeholder: '1950'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1925
+      enum_values: {}
+      raw:
+        DisplayName: Starting Year
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the starting year for the game. 1925 appears to be the earliest year
+        Keywords: starting,year,starting_year
+        FieldName: t
+        InputType: number
+        MinValue: '1925'
+        IsFlagArgument: false
+        ParamFieldName: t
+        IncludeInCommandLine: true
+        DefaultValue: '1950'
+        Placeholder: '1950'
+        EnumValues: {}
+    - key: t
+      label: Starting Year
+      category: OpenTTD
+      subcategory: Creation
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: game_creation.starting_year
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Starting Year
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: ''
+        Keywords: ''
+        FieldName: t
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: game_creation.starting_year
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: restart_game_year
+      label: Restart Year
+      category: OpenTTD
+      subcategory: Creation
+      description: Sets the year when the server will restart automatically (on 1 January). 0 = no automatic restart
+      keywords: restart,year,restart_game_year
+      input_type: number
+      param_field_name: network.restart_game_year
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Restart Year
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: Sets the year when the server will restart automatically (on 1 January). 0 = no automatic restart
+        Keywords: restart,year,restart_game_year
+        FieldName: restart_game_year
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: network.restart_game_year
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: town_name
+      label: Town Name Nationality
+      category: OpenTTD
+      subcategory: Creation
+      description: >-
+        Sets the nationality that town names are sourced from in randomly generated games. If Other is selected, Custom
+        Town Name Nationality must also be set
+      keywords: town,name,nationality,country,language,town_name
+      input_type: enum
+      param_field_name: game_creation.town_name
+      default: english
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        american: American
+        austrian: Austrian
+        english: English (default)
+        catalan: Catalan
+        czech: Czech
+        danish: Danish
+        dutch: Dutch
+        finnish: Finnish
+        french: French
+        german: German
+        hungarian: Hungarian
+        italian: Italian
+        latin: Latin
+        norwegian: Norwegian
+        polish: Polish
+        romanian: Romanian
+        silly: Silly
+        slovakish: Slovakish
+        swedish: Swedish
+        swiss: Swiss
+        turkish: Turkish
+        '{{CustomTownName}}': Other
+      raw:
+        DisplayName: Town Name Nationality
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: >-
+          Sets the nationality that town names are sourced from in randomly generated games. If Other is selected,
+          Custom Town Name Nationality must also be set
+        Keywords: town,name,nationality,country,language,town_name
+        FieldName: town_name
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_creation.town_name
+        IncludeInCommandLine: false
+        DefaultValue: english
+        EnumValues:
+          american: American
+          austrian: Austrian
+          english: English (default)
+          catalan: Catalan
+          czech: Czech
+          danish: Danish
+          dutch: Dutch
+          finnish: Finnish
+          french: French
+          german: German
+          hungarian: Hungarian
+          italian: Italian
+          latin: Latin
+          norwegian: Norwegian
+          polish: Polish
+          romanian: Romanian
+          silly: Silly
+          slovakish: Slovakish
+          swedish: Swedish
+          swiss: Swiss
+          turkish: Turkish
+          '{{CustomTownName}}': Other
+    - key: CustomTownName
+      label: Custom Town Name Nationality
+      category: OpenTTD
+      subcategory: Creation
+      description: >-
+        Sets a custom NewGRF source for random town names, if "Other" is selected under Town Name Nationality. The
+        NewGRF file must be installed in the newgrf directory
+      keywords: town,name,nationality,country,language
+      input_type: text
+      param_field_name: CustomTownName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Town Name Nationality
+        Category: OpenTTD:stadia_controller
+        Subcategory: Creation:build:8
+        Description: >-
+          Sets a custom NewGRF source for random town names, if "Other" is selected under Town Name Nationality. The
+          NewGRF file must be installed in the newgrf directory
+        Keywords: town,name,nationality,country,language
+        FieldName: CustomTownName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomTownName
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: 'Sets the server branch to install. NOTE: Update the server after switching branches!'
+      keywords: server,branch,depot
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        testing: Testing (beta and RC)
+        nightly: Nightly
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: 'Sets the server branch to install. NOTE: Update the server after switching branches!'
+        Keywords: server,branch,depot
+        FieldName: ServerBranch
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ServerBranch
+        IncludeInCommandLine: false
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          testing: Testing (beta and RC)
+          nightly: Nightly
+  files:
+    - path: config/openttd.cfg
+      type: ini
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: config/openttd.cfg
+        ConfigType: ini
+        AutoMap: true
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^(?<key>.+?) = (?<value>.*?)$
+    - path: config/private.cfg
+      type: ini
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: config/private.cfg
+        ConfigType: ini
+        AutoMap: true
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^(?<key>.+?) = (?<value>.*?)$
+    - path: config/secrets.cfg
+      type: ini
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: config/secrets.cfg
+        ConfigType: ini
+        AutoMap: true
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^(?<key>.+?) = (?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: server_game_type
+    label: Server Public Status
+    default: local
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_name
+    label: Server Name
+    default: AMP Powered OpenTTD Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: client_name
+    label: Client Name
+    default: AMPServer
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: admin_password
+    label: Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: autosave
+    label: Autosave Interval
+    default: monthly
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autosave_on_exit
+    label: Autosave On Exit
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g
+    label: Save Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_clients
+    label: Player Limit
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: min_active_clients
+    label: Minimum Active Players
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_companies
+    label: Maximum Companies
+    default: '15'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_admin_chat
+    label: Enable Admin Chat
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_join_time
+    label: Maximum Join Time
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: inflation
+    label: Allow Inflation
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_loan
+    label: Maximum Initial Loan
+    default: '300000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: initial_interest
+    label: Initial Interest Rate
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: subsidy_multiplier
+    label: Subsidy Multiplier
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: subsidy_duration
+    label: Subsidy Duration
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: infrastructure_maintenance
+    label: Infrastructure Maintenance
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: vehicle_costs
+    label: Running Costs
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: construction_cost
+    label: Construction Costs
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disasters
+    label: Allow Disasters
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: economy
+    label: Allow Economic Recessions
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: vehicle_breakdowns
+    label: Vehicle Breakdown Frequency
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: plane_crashes
+    label: Aircraft Crash Probability
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dist_local_authority
+    label: Local Authority Distance
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: town_council_tolerance
+    label: Town Council Tolerance
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: town_noise_population0
+    label: Town Population Noise Level Increase - Lenient
+    default: '800'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: town_noise_population1
+    label: Town Population Noise Level Increase - Tolerant
+    default: '2000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: town_noise_population2
+    label: Town Population Noise Level Increase - Hostile
+    default: '4000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: town_noise_population3
+    label: Town Population Noise Level Increase - Permissive
+    default: '400'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bribe
+    label: Allow Bribes
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: exclusive_rights
+    label: Allow Exclusive Rights
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fund_roads
+    label: Allow Funding Of Roads
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fund_buildings
+    label: Allow Funding Of Buildings
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: station_noise_level
+    label: Enable Airport Noise Level
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: town_growth_rate
+    label: Town Growth Rate
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow_town_roads
+    label: Allow Town Roads
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow_town_level_crossings
+    label: Allow Town Level Crossings
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mod_road_rebuild
+    label: Remove Useless Road Elements
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: found_town
+    label: Allow Founding Of Towns
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: town_cargo_scale
+    label: Town Cargo Production Scale
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: industry_cargo_scale
+    label: Industry Production Scale
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: town_cargogen_mode
+    label: Town Cargo Generation Mode
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: selectgoods
+    label: Enable Demand-Only Cargo Generation
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: multiple_industry_per_town
+    label: Allow Multiple Industries Per Town
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: oil_refinery_limit
+    label: Oil Refinery Limit
+    default: '32'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serve_neutral_industries
+    label: Allow Serving Neutral Industries
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: modified_catchment
+    label: Modified Catchment Areas
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: improved_load
+    label: Enable Improved Loading
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gradual_loading
+    label: Enable Gradual Loading
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: timekeeping_units
+    label: Timekeeping Units
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: minutes_per_calendar_year
+    label: Minutes Per Year
+    default: '12'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: recalc_time
+    label: Recalculation Time
+    default: '32'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: recalc_interval
+    label: Recalculation Interval
+    default: '8'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: distribution_pax
+    label: Distribution Mode For Passengers
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: distribution_mail
+    label: Distribution Mode For Mail
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: distribution_armoured
+    label: Distribution Mode For ARMOURED Cargo
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: distribution_default
+    label: Distribution Mode For Other Cargo
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: accuracy
+    label: Distribution Accuracy
+    default: '16'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: demand_distance
+    label: Effect Of Distance On Demand
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: demand_size
+    label: Symmetric Mode Returning Cargo
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: short_path_saturation
+    label: Saturation Limit
+    default: '80'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_no_competitors
+    label: AI Competitors
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: competitor_speed
+    label: Competitor Speed
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: give_money
+    label: Allow Giving Of Money
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow_shares
+    label: Allow Buying Of Shares
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: min_years_for_shares
+    label: Minimum Age For Buying Shares
+    default: '6'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: train_acceleration_model
+    label: Train Acceleration Model
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: train_slope_steepness
+    label: Train Slope Steepness
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: wagon_speed_limits
+    label: Enable Wagon Speed Limits
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: freight_trains
+    label: Freight Trains Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: roadveh_acceleration_model
+    label: Road Vehicle Acceleration Model
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: roadveh_slope_steepness
+    label: Road Vehicle Slope Steepness
+    default: '7'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: plane_speed
+    label: Aircraft Speed Factor
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: line_reverse_mode
+    label: Disallow Train Reversing
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: no_servicing_if_no_breakdowns
+    label: Disable Servicing If No Breakdowns
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serviceathelipad
+    label: Enable Helicopter Servicing
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dynamic_engines
+    label: Enable Dynamic Engines
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: extend_vehicle_life
+    label: Extend Vehicle Life
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: servint_ispercent
+    label: Enable Service Interval Percentage
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: servint_trains
+    label: Train Service Interval
+    default: '150'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: servint_roadveh
+    label: Road Vehicle Service Interval
+    default: '150'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: servint_ships
+    label: Ship Service Interval
+    default: '360'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: servint_aircraft
+    label: Aircraft Service Interval
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: never_expire_airports
+    label: Disable Airport Expiry
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: never_expire_vehicles
+    label: Disable Vehicle Expiry
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_trains
+    label: Maximum Trains
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_roadveh
+    label: Maximum Road Vehicles
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_aircraft
+    label: Maximum Aircraft
+    default: '200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_ships
+    label: Maximum Ships
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_train_length
+    label: Maximum Train Length
+    default: '7'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: station_spread
+    label: Station Spread
+    default: '12'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adjacent_stations
+    label: Allow Building Adjacent Stations
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: distant_join_stations
+    label: Allow Joining Distant Stations
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disable_elrails
+    label: Disable Electric Tracks Requirement
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: G
+    label: Map Seed
+    default: '970327061'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: G
+    label: Map Seed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map_x
+    label: Map Size - X Axis
+    default: '8'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map_y
+    label: Map Size - Y Axis
+    default: '8'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: landscape
+    label: Landscape
+    default: temperate
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: land_generator
+    label: Land Generation System
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: terrain_type
+    label: Terrain Type (TGP Only)
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tgen_smoothness
+    label: Terrain Smoothness (TGP Only)
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: variety
+    label: Variety Distribution (TGP Only)
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: snow_coverage
+    label: Snow Coverage
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: snow_line_height
+    label: Snow Line Height
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: desert_coverage
+    label: Desert Coverage
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: quantity_sea_lakes
+    label: Sea Level (TGP Only)
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: custom_sea_level
+    label: Custom Sea Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: amount_of_rivers
+    label: Quantity Of Rivers
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: min_river_length
+    label: Minimum River Length
+    default: '16'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tree_placer
+    label: Tree Placing
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: number_towns
+    label: Town Quantity
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: custom_town_number
+    label: Custom Town Quantity
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: larger_towns
+    label: Larger Towns Proportion
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: initial_city_size
+    label: Initial City Size Multiplier
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: industry_density
+    label: Industry Density
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: town_layout
+    label: Town Layout
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: road_side
+    label: Vehicle Driving Side
+    default: right
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: t
+    label: Starting Year
+    default: '1950'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: t
+    label: Starting Year
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: restart_game_year
+    label: Restart Year
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: town_name
+    label: Town Name Nationality
+    default: english
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomTownName
+    label: Custom Town Name Nationality
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1536610'
+  collection_support: true
 backup:
   include:
     - /data

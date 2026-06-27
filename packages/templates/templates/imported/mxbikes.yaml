@@ -5,13 +5,16 @@ category: Imported
 summary: MX Bikes Dedicated Server
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '655500'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: /usr/bin/wine {PlatformArgs} -dedicated {GamePort} -set params dedicated.ini {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,3155 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 54210
     protocol: udp
     required: true
-config_files: []
+  - key: liveport
+    name: Live Port
+    default: 54211
+    protocol: udp
+    required: true
+  - key: remoteadminport
+    name: Remote Admin Port
+    default: 54212
+    protocol: udp
+    required: true
+config_files:
+  - path: dedicated.ini
+    type: ini
+    editable: true
+  - path: core.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $LivePort
+      label: Live Port
+      category: MX Bikes
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: live.port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Live Port
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $LivePort
+        InputType: number
+        Hidden: true
+        ParamFieldName: live.port
+        EnumValues: {}
+    - key: $RemoteAdminPort
+      label: Remote Admin Port
+      category: MX Bikes
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: remote_admin.port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Remote Admin Port
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RemoteAdminPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: remote_admin.port
+        EnumValues: {}
+    - key: save_directory
+      label: Saves Directory
+      category: MX Bikes
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: save.directory
+      default: saves
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Saves Directory
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: save_directory
+        InputType: text
+        Hidden: true
+        ParamFieldName: save.directory
+        DefaultValue: saves
+        EnumValues: {}
+    - key: pause_directory
+      label: Pause Directory
+      category: MX Bikes
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: pause.directory
+      default: saves
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Pause Directory
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: pause_directory
+        InputType: text
+        Hidden: true
+        ParamFieldName: pause.directory
+        DefaultValue: saves
+        EnumValues: {}
+    - key: replay_directory
+      label: Replays Directory
+      category: MX Bikes
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: replay.directory
+      default: replays
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Replays Directory
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: replay_directory
+        InputType: text
+        Hidden: true
+        ParamFieldName: replay.directory
+        DefaultValue: replays
+        EnumValues: {}
+    - key: export_directory
+      label: Results Directory
+      category: MX Bikes
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: export.directory
+      default: results
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Results Directory
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: export_directory
+        InputType: text
+        Hidden: true
+        ParamFieldName: export.directory
+        DefaultValue: results
+        EnumValues: {}
+    - key: log_file
+      label: Log File
+      category: MX Bikes
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: log.file
+      default: logs.txt
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Log File
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: log_file
+        InputType: text
+        Hidden: true
+        ParamFieldName: log.file
+        DefaultValue: logs.txt
+        EnumValues: {}
+    - key: connection_whitelist
+      label: Whitelist Filename
+      category: MX Bikes
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: connection.whitelist
+      default: whitelist.txt
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Whitelist Filename
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: connection_whitelist
+        InputType: text
+        Hidden: true
+        ParamFieldName: connection.whitelist
+        DefaultValue: whitelist.txt
+        EnumValues: {}
+    - key: connection_blacklist
+      label: Blacklist Filename
+      category: MX Bikes
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: connection.blacklist
+      default: blacklist.txt
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Blacklist Filename
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: connection_blacklist
+        InputType: text
+        Hidden: true
+        ParamFieldName: connection.blacklist
+        DefaultValue: blacklist.txt
+        EnumValues: {}
+    - key: windows_compatibility
+      label: Windows Compatibility
+      category: MX Bikes
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: windows.compatibility
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Windows Compatibility
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: windows_compatibility
+        InputType: number
+        Hidden: true
+        ParamFieldName: windows.compatibility
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: connection_name
+      label: Server Name
+      category: MX Bikes
+      subcategory: Server
+      description: Sets the name of the server to display in the server list
+      keywords: server,name,connection.name
+      input_type: text
+      param_field_name: connection.name
+      default: AMP Powered MX Bikes Server
+      placeholder: AMP Powered MX Bikes Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server to display in the server list
+        Keywords: server,name,connection.name
+        FieldName: connection_name
+        InputType: text
+        ParamFieldName: connection.name
+        DefaultValue: AMP Powered MX Bikes Server
+        Placeholder: AMP Powered MX Bikes Server
+        EnumValues: {}
+    - key: connection_motd
+      label: Server MOTD
+      category: MX Bikes
+      subcategory: Server
+      description: Sets the welcome message to display to players when joining. Use '/r' to split over multiple lines
+      keywords: server,motd,welcome,message,connection.motd
+      input_type: text
+      param_field_name: connection.motd
+      default: Welcome to my server!
+      placeholder: Welcome to my server!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server MOTD
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: Sets the welcome message to display to players when joining. Use '/r' to split over multiple lines
+        Keywords: server,motd,welcome,message,connection.motd
+        FieldName: connection_motd
+        InputType: text
+        ParamFieldName: connection.motd
+        DefaultValue: Welcome to my server!
+        Placeholder: Welcome to my server!
+        EnumValues: {}
+    - key: connection_location
+      label: Server Location
+      category: MX Bikes
+      subcategory: Server
+      description: Sets information about the server location
+      keywords: server,location,info,information,connection.location
+      input_type: text
+      param_field_name: connection.location
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Location
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: Sets information about the server location
+        Keywords: server,location,info,information,connection.location
+        FieldName: connection_location
+        InputType: text
+        ParamFieldName: connection.location
+        DefaultValue: ''
+        EnumValues: {}
+    - key: connection_password
+      label: Server Password
+      category: MX Bikes
+      subcategory: Server
+      description: Sets the password required to join the server. Default is no password
+      keywords: server,password,connection.password
+      input_type: password
+      param_field_name: connection.password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: Sets the password required to join the server. Default is no password
+        Keywords: server,password,connection.password
+        FieldName: connection_password
+        InputType: password
+        ParamFieldName: connection.password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: connection_admin_password
+      label: Admin Password
+      category: MX Bikes
+      subcategory: Server
+      description: Sets the password required to join the server. Default is no password
+      keywords: server,admin,password,admin_password,connection.admin_password
+      input_type: password
+      param_field_name: connection.admin_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: Sets the password required to join the server. Default is no password
+        Keywords: server,admin,password,admin_password,connection.admin_password
+        FieldName: connection_admin_password
+        InputType: password
+        ParamFieldName: connection.admin_password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: MX Bikes
+      subcategory: Server
+      description: Sets the maximum number of players that can connect to the server at one time
+      keywords: max,maximum,players,limit,maxclient,connection.maxclient
+      input_type: number
+      param_field_name: connection.maxclient
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that can connect to the server at one time
+        Keywords: max,maximum,players,limit,maxclient,connection.maxclient
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: connection.maxclient
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: players
+        EnumValues: {}
+    - key: connection_bandwidth
+      label: Server Bandwidth
+      category: MX Bikes
+      subcategory: Server
+      description: Sets the server bandwidth
+      keywords: server,bandwidth,connection.bandwidth
+      input_type: enum
+      param_field_name: connection.bandwidth
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Very low
+        '1': Low
+        '2': Medium
+        '3': High
+        '4': Very high
+      raw:
+        DisplayName: Server Bandwidth
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: Sets the server bandwidth
+        Keywords: server,bandwidth,connection.bandwidth
+        FieldName: connection_bandwidth
+        InputType: enum
+        ParamFieldName: connection.bandwidth
+        DefaultValue: '2'
+        EnumValues:
+          '0': Very low
+          '1': Low
+          '2': Medium
+          '3': High
+          '4': Very high
+    - key: remote_admin_enable
+      label: Enable Remote Admin
+      category: MX Bikes
+      subcategory: Server
+      description: If enabled, the [remote admin](http://forum.mx-bikes.com/index.php?topic=3891.0) server will be enabled
+      keywords: remote,admin,remote_admin.enable
+      input_type: checkbox
+      param_field_name: remote_admin.enable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Remote Admin
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: If enabled, the [remote admin](http://forum.mx-bikes.com/index.php?topic=3891.0) server will be enabled
+        Keywords: remote,admin,remote_admin.enable
+        FieldName: remote_admin_enable
+        InputType: checkbox
+        ParamFieldName: remote_admin.enable
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: remote_admin_password
+      label: Remote Admin Password
+      category: MX Bikes
+      subcategory: Server
+      description: Sets the password required to connect to remote admin. Default is no password
+      keywords: remote,admin,password,remote_admin.password
+      input_type: password
+      param_field_name: remote_admin.password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Remote Admin Password
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to remote admin. Default is no password
+        Keywords: remote,admin,password,remote_admin.password
+        FieldName: remote_admin_password
+        InputType: password
+        ParamFieldName: remote_admin.password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: connection_max_ping
+      label: Client Ping Limit
+      category: MX Bikes
+      subcategory: Server
+      description: Sets the ping limit for clients. 0 = no limit
+      keywords: max,maximum,ping,limit,max_ping,connection.max_ping
+      input_type: number
+      param_field_name: connection.max_ping
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Client Ping Limit
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: Sets the ping limit for clients. 0 = no limit
+        Keywords: max,maximum,ping,limit,max_ping,connection.max_ping
+        FieldName: connection_max_ping
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: connection.max_ping
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: polls_disable
+      label: Disable Polls
+      category: MX Bikes
+      subcategory: Server
+      description: If set, polls will be disabled
+      keywords: disable,polls,polls.disable
+      input_type: checkbox
+      param_field_name: polls.disable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Polls
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: If set, polls will be disabled
+        Keywords: disable,polls,polls.disable
+        FieldName: polls_disable
+        InputType: checkbox
+        ParamFieldName: polls.disable
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: polls_disable_during_races
+      label: Polls Disable During Races
+      category: MX Bikes
+      subcategory: Server
+      description: If set, polls will be disabled during races
+      keywords: polls,disable,during,races,disable_during_races,polls.disable_during_races
+      input_type: checkbox
+      param_field_name: polls.disable_during_races
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Polls Disable During Races
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Server:dns:1
+        Description: If set, polls will be disabled during races
+        Keywords: polls,disable,during,races,disable_during_races,polls.disable_during_races
+        FieldName: polls_disable_during_races
+        InputType: checkbox
+        ParamFieldName: polls.disable_during_races
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: export_results
+      label: Results Export Format
+      category: MX Bikes
+      subcategory: Data
+      description: >-
+        Specifies the format for exporting results. If set, it will automatically export results at the end of the last
+        session
+      keywords: export,results,format,export.results
+      input_type: enum
+      param_field_name: export.results
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': None
+        html: HTML
+        xml: XML
+        both: Both HTML and XML
+      raw:
+        DisplayName: Results Export Format
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: >-
+          Specifies the format for exporting results. If set, it will automatically export results at the end of the
+          last session
+        Keywords: export,results,format,export.results
+        FieldName: export_results
+        InputType: enum
+        ParamFieldName: export.results
+        DefaultValue: ''
+        EnumValues:
+          '': None
+          html: HTML
+          xml: XML
+          both: Both HTML and XML
+    - key: export_units
+      label: Results Export Units
+      category: MX Bikes
+      subcategory: Data
+      description: Specifies the units for exporting results
+      keywords: export,units,export.units
+      input_type: enum
+      param_field_name: export.units
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Metric units
+        '1': US units
+        '2': UK units
+      raw:
+        DisplayName: Results Export Units
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: Specifies the units for exporting results
+        Keywords: export,units,export.units
+        FieldName: export_units
+        InputType: enum
+        ParamFieldName: export.units
+        DefaultValue: '0'
+        EnumValues:
+          '0': Metric units
+          '1': US units
+          '2': UK units
+    - key: export_prefix
+      label: Results Filename Prefix
+      category: MX Bikes
+      subcategory: Data
+      description: Sets the filename prefix for exported results
+      keywords: export,prefix,filename,export.prefix
+      input_type: text
+      param_field_name: export.prefix
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Results Filename Prefix
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: Sets the filename prefix for exported results
+        Keywords: export,prefix,filename,export.prefix
+        FieldName: export_prefix
+        InputType: text
+        ParamFieldName: export.prefix
+        DefaultValue: ''
+        EnumValues: {}
+    - key: export_incremental
+      label: Export Incremental Results
+      category: MX Bikes
+      subcategory: Data
+      description: If enabled, results will be exported at the end of each session
+      keywords: export,incremental,export.incremental
+      input_type: checkbox
+      param_field_name: export.incremental
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Export Incremental Results
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: If enabled, results will be exported at the end of each session
+        Keywords: export,incremental,export.incremental
+        FieldName: export_incremental
+        InputType: checkbox
+        ParamFieldName: export.incremental
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: export_contacts
+      label: Export Contacts Mode
+      category: MX Bikes
+      subcategory: Data
+      description: Specifies the contacts to include in the exported results
+      keywords: export,results,contacts,export.contacts
+      input_type: enum
+      param_field_name: export.contacts
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None
+        '1': Contacts between bikes
+        '2': Contacts between bikes and with walls
+      raw:
+        DisplayName: Export Contacts Mode
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: Specifies the contacts to include in the exported results
+        Keywords: export,results,contacts,export.contacts
+        FieldName: export_contacts
+        InputType: enum
+        ParamFieldName: export.contacts
+        DefaultValue: '0'
+        EnumValues:
+          '0': None
+          '1': Contacts between bikes
+          '2': Contacts between bikes and with walls
+    - key: replay_save
+      label: Automatically Save Replays
+      category: MX Bikes
+      subcategory: Data
+      description: If enabled, the server will automatically save the full replay at the end of the race
+      keywords: replay,save,replay.save
+      input_type: checkbox
+      param_field_name: replay.save
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Automatically Save Replays
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: If enabled, the server will automatically save the full replay at the end of the race
+        Keywords: replay,save,replay.save
+        FieldName: replay_save
+        InputType: checkbox
+        ParamFieldName: replay.save
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: replay_prefix
+      label: Replay Filename Prefix
+      category: MX Bikes
+      subcategory: Data
+      description: Sets the filename prefix for saved replays
+      keywords: replay,prefix,filename,replay.prefix
+      input_type: text
+      param_field_name: replay.prefix
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Replay Filename Prefix
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: Sets the filename prefix for saved replays
+        Keywords: replay,prefix,filename,replay.prefix
+        FieldName: replay_prefix
+        InputType: text
+        ParamFieldName: replay.prefix
+        DefaultValue: ''
+        EnumValues: {}
+    - key: live_enable
+      label: Live Data Mode
+      category: MX Bikes
+      subcategory: Data
+      description: Sets the [live timing](http://forum.mx-bikes.com/index.php?topic=233.0) mode
+      keywords: live,timing,data,live.enable
+      input_type: enum
+      param_field_name: live.enable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Disabled (default)
+        '1': Send to Live Port
+        '2': Send to file
+      raw:
+        DisplayName: Live Data Mode
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: Sets the [live timing](http://forum.mx-bikes.com/index.php?topic=233.0) mode
+        Keywords: live,timing,data,live.enable
+        FieldName: live_enable
+        InputType: enum
+        ParamFieldName: live.enable
+        DefaultValue: '0'
+        EnumValues:
+          '0': Disabled (default)
+          '1': Send to Live Port
+          '2': Send to file
+    - key: live_password
+      label: Live Data Password
+      category: MX Bikes
+      subcategory: Data
+      description: Sets the password required to connect to the Live Port. Default is no password
+      keywords: live,timing,data,port,password,live.password
+      input_type: password
+      param_field_name: live.password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Live Data Password
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: Sets the password required to connect to the Live Port. Default is no password
+        Keywords: live,timing,data,port,password,live.password
+        FieldName: live_password
+        InputType: password
+        ParamFieldName: live.password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: live_file
+      label: Live Data Filename
+      category: MX Bikes
+      subcategory: Data
+      description: Sets the name of the file to write live timing data to, if the relevant Live Timing Mode is set
+      keywords: live,timing,data,file,filename,live.file
+      input_type: text
+      param_field_name: live.file
+      default: race_data.txt
+      placeholder: race_data.txt
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Live Data Filename
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: Sets the name of the file to write live timing data to, if the relevant Live Timing Mode is set
+        Keywords: live,timing,data,file,filename,live.file
+        FieldName: live_file
+        InputType: text
+        ParamFieldName: live.file
+        DefaultValue: race_data.txt
+        Placeholder: race_data.txt
+        EnumValues: {}
+    - key: live_track_position
+      label: Live Data Track Position
+      category: MX Bikes
+      subcategory: Data
+      description: >-
+        If enabled, the track centreline and all bike positions will be written to the live timing data file, if the
+        relevant Live Timing Mode is set
+      keywords: live,timing,data,track,position,bikes,centreline,centerline,track_position,live.track_position
+      input_type: checkbox
+      param_field_name: live.track_position
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Live Data Track Position
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: >-
+          If enabled, the track centreline and all bike positions will be written to the live timing data file, if the
+          relevant Live Timing Mode is set
+        Keywords: live,timing,data,track,position,bikes,centreline,centerline,track_position,live.track_position
+        FieldName: live_track_position
+        InputType: checkbox
+        ParamFieldName: live.track_position
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: live_contacts
+      label: Live Data Contacts Mode
+      category: MX Bikes
+      subcategory: Data
+      description: Specifies the contacts to write to the live timing data file, if the relevant Live Timing Mode is set
+      keywords: live,timing,data,contacts,live.contacts
+      input_type: enum
+      param_field_name: live.contacts
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None
+        '1': Contacts between bikes
+        '2': Contacts between bikes and with walls
+      raw:
+        DisplayName: Live Data Contacts Mode
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Data:info:3
+        Description: Specifies the contacts to write to the live timing data file, if the relevant Live Timing Mode is set
+        Keywords: live,timing,data,contacts,live.contacts
+        FieldName: live_contacts
+        InputType: enum
+        ParamFieldName: live.contacts
+        DefaultValue: '0'
+        EnumValues:
+          '0': None
+          '1': Contacts between bikes
+          '2': Contacts between bikes and with walls
+    - key: event_name
+      label: Event Name
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the name of the event
+      keywords: event,name,event.name
+      input_type: text
+      param_field_name: event.name
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Event Name
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the name of the event
+        Keywords: event,name,event.name
+        FieldName: event_name
+        InputType: text
+        ParamFieldName: event.name
+        DefaultValue: ''
+        EnumValues: {}
+    - key: event_tracks_shuffle
+      label: Tracks Shuffle Mode
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the tracks shuffle mode
+      keywords: event,tracks,shuffle,tracks_shuffle,event.tracks_shuffle
+      input_type: enum
+      param_field_name: event.tracks_shuffle
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No shuffling
+        '1': Shuffle at start only
+        '2': Shuffle at end of list
+      raw:
+        DisplayName: Tracks Shuffle Mode
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the tracks shuffle mode
+        Keywords: event,tracks,shuffle,tracks_shuffle,event.tracks_shuffle
+        FieldName: event_tracks_shuffle
+        InputType: enum
+        ParamFieldName: event.tracks_shuffle
+        DefaultValue: '0'
+        EnumValues:
+          '0': No shuffling
+          '1': Shuffle at start only
+          '2': Shuffle at end of list
+    - key: tracks
+      label: Track Settings
+      category: MX Bikes
+      subcategory: Gameplay
+      description: >-
+        The selected tracks for an event, and their attributes such as layout and paint, can be specified in the [event]
+        section of 'dedicated.ini'. Up to 10 tracks can be specified by a unique number, such as 'track2'
+      keywords: tracks,layout,paint
+      input_type: hidden
+      param_field_name: tracks
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Track Settings
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          The selected tracks for an event, and their attributes such as layout and paint, can be specified in the
+          [event] section of 'dedicated.ini'. Up to 10 tracks can be specified by a unique number, such as 'track2'
+        Keywords: tracks,layout,paint
+        FieldName: tracks
+        InputType: hidden
+        ParamFieldName: tracks
+        EnumValues: {}
+    - key: event_category
+      label: Allowed Bike Categories
+      category: MX Bikes
+      subcategory: Gameplay
+      description: >-
+        Sets the allowed bike categories. Empty = Open. Multiple categories can be set, separated by a slash, such as:
+        MX1/MX2
+      keywords: event,category,categories,bike,allowed,open,event.category
+      input_type: text
+      param_field_name: event.category
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Allowed Bike Categories
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the allowed bike categories. Empty = Open. Multiple categories can be set, separated by a slash, such as:
+          MX1/MX2
+        Keywords: event,category,categories,bike,allowed,open,event.category
+        FieldName: event_category
+        InputType: text
+        ParamFieldName: event.category
+        DefaultValue: ''
+        EnumValues: {}
+    - key: event_allowed_bikes
+      label: Allowed Bikes
+      category: MX Bikes
+      subcategory: Gameplay
+      description: 'Sets a list of IDs of allowed bikes, separated by a slash. For example: 350xf/450xf'
+      keywords: event,allowed,bikes
+      input_type: text
+      param_field_name: event.allowed_bikes
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Allowed Bikes
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: 'Sets a list of IDs of allowed bikes, separated by a slash. For example: 350xf/450xf'
+        Keywords: event,allowed,bikes
+        FieldName: event_allowed_bikes
+        InputType: text
+        ParamFieldName: event.allowed_bikes
+        DefaultValue: ''
+        EnumValues: {}
+    - key: rating_class
+      label: Rating Class
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the rating class
+      keywords: rating,class,rating.class
+      input_type: enum
+      param_field_name: rating.class
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': No rating (default)
+        A: 2000+
+        B: 1600-1999
+        C: 1200-1599
+        D: 800-1199
+      raw:
+        DisplayName: Rating Class
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the rating class
+        Keywords: rating,class,rating.class
+        FieldName: rating_class
+        InputType: enum
+        ParamFieldName: rating.class
+        DefaultValue: ''
+        EnumValues:
+          '': No rating (default)
+          A: 2000+
+          B: 1600-1999
+          C: 1200-1599
+          D: 800-1199
+    - key: race_open_practice
+      label: Enable Open Practice
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, the identified race settings following will be ignored
+      keywords: race,open,practice,open_practice,race.open_practice
+      input_type: checkbox
+      param_field_name: race.open_practice
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Open Practice
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the identified race settings following will be ignored
+        Keywords: race,open,practice,open_practice,race.open_practice
+        FieldName: race_open_practice
+        InputType: checkbox
+        ParamFieldName: race.open_practice
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: race_format
+      label: Replace Qualify Race
+      category: MX Bikes
+      subcategory: Gameplay
+      description: >-
+        If enabled, the qualify race will be replaced by a qualify practice session, and the pre-qualify session will be
+        skipped
+      keywords: race,format,qualify,race,practice,race.format
+      input_type: checkbox
+      param_field_name: race.format
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Replace Qualify Race
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, the qualify race will be replaced by a qualify practice session, and the pre-qualify session will
+          be skipped
+        Keywords: race,format,qualify,race,practice,race.format
+        FieldName: race_format
+        InputType: checkbox
+        ParamFieldName: race.format
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: race_quick_race
+      label: Enable Quick Race
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, the sighting lap and all sessions except for Warm-up and Race 2 will be skipped
+      keywords: quick,race,skip,sessions,sighting,lap,quick_race,race.quick_race
+      input_type: checkbox
+      param_field_name: race.quick_race
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Quick Race
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the sighting lap and all sessions except for Warm-up and Race 2 will be skipped
+        Keywords: quick,race,skip,sessions,sighting,lap,quick_race,race.quick_race
+        FieldName: race_quick_race
+        InputType: checkbox
+        ParamFieldName: race.quick_race
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: race_practice_length
+      label: Practice Session Length
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the length of the practice session. 0 = skipped
+      keywords: practice,session,time,length,practice_length,race.practice_length
+      input_type: number
+      param_field_name: race.practice_length
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Practice Session Length
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the length of the practice session. 0 = skipped
+        Keywords: practice,session,time,length,practice_length,race.practice_length
+        FieldName: race_practice_length
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: race.practice_length
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: minutes
+        EnumValues: {}
+    - key: race_prequalify_length
+      label: Pre-qualify Session Length
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the length of the pre-qualify session. 0 = skipped
+      keywords: pre-qualify,session,time,length,prequalify_length,race.prequalify_length
+      input_type: number
+      param_field_name: race.prequalify_length
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Pre-qualify Session Length
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the length of the pre-qualify session. 0 = skipped
+        Keywords: pre-qualify,session,time,length,prequalify_length,race.prequalify_length
+        FieldName: race_prequalify_length
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: race.prequalify_length
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: minutes
+        EnumValues: {}
+    - key: race_qualifypractice_length
+      label: Qualify Practice Session Length
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the length of the qualify practice session. 0 = skipped
+      keywords: qualify,practice,session,time,length,qualifypractice_length,race.qualifypractice_length
+      input_type: number
+      param_field_name: race.qualifypractice_length
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Qualify Practice Session Length
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the length of the qualify practice session. 0 = skipped
+        Keywords: qualify,practice,session,time,length,qualifypractice_length,race.qualifypractice_length
+        FieldName: race_qualifypractice_length
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: race.qualifypractice_length
+        DefaultValue: '3'
+        Placeholder: '3'
+        Suffix: minutes
+        EnumValues: {}
+    - key: race_warmup_length
+      label: Warmup Session Length
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the length of the warmup session. 0 = skipped
+      keywords: warmup,session,time,length,warmup_length,race.warmup_length
+      input_type: number
+      param_field_name: race.warmup_length
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Warmup Session Length
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the length of the warmup session. 0 = skipped
+        Keywords: warmup,session,time,length,warmup_length,race.warmup_length
+        FieldName: race_warmup_length
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: race.warmup_length
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: minutes
+        EnumValues: {}
+    - key: race_sighting_lap
+      label: Enable Sighting Lap
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If set, the sighting lap will be enabled
+      keywords: sighting,lap,sighting_lap,race.sighting_lap
+      input_type: checkbox
+      param_field_name: race.sighting_lap
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Sighting Lap
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the sighting lap will be enabled
+        Keywords: sighting,lap,sighting_lap,race.sighting_lap
+        FieldName: race_sighting_lap
+        InputType: checkbox
+        ParamFieldName: race.sighting_lap
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: race_race_length_format
+      label: Race Length Format
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Specifies the format for race length
+      keywords: race,length,format,race_length_format,race.race_length_format
+      input_type: enum
+      param_field_name: race.race_length_format
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Percentage of full length + 2 laps
+        '1': Timed race + extra lap
+        '2': Laps
+      raw:
+        DisplayName: Race Length Format
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Specifies the format for race length
+        Keywords: race,length,format,race_length_format,race.race_length_format
+        FieldName: race_race_length_format
+        InputType: enum
+        ParamFieldName: race.race_length_format
+        DefaultValue: '0'
+        EnumValues:
+          '0': Percentage of full length + 2 laps
+          '1': Timed race + extra lap
+          '2': Laps
+    - key: race_race_length
+      label: Race Length Percentage
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the percentage of a full length for the race length, if the relevant Race Length Format is selected
+      keywords: race,length,percentage,race_length,race.race_length
+      input_type: number
+      param_field_name: race.race_length
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Race Length Percentage
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the percentage of a full length for the race length, if the relevant Race Length Format is selected
+        Keywords: race,length,percentage,race_length,race.race_length
+        FieldName: race_race_length
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: race.race_length
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: '%'
+        EnumValues: {}
+    - key: race_race_minutes
+      label: Race Length Period
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the length of a timed race, if the relevant Race Length Format is selected
+      keywords: race,timed,length,race_minutes,race.race_minutes
+      input_type: number
+      param_field_name: race.race_minutes
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Race Length Period
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the length of a timed race, if the relevant Race Length Format is selected
+        Keywords: race,timed,length,race_minutes,race.race_minutes
+        FieldName: race_race_minutes
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: race.race_minutes
+        DefaultValue: '5'
+        Placeholder: '5'
+        EnumValues: {}
+    - key: race_race_extralaps
+      label: Race Length Extra Laps
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the number of extra laps for timed races, if the relevant Race Length Format is selected
+      keywords: race,timed,length,extra,laps
+      input_type: number
+      param_field_name: race.race_extralaps
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Race Length Extra Laps
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of extra laps for timed races, if the relevant Race Length Format is selected
+        Keywords: race,timed,length,extra,laps
+        FieldName: race_race_extralaps
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: race.race_extralaps
+        DefaultValue: '2'
+        Placeholder: '2'
+        EnumValues: {}
+    - key: race_race_laps
+      label: Race Length Laps
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the number of laps for lap-based races
+      keywords: race,laps
+      input_type: number
+      param_field_name: race.race_laps
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Race Length Laps
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of laps for lap-based races
+        Keywords: race,laps
+        FieldName: race_race_laps
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: race.race_laps
+        DefaultValue: '5'
+        Placeholder: '5'
+        EnumValues: {}
+    - key: race_restart_delay
+      label: Restart Delay
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the server restart time. 0 = no restart
+      keywords: restart,delay,restart.delay
+      input_type: number
+      param_field_name: race.restart_delay
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Restart Delay
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the server restart time. 0 = no restart
+        Keywords: restart,delay,restart.delay
+        FieldName: race_restart_delay
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: race.restart_delay
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: race_raceover_length
+      label: Race Over Length
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the race over length
+      keywords: race,over,length,raceover_length,race.raceover_length
+      input_type: number
+      param_field_name: race.raceover_length
+      default: '180'
+      placeholder: '180'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Race Over Length
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the race over length
+        Keywords: race,over,length,raceover_length,race.raceover_length
+        FieldName: race_raceover_length
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: race.raceover_length
+        DefaultValue: '180'
+        Placeholder: '180'
+        Suffix: seconds
+        EnumValues: {}
+    - key: race_pause
+      label: Enable Event Pause
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, the event will be paused and saved at the end of the specified Event Pause Session
+      keywords: pause,event,race.pause
+      input_type: checkbox
+      param_field_name: race.pause
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Event Pause
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the event will be paused and saved at the end of the specified Event Pause Session
+        Keywords: pause,event,race.pause
+        FieldName: race_pause
+        InputType: checkbox
+        ParamFieldName: race.pause
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: race_pause_session
+      label: Event Pause Session
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the session after which the event will be paused and saved, if Event Pause is enabled
+      keywords: pause,session,pause_session,race.pause_session
+      input_type: enum
+      param_field_name: race.pause_session
+      default: practice
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        practice: Practice
+        prequalify: Pre-qualify
+        qualifypractice: Qualify practice
+        qualify: Qualify
+        warmup: Warmup
+        race1: Race 1
+        race2: Race 2
+      raw:
+        DisplayName: Event Pause Session
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the session after which the event will be paused and saved, if Event Pause is enabled
+        Keywords: pause,session,pause_session,race.pause_session
+        FieldName: race_pause_session
+        InputType: enum
+        ParamFieldName: race.pause_session
+        DefaultValue: practice
+        EnumValues:
+          practice: Practice
+          prequalify: Pre-qualify
+          qualifypractice: Qualify practice
+          qualify: Qualify
+          warmup: Warmup
+          race1: Race 1
+          race2: Race 2
+    - key: race_resume
+      label: Resume Event Filename
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the name of the file to load to resume an event
+      keywords: resume,event,race.resume
+      input_type: text
+      param_field_name: race.resume
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Resume Event Filename
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the name of the file to load to resume an event
+        Keywords: resume,event,race.resume
+        FieldName: race_resume
+        InputType: text
+        ParamFieldName: race.resume
+        DefaultValue: ''
+        EnumValues: {}
+    - key: race_save
+      label: Enable Event Save
+      category: MX Bikes
+      subcategory: Gameplay
+      description: >-
+        If enabled, the event will be saved at the end of the specified Event Save Session. If Event Pause is enabled,
+        this setting will be ignored
+      keywords: save,event,session,race.save
+      input_type: checkbox
+      param_field_name: race.save
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Event Save
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, the event will be saved at the end of the specified Event Save Session. If Event Pause is enabled,
+          this setting will be ignored
+        Keywords: save,event,session,race.save
+        FieldName: race_save
+        InputType: checkbox
+        ParamFieldName: race.save
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: race_save_session
+      label: Event Save Session
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the session after which the event will be saved, if Event Save is enabled (and Event Pause is disabled)
+      keywords: save,session,save_session,race.save_session
+      input_type: enum
+      param_field_name: race.save_session
+      default: practice
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        practice: Practice
+        prequalify: Pre-qualify
+        qualifypractice: Qualify practice
+        qualify: Qualify
+        warmup: Warmup
+        race1: Race 1
+        race2: Race 2
+      raw:
+        DisplayName: Event Save Session
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the session after which the event will be saved, if Event Save is enabled (and Event Pause is disabled)
+        Keywords: save,session,save_session,race.save_session
+        FieldName: race_save_session
+        InputType: enum
+        ParamFieldName: race.save_session
+        DefaultValue: practice
+        EnumValues:
+          practice: Practice
+          prequalify: Pre-qualify
+          qualifypractice: Qualify practice
+          qualify: Qualify
+          warmup: Warmup
+          race1: Race 1
+          race2: Race 2
+    - key: weather_realistic
+      label: Enable Realistic Weather
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, the weather will be realistic, and the following weather settings will be ignored
+      keywords: weather,realistic,weather.realistic
+      input_type: checkbox
+      param_field_name: weather.realistic
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Realistic Weather
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the weather will be realistic, and the following weather settings will be ignored
+        Keywords: weather,realistic,weather.realistic
+        FieldName: weather_realistic
+        InputType: checkbox
+        ParamFieldName: weather.realistic
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: weather_conditions
+      label: Weather Conditions
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the weather conditions. Ignored if Realistic Weather is enabled
+      keywords: weather,conditions,weather.conditions
+      input_type: enum
+      param_field_name: weather.conditions
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Sunny
+        '1': Cloudy
+        '2': Rainy
+      raw:
+        DisplayName: Weather Conditions
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the weather conditions. Ignored if Realistic Weather is enabled
+        Keywords: weather,conditions,weather.conditions
+        FieldName: weather_conditions
+        InputType: enum
+        ParamFieldName: weather.conditions
+        DefaultValue: '0'
+        EnumValues:
+          '0': Sunny
+          '1': Cloudy
+          '2': Rainy
+    - key: weather_temperature
+      label: Weather Temperature
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the air temperature. Ignored if Realistic Weather is enabled
+      keywords: weather,temperature,weather.temperature
+      input_type: number
+      param_field_name: weather.temperature
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: °C
+      enum_values: {}
+      raw:
+        DisplayName: Weather Temperature
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the air temperature. Ignored if Realistic Weather is enabled
+        Keywords: weather,temperature,weather.temperature
+        FieldName: weather_temperature
+        InputType: number
+        ParamFieldName: weather.temperature
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: °C
+        EnumValues: {}
+    - key: weather_wind_direction
+      label: Wind Direction
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the wind direction. Ignored if Realistic Weather is enabled
+      keywords: weather,wind,direction,wind_direction,weather.wind_direction
+      input_type: enum
+      param_field_name: weather.wind_direction
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': North
+        '1': North-east
+        '2': East
+        '3': South-east
+        '4': South
+        '5': South-west
+        '6': West
+        '7': North-west
+      raw:
+        DisplayName: Wind Direction
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the wind direction. Ignored if Realistic Weather is enabled
+        Keywords: weather,wind,direction,wind_direction,weather.wind_direction
+        FieldName: weather_wind_direction
+        InputType: enum
+        ParamFieldName: weather.wind_direction
+        DefaultValue: '0'
+        EnumValues:
+          '0': North
+          '1': North-east
+          '2': East
+          '3': South-east
+          '4': South
+          '5': South-west
+          '6': West
+          '7': North-west
+    - key: weather_wind_speed
+      label: Wind Speed
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the wind speed. Ignored if Realistic Weather is enabled
+      keywords: weather,wind,speed,wind_speed,weather.wind_speed
+      input_type: number
+      param_field_name: weather.wind_speed
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: metres/second
+      enum_values: {}
+      raw:
+        DisplayName: Wind Speed
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the wind speed. Ignored if Realistic Weather is enabled
+        Keywords: weather,wind,speed,wind_speed,weather.wind_speed
+        FieldName: weather_wind_speed
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: weather.wind_speed
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: metres/second
+        EnumValues: {}
+    - key: weather_track_conditions
+      label: Track Conditions
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the track conditions. Ignored if Realistic Weather is enabled
+      keywords: weather,track,conditions,track_conditions,weather.track_conditions
+      input_type: enum
+      param_field_name: weather.track_conditions
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Dry
+        '1': Wet
+      raw:
+        DisplayName: Track Conditions
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the track conditions. Ignored if Realistic Weather is enabled
+        Keywords: weather,track,conditions,track_conditions,weather.track_conditions
+        FieldName: weather_track_conditions
+        InputType: enum
+        ParamFieldName: weather.track_conditions
+        DefaultValue: '0'
+        EnumValues:
+          '0': Dry
+          '1': Wet
+    - key: hardcore_force_cockpit
+      label: Force Cockpit
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, the cockpit view will be forced
+      keywords: hardcore,force,cockpit,force_cockpit,hardcore.force_cockpit
+      input_type: checkbox
+      param_field_name: hardcore.force_cockpit
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Force Cockpit
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the cockpit view will be forced
+        Keywords: hardcore,force,cockpit,force_cockpit,hardcore.force_cockpit
+        FieldName: hardcore_force_cockpit
+        InputType: checkbox
+        ParamFieldName: hardcore.force_cockpit
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: hardcore_no_aids
+      label: Disable Aids
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, no driving aids will be allowed
+      keywords: hardcore,no,aids,no_aids,hardcore.no_aids
+      input_type: checkbox
+      param_field_name: hardcore.no_aids
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Aids
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, no driving aids will be allowed
+        Keywords: hardcore,no,aids,no_aids,hardcore.no_aids
+        FieldName: hardcore_no_aids
+        InputType: checkbox
+        ParamFieldName: hardcore.no_aids
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: hardcore_limited_tyre_sets
+      label: Limit Tyre Sets
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, tyre sets will be limited
+      keywords: hardcore,limited,tyre,sets,limited_tyre_sets,hardcore.limited_tyre_sets
+      input_type: checkbox
+      param_field_name: hardcore.limited_tyre_sets
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Limit Tyre Sets
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, tyre sets will be limited
+        Keywords: hardcore,limited,tyre,sets,limited_tyre_sets,hardcore.limited_tyre_sets
+        FieldName: hardcore_limited_tyre_sets
+        InputType: checkbox
+        ParamFieldName: hardcore.limited_tyre_sets
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: hardcore_force_particles
+      label: Ban For Roost Changes
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, players having their roost removed/altered will be banned for cheating
+      keywords: hardcore,force,particles,roost,cheating,ban,force_particles,hardcore.force_particles
+      input_type: checkbox
+      param_field_name: hardcore.force_particles
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Ban For Roost Changes
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, players having their roost removed/altered will be banned for cheating
+        Keywords: hardcore,force,particles,roost,cheating,ban,force_particles,hardcore.force_particles
+        FieldName: hardcore_force_particles
+        InputType: checkbox
+        ParamFieldName: hardcore.force_particles
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: hardcore_force_vieweffects
+      label: Ban For Tear-off Changes
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, players having their tear-offs removed/altered will be banned for cheating
+      keywords: hardcore,force,view,effects,tear-off,cheating,ban,force_vieweffects,hardcore.force_vieweffects
+      input_type: checkbox
+      param_field_name: hardcore.force_vieweffects
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Ban For Tear-off Changes
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, players having their tear-offs removed/altered will be banned for cheating
+        Keywords: hardcore,force,view,effects,tear-off,cheating,ban,force_vieweffects,hardcore.force_vieweffects
+        FieldName: hardcore_force_vieweffects
+        InputType: checkbox
+        ParamFieldName: hardcore.force_vieweffects
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: hardcore_force_leanhelp
+      label: Force Lean Help
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, connected players will be forced to 'leanhelp=1'
+      keywords: hardcore,force,lean,help,leanhelp,force_leanhelp,hardcore.force_leanhelp
+      input_type: checkbox
+      param_field_name: hardcore.force_leanhelp
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Force Lean Help
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, connected players will be forced to 'leanhelp=1'
+        Keywords: hardcore,force,lean,help,leanhelp,force_leanhelp,hardcore.force_leanhelp
+        FieldName: hardcore_force_leanhelp
+        InputType: checkbox
+        ParamFieldName: hardcore.force_leanhelp
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: reset_type
+      label: Reset Delay Mode
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the bike reset delay mode
+      keywords: reset,type,mode,delay,reset.type
+      input_type: enum
+      param_field_name: reset.type
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No bike reset delay
+        '1': Fixed time reset delay
+        '2': Reset delay based on distance of rider from bike
+        '3': Reset delay based on distance of crash speed
+      raw:
+        DisplayName: Reset Delay Mode
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the bike reset delay mode
+        Keywords: reset,type,mode,delay,reset.type
+        FieldName: reset_type
+        InputType: enum
+        ParamFieldName: reset.type
+        DefaultValue: '0'
+        EnumValues:
+          '0': No bike reset delay
+          '1': Fixed time reset delay
+          '2': Reset delay based on distance of rider from bike
+          '3': Reset delay based on distance of crash speed
+    - key: reset_time
+      label: Reset Delay Time
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the reset delay time, if the Reset Delay Mode is set to 'Fixed time reset delay'
+      keywords: reset,time,delay,fixed,reset.time
+      input_type: number
+      param_field_name: reset.time
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Reset Delay Time
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the reset delay time, if the Reset Delay Mode is set to 'Fixed time reset delay'
+        Keywords: reset,time,delay,fixed,reset.time
+        FieldName: reset_time
+        InputType: number
+        ParamFieldName: reset.time
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: collisions_disable
+      label: Disable Collisions
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If sets, collisions between bikes will be disabled
+      keywords: collisions,disable,collisions.disable
+      input_type: checkbox
+      param_field_name: collisions.disable
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Collisions
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If sets, collisions between bikes will be disabled
+        Keywords: collisions,disable,collisions.disable
+        FieldName: collisions_disable
+        InputType: checkbox
+        ParamFieldName: collisions.disable
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: collisions_max_ping
+      label: Collision Ping Limit
+      category: MX Bikes
+      subcategory: Gameplay
+      description: >-
+        Set the ping over which collisions will be disabled (but high-ping clients will still collide with low-ping
+        ones). 0 = collisions are never disabled
+      keywords: collisions,max,maximum,ping,max_ping,collisions.max_ping
+      input_type: number
+      param_field_name: collisions.max_ping
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Collision Ping Limit
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Set the ping over which collisions will be disabled (but high-ping clients will still collide with low-ping
+          ones). 0 = collisions are never disabled
+        Keywords: collisions,max,maximum,ping,max_ping,collisions.max_ping
+        FieldName: collisions_max_ping
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: collisions.max_ping
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: deformation_scale
+      label: Deformation Scale
+      category: MX Bikes
+      subcategory: Gameplay
+      description: Sets the terrain deformation scale. 0 = disabled
+      keywords: deformation,scale,deformation.scale
+      input_type: number
+      param_field_name: deformation.scale
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Deformation Scale
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the terrain deformation scale. 0 = disabled
+        Keywords: deformation,scale,deformation.scale
+        FieldName: deformation_scale
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: deformation.scale
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: deformation_auto_reset
+      label: Enable Deformation Auto Reset
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, terrain deformation will be reset at the beginning of each session
+      keywords: deformation,auto,reset,deformation.auto_reset
+      input_type: checkbox
+      param_field_name: deformation.auto_reset
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Deformation Auto Reset
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, terrain deformation will be reset at the beginning of each session
+        Keywords: deformation,auto,reset,deformation.auto_reset
+        FieldName: deformation_auto_reset
+        InputType: checkbox
+        ParamFieldName: deformation.auto_reset
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: dynamic_surface_disable
+      label: Disable Dynamic Track Surfaces
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If set, dynamic track surfaces will be disabled
+      keywords: dynamic,surface,disable,dynamic_surface.disable
+      input_type: checkbox
+      param_field_name: dynamic_surface.disable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Dynamic Track Surfaces
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If set, dynamic track surfaces will be disabled
+        Keywords: dynamic,surface,disable,dynamic_surface.disable
+        FieldName: dynamic_surface_disable
+        InputType: checkbox
+        ParamFieldName: dynamic_surface.disable
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: dynamic_surface_persistent
+      label: Enable Persistent Dynamic Track Surfaces
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If enabled, dynamic track surfaces will not be reset between events
+      keywords: dynamic,surface,persistent,dynamic_surface.persistent
+      input_type: checkbox
+      param_field_name: dynamic_surface.persistent
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Persistent Dynamic Track Surfaces
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, dynamic track surfaces will not be reset between events
+        Keywords: dynamic,surface,persistent,dynamic_surface.persistent
+        FieldName: dynamic_surface_persistent
+        InputType: checkbox
+        ParamFieldName: dynamic_surface.persistent
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: connection_chat_disable
+      label: Disable Chat
+      category: MX Bikes
+      subcategory: Gameplay
+      description: If set, chat (except for admin messages) will be disabled
+      keywords: disable,chat,chat_disable,connection.chat_disable
+      input_type: checkbox
+      param_field_name: connection.chat_disable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Chat
+        Category: MX Bikes:sports_motorsports
+        Subcategory: Gameplay:joystick:2
+        Description: If set, chat (except for admin messages) will be disabled
+        Keywords: disable,chat,chat_disable,connection.chat_disable
+        FieldName: connection_chat_disable
+        InputType: checkbox
+        ParamFieldName: connection.chat_disable
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: DownloadSource
+      label: Download Source
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets how to download the client and server files. Standalone = complete download from the mirror set under
+        Standalone Download Mirror. Steam with patch = client files downloaded from Steam, along with server patch
+        downloaded from MX-Bikes.com. NOTE: Update the server after changing this setting!
+      keywords: server,download,source,steam,path,standalone
+      input_type: enum
+      param_field_name: DownloadSource
+      default: standalone
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        standalone: Standalone (default)
+        steam: Steam with patch
+      raw:
+        DisplayName: Download Source
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets how to download the client and server files. Standalone = complete download from the mirror set under
+          Standalone Download Mirror. Steam with patch = client files downloaded from Steam, along with server patch
+          downloaded from MX-Bikes.com. NOTE: Update the server after changing this setting!
+        Keywords: server,download,source,steam,path,standalone
+        FieldName: DownloadSource
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: DownloadSource
+        IncludeInCommandLine: false
+        DefaultValue: standalone
+        EnumValues:
+          standalone: Standalone (default)
+          steam: Steam with patch
+    - key: ServerDownloadMirror
+      label: Standalone Download Mirror
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the mirror to download the client and server files from, if "Standalone" is selected under Download Source.
+        NOTE: Update the server after changing this setting!
+      keywords: server,download,mirror,cdn
+      input_type: enum
+      param_field_name: ServerDownloadMirror
+      default: MXB-Mods.com
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        MXB-Mods.com: MXB-Mods.com (default)
+        MX-Bikes.com: MX-Bikes.com
+      raw:
+        DisplayName: Standalone Download Mirror
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the mirror to download the client and server files from, if "Standalone" is selected under Download
+          Source. NOTE: Update the server after changing this setting!
+        Keywords: server,download,mirror,cdn
+        FieldName: ServerDownloadMirror
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ServerDownloadMirror
+        IncludeInCommandLine: false
+        DefaultValue: MXB-Mods.com
+        EnumValues:
+          MXB-Mods.com: MXB-Mods.com (default)
+          MX-Bikes.com: MX-Bikes.com
+  files:
+    - path: dedicated.ini
+      type: ini
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: dedicated.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
+    - path: core.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: core.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: save_directory
+    label: Saves Directory
+    default: saves
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pause_directory
+    label: Pause Directory
+    default: saves
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: replay_directory
+    label: Replays Directory
+    default: replays
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: export_directory
+    label: Results Directory
+    default: results
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: log_file
+    label: Log File
+    default: logs.txt
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: connection_whitelist
+    label: Whitelist Filename
+    default: whitelist.txt
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: connection_blacklist
+    label: Blacklist Filename
+    default: blacklist.txt
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: windows_compatibility
+    label: Windows Compatibility
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: connection_name
+    label: Server Name
+    default: AMP Powered MX Bikes Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: connection_motd
+    label: Server MOTD
+    default: Welcome to my server!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: connection_location
+    label: Server Location
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: connection_password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: connection_admin_password
+    label: Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: connection_bandwidth
+    label: Server Bandwidth
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: remote_admin_enable
+    label: Enable Remote Admin
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: remote_admin_password
+    label: Remote Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: connection_max_ping
+    label: Client Ping Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: polls_disable
+    label: Disable Polls
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: polls_disable_during_races
+    label: Polls Disable During Races
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: export_results
+    label: Results Export Format
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: export_units
+    label: Results Export Units
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: export_prefix
+    label: Results Filename Prefix
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: export_incremental
+    label: Export Incremental Results
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: export_contacts
+    label: Export Contacts Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: replay_save
+    label: Automatically Save Replays
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: replay_prefix
+    label: Replay Filename Prefix
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: live_enable
+    label: Live Data Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: live_password
+    label: Live Data Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: live_file
+    label: Live Data Filename
+    default: race_data.txt
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: live_track_position
+    label: Live Data Track Position
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: live_contacts
+    label: Live Data Contacts Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: event_name
+    label: Event Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: event_tracks_shuffle
+    label: Tracks Shuffle Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: event_category
+    label: Allowed Bike Categories
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: event_allowed_bikes
+    label: Allowed Bikes
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rating_class
+    label: Rating Class
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_open_practice
+    label: Enable Open Practice
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_format
+    label: Replace Qualify Race
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_quick_race
+    label: Enable Quick Race
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_practice_length
+    label: Practice Session Length
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_prequalify_length
+    label: Pre-qualify Session Length
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_qualifypractice_length
+    label: Qualify Practice Session Length
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_warmup_length
+    label: Warmup Session Length
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_sighting_lap
+    label: Enable Sighting Lap
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_race_length_format
+    label: Race Length Format
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_race_length
+    label: Race Length Percentage
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_race_minutes
+    label: Race Length Period
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_race_extralaps
+    label: Race Length Extra Laps
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_race_laps
+    label: Race Length Laps
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_restart_delay
+    label: Restart Delay
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_raceover_length
+    label: Race Over Length
+    default: '180'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_pause
+    label: Enable Event Pause
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_pause_session
+    label: Event Pause Session
+    default: practice
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_resume
+    label: Resume Event Filename
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_save
+    label: Enable Event Save
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: race_save_session
+    label: Event Save Session
+    default: practice
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: weather_realistic
+    label: Enable Realistic Weather
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: weather_conditions
+    label: Weather Conditions
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: weather_temperature
+    label: Weather Temperature
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: weather_wind_direction
+    label: Wind Direction
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: weather_wind_speed
+    label: Wind Speed
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: weather_track_conditions
+    label: Track Conditions
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hardcore_force_cockpit
+    label: Force Cockpit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hardcore_no_aids
+    label: Disable Aids
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hardcore_limited_tyre_sets
+    label: Limit Tyre Sets
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hardcore_force_particles
+    label: Ban For Roost Changes
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hardcore_force_vieweffects
+    label: Ban For Tear-off Changes
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hardcore_force_leanhelp
+    label: Force Lean Help
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: reset_type
+    label: Reset Delay Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: reset_time
+    label: Reset Delay Time
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: collisions_disable
+    label: Disable Collisions
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: collisions_max_ping
+    label: Collision Ping Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: deformation_scale
+    label: Deformation Scale
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: deformation_auto_reset
+    label: Enable Deformation Auto Reset
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dynamic_surface_disable
+    label: Disable Dynamic Track Surfaces
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dynamic_surface_persistent
+    label: Enable Persistent Dynamic Track Surfaces
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: connection_chat_disable
+    label: Disable Chat
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadSource
+    label: Download Source
+    default: standalone
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerDownloadMirror
+    label: Standalone Download Mirror
+    default: MXB-Mods.com
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '655500'
+  collection_support: true
 backup:
   include:
     - /data

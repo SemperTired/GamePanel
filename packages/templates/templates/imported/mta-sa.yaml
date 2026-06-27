@@ -4,14 +4,19 @@ name: 'Multi Theft Auto: San Andreas'
 category: Imported
 summary: 'Multi Theft Auto: San Andreas Multiplayer Mod for Grand Theft Auto: San Andreas'
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://mirror-cdn.multitheftauto.com/mtasa/main/mtasa-1.6.exe
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/mta-server64
+  startup: >-
+    server/mta-server64 {PlatformArgs} -u -n --port {ServerPort} --httpport {ServerPort} --httpserver {httpserver}
+    --maxplayers {MaxUsers} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,2549 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 22003
+    protocol: both
+    required: true
+  - key: aseport
+    name: ASE Port
+    default: 22126
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: mods/deathmatch/mtaserver.conf
+    type: xml
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Server Port
+      category: Multi Theft Auto
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /config/serverport
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: /config/serverport
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $ServerPort
+      label: HTTP Port
+      category: Multi Theft Auto
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /config/httpport
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: HTTP Port
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: /config/httpport
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: serverip
+      label: Server IP Binding
+      category: Multi Theft Auto
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /config/serverip
+      default: auto
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server IP Binding
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: serverip
+        InputType: text
+        Hidden: true
+        ParamFieldName: /config/serverip
+        ExcludeFromImport: true
+        DefaultValue: auto
+        EnumValues: {}
+    - key: logfile
+      label: Log File
+      category: Multi Theft Auto
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /config/logfile
+      default: logs/server.log
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Log File
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: logfile
+        InputType: text
+        Hidden: true
+        ParamFieldName: /config/logfile
+        ExcludeFromImport: true
+        DefaultValue: logs/server.log
+        EnumValues: {}
+    - key: authfile
+      label: Auth File
+      category: Multi Theft Auto
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /config/authfile
+      default: logs/server_auth.log
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auth File
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: authfile
+        InputType: text
+        Hidden: true
+        ParamFieldName: /config/authfile
+        ExcludeFromImport: true
+        DefaultValue: logs/server_auth.log
+        EnumValues: {}
+    - key: dbfile
+      label: Database Log File
+      category: Multi Theft Auto
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /config/dbfile
+      default: logs/db.log
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Database Log File
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: dbfile
+        InputType: text
+        Hidden: true
+        ParamFieldName: /config/dbfile
+        ExcludeFromImport: true
+        DefaultValue: logs/db.log
+        EnumValues: {}
+    - key: loadstringfile
+      label: Loadstring Log File
+      category: Multi Theft Auto
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /config/loadstringfile
+      default: logs/loadstring.log
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Loadstring Log File
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: loadstringfile
+        InputType: text
+        Hidden: true
+        ParamFieldName: /config/loadstringfile
+        ExcludeFromImport: true
+        DefaultValue: logs/loadstring.log
+        EnumValues: {}
+    - key: acl
+      label: Access Control List File
+      category: Multi Theft Auto
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /config/acl
+      default: acl.xml
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Access Control List File
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: acl
+        InputType: text
+        Hidden: true
+        ParamFieldName: /config/acl
+        ExcludeFromImport: true
+        DefaultValue: acl.xml
+        EnumValues: {}
+    - key: scriptdebuglogfile
+      label: Script Debug Log File
+      category: Multi Theft Auto
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /config/scriptdebuglogfile
+      default: logs/scripts.log
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Script Debug Log File
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: scriptdebuglogfile
+        InputType: text
+        Hidden: true
+        ParamFieldName: /config/scriptdebuglogfile
+        ExcludeFromImport: true
+        DefaultValue: logs/scripts.log
+        EnumValues: {}
+    - key: servername
+      label: Server Name
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets the name of the server as shown in the in-game server browser and on Game-Monitor
+      keywords: server,name,servername
+      input_type: text
+      param_field_name: /config/servername
+      default: AMP Powered MTA:SA Server
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as shown in the in-game server browser and on Game-Monitor
+        Keywords: server,name,servername
+        FieldName: servername
+        InputType: text
+        ParamFieldName: /config/servername
+        DefaultValue: AMP Powered MTA:SA Server
+        Required: true
+        EnumValues: {}
+    - key: owner_email_address
+      label: Owner Email Address
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        Comma-separated list of contact email addresses for the server owner(s). Only used by MTA administrators. Can
+        affect visibility in the master server list if missing or incorrect
+      keywords: owner,email,address,owner_email_address
+      input_type: text
+      param_field_name: /config/owner_email_address
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Owner Email Address
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma-separated list of contact email addresses for the server owner(s). Only used by MTA administrators. Can
+          affect visibility in the master server list if missing or incorrect
+        Keywords: owner,email,address,owner_email_address
+        FieldName: owner_email_address
+        InputType: text
+        ParamFieldName: /config/owner_email_address
+        DefaultValue: ''
+        EnumValues: {}
+    - key: password
+      label: Server Password
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets the password required for players to connect to the server. Default = no password
+      keywords: password
+      input_type: password
+      param_field_name: /config/password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for players to connect to the server. Default = no password
+        Keywords: password
+        FieldName: password
+        InputType: password
+        ParamFieldName: /config/password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ase
+      label: Enable Game-Monitor Reporting
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        If set, the server will report to the Game-Monitor master servers, allowing visibility in the in-game server
+        browser
+      keywords: game-monitor,reporting,visibility,ase
+      input_type: checkbox
+      param_field_name: /config/ase
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Game-Monitor Reporting
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server will report to the Game-Monitor master servers, allowing visibility in the in-game server
+          browser
+        Keywords: game-monitor,reporting,visibility,ase
+        FieldName: ase
+        InputType: checkbox
+        ParamFieldName: /config/ase
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: donotbroadcastlan
+      label: Disable LAN Broadcasting
+      category: Multi Theft Auto
+      subcategory: Server
+      description: If set, LAN broadcasting will be disabled
+      keywords: broadcast,lan,donotbroadcastlan
+      input_type: checkbox
+      param_field_name: /config/donotbroadcastlan
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable LAN Broadcasting
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, LAN broadcasting will be disabled
+        Keywords: broadcast,lan,donotbroadcastlan
+        FieldName: donotbroadcastlan
+        InputType: checkbox
+        ParamFieldName: /config/donotbroadcastlan
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: modules
+      label: Load Modules
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Specify the modules to load with the server in the <module> setting in mtaserver.conf. One module per line
+      keywords: modules
+      input_type: hidden
+      param_field_name: modules
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Load Modules
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Specify the modules to load with the server in the <module> setting in mtaserver.conf. One module per line
+        Keywords: modules
+        FieldName: modules
+        InputType: hidden
+        ParamFieldName: modules
+        EnumValues: {}
+    - key: resource
+      label: Load Resources
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Specify the resources to load with the server in the <resource> setting in mtaserver.conf. One resource per line
+      keywords: resource
+      input_type: hidden
+      param_field_name: resource
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Load Resources
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specify the resources to load with the server in the <resource> setting in mtaserver.conf. One resource per
+          line
+        Keywords: resource
+        FieldName: resource
+        InputType: hidden
+        ParamFieldName: resource
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,clients,limit,maxplayers
+      input_type: number
+      param_field_name: /config/maxplayers
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,clients,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: /config/maxplayers
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: players
+        EnumValues: {}
+    - key: httpserver
+      label: Enable HTTP Server
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        If set, the built-in [HTTP server](https://wiki.multitheftauto.com/wiki/Server_Manual#Using_the_web_interface)
+        will be enabled. Note that only
+        [administrators](https://wiki.multitheftauto.com/wiki/Server_Manual#Adding_administrators) can access the HTTP
+        server
+      keywords: http,server,httpserver
+      input_type: checkbox
+      param_field_name: /config/httpserver
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable HTTP Server
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the built-in [HTTP server](https://wiki.multitheftauto.com/wiki/Server_Manual#Using_the_web_interface)
+          will be enabled. Note that only
+          [administrators](https://wiki.multitheftauto.com/wiki/Server_Manual#Adding_administrators) can access the HTTP
+          server
+        Keywords: http,server,httpserver
+        FieldName: httpserver
+        InputType: checkbox
+        ParamFieldName: /config/httpserver
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: httpdownloadurl
+      label: HTTP Download URL
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        If set, specifies an [external
+        URL](https://wiki.multitheftauto.com/wiki/Server_Manual#Configuring_an_external_web_server) from which clients
+        will download needed resources in-game. Otherwise they will download them directly from the server
+      keywords: http,download,url,httpdownloadurl
+      input_type: url
+      param_field_name: /config/httpdownloadurl
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: HTTP Download URL
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, specifies an [external
+          URL](https://wiki.multitheftauto.com/wiki/Server_Manual#Configuring_an_external_web_server) from which clients
+          will download needed resources in-game. Otherwise they will download them directly from the server
+        Keywords: http,download,url,httpdownloadurl
+        FieldName: httpdownloadurl
+        InputType: url
+        ParamFieldName: /config/httpdownloadurl
+        DefaultValue: ''
+        EnumValues: {}
+    - key: httpmaxconnectionsperclient
+      label: HTTP Max Connections Per Client
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Limits the number of HTTP connections each client can make. Relevant when using an external HTTP server
+      keywords: http,connections,limit,httpmaxconnectionsperclient
+      input_type: number
+      param_field_name: /config/httpmaxconnectionsperclient
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 8
+      enum_values: {}
+      raw:
+        DisplayName: HTTP Max Connections Per Client
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Limits the number of HTTP connections each client can make. Relevant when using an external HTTP server
+        Keywords: http,connections,limit,httpmaxconnectionsperclient
+        FieldName: httpmaxconnectionsperclient
+        InputType: number
+        MinValue: '1'
+        MaxValue: '8'
+        ParamFieldName: /config/httpmaxconnectionsperclient
+        DefaultValue: '5'
+        Placeholder: '5'
+        EnumValues: {}
+    - key: httpdosthreshold
+      label: HTTP DoS Threshold
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Limits the number of HTTP connections that an IP can initiate over a short period of time
+      keywords: http,dos,threshold,httpdosthreshold
+      input_type: number
+      param_field_name: /config/httpdosthreshold
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: HTTP DoS Threshold
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Limits the number of HTTP connections that an IP can initiate over a short period of time
+        Keywords: http,dos,threshold,httpdosthreshold
+        FieldName: httpdosthreshold
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: /config/httpdosthreshold
+        DefaultValue: '20'
+        Placeholder: '20'
+        EnumValues: {}
+    - key: http_dos_exclude
+      label: HTTP DoS Exclude
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Comma-separated list of IP addresses that are to be excluded from the HTTP DoS Threshold limits
+      keywords: http,dos,exclude,http_dos_exclude
+      input_type: text
+      param_field_name: /config/http_dos_exclude
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: HTTP DoS Exclude
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Comma-separated list of IP addresses that are to be excluded from the HTTP DoS Threshold limits
+        Keywords: http,dos,exclude,http_dos_exclude
+        FieldName: http_dos_exclude
+        InputType: text
+        ParamFieldName: /config/http_dos_exclude
+        DefaultValue: ''
+        EnumValues: {}
+    - key: allow_gta3_img_mods
+      label: Allow GTA3 IMG Mods
+      category: Multi Theft Auto
+      subcategory: Server
+      description: If set, locally customized gta3.img player skins can be used. Not recommended for competitive servers
+      keywords: gta3,img,mods,allow_gta3_img_mods
+      input_type: checkbox
+      param_field_name: /config/allow_gta3_img_mods
+      default: none
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': none
+        'True': peds
+      raw:
+        DisplayName: Allow GTA3 IMG Mods
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, locally customized gta3.img player skins can be used. Not recommended for competitive servers
+        Keywords: gta3,img,mods,allow_gta3_img_mods
+        FieldName: allow_gta3_img_mods
+        InputType: checkbox
+        ParamFieldName: /config/allow_gta3_img_mods
+        DefaultValue: none
+        EnumValues:
+          'False': none
+          'True': peds
+    - key: client_file
+      label: Allowed GTA:SA Client Files
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        By default, the server will block the use of customized [GTA:SA data
+        files](https://wiki.multitheftauto.com/wiki/Anti-cheat_guide#.3Cclient_file_name.3D.22data.2Fcarmods.dat.22_verify.3D.220.22.2F.3E).
+        To allow specific client files, add one or more 'client_file' settings in mtaserver.conf
+      keywords: client,file,client_file
+      input_type: hidden
+      param_field_name: client_file
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Allowed GTA:SA Client Files
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          By default, the server will block the use of customized [GTA:SA data
+          files](https://wiki.multitheftauto.com/wiki/Anti-cheat_guide#.3Cclient_file_name.3D.22data.2Fcarmods.dat.22_verify.3D.220.22.2F.3E).
+          To allow specific client files, add one or more 'client_file' settings in mtaserver.conf
+        Keywords: client,file,client_file
+        FieldName: client_file
+        InputType: hidden
+        ParamFieldName: client_file
+        EnumValues: {}
+    - key: disableac
+      label: Disable Anti-Cheat
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        Comma-separated list of disabled anti-cheats. For example, to disable anti-cheat #2 and #3, use: 2,3. [More
+        information](https://wiki.multitheftauto.com/wiki/Anti-cheat_guide#.3Cdisableac.3E.3C.2Fdisableac.3E)
+      keywords: disable,anti-cheat,disableac
+      input_type: text
+      param_field_name: /config/disableac
+      default: ''
+      placeholder: 2,3
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Disable Anti-Cheat
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma-separated list of disabled anti-cheats. For example, to disable anti-cheat #2 and #3, use: 2,3. [More
+          information](https://wiki.multitheftauto.com/wiki/Anti-cheat_guide#.3Cdisableac.3E.3C.2Fdisableac.3E)
+        Keywords: disable,anti-cheat,disableac
+        FieldName: disableac
+        InputType: text
+        ParamFieldName: /config/disableac
+        DefaultValue: ''
+        Placeholder: 2,3
+        EnumValues: {}
+    - key: enablesd
+      label: Enable Special Detections
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        Comma-separated list of enabled special detections (a type of anti-cheat for usually harmless game
+        modifications). For example, to disable special detections #31 and #32, use: 31,32. [More
+        information](https://wiki.multitheftauto.com/wiki/Anti-cheat_guide#.3Cenablesd.3E.3C.2Fenablesd.3E)
+      keywords: enable,special,detections,enablesd
+      input_type: text
+      param_field_name: /config/enablesd
+      default: ''
+      placeholder: 31,32
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable Special Detections
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma-separated list of enabled special detections (a type of anti-cheat for usually harmless game
+          modifications). For example, to disable special detections #31 and #32, use: 31,32. [More
+          information](https://wiki.multitheftauto.com/wiki/Anti-cheat_guide#.3Cenablesd.3E.3C.2Fenablesd.3E)
+        Keywords: enable,special,detections,enablesd
+        FieldName: enablesd
+        InputType: text
+        ParamFieldName: /config/enablesd
+        DefaultValue: ''
+        Placeholder: 31,32
+        EnumValues: {}
+    - key: minclientversion
+      label: Minimum Client Version
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets the minimum client version. Clients with a lower version will not be allowed to connect. Empty = disabled
+      keywords: minimum,client,version,minclientversion
+      input_type: text
+      param_field_name: /config/minclientversion
+      default: ''
+      placeholder: 1.6.0-9.22628.0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Client Version
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum client version. Clients with a lower version will not be allowed to connect. Empty = disabled
+        Keywords: minimum,client,version,minclientversion
+        FieldName: minclientversion
+        InputType: text
+        ParamFieldName: /config/minclientversion
+        DefaultValue: ''
+        Placeholder: 1.6.0-9.22628.0
+        EnumValues: {}
+    - key: minclientversion_auto_update
+      label: Auto Update Minimum Client Version
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        Sets whether and how the minimum client version setting is automatically updated. 'Instant' is only recommended
+        for competitive servers
+      keywords: auto,update,minclientversion,minclientversion_auto_update
+      input_type: enum
+      param_field_name: /config/minclientversion_auto_update
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Disabled
+        '1': Enabled (delayed for a few days) (default)
+        '2': Enabled (instant)
+      raw:
+        DisplayName: Auto Update Minimum Client Version
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether and how the minimum client version setting is automatically updated. 'Instant' is only
+          recommended for competitive servers
+        Keywords: auto,update,minclientversion,minclientversion_auto_update
+        FieldName: minclientversion_auto_update
+        InputType: enum
+        ParamFieldName: /config/minclientversion_auto_update
+        DefaultValue: '1'
+        EnumValues:
+          '0': Disabled
+          '1': Enabled (delayed for a few days) (default)
+          '2': Enabled (instant)
+    - key: recommendedclientversion
+      label: Recommended Client Version
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets the recommended client version. Clients with a lower version will be prompted to update. Empty = disabled
+      keywords: recommended,client,version,recommendedclientversion
+      input_type: text
+      param_field_name: /config/recommendedclientversion
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Recommended Client Version
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the recommended client version. Clients with a lower version will be prompted to update. Empty = disabled
+        Keywords: recommended,client,version,recommendedclientversion
+        FieldName: recommendedclientversion
+        InputType: text
+        ParamFieldName: /config/recommendedclientversion
+        DefaultValue: ''
+        EnumValues: {}
+    - key: idfile
+      label: Server ID File
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        Sets the location and file name of the server's unique private key. Used to prevent private files saved on the
+        client from being read by other servers. [More information](http://wiki.multitheftauto.com/wiki/Filepath)
+      keywords: idfile,server,private,key
+      input_type: text
+      param_field_name: /config/idfile
+      default: server-id.keys
+      placeholder: server-id.keys
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server ID File
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the location and file name of the server's unique private key. Used to prevent private files saved on the
+          client from being read by other servers. [More information](http://wiki.multitheftauto.com/wiki/Filepath)
+        Keywords: idfile,server,private,key
+        FieldName: idfile
+        InputType: text
+        ParamFieldName: /config/idfile
+        DefaultValue: server-id.keys
+        Placeholder: server-id.keys
+        EnumValues: {}
+    - key: bandwidth_reduction
+      label: Bandwidth Reduction Mode
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets the server's bandwidth reduction mode
+      keywords: bandwidth,reduction,bandwidth_reduction
+      input_type: enum
+      param_field_name: /config/bandwidth_reduction
+      default: medium
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        none: None
+        medium: Medium (default)
+        maximum: Maximum
+      raw:
+        DisplayName: Bandwidth Reduction Mode
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server's bandwidth reduction mode
+        Keywords: bandwidth,reduction,bandwidth_reduction
+        FieldName: bandwidth_reduction
+        InputType: enum
+        ParamFieldName: /config/bandwidth_reduction
+        DefaultValue: medium
+        EnumValues:
+          none: None
+          medium: Medium (default)
+          maximum: Maximum
+    - key: threadnet
+      label: Thread Network Sync
+      category: Multi Theft Auto
+      subcategory: Server
+      description: If set, the network synchronization will be run on another thread
+      keywords: thread,network,sync,threadnet
+      input_type: checkbox
+      param_field_name: /config/threadnet
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Thread Network Sync
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the network synchronization will be run on another thread
+        Keywords: thread,network,sync,threadnet
+        FieldName: threadnet
+        InputType: checkbox
+        ParamFieldName: /config/threadnet
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: backup_path
+      label: Backup Path
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets the path to use for a basic backup of some server files. Basic backups are only made during server startup
+      keywords: backup,path,backup_path
+      input_type: text
+      param_field_name: /config/backup_path
+      default: backups
+      placeholder: backups
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Backup Path
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the path to use for a basic backup of some server files. Basic backups are only made during server
+          startup
+        Keywords: backup,path,backup_path
+        FieldName: backup_path
+        InputType: text
+        ParamFieldName: /config/backup_path
+        DefaultValue: backups
+        Placeholder: backups
+        EnumValues: {}
+    - key: backup_interval
+      label: Backup Interval
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        Sets the period between each basic backup. Backups are only made during server startup, so the actual interval
+        may be much longer. 0 = backups disabled
+      keywords: backup,interval,backup_interval
+      input_type: number
+      param_field_name: /config/backup_interval
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 30
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Backup Interval
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the period between each basic backup. Backups are only made during server startup, so the actual interval
+          may be much longer. 0 = backups disabled
+        Keywords: backup,interval,backup_interval
+        FieldName: backup_interval
+        InputType: number
+        MinValue: '0'
+        MaxValue: '30'
+        ParamFieldName: /config/backup_interval
+        DefaultValue: '3'
+        Placeholder: '3'
+        Suffix: days
+        EnumValues: {}
+    - key: backup_copies
+      label: Backup Copies
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets the maximum number of backup copies to keep. 0 = backups disabled
+      keywords: backup,copies,backup_copies
+      input_type: number
+      param_field_name: /config/backup_copies
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: backups
+      enum_values: {}
+      raw:
+        DisplayName: Backup Copies
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of backup copies to keep. 0 = backups disabled
+        Keywords: backup,copies,backup_copies
+        FieldName: backup_copies
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: /config/backup_copies
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: backups
+        EnumValues: {}
+    - key: scriptdebugloglevel
+      label: Script Debug Log Level
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets the level of the debugscript log file
+      keywords: script,debug,level,scriptdebugloglevel
+      input_type: enum
+      param_field_name: /config/scriptdebugloglevel
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Off (default)
+        '1': Error
+        '2': Warning
+        '3': Info
+      raw:
+        DisplayName: Script Debug Log Level
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the level of the debugscript log file
+        Keywords: script,debug,level,scriptdebugloglevel
+        FieldName: scriptdebugloglevel
+        InputType: enum
+        ParamFieldName: /config/scriptdebugloglevel
+        DefaultValue: '0'
+        EnumValues:
+          '0': Off (default)
+          '1': Error
+          '2': Warning
+          '3': Info
+    - key: htmldebuglevel
+      label: HTML Debug Level
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets the level of the HTML debug
+      keywords: html,debug,level,htmldebuglevel
+      input_type: enum
+      param_field_name: /config/htmldebuglevel
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Off (default)
+        '1': Error
+        '2': Warning
+        '3': Info
+      raw:
+        DisplayName: HTML Debug Level
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the level of the HTML debug
+        Keywords: html,debug,level,htmldebuglevel
+        FieldName: htmldebuglevel
+        InputType: enum
+        ParamFieldName: /config/htmldebuglevel
+        DefaultValue: '0'
+        EnumValues:
+          '0': Off (default)
+          '1': Error
+          '2': Warning
+          '3': Info
+    - key: filter_duplicate_log_lines
+      label: Filter Duplicate Log Lines
+      category: Multi Theft Auto
+      subcategory: Server
+      description: If set, duplicate log lines will be filtered
+      keywords: log,filter,duplicate,filter_duplicate_log_lines
+      input_type: checkbox
+      param_field_name: /config/filter_duplicate_log_lines
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Filter Duplicate Log Lines
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, duplicate log lines will be filtered
+        Keywords: log,filter,duplicate,filter_duplicate_log_lines
+        FieldName: filter_duplicate_log_lines
+        InputType: checkbox
+        ParamFieldName: /config/filter_duplicate_log_lines
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: compact_internal_databases
+      label: Compact Internal Databases
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets if and when the internal sqlite databases should be defragmented
+      keywords: compact,internal,databases,compact_internal_databases
+      input_type: enum
+      param_field_name: /config/compact_internal_databases
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Never
+        '1': On server start only after basic backup (default)
+        '2': On server start always
+      raw:
+        DisplayName: Compact Internal Databases
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets if and when the internal sqlite databases should be defragmented
+        Keywords: compact,internal,databases,compact_internal_databases
+        FieldName: compact_internal_databases
+        InputType: enum
+        ParamFieldName: /config/compact_internal_databases
+        DefaultValue: '1'
+        EnumValues:
+          '0': Never
+          '1': On server start only after basic backup (default)
+          '2': On server start always
+    - key: crash_dump_upload
+      label: Enable Crash Dump Upload
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Sets whether server crash dump files should be sent to MTA HQ
+      keywords: crash,dump,upload,crash_dump_upload
+      input_type: checkbox
+      param_field_name: /config/crash_dump_upload
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Crash Dump Upload
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether server crash dump files should be sent to MTA HQ
+        Keywords: crash,dump,upload,crash_dump_upload
+        FieldName: crash_dump_upload
+        InputType: checkbox
+        ParamFieldName: /config/crash_dump_upload
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: fakelag
+      label: Enable Fakelag and Sfakelag Commands
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        If set, the [fakelag and sfakelag commands](https://wiki.multitheftauto.com/wiki/Command_fakelag) will be
+        enabled
+      keywords: fakelag,sfakelag,command
+      input_type: checkbox
+      param_field_name: /config/fakelag
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Fakelag and Sfakelag Commands
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the [fakelag and sfakelag commands](https://wiki.multitheftauto.com/wiki/Command_fakelag) will be
+          enabled
+        Keywords: fakelag,sfakelag,command
+        FieldName: fakelag
+        InputType: checkbox
+        ParamFieldName: /config/fakelag
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: auth_serial_groups
+      label: Auth Serial Groups
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        Comma-separated list of ACL groups that are protected by serial authorization. Login attempts to a protected
+        account from a second serial are blocked until the serial is manually authorized via the authserial command.
+        [More information](https://mtasa.com/authserial)
+      keywords: auth,serial,groups,auth_serial_groups
+      input_type: text
+      param_field_name: /config/auth_serial_groups
+      default: Admin
+      placeholder: Admin
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auth Serial Groups
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma-separated list of ACL groups that are protected by serial authorization. Login attempts to a protected
+          account from a second serial are blocked until the serial is manually authorized via the authserial command.
+          [More information](https://mtasa.com/authserial)
+        Keywords: auth,serial,groups,auth_serial_groups
+        FieldName: auth_serial_groups
+        InputType: text
+        ParamFieldName: /config/auth_serial_groups
+        DefaultValue: Admin
+        Placeholder: Admin
+        EnumValues: {}
+    - key: auth_serial_http
+      label: Enable Auth Serial On HTTP
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        Specifies if the authorized serial login checks should also apply to the HTTP interface. Protected account login
+        attempts to the HTTP interface will only succeed if the IP address matches one recently used by the account
+        holder in-game. [More information](https://mtasa.com/authserialhttp)
+      keywords: auth,serial,http,auth_serial_http
+      input_type: checkbox
+      param_field_name: /config/auth_serial_http
+      default: '1'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Auth Serial On HTTP
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies if the authorized serial login checks should also apply to the HTTP interface. Protected account
+          login attempts to the HTTP interface will only succeed if the IP address matches one recently used by the
+          account holder in-game. [More information](https://mtasa.com/authserialhttp)
+        Keywords: auth,serial,http,auth_serial_http
+        FieldName: auth_serial_http
+        InputType: checkbox
+        ParamFieldName: /config/auth_serial_http
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: auth_serial_http_ip_exceptions
+      label: Auth Serial On HTTP IP Exceptions
+      category: Multi Theft Auto
+      subcategory: Server
+      description: Specifies which IP addresses should always pass Auth Serial On HTTP checks
+      keywords: auth,serial,http,ip,exceptions,auth_serial_http_ip_exceptions
+      input_type: text
+      param_field_name: /config/auth_serial_http_ip_exceptions
+      default: 127.0.0.1
+      placeholder: 127.0.0.1
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auth Serial On HTTP IP Exceptions
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Specifies which IP addresses should always pass Auth Serial On HTTP checks
+        Keywords: auth,serial,http,ip,exceptions,auth_serial_http_ip_exceptions
+        FieldName: auth_serial_http_ip_exceptions
+        InputType: text
+        ParamFieldName: /config/auth_serial_http_ip_exceptions
+        DefaultValue: 127.0.0.1
+        Placeholder: 127.0.0.1
+        EnumValues: {}
+    - key: database_credentials_protection
+      label: Enable Database Credentials Protection
+      category: Multi Theft Auto
+      subcategory: Server
+      description: If set, extra security measures will be applied to resources which use dbConnect with MySQL
+      keywords: database,credentials,protection,database_credentials_protection
+      input_type: checkbox
+      param_field_name: /config/database_credentials_protection
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Database Credentials Protection
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, extra security measures will be applied to resources which use dbConnect with MySQL
+        Keywords: database,credentials,protection,database_credentials_protection
+        FieldName: database_credentials_protection
+        InputType: checkbox
+        ParamFieldName: /config/database_credentials_protection
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: player_triggered_event_interval
+      label: Player Triggered Event Interval
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        Sets the time interval for counting max triggered events (via triggerServerEvent). Exceeding this will call
+        onPlayerTriggerEventThreshold
+      keywords: player,triggered,event,interval,player_triggered_event_interval
+      input_type: number
+      param_field_name: /config/player_triggered_event_interval
+      default: '1000'
+      placeholder: '1000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 50
+      max: 5000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Player Triggered Event Interval
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the time interval for counting max triggered events (via triggerServerEvent). Exceeding this will call
+          onPlayerTriggerEventThreshold
+        Keywords: player,triggered,event,interval,player_triggered_event_interval
+        FieldName: player_triggered_event_interval
+        InputType: number
+        MinValue: '50'
+        MaxValue: '5000'
+        ParamFieldName: /config/player_triggered_event_interval
+        DefaultValue: '1000'
+        Placeholder: '1000'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: max_player_triggered_events_per_interval
+      label: Maximum Player Triggered Events Per Interval
+      category: Multi Theft Auto
+      subcategory: Server
+      description: >-
+        Sets the maximum triggered amount of events (via triggerServerEvent) within the specified interval. Exceeding
+        this will call onPlayerTriggerEventThreshold
+      keywords: max,player,triggered,events,max_player_triggered_events_per_interval
+      input_type: number
+      param_field_name: /config/max_player_triggered_events_per_interval
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Player Triggered Events Per Interval
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum triggered amount of events (via triggerServerEvent) within the specified interval. Exceeding
+          this will call onPlayerTriggerEventThreshold
+        Keywords: max,player,triggered,events,max_player_triggered_events_per_interval
+        FieldName: max_player_triggered_events_per_interval
+        InputType: number
+        MinValue: '1'
+        MaxValue: '1000'
+        ParamFieldName: /config/max_player_triggered_events_per_interval
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: player_sync_interval
+      label: Player Sync Interval
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets the time between player sync packets. [More
+        information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+      keywords: player,sync,interval,player_sync_interval
+      input_type: number
+      param_field_name: /config/player_sync_interval
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 50
+      max: 4000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Player Sync Interval
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the time between player sync packets. [More
+          information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+        Keywords: player,sync,interval,player_sync_interval
+        FieldName: player_sync_interval
+        InputType: number
+        MinValue: '50'
+        MaxValue: '4000'
+        ParamFieldName: /config/player_sync_interval
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: lightweight_sync_interval
+      label: Lightweight Sync Interval
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Determines the time between lightweight (player) sync packets. Used when players are far apart. [More
+        information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+      keywords: lightweight,sync,interval,lightweight_sync_interval
+      input_type: number
+      param_field_name: /config/lightweight_sync_interval
+      default: '1500'
+      placeholder: '1500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 200
+      max: 4000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Lightweight Sync Interval
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Determines the time between lightweight (player) sync packets. Used when players are far apart. [More
+          information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+        Keywords: lightweight,sync,interval,lightweight_sync_interval
+        FieldName: lightweight_sync_interval
+        InputType: number
+        MinValue: '200'
+        MaxValue: '4000'
+        ParamFieldName: /config/lightweight_sync_interval
+        DefaultValue: '1500'
+        Placeholder: '1500'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: camera_sync_interval
+      label: Camera Sync Interval
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets the time between camera sync packets. [More
+        information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+      keywords: camera,sync,interval,camera_sync_interval
+      input_type: number
+      param_field_name: /config/camera_sync_interval
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 50
+      max: 4000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Camera Sync Interval
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the time between camera sync packets. [More
+          information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+        Keywords: camera,sync,interval,camera_sync_interval
+        FieldName: camera_sync_interval
+        InputType: number
+        MinValue: '50'
+        MaxValue: '4000'
+        ParamFieldName: /config/camera_sync_interval
+        DefaultValue: '500'
+        Placeholder: '500'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: ped_sync_interval
+      label: Ped Sync Interval
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets the time between ped sync packets when the ped is near the player. [More
+        information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+      keywords: ped,sync,interval,ped_sync_interval
+      input_type: number
+      param_field_name: /config/ped_sync_interval
+      default: '400'
+      placeholder: '400'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 50
+      max: 4000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Ped Sync Interval
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the time between ped sync packets when the ped is near the player. [More
+          information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+        Keywords: ped,sync,interval,ped_sync_interval
+        FieldName: ped_sync_interval
+        InputType: number
+        MinValue: '50'
+        MaxValue: '4000'
+        ParamFieldName: /config/ped_sync_interval
+        DefaultValue: '400'
+        Placeholder: '400'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: ped_far_sync_interval
+      label: Ped Far Sync Interval
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets the time between ped sync packets when the ped is far away from the player. [More
+        information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+      keywords: ped,far,sync,interval,ped_far_sync_interval
+      input_type: number
+      param_field_name: /config/ped_far_sync_interval
+      default: '2000'
+      placeholder: '2000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 50
+      max: 4000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Ped Far Sync Interval
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the time between ped sync packets when the ped is far away from the player. [More
+          information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+        Keywords: ped,far,sync,interval,ped_far_sync_interval
+        FieldName: ped_far_sync_interval
+        InputType: number
+        MinValue: '50'
+        MaxValue: '4000'
+        ParamFieldName: /config/ped_far_sync_interval
+        DefaultValue: '2000'
+        Placeholder: '2000'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: unoccupied_vehicle_sync_interval
+      label: Unoccupied Vehicle Sync Interval
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets the time between unoccupied vehicle sync packets. [More
+        information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+      keywords: vehicle,sync,interval,unoccupied_vehicle_sync_interval
+      input_type: number
+      param_field_name: /config/unoccupied_vehicle_sync_interval
+      default: '400'
+      placeholder: '400'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 50
+      max: 4000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Unoccupied Vehicle Sync Interval
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the time between unoccupied vehicle sync packets. [More
+          information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+        Keywords: vehicle,sync,interval,unoccupied_vehicle_sync_interval
+        FieldName: unoccupied_vehicle_sync_interval
+        InputType: number
+        MinValue: '50'
+        MaxValue: '4000'
+        ParamFieldName: /config/unoccupied_vehicle_sync_interval
+        DefaultValue: '400'
+        Placeholder: '400'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: keysync_mouse_sync_interval
+      label: Keysync Mouse Rotation Sync Interval
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets the minimum time between key sync packets due to mouse movement. [More
+        information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+      keywords: key,sync,mouse,interval,keysync_mouse_sync_interval
+      input_type: number
+      param_field_name: /config/keysync_mouse_sync_interval
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 50
+      max: 4000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Keysync Mouse Rotation Sync Interval
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the minimum time between key sync packets due to mouse movement. [More
+          information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+        Keywords: key,sync,mouse,interval,keysync_mouse_sync_interval
+        FieldName: keysync_mouse_sync_interval
+        InputType: number
+        MinValue: '50'
+        MaxValue: '4000'
+        ParamFieldName: /config/keysync_mouse_sync_interval
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: keysync_analog_sync_interval
+      label: Keysync Analog Movement Sync Interval
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets the minimum time between key sync packets due to joystick movement. [More
+        information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+      keywords: key,sync,analog,interval,keysync_analog_sync_interval
+      input_type: number
+      param_field_name: /config/keysync_analog_sync_interval
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 50
+      max: 4000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Keysync Analog Movement Sync Interval
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the minimum time between key sync packets due to joystick movement. [More
+          information](https://wiki.multitheftauto.com/wiki/Sync_interval_settings)
+        Keywords: key,sync,analog,interval,keysync_analog_sync_interval
+        FieldName: keysync_analog_sync_interval
+        InputType: number
+        MinValue: '50'
+        MaxValue: '4000'
+        ParamFieldName: /config/keysync_analog_sync_interval
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: bullet_sync
+      label: Enable Bullet Sync
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        If set, the reliability of shots will be improved when using certain weapons, but will use more bandwidth.
+        Bullet sync will be active regardless of this setting when certain glitches are enabled
+      keywords: bullet,sync,bullet_sync
+      input_type: checkbox
+      param_field_name: /config/bullet_sync
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Bullet Sync
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, the reliability of shots will be improved when using certain weapons, but will use more bandwidth.
+          Bullet sync will be active regardless of this setting when certain glitches are enabled
+        Keywords: bullet,sync,bullet_sync
+        FieldName: bullet_sync
+        InputType: checkbox
+        ParamFieldName: /config/bullet_sync
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: vehicle_contact_sync_radius
+      label: Vehicle Contact Sync Radius
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets the radius in which any contact with a vehicle will turn the player into its syncer. 0 = vehicles will not
+        pick a new syncer based on which player is touching the vehicle
+      keywords: vehicle,contact,sync,radius,vehicle_contact_sync_radius
+      input_type: number
+      param_field_name: /config/vehicle_contact_sync_radius
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 130
+      enum_values: {}
+      raw:
+        DisplayName: Vehicle Contact Sync Radius
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the radius in which any contact with a vehicle will turn the player into its syncer. 0 = vehicles will
+          not pick a new syncer based on which player is touching the vehicle
+        Keywords: vehicle,contact,sync,radius,vehicle_contact_sync_radius
+        FieldName: vehicle_contact_sync_radius
+        InputType: number
+        MinValue: '0'
+        MaxValue: '130'
+        ParamFieldName: /config/vehicle_contact_sync_radius
+        DefaultValue: '30'
+        Placeholder: '30'
+        EnumValues: {}
+    - key: vehext_percent
+      label: Vehicle Extrapolation Percent
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets the amount of extrapolation that clients will apply to remote vehicles (experimental). Can reduce some
+        latency induced location disparency by predicting where the remote vehicles will probably be, but an incorrect
+        prediction may have a negative effect
+      keywords: vehicle,extrapolation,percent,vehext_percent
+      input_type: number
+      param_field_name: /config/vehext_percent
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Vehicle Extrapolation Percent
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the amount of extrapolation that clients will apply to remote vehicles (experimental). Can reduce some
+          latency induced location disparency by predicting where the remote vehicles will probably be, but an incorrect
+          prediction may have a negative effect
+        Keywords: vehicle,extrapolation,percent,vehext_percent
+        FieldName: vehext_percent
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: /config/vehext_percent
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: vehext_ping_limit
+      label: Vehicle Extrapolation Ping Limit
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets a limit on how much time the vehicle extrapolation will attempt to compensate for. Only relevant if Vehicle
+        Extrapolation Percent > 0
+      keywords: vehicle,extrapolation,ping,limit,vehext_ping_limit
+      input_type: number
+      param_field_name: /config/vehext_ping_limit
+      default: '150'
+      placeholder: '150'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 50
+      max: 500
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Vehicle Extrapolation Ping Limit
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets a limit on how much time the vehicle extrapolation will attempt to compensate for. Only relevant if
+          Vehicle Extrapolation Percent > 0
+        Keywords: vehicle,extrapolation,ping,limit,vehext_ping_limit
+        FieldName: vehext_ping_limit
+        InputType: number
+        MinValue: '50'
+        MaxValue: '500'
+        ParamFieldName: /config/vehext_ping_limit
+        DefaultValue: '150'
+        Placeholder: '150'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: latency_reduction
+      label: Enable Latency Reduction
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: If set, reduces the delay of player actions appearing on remote clients by 2 frames (approx 50ms). Experimental
+      keywords: latency,reduction,latency_reduction
+      input_type: checkbox
+      param_field_name: /config/latency_reduction
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Latency Reduction
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, reduces the delay of player actions appearing on remote clients by 2 frames (approx 50ms).
+          Experimental
+        Keywords: latency,reduction,latency_reduction
+        FieldName: latency_reduction
+        InputType: checkbox
+        ParamFieldName: /config/latency_reduction
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: fpslimit
+      label: Frame Rate Limit
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: Specifies the frame rate limit that will be applied to connecting clients. Range = 25 to 32767. 0 = uncapped
+      keywords: fps,limit,frame,rate,fpslimit
+      input_type: number
+      param_field_name: /config/fpslimit
+      default: '74'
+      placeholder: '74'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 32767
+      suffix: fps
+      enum_values: {}
+      raw:
+        DisplayName: Frame Rate Limit
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Specifies the frame rate limit that will be applied to connecting clients. Range = 25 to 32767. 0 = uncapped
+        Keywords: fps,limit,frame,rate,fpslimit
+        FieldName: fpslimit
+        InputType: number
+        MinValue: '0'
+        MaxValue: '32767'
+        ParamFieldName: /config/fpslimit
+        DefaultValue: '74'
+        Placeholder: '74'
+        Suffix: fps
+        EnumValues: {}
+    - key: voice
+      label: Enable Voice Chat
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: If set, player voice chat will be enabled in-game
+      keywords: voice,chat,voice_chat
+      input_type: checkbox
+      param_field_name: /config/voice
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Voice Chat
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, player voice chat will be enabled in-game
+        Keywords: voice,chat,voice_chat
+        FieldName: voice
+        InputType: checkbox
+        ParamFieldName: /config/voice
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: voice_samplerate
+      label: Voice Sample Rate
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets the sample rate for voice chat. Voice Chat must be enabled for this to be effective. Higher settings use
+        more bandwidth and increase the sampling quality of voice chat
+      keywords: voice,sample,rate,voice_sample_rate
+      input_type: enum
+      param_field_name: /config/voice_samplerate
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Narrowband (8kHz)
+        '1': Wideband (16kHz)
+        '2': Ultrawideband (32kHz)
+      raw:
+        DisplayName: Voice Sample Rate
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the sample rate for voice chat. Voice Chat must be enabled for this to be effective. Higher settings use
+          more bandwidth and increase the sampling quality of voice chat
+        Keywords: voice,sample,rate,voice_sample_rate
+        FieldName: voice_samplerate
+        InputType: enum
+        ParamFieldName: /config/voice_samplerate
+        DefaultValue: '1'
+        EnumValues:
+          '0': Narrowband (8kHz)
+          '1': Wideband (16kHz)
+          '2': Ultrawideband (32kHz)
+    - key: voice_quality
+      label: Voice Quality
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        Sets the voice quality for voice chat. Voice Chat must be enabled for this to be effective. Higher settings use
+        more bandwidth and increase the overall quality of voice chat
+      keywords: voice,quality,voice_quality
+      input_type: number
+      param_field_name: /config/voice_quality
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Voice Quality
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the voice quality for voice chat. Voice Chat must be enabled for this to be effective. Higher settings
+          use more bandwidth and increase the overall quality of voice chat
+        Keywords: voice,quality,voice_quality
+        FieldName: voice_quality
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: /config/voice_quality
+        DefaultValue: '4'
+        Placeholder: '4'
+        EnumValues: {}
+    - key: voice_bitrate
+      label: Voice Bitrate
+      category: Multi Theft Auto
+      subcategory: Gameplay
+      description: >-
+        The voice bitrate can be set by configuring the <voice_bitrate> setting in mtaserver.conf. This will override
+        the previous two settings. If not set, MTA handles this automatically. Use with care
+      keywords: voice,bitrate,voice_bitrate
+      input_type: hidden
+      param_field_name: voice_bitrate
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Voice Bitrate
+        Category: Multi Theft Auto:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          The voice bitrate can be set by configuring the <voice_bitrate> setting in mtaserver.conf. This will override
+          the previous two settings. If not set, MTA handles this automatically. Use with care
+        Keywords: voice,bitrate,voice_bitrate
+        FieldName: voice_bitrate
+        InputType: hidden
+        ParamFieldName: voice_bitrate
+        EnumValues: {}
+  files:
+    - path: mods/deathmatch/mtaserver.conf
+      type: xml
+      subsections: []
+      raw:
+        ConfigFile: mods/deathmatch/mtaserver.conf
+        AutoMap: true
+        Importable: true
+        ConfigType: xml
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: serverip
+    label: Server IP Binding
+    default: auto
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logfile
+    label: Log File
+    default: logs/server.log
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: authfile
+    label: Auth File
+    default: logs/server_auth.log
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: dbfile
+    label: Database Log File
+    default: logs/db.log
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: loadstringfile
+    label: Loadstring Log File
+    default: logs/loadstring.log
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: acl
+    label: Access Control List File
+    default: acl.xml
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scriptdebuglogfile
+    label: Script Debug Log File
+    default: logs/scripts.log
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: servername
+    label: Server Name
+    default: AMP Powered MTA:SA Server
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: owner_email_address
+    label: Owner Email Address
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: ase
+    label: Enable Game-Monitor Reporting
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: donotbroadcastlan
+    label: Disable LAN Broadcasting
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: httpserver
+    label: Enable HTTP Server
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: httpdownloadurl
+    label: HTTP Download URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: httpmaxconnectionsperclient
+    label: HTTP Max Connections Per Client
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: httpdosthreshold
+    label: HTTP DoS Threshold
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: http_dos_exclude
+    label: HTTP DoS Exclude
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow_gta3_img_mods
+    label: Allow GTA3 IMG Mods
+    default: none
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disableac
+    label: Disable Anti-Cheat
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enablesd
+    label: Enable Special Detections
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: minclientversion
+    label: Minimum Client Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: minclientversion_auto_update
+    label: Auto Update Minimum Client Version
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: recommendedclientversion
+    label: Recommended Client Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: idfile
+    label: Server ID File
+    default: server-id.keys
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: bandwidth_reduction
+    label: Bandwidth Reduction Mode
+    default: medium
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: threadnet
+    label: Thread Network Sync
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: backup_path
+    label: Backup Path
+    default: backups
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: backup_interval
+    label: Backup Interval
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: backup_copies
+    label: Backup Copies
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scriptdebugloglevel
+    label: Script Debug Log Level
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: htmldebuglevel
+    label: HTML Debug Level
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: filter_duplicate_log_lines
+    label: Filter Duplicate Log Lines
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: compact_internal_databases
+    label: Compact Internal Databases
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: crash_dump_upload
+    label: Enable Crash Dump Upload
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fakelag
+    label: Enable Fakelag and Sfakelag Commands
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: auth_serial_groups
+    label: Auth Serial Groups
+    default: Admin
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: auth_serial_http
+    label: Enable Auth Serial On HTTP
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: auth_serial_http_ip_exceptions
+    label: Auth Serial On HTTP IP Exceptions
+    default: 127.0.0.1
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: database_credentials_protection
+    label: Enable Database Credentials Protection
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: player_triggered_event_interval
+    label: Player Triggered Event Interval
+    default: '1000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_player_triggered_events_per_interval
+    label: Maximum Player Triggered Events Per Interval
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: player_sync_interval
+    label: Player Sync Interval
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lightweight_sync_interval
+    label: Lightweight Sync Interval
+    default: '1500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: camera_sync_interval
+    label: Camera Sync Interval
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ped_sync_interval
+    label: Ped Sync Interval
+    default: '400'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ped_far_sync_interval
+    label: Ped Far Sync Interval
+    default: '2000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: unoccupied_vehicle_sync_interval
+    label: Unoccupied Vehicle Sync Interval
+    default: '400'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: keysync_mouse_sync_interval
+    label: Keysync Mouse Rotation Sync Interval
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: keysync_analog_sync_interval
+    label: Keysync Analog Movement Sync Interval
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: bullet_sync
+    label: Enable Bullet Sync
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: vehicle_contact_sync_radius
+    label: Vehicle Contact Sync Radius
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: vehext_percent
+    label: Vehicle Extrapolation Percent
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: vehext_ping_limit
+    label: Vehicle Extrapolation Ping Limit
+    default: '150'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: latency_reduction
+    label: Enable Latency Reduction
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fpslimit
+    label: Frame Rate Limit
+    default: '74'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: voice
+    label: Enable Voice Chat
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: voice_samplerate
+    label: Voice Sample Rate
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: voice_quality
+    label: Voice Quality
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '12120'
+  collection_support: true
 backup:
   include:
     - /data

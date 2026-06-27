@@ -5,13 +5,18 @@ category: Imported
 summary: 'NEBULOUS: Fleet Command Dedicated Server'
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2353090'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 2353090/NebulousDedicatedServer
+  startup: >-
+    2353090/NebulousDedicatedServer {PlatformArgs} -nographics -batchmode -serverConfig ./AMPServerConfig.xml
+    {FormattedArgs} -logFile -
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,723 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 7777
+    protocol: tcp
+    required: true
+  - key: queryport
+    name: Query Port
+    default: 27016
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: ./AMPServerConfig.xml
+    type: xml
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: SkirmishDedicatedServerConfig/GamePort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/GamePort
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $QueryPort
+      label: Steam Query Port
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: SkirmishDedicatedServerConfig/QueryPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Steam Query Port
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/QueryPort
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: Sets the server name visible in the server browser
+      keywords: server,name,servername
+      input_type: text
+      param_field_name: SkirmishDedicatedServerConfig/ServerName
+      default: 'AMP Powered NEBULOUS: Fleet Command Server'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server name visible in the server browser
+        Keywords: server,name,servername
+        FieldName: ServerName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/ServerName
+        IncludeInCommandLine: false
+        DefaultValue: 'AMP Powered NEBULOUS: Fleet Command Server'
+        EnumValues: {}
+    - key: password
+      label: Server Password
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: Sets the password required to connect to the server. Default is no password
+      keywords: server,password
+      input_type: password
+      param_field_name: SkirmishDedicatedServerConfig/Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server. Default is no password
+        Keywords: server,password
+        FieldName: password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/Password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Admins
+      label: Server Admins
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: >-
+        Server admins can be configured in the Admins section in AMPServerConfig.xml. Admins can execute ! commands on
+        the server without requiring a vote
+      keywords: admins
+      input_type: hidden
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Admins
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Server admins can be configured in the Admins section in AMPServerConfig.xml. Admins can execute ! commands on
+          the server without requiring a vote
+        Keywords: admins
+        FieldName: Admins
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ''
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: MOTD
+      label: Message Of The Day
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: Sets the player welcome message (MOTD)
+      keywords: motd,welcome,message
+      input_type: Textarea
+      param_field_name: SkirmishDedicatedServerConfig/MOTD
+      default: |-
+        -- Welcome to N:FC! --
+        Play by the rules!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Message Of The Day
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the player welcome message (MOTD)
+        Keywords: motd,welcome,message
+        FieldName: MOTD
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/MOTD
+        IncludeInCommandLine: false
+        DefaultValue: |-
+          -- Welcome to N:FC! --
+          Play by the rules!
+        EnumValues: {}
+    - key: Scenario
+      label: Server Scenario
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: Sets the scenario for the server. If Custom is selected, Custom Scenario Name must also be set
+      keywords: scenario
+      input_type: enum
+      param_field_name: SkirmishDedicatedServerConfig/Scenario
+      default: Control
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Deathmatch: Deathmatch
+        Two Flags: Two Flags
+        Center Flag: Center Flag
+        Control: Control (default)
+        Station Capture: Station Capture
+        Tug Of War: Tug Of War
+        '{{CustomScenario}}': Custom
+      raw:
+        DisplayName: Server Scenario
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the scenario for the server. If Custom is selected, Custom Scenario Name must also be set
+        Keywords: scenario
+        FieldName: Scenario
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/Scenario
+        IncludeInCommandLine: false
+        DefaultValue: Control
+        EnumValues:
+          Deathmatch: Deathmatch
+          Two Flags: Two Flags
+          Center Flag: Center Flag
+          Control: Control (default)
+          Station Capture: Station Capture
+          Tug Of War: Tug Of War
+          '{{CustomScenario}}': Custom
+    - key: CustomScenario
+      label: Custom Scenario Name
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: Sets the name of a custom (modded) scenario for the server. "Custom" must be selected under Server Scenario
+      keywords: custom,scenario
+      input_type: text
+      param_field_name: CustomScenario
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Scenario Name
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of a custom (modded) scenario for the server. "Custom" must be selected under Server Scenario
+        Keywords: custom,scenario
+        FieldName: CustomScenario
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomScenario
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ScenarioSettings
+      label: Server Scenario Settings
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: Scenario settings can be configured in AMPServerConfig.xml. Otherwise defaults apply
+      keywords: scenario,settings,scenariosettings
+      input_type: hidden
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Scenario Settings
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Scenario settings can be configured in AMPServerConfig.xml. Otherwise defaults apply
+        Keywords: scenario,settings,scenariosettings
+        FieldName: ScenarioSettings
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ''
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: Maps
+      label: Server Maps
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: >-
+        Maps for the map rotation can be configured in the Maps section in AMPServerConfig.xml. Default map is Pillars.
+        Modded maps must be included in the Mods section in AMPServerConfig.xml as well
+      keywords: map,rotation,maps
+      input_type: hidden
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Maps
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Maps for the map rotation can be configured in the Maps section in AMPServerConfig.xml. Default map is
+          Pillars. Modded maps must be included in the Mods section in AMPServerConfig.xml as well
+        Keywords: map,rotation,maps
+        FieldName: Maps
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ''
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: MapRotation
+      label: Map Rotation Order
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: Sets the order in which the server maps will be selected
+      keywords: map,rotation,maprotation
+      input_type: enum
+      param_field_name: SkirmishDedicatedServerConfig/MapRotation
+      default: Sequential
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Sequential: Sequential (default)
+        Random: Random
+      raw:
+        DisplayName: Map Rotation Order
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the order in which the server maps will be selected
+        Keywords: map,rotation,maprotation
+        FieldName: MapRotation
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/MapRotation
+        IncludeInCommandLine: false
+        DefaultValue: Sequential
+        EnumValues:
+          Sequential: Sequential (default)
+          Random: Random
+    - key: Mods
+      label: Server Mods
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: >-
+        Mods can be enabled in the Mods section in AMPServerConfig.xml. The mods specified will be automatically
+        downloaded by the server
+      keywords: mods
+      input_type: hidden
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Mods
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Mods can be enabled in the Mods section in AMPServerConfig.xml. The mods specified will be automatically
+          downloaded by the server
+        Keywords: mods
+        FieldName: Mods
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ''
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: AllowModdedFleets
+      label: Allow Modded Fleets
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: >-
+        If set, mods enabled on the server will be permitted for use on player fleets. The server will show the "Mod
+        Friendly" icon
+      keywords: mods,modded,fleets,allowmoddedfleets
+      input_type: checkbox
+      param_field_name: SkirmishDedicatedServerConfig/AllowModdedFleets
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Modded Fleets
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, mods enabled on the server will be permitted for use on player fleets. The server will show the "Mod
+          Friendly" icon
+        Keywords: mods,modded,fleets,allowmoddedfleets
+        FieldName: AllowModdedFleets
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/AllowModdedFleets
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: $MaxUsers
+      label: Player Limit
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: >-
+        Sets the maximum number of players that may connect to the server at one time. The number of players per team is
+        still decided by the map
+      keywords: maximum,players,clients,limit,maxplayers
+      input_type: number
+      param_field_name: SkirmishDedicatedServerConfig/MaxPlayers
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of players that may connect to the server at one time. The number of players per team
+          is still decided by the map
+        Keywords: maximum,players,clients,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/MaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: players
+        EnumValues: {}
+    - key: TeamSizeToStart
+      label: Team Size To Start
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: Sets the number of players that must be present on each team before the game can start
+      keywords: team,size,minimum,teamsizetostart
+      input_type: number
+      param_field_name: SkirmishDedicatedServerConfig/TeamSizeToStart
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Team Size To Start
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of players that must be present on each team before the game can start
+        Keywords: team,size,minimum,teamsizetostart
+        FieldName: TeamSizeToStart
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/TeamSizeToStart
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        Placeholder: '2'
+        Suffix: players
+        EnumValues: {}
+    - key: RequireUniformTeams
+      label: Enforce Uniform Team Factions
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: If enabled, the server will enforce uniform factions on teams
+      keywords: uniform,team,factions,requireuniformteams
+      input_type: checkbox
+      param_field_name: SkirmishDedicatedServerConfig/RequireUniformTeams
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enforce Uniform Team Factions
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will enforce uniform factions on teams
+        Keywords: uniform,team,factions,requireuniformteams
+        FieldName: RequireUniformTeams
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/RequireUniformTeams
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: TimeLimit
+      label: Game Time Limit
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: >-
+        Sets the time limit for games. 0 = unlimited time. The value set indexes into a list of possible time settings.
+        It is NOT a minutes value
+      keywords: time,limit,timelimit
+      input_type: number
+      param_field_name: SkirmishDedicatedServerConfig/TimeLimit
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Game Time Limit
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the time limit for games. 0 = unlimited time. The value set indexes into a list of possible time
+          settings. It is NOT a minutes value
+        Keywords: time,limit,timelimit
+        FieldName: TimeLimit
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/TimeLimit
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: AllowMapVoting
+      label: Allow Player Voting
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: If enabled, players can vote on maps, scenarios and rules
+      keywords: map,scenarios,rules,voting,allowmapvoting
+      input_type: checkbox
+      param_field_name: SkirmishDedicatedServerConfig/AllowMapVoting
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Player Voting
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, players can vote on maps, scenarios and rules
+        Keywords: map,scenarios,rules,voting,allowmapvoting
+        FieldName: AllowMapVoting
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SkirmishDedicatedServerConfig/AllowMapVoting
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: Bots
+      label: Bot Settings
+      category: NEBULOUS Fleet Command
+      subcategory: Server
+      description: Bots listed in the Bots section in AMPServerConfig.xml will be created each time the server returns to the lobby
+      keywords: bots
+      input_type: hidden
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Bot Settings
+        Category: NEBULOUS Fleet Command:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Bots listed in the Bots section in AMPServerConfig.xml will be created each time the server returns to the
+          lobby
+        Keywords: bots
+        FieldName: Bots
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ''
+        IncludeInCommandLine: false
+        EnumValues: {}
+  files:
+    - path: ./AMPServerConfig.xml
+      type: xml
+      subsections: []
+      raw:
+        ConfigFile: ./AMPServerConfig.xml
+        AutoMap: true
+        ConfigType: xml
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: 'AMP Powered NEBULOUS: Fleet Command Server'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: MOTD
+    label: Message Of The Day
+    default: |-
+      -- Welcome to N:FC! --
+      Play by the rules!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Scenario
+    label: Server Scenario
+    default: Control
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomScenario
+    label: Custom Scenario Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MapRotation
+    label: Map Rotation Order
+    default: Sequential
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowModdedFleets
+    label: Allow Modded Fleets
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TeamSizeToStart
+    label: Team Size To Start
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RequireUniformTeams
+    label: Enforce Uniform Team Factions
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TimeLimit
+    label: Game Time Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowMapVoting
+    label: Allow Player Voting
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '887570'
+  collection_support: true
 backup:
   include:
     - /data

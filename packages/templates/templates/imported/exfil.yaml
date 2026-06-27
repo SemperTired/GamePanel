@@ -5,13 +5,18 @@ category: Imported
 summary: EXFIL Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '3093190'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 3093190/Exfil/Binaries/Linux/ExfilServer-Linux-Shipping
+  startup: >-
+    3093190/Exfil/Binaries/Linux/ExfilServer-Linux-Shipping {PlatformArgs} Exfil -Port={GamePort} -QueryPort={QueryPort}
+    {FormattedArgs} -stdout -FullStdOutLogOutput
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,294 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 7777
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: Exfil/Saved/ServerSettings/DedicatedSettings.JSON
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: ServerName
+      label: Server Name
+      category: EXFIL
+      subcategory: Server
+      description: Sets the name of the server that will appear in the server browser
+      keywords: server,name,browser,list,servername
+      input_type: text
+      param_field_name: $.ServerName
+      default: AMP Powered EXFIL Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: EXFIL:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that will appear in the server browser
+        Keywords: server,name,browser,list,servername
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: $.ServerName
+        DefaultValue: AMP Powered EXFIL Server
+        EnumValues: {}
+    - key: ServerPassword
+      label: Server Password
+      category: EXFIL
+      subcategory: Server
+      description: Sets the password required for players to join the server. Default is no password
+      keywords: password,server,serverpassword
+      input_type: password
+      param_field_name: $.ServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: EXFIL:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for players to join the server. Default is no password
+        Keywords: password,server,serverpassword
+        FieldName: ServerPassword
+        InputType: password
+        ParamFieldName: $.ServerPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: EXFIL
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: max,maximum,players,limit,MaxPlayerCount
+      input_type: number
+      param_field_name: $.MaxPlayerCount
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: EXFIL:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: max,maximum,players,limit,MaxPlayerCount
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: $.MaxPlayerCount
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: players
+        EnumValues: {}
+    - key: AutoStartTimer
+      label: Auto Start Timer
+      category: EXFIL
+      subcategory: Server
+      description: Sets the timer for auto start. 0 = disabled
+      keywords: auto,start,timer,AutoStartTimer
+      input_type: number
+      param_field_name: $.AutoStartTimer
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Auto Start Timer
+        Category: EXFIL:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the timer for auto start. 0 = disabled
+        Keywords: auto,start,timer,AutoStartTimer
+        FieldName: AutoStartTimer
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.AutoStartTimer
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: seconds
+        EnumValues: {}
+    - key: MinAutoStartPlayers
+      label: Minimum Auto Start Players
+      category: EXFIL
+      subcategory: Server
+      description: Sets the minimum number of players required to auto start
+      keywords: auto,start,min,minimum,players,MinAutoStartPlayers
+      input_type: number
+      param_field_name: $.MinAutoStartPlayers
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Auto Start Players
+        Category: EXFIL:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum number of players required to auto start
+        Keywords: auto,start,min,minimum,players,MinAutoStartPlayers
+        FieldName: MinAutoStartPlayers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: $.MinAutoStartPlayers
+        DefaultValue: '2'
+        Placeholder: '2'
+        Suffix: players
+        EnumValues: {}
+    - key: AddAutoStartTimeOnPlayerJoin
+      label: Auto Start Additional Time On Player Join
+      category: EXFIL
+      subcategory: Server
+      description: Adds additional time to the auto start timer when a player joins
+      keywords: auto,start,additional,time,player,join,AddAutoStartTimeOnPlayerJoin
+      input_type: number
+      param_field_name: $.AddAutoStartTimeOnPlayerJoin
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Auto Start Additional Time On Player Join
+        Category: EXFIL:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Adds additional time to the auto start timer when a player joins
+        Keywords: auto,start,additional,time,player,join,AddAutoStartTimeOnPlayerJoin
+        FieldName: AddAutoStartTimeOnPlayerJoin
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.AddAutoStartTimeOnPlayerJoin
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: seconds
+        EnumValues: {}
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: Sets the server branch to install. Update the server after switching branches
+      keywords: server,branch,depot,beta
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        public-testing: Testing build
+        demo: Demo build
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: Sets the server branch to install. Update the server after switching branches
+        Keywords: server,branch,depot,beta
+        FieldName: ServerBranch
+        InputType: enum
+        ParamFieldName: ServerBranch
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          public-testing: Testing build
+          demo: Demo build
+  files:
+    - path: Exfil/Saved/ServerSettings/DedicatedSettings.JSON
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Exfil/Saved/ServerSettings/DedicatedSettings.JSON
+        ConfigType: json
+        AutoMap: true
+        Importable: true
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered EXFIL Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AutoStartTimer
+    label: Auto Start Timer
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MinAutoStartPlayers
+    label: Minimum Auto Start Players
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AddAutoStartTimeOnPlayerJoin
+    label: Auto Start Additional Time On Player Join
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '860020'
+  collection_support: true
 backup:
   include:
     - /data

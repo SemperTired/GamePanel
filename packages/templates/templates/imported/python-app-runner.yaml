@@ -4,14 +4,16 @@ name: Python App Runner
 category: Imported
 summary: Python App Runner
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: venv/bin/python3
+  startup: venv/bin/python3 -u {AppRunMode} {CommandLineArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +21,762 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Main Port
+    default: 7777
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: python-app-runnerconfig.json
+    type: json
+    editable: true
+  - path: python-app-runnermetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: DownloadType
+      label: App Download Type
+      category: Python App Runner
+      subcategory: Download
+      description: >-
+        Sets how to download the app. Specify the App Download Source and the relevant Git repo, GitHub release or PyPI
+        package settings accordingly. Update the app after changing this setting
+      keywords: download,type,DownloadType
+      input_type: enum
+      param_field_name: DownloadType
+      default: ''
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': '--Please select--'
+        DownloadURL: Download URL
+        GithubRelease: GitHub release
+        GitRepo: Git repo
+        PyPIPackage: PyPI package
+        None: None
+      raw:
+        DisplayName: App Download Type
+        Category: Python App Runner:code
+        Subcategory: Download:download:2
+        Description: >-
+          Sets how to download the app. Specify the App Download Source and the relevant Git repo, GitHub release or
+          PyPI package settings accordingly. Update the app after changing this setting
+        Keywords: download,type,DownloadType
+        FieldName: DownloadType
+        InputType: enum
+        ParamFieldName: DownloadType
+        DefaultValue: ''
+        Required: true
+        EnumValues:
+          '': '--Please select--'
+          DownloadURL: Download URL
+          GithubRelease: GitHub release
+          GitRepo: Git repo
+          PyPIPackage: PyPI package
+          None: None
+    - key: DownloadSource
+      label: App Download Source
+      category: Python App Runner
+      subcategory: Download
+      description: >-
+        Sets the source for the App Download Type. Git repo = URL that ends in .git. GitHub release = User/Repo.
+        Download URL = URL to a zip file. PyPI package = package name (and version if needed). Update the app after
+        changing this setting
+      keywords: download,source,DownloadSource
+      input_type: text
+      param_field_name: DownloadSource
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Download Source
+        Category: Python App Runner:code
+        Subcategory: Download:download:2
+        Description: >-
+          Sets the source for the App Download Type. Git repo = URL that ends in .git. GitHub release = User/Repo.
+          Download URL = URL to a zip file. PyPI package = package name (and version if needed). Update the app after
+          changing this setting
+        Keywords: download,source,DownloadSource
+        FieldName: DownloadSource
+        InputType: text
+        ParamFieldName: DownloadSource
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadBranch
+      label: Git Repo Branch
+      category: Python App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the branch if required. Empty = default branch
+      keywords: git,repo,branch,DownloadBranch
+      input_type: text
+      param_field_name: DownloadBranch
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Branch
+        Category: Python App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the branch if required. Empty = default branch
+        Keywords: git,repo,branch,DownloadBranch
+        FieldName: DownloadBranch
+        InputType: text
+        ParamFieldName: DownloadBranch
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadUsername
+      label: Git Repo Username
+      category: Python App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the username if login is required
+      keywords: git,repo,username,DownloadUsername
+      input_type: text
+      param_field_name: DownloadUsername
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Username
+        Category: Python App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the username if login is required
+        Keywords: git,repo,username,DownloadUsername
+        FieldName: DownloadUsername
+        InputType: text
+        ParamFieldName: DownloadUsername
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadPassword
+      label: Git Repo Password/Token
+      category: Python App Runner
+      subcategory: Download
+      description: If "Git repo" is selected under App Download Type, sets the password/token if login is required
+      keywords: git,repo,password,token,DownloadPassword
+      input_type: password
+      param_field_name: DownloadPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Git Repo Password/Token
+        Category: Python App Runner:code
+        Subcategory: Download:download:2
+        Description: If "Git repo" is selected under App Download Type, sets the password/token if login is required
+        Keywords: git,repo,password,token,DownloadPassword
+        FieldName: DownloadPassword
+        InputType: password
+        ParamFieldName: DownloadPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: DownloadFilename
+      label: GitHub Release Filename
+      category: Python App Runner
+      subcategory: Download
+      description: If "GitHub release" is selected under App Download Type, sets the name of the zip file to download
+      keywords: github,release,filename,DownloadFilename
+      input_type: text
+      param_field_name: DownloadFilename
+      default: ''
+      placeholder: app.zip
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GitHub Release Filename
+        Category: Python App Runner:code
+        Subcategory: Download:download:2
+        Description: If "GitHub release" is selected under App Download Type, sets the name of the zip file to download
+        Keywords: github,release,filename,DownloadFilename
+        FieldName: DownloadFilename
+        InputType: text
+        ParamFieldName: DownloadFilename
+        DefaultValue: ''
+        Placeholder: app.zip
+        EnumValues: {}
+    - key: DownloadVersion
+      label: GitHub Release Version
+      category: Python App Runner
+      subcategory: Download
+      description: If "GitHub release" is selected under App Download Type, sets the release version to download. Empty = latest
+      keywords: github,release,version,DownloadVersion
+      input_type: text
+      param_field_name: DownloadVersion
+      default: ''
+      placeholder: 1.0.0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GitHub Release Version
+        Category: Python App Runner:code
+        Subcategory: Download:download:2
+        Description: If "GitHub release" is selected under App Download Type, sets the release version to download. Empty = latest
+        Keywords: github,release,version,DownloadVersion
+        FieldName: DownloadVersion
+        InputType: text
+        ParamFieldName: DownloadVersion
+        DefaultValue: ''
+        Placeholder: 1.0.0
+        EnumValues: {}
+    - key: DownloadPackageArgs
+      label: PyPI Package Installation Arguments
+      category: Python App Runner
+      subcategory: Download
+      description: >-
+        If "PyPI package" is selected under App Download Type, sets any required pip command line arguments when
+        installing the package. The '-U' flag is passed by default
+      keywords: pypi,install,package,command,line,arguments,flags,DownloadPackageArgs
+      input_type: text
+      param_field_name: DownloadPackageArgs
+      default: ''
+      placeholder: '--force-reinstall --no-cache-dir'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: PyPI Package Installation Arguments
+        Category: Python App Runner:code
+        Subcategory: Download:download:2
+        Description: >-
+          If "PyPI package" is selected under App Download Type, sets any required pip command line arguments when
+          installing the package. The '-U' flag is passed by default
+        Keywords: pypi,install,package,command,line,arguments,flags,DownloadPackageArgs
+        FieldName: DownloadPackageArgs
+        InputType: text
+        ParamFieldName: DownloadPackageArgs
+        DefaultValue: ''
+        Placeholder: '--force-reinstall --no-cache-dir'
+        EnumValues: {}
+    - key: RunAppSetupCommand
+      label: Run App Setup Command
+      category: Python App Runner
+      subcategory: App
+      description: >-
+        If enabled, the command specified under App Setup Command will be run when the server is updated and after the
+        app is installed. Ensure that the app data is installed outside of the 'venv' directory
+      keywords: app,setup,command,RunAppSetupCommand
+      input_type: checkbox
+      param_field_name: RunAppSetupCommand
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Run App Setup Command
+        Category: Python App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          If enabled, the command specified under App Setup Command will be run when the server is updated and after the
+          app is installed. Ensure that the app data is installed outside of the 'venv' directory
+        Keywords: app,setup,command,RunAppSetupCommand
+        FieldName: RunAppSetupCommand
+        InputType: checkbox
+        ParamFieldName: RunAppSetupCommand
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AppSetupCommand
+      label: App Setup Command
+      category: Python App Runner
+      subcategory: App
+      description: >-
+        Sets any required command to run in the activated virtual environment to set up the app after it is installed,
+        if Run App Setup Command is enabled. For example, it can be a script or Python module installed in the virtual
+        environment or a Python script installed in the root directory. Use the prefix 'python' as relevant
+      keywords: app,setup,command,AppSetupCommand
+      input_type: text
+      param_field_name: AppSetupCommand
+      default: ''
+      placeholder: myapp-setup --no-prompt
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Setup Command
+        Category: Python App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets any required command to run in the activated virtual environment to set up the app after it is installed,
+          if Run App Setup Command is enabled. For example, it can be a script or Python module installed in the virtual
+          environment or a Python script installed in the root directory. Use the prefix 'python' as relevant
+        Keywords: app,setup,command,AppSetupCommand
+        FieldName: AppSetupCommand
+        InputType: text
+        ParamFieldName: AppSetupCommand
+        DefaultValue: ''
+        Placeholder: myapp-setup --no-prompt
+        EnumValues: {}
+    - key: PythonVersion
+      label: Python Version
+      category: Python App Runner
+      subcategory: App
+      description: >-
+        Sets the specific Python 3 version to run the app with. The version must be installed on the system for all
+        users (and in the System Path on Windows). Make sure the version is compatible with the app and any required
+        packages. If using AMP's Docker, you will limited to its installed version
+      keywords: python,version,PythonVersion
+      input_type: enum
+      param_field_name: PythonVersion
+      default: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '3': System default
+        '3.8': '3.8'
+        '3.9': '3.9'
+        '3.10': '3.10'
+        '3.11': '3.11'
+        '3.12': '3.12'
+        '3.13': '3.13'
+        '3.14': '3.14'
+      raw:
+        DisplayName: Python Version
+        Category: Python App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the specific Python 3 version to run the app with. The version must be installed on the system for all
+          users (and in the System Path on Windows). Make sure the version is compatible with the app and any required
+          packages. If using AMP's Docker, you will limited to its installed version
+        Keywords: python,version,PythonVersion
+        FieldName: PythonVersion
+        InputType: enum
+        ParamFieldName: PythonVersion
+        DefaultValue: '3'
+        EnumValues:
+          '3': System default
+          '3.8': '3.8'
+          '3.9': '3.9'
+          '3.10': '3.10'
+          '3.11': '3.11'
+          '3.12': '3.12'
+          '3.13': '3.13'
+          '3.14': '3.14'
+    - key: PackagesInstallType
+      label: Python Packages Install Method
+      category: Python App Runner
+      subcategory: App
+      description: >-
+        Sets the method to install additional Python packages from PyPI to run the app. If "Requirements specifier" is
+        selected, list the packages under Specific Python Package Requirements. Note: setuptools, wheel, discord.py and
+        python-dotenv are installed by default
+      keywords: python,install,method,packages,requirements,PackagesInstallType
+      input_type: enum
+      param_field_name: PackagesInstallType
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        none: None
+        file: Requirements.txt file
+        specifier: Requirements specifier
+      raw:
+        DisplayName: Python Packages Install Method
+        Category: Python App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the method to install additional Python packages from PyPI to run the app. If "Requirements specifier" is
+          selected, list the packages under Specific Python Package Requirements. Note: setuptools, wheel, discord.py
+          and python-dotenv are installed by default
+        Keywords: python,install,method,packages,requirements,PackagesInstallType
+        FieldName: PackagesInstallType
+        InputType: enum
+        ParamFieldName: PackagesInstallType
+        DefaultValue: ''
+        EnumValues:
+          none: None
+          file: Requirements.txt file
+          specifier: Requirements specifier
+    - key: PythonPackages
+      label: Specific Python Package Requirements
+      category: Python App Runner
+      subcategory: App
+      description: >-
+        Specifies a space-separated list of additional Python packages to install. Select "Requirements specifier" under
+        Python Packages Install Method. Otherwise select the "Requirements.txt file" method
+      keywords: additional,python,packages,PythonPackages
+      input_type: text
+      param_field_name: PythonPackages
+      default: ''
+      placeholder: numpy requests
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Specific Python Package Requirements
+        Category: Python App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Specifies a space-separated list of additional Python packages to install. Select "Requirements specifier"
+          under Python Packages Install Method. Otherwise select the "Requirements.txt file" method
+        Keywords: additional,python,packages,PythonPackages
+        FieldName: PythonPackages
+        InputType: text
+        ParamFieldName: PythonPackages
+        DefaultValue: ''
+        Placeholder: numpy requests
+        EnumValues: {}
+    - key: AppRunMode
+      label: App Run Mode
+      category: Python App Runner
+      subcategory: App
+      description: Sets the method to run the app, either as a Python script or a Python module (if the app was installed via pip)
+      keywords: app,run,running,mode,AppRunMode
+      input_type: enum
+      param_field_name: AppRunMode
+      default: '{{AppScriptName}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{{AppScriptName}}': Python script (default)
+        '-m {{AppModuleName}}': Python module
+      raw:
+        DisplayName: App Run Mode
+        Category: Python App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets the method to run the app, either as a Python script or a Python module (if the app was installed via
+          pip)
+        Keywords: app,run,running,mode,AppRunMode
+        FieldName: AppRunMode
+        InputType: enum
+        ParamFieldName: AppRunMode
+        DefaultValue: '{{AppScriptName}}'
+        EnumValues:
+          '{{AppScriptName}}': Python script (default)
+          '-m {{AppModuleName}}': Python module
+    - key: AppScriptName
+      label: App Script Filename
+      category: Python App Runner
+      subcategory: App
+      description: >-
+        If "Python script" is selected under App Run Mode, sets the script filename to run. Also set App Subdirectory as
+        needed, or include the script path under the root directory here if App Subdirectory is not otherwise
+        appropriate
+      keywords: app,script,name,filename,AppScriptName
+      input_type: text
+      param_field_name: AppScriptName
+      default: ''
+      placeholder: myapp.py | venv/Scripts/myapp.exe
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Script Filename
+        Category: Python App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          If "Python script" is selected under App Run Mode, sets the script filename to run. Also set App Subdirectory
+          as needed, or include the script path under the root directory here if App Subdirectory is not otherwise
+          appropriate
+        Keywords: app,script,name,filename,AppScriptName
+        FieldName: AppScriptName
+        InputType: text
+        ParamFieldName: AppScriptName
+        DefaultValue: ''
+        Placeholder: myapp.py | venv/Scripts/myapp.exe
+        EnumValues: {}
+    - key: AppModuleName
+      label: App Module Name
+      category: Python App Runner
+      subcategory: App
+      description: If "Python module" is selected under App Run Mode, sets the name of the app module to run
+      keywords: app,package,module,AppModuleName
+      input_type: text
+      param_field_name: AppModuleName
+      default: ''
+      placeholder: myapp
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Module Name
+        Category: Python App Runner:code
+        Subcategory: App:settings:1
+        Description: If "Python module" is selected under App Run Mode, sets the name of the app module to run
+        Keywords: app,package,module,AppModuleName
+        FieldName: AppModuleName
+        InputType: text
+        ParamFieldName: AppModuleName
+        DefaultValue: ''
+        Placeholder: myapp
+        EnumValues: {}
+    - key: AppDir
+      label: App Subdirectory
+      category: Python App Runner
+      subcategory: App
+      description: >-
+        Sets any applicable subdirectory path under the root directory that the app is installed in, for the purpose of
+        running a script selected under App Script Filename or installing packages with a 'requirements.txt' file under
+        Python Packages Install Method. This will set the working directory for running the app accordingly
+      keywords: app,directory,subdirectory,path,AppScriptName
+      input_type: text
+      param_field_name: AppDir
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Subdirectory
+        Category: Python App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          Sets any applicable subdirectory path under the root directory that the app is installed in, for the purpose
+          of running a script selected under App Script Filename or installing packages with a 'requirements.txt' file
+          under Python Packages Install Method. This will set the working directory for running the app accordingly
+        Keywords: app,directory,subdirectory,path,AppScriptName
+        FieldName: AppDir
+        InputType: text
+        ParamFieldName: AppDir
+        DefaultValue: ''
+        EnumValues: {}
+    - key: EnvVars
+      label: App Environment Variables
+      category: Python App Runner
+      subcategory: App
+      description: >-
+        To set a list of environment variables to run the app with, create a '.env' file in the working directory. For
+        example, this may include a [Discord bot token](https://discord.com/developers/applications/). Consult any
+        example '.env' file included with the app for relevant variables to specify
+      keywords: environment,variables,EnvVars
+      input_type: hidden
+      param_field_name: EnvVars
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Environment Variables
+        Category: Python App Runner:code
+        Subcategory: App:settings:1
+        Description: >-
+          To set a list of environment variables to run the app with, create a '.env' file in the working directory. For
+          example, this may include a [Discord bot token](https://discord.com/developers/applications/). Consult any
+          example '.env' file included with the app for relevant variables to specify
+        Keywords: environment,variables,EnvVars
+        FieldName: EnvVars
+        InputType: hidden
+        ParamFieldName: EnvVars
+        EnumValues: {}
+    - key: CommandLineArgs
+      label: App Command Line Arguments
+      category: Python App Runner
+      subcategory: App
+      description: Specifies any command line arguments to include when running the app
+      keywords: command,line,arguments,args,CommandLineArgs
+      input_type: text
+      param_field_name: CommandLineArgs
+      default: ''
+      placeholder: value1=foo value2=bar
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: App Command Line Arguments
+        Category: Python App Runner:code
+        Subcategory: App:settings:1
+        Description: Specifies any command line arguments to include when running the app
+        Keywords: command,line,arguments,args,CommandLineArgs
+        FieldName: CommandLineArgs
+        InputType: text
+        ParamFieldName: CommandLineArgs
+        DefaultValue: ''
+        Placeholder: value1=foo value2=bar
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: DownloadType
+    label: App Download Type
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: DownloadSource
+    label: App Download Source
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadBranch
+    label: Git Repo Branch
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadUsername
+    label: Git Repo Username
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadPassword
+    label: Git Repo Password/Token
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: DownloadFilename
+    label: GitHub Release Filename
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadVersion
+    label: GitHub Release Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadPackageArgs
+    label: PyPI Package Installation Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RunAppSetupCommand
+    label: Run App Setup Command
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AppSetupCommand
+    label: App Setup Command
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PythonVersion
+    label: Python Version
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PackagesInstallType
+    label: Python Packages Install Method
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PythonPackages
+    label: Specific Python Package Requirements
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AppRunMode
+    label: App Run Mode
+    default: '{{AppScriptName}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AppScriptName
+    label: App Script Filename
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AppModuleName
+    label: App Module Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AppDir
+    label: App Subdirectory
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CommandLineArgs
+    label: App Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

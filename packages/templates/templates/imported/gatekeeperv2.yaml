@@ -4,14 +4,17 @@ name: GatekeeperV2 Bot (Deprecated)
 category: Imported
 summary: AMP Discord Bot created by k8thekat - https://github.com/k8thekat/GatekeeperV2
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://github.com/k8thekat/GatekeeperV2/archive/refs/heads/main.zip
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: venv/bin/python3
+  startup: venv/bin/python3 start.py -token {dev}{debug}{discord}{super}{command}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +22,460 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: port
+    name: Port
+    default: 4444
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: GatekeeperV2-main/tokens.py
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: PythonVersion
+      label: Python Version
+      category: GatekeeperV2
+      subcategory: Bot
+      description: >-
+        Sets the specific Python 3 version to run the bot with (requires 3.8 to 3.11). The version must be installed on
+        the system for all users (and in the System Path on Windows). If using AMP's Docker, you will be limited to its
+        installed version.
+      keywords: python,version,PythonVersion
+      input_type: enum
+      param_field_name: PythonVersion
+      default: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '3': System default
+        '3.8': '3.8'
+        '3.9': '3.9'
+        '3.10': '3.10'
+        '3.11': '3.11'
+      raw:
+        DisplayName: Python Version
+        Category: GatekeeperV2:code
+        Subcategory: Bot:settings:1
+        Description: >-
+          Sets the specific Python 3 version to run the bot with (requires 3.8 to 3.11). The version must be installed
+          on the system for all users (and in the System Path on Windows). If using AMP's Docker, you will be limited to
+          its installed version.
+        Keywords: python,version,PythonVersion
+        FieldName: PythonVersion
+        InputType: enum
+        ParamFieldName: PythonVersion
+        DefaultValue: '3'
+        EnumValues:
+          '3': System default
+          '3.8': '3.8'
+          '3.9': '3.9'
+          '3.10': '3.10'
+          '3.11': '3.11'
+    - key: token
+      label: Discord Bot Token
+      category: GatekeeperV2
+      subcategory: Bot
+      description: Sets the [Discord Bot Token](https://discord.com/developers/applications/) for the bot.
+      keywords: discord,token
+      input_type: password
+      param_field_name: token
+      default: ''
+      placeholder: 319/f0dsA0jk0PKge2jkpSFWEauopbvejwaioj32omoi32JIOabdsajotjewq3jr2==
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Discord Bot Token
+        Category: GatekeeperV2:code
+        Subcategory: Bot:settings:1
+        Description: Sets the [Discord Bot Token](https://discord.com/developers/applications/) for the bot.
+        Keywords: discord,token
+        FieldName: token
+        InputType: password
+        ParamFieldName: token
+        DefaultValue: ''
+        Placeholder: 319/f0dsA0jk0PKge2jkpSFWEauopbvejwaioj32omoi32JIOabdsajotjewq3jr2==
+        EnumValues: {}
+    - key: AMPUser
+      label: AMP User
+      category: GatekeeperV2
+      subcategory: Bot
+      description: >-
+        Sets the login name for the AMP account that the the bot will use. This account must have "Super Admin"
+        privileges for setup of new instances and after upgrades.
+      keywords: amp,user
+      input_type: text
+      param_field_name: AMPUser
+      default: ''
+      placeholder: amp-bot
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: AMP User
+        Category: GatekeeperV2:code
+        Subcategory: Bot:settings:1
+        Description: >-
+          Sets the login name for the AMP account that the the bot will use. This account must have "Super Admin"
+          privileges for setup of new instances and after upgrades.
+        Keywords: amp,user
+        FieldName: AMPUser
+        InputType: text
+        ParamFieldName: AMPUser
+        DefaultValue: ''
+        Placeholder: amp-bot
+        EnumValues: {}
+    - key: AMPPassword
+      label: AMP Password
+      category: GatekeeperV2
+      subcategory: Bot
+      description: Sets the password for the AMP user that the bot will use.
+      keywords: amp,password
+      input_type: password
+      param_field_name: AMPPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: AMP Password
+        Category: GatekeeperV2:code
+        Subcategory: Bot:settings:1
+        Description: Sets the password for the AMP user that the bot will use.
+        Keywords: amp,password
+        FieldName: AMPPassword
+        InputType: password
+        ParamFieldName: AMPPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: AMPAuth
+      label: AMP 2FA Token
+      category: GatekeeperV2
+      subcategory: Bot
+      description: Sets the two factor authorisation token (if any) for the AMP user that the bot will use.
+      keywords: amp,2factor,2fa,token
+      input_type: password
+      param_field_name: AMPAuth
+      default: ''
+      placeholder: MQ2TMMETGB4WCYJY8NRDINDEMKQTGMZTMIZDOZTFME3TSMRXGA2A
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: AMP 2FA Token
+        Category: GatekeeperV2:code
+        Subcategory: Bot:settings:1
+        Description: Sets the two factor authorisation token (if any) for the AMP user that the bot will use.
+        Keywords: amp,2factor,2fa,token
+        FieldName: AMPAuth
+        InputType: password
+        ParamFieldName: AMPAuth
+        DefaultValue: ''
+        Placeholder: MQ2TMMETGB4WCYJY8NRDINDEMKQTGMZTMIZDOZTFME3TSMRXGA2A
+        EnumValues: {}
+    - key: AMPurl
+      label: AMP URL
+      category: GatekeeperV2
+      subcategory: Bot
+      description: Sets the URL or IP of the AMP ADS instance that the bot will connect to.
+      keywords: amp,url
+      input_type: text
+      param_field_name: AMPurl
+      default: http://127.0.0.1:8080
+      placeholder: http://127.0.0.1:8080
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: AMP URL
+        Category: GatekeeperV2:code
+        Subcategory: Bot:settings:1
+        Description: Sets the URL or IP of the AMP ADS instance that the bot will connect to.
+        Keywords: amp,url
+        FieldName: AMPurl
+        InputType: text
+        ParamFieldName: AMPurl
+        DefaultValue: http://127.0.0.1:8080
+        Placeholder: http://127.0.0.1:8080
+    - key: super
+      label: Enable Super Admin Privileges
+      category: GatekeeperV2
+      subcategory: Bot
+      description: >-
+        The bot requires Super Admin privileges for first time setup of new instances and after upgrades. Enable this
+        setting to keep the permission intact. Use at your own risk as this poses some security risk at the expense of
+        convenience.
+      keywords: super,admin
+      input_type: checkbox
+      param_field_name: super
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': ' -super'
+      raw:
+        DisplayName: Enable Super Admin Privileges
+        Category: GatekeeperV2:code
+        Subcategory: Bot:settings:1
+        Description: >-
+          The bot requires Super Admin privileges for first time setup of new instances and after upgrades. Enable this
+          setting to keep the permission intact. Use at your own risk as this poses some security risk at the expense of
+          convenience.
+        Keywords: super,admin
+        FieldName: super
+        InputType: checkbox
+        ParamFieldName: super
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': ' -super'
+    - key: discord
+      label: Disable Discord Integration
+      category: GatekeeperV2
+      subcategory: Bot
+      description: If set, Discord integration will be disabled. Used for development purposes.
+      keywords: discord,integration
+      input_type: checkbox
+      param_field_name: discord
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': ' -discord'
+      raw:
+        DisplayName: Disable Discord Integration
+        Category: GatekeeperV2:code
+        Subcategory: Bot:settings:1
+        Description: If set, Discord integration will be disabled. Used for development purposes.
+        Keywords: discord,integration
+        FieldName: discord
+        InputType: checkbox
+        ParamFieldName: discord
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': ' -discord'
+    - key: dev
+      label: Enable Development Print Statements
+      category: GatekeeperV2
+      subcategory: Bot
+      description: If set, development print statements will be enabled. Used for development purposes.
+      keywords: development,print,statements
+      input_type: checkbox
+      param_field_name: dev
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': ' -dev'
+      raw:
+        DisplayName: Enable Development Print Statements
+        Category: GatekeeperV2:code
+        Subcategory: Bot:settings:1
+        Description: If set, development print statements will be enabled. Used for development purposes.
+        Keywords: development,print,statements
+        FieldName: dev
+        InputType: checkbox
+        ParamFieldName: dev
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': ' -dev'
+    - key: command
+      label: Enable Command Print Statements
+      category: GatekeeperV2
+      subcategory: Bot
+      description: If enabled, the name of the Discord User who issued the slash command will be displayed.
+      keywords: command,print,statements
+      input_type: checkbox
+      param_field_name: command
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': ' -command'
+      raw:
+        DisplayName: Enable Command Print Statements
+        Category: GatekeeperV2:code
+        Subcategory: Bot:settings:1
+        Description: If enabled, the name of the Discord User who issued the slash command will be displayed.
+        Keywords: command,print,statements
+        FieldName: command
+        InputType: checkbox
+        ParamFieldName: command
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': ' -command'
+    - key: debug
+      label: Enable Debug Logging
+      category: GatekeeperV2
+      subcategory: Bot
+      description: If set, DEBUGGING log level will be enabled. Used for development purposes.
+      keywords: debug,logging
+      input_type: checkbox
+      param_field_name: debug
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': ' -debug'
+      raw:
+        DisplayName: Enable Debug Logging
+        Category: GatekeeperV2:code
+        Subcategory: Bot:settings:1
+        Description: If set, DEBUGGING log level will be enabled. Used for development purposes.
+        Keywords: debug,logging
+        FieldName: debug
+        InputType: checkbox
+        ParamFieldName: debug
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': ' -debug'
+  files:
+    - path: GatekeeperV2-main/tokens.py
+      type: kvp
+      format: '{0} = ''{1}'''
+      subsections:
+        - heading: $root
+          setting_mappings:
+            token: token
+            AMPUser: AMPUser
+            AMPPassword: AMPPassword
+            AMPAuth: AMPAuth
+            AMPurl: AMPurl
+      raw:
+        ConfigFile: GatekeeperV2-main/tokens.py
+        AutoMap: false
+        ConfigType: kvp
+        ConfigFormat: '{0} = ''{1}'''
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              token: token
+              AMPUser: AMPUser
+              AMPPassword: AMPPassword
+              AMPAuth: AMPAuth
+              AMPurl: AMPurl
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: PythonVersion
+    label: Python Version
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: token
+    label: Discord Bot Token
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AMPUser
+    label: AMP User
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AMPPassword
+    label: AMP Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AMPAuth
+    label: AMP 2FA Token
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AMPurl
+    label: AMP URL
+    default: http://127.0.0.1:8080
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: super
+    label: Enable Super Admin Privileges
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: discord
+    label: Disable Discord Integration
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dev
+    label: Enable Development Print Statements
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: command
+    label: Enable Command Print Statements
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: debug
+    label: Enable Debug Logging
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

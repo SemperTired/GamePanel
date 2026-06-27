@@ -5,13 +5,16 @@ category: Imported
 summary: Portal Knights Dedicated Server
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '374040'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: /usr/bin/xvfb-run {PlatformArgs} -config "{FullBaseDir}server_config.json" -log Server.log
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1134 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 28001
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: server_config.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: name
+      label: Server Name
+      category: Portal Knights
+      subcategory: Server
+      description: The name that your dedicated server will display.
+      keywords: server,name
+      input_type: text
+      param_field_name: $.basicServerData.name
+      default: AMP Powered Portal Knights Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The name that your dedicated server will display.
+        Keywords: server,name
+        FieldName: name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: $.basicServerData.name
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Portal Knights Server
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Game IP
+      category: Portal Knights
+      subcategory: Server
+      description: >-
+        The local network IP address of your dedicated server. The address 0.0.0.0 allows the host computer to listen to
+        all local network traffic. You probably won't need to change this unless you're setting up your server to work
+        on a specific network card or interface.
+      keywords: ''
+      input_type: text
+      param_field_name: $.basicServerData.ipv4
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game IP
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          The local network IP address of your dedicated server. The address 0.0.0.0 allows the host computer to listen
+          to all local network traffic. You probably won't need to change this unless you're setting up your server to
+          work on a specific network card or interface.
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: $.basicServerData.ipv4
+        IncludeInCommandLine: false
+    - key: $GamePort
+      label: Game Port
+      category: Portal Knights
+      subcategory: Server
+      description: The port for the dedicated server.
+      keywords: ''
+      input_type: number
+      param_field_name: $.basicServerData.port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The port for the dedicated server.
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: $.basicServerData.port
+        IncludeInCommandLine: false
+    - key: saveFolderPath
+      label: Save Folder Path
+      category: Portal Knights
+      subcategory: Server
+      description: This is the location where save data will be written.
+      keywords: Save,folder,path
+      input_type: text
+      param_field_name: $.basicServerData.saveFolderPath
+      default: ./savedata
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Save Folder Path
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: This is the location where save data will be written.
+        Keywords: Save,folder,path
+        FieldName: saveFolderPath
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: $.basicServerData.saveFolderPath
+        IncludeInCommandLine: false
+        DefaultValue: ./savedata
+    - key: gameplayMode
+      label: Gameplay Mode
+      category: Portal Knights
+      subcategory: Server
+      description: The game play mode for the dedicated server.
+      keywords: gameplay,Mode
+      input_type: enum
+      param_field_name: $.gameplayMode
+      default: Adventure
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Adventure: Adventure
+        Creative: Creative
+      raw:
+        DisplayName: Gameplay Mode
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The game play mode for the dedicated server.
+        Keywords: gameplay,Mode
+        FieldName: gameplayMode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: $.gameplayMode
+        IncludeInCommandLine: false
+        DefaultValue: Adventure
+        EnumValues:
+          Adventure: Adventure
+          Creative: Creative
+    - key: universeSize
+      label: Universe Size
+      category: Portal Knights
+      subcategory: Server
+      description: The universe size for the dedicated server.
+      keywords: universe,Size
+      input_type: enum
+      param_field_name: $.universeSize
+      default: Normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Small: Normal
+        Normal: Large
+        Large: Huge
+      raw:
+        DisplayName: Universe Size
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The universe size for the dedicated server.
+        Keywords: universe,Size
+        FieldName: universeSize
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: $.universeSize
+        IncludeInCommandLine: false
+        DefaultValue: Normal
+        EnumValues:
+          Small: Normal
+          Normal: Large
+          Large: Huge
+    - key: universeId
+      label: Universe ID
+      category: Portal Knights
+      subcategory: Server
+      description: The world slot used when accessing this dedicated server.
+      keywords: universe,Id
+      input_type: number
+      param_field_name: $.universeId
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Universe ID
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The world slot used when accessing this dedicated server.
+        Keywords: universe,Id
+        FieldName: universeId
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: $.universeId
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: hideConsoleWindow
+      label: Hide Console Window
+      category: Portal Knights
+      subcategory: Server
+      description: This will hide the console window and break the console in AMP if changed.
+      keywords: ''
+      input_type: text
+      param_field_name: $.hideConsoleWindow
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Hide Console Window
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: This will hide the console window and break the console in AMP if changed.
+        Keywords: ''
+        FieldName: hideConsoleWindow
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: $.hideConsoleWindow
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues: {}
+        Hidden: true
+    - key: adminscredentialspassword
+      label: Admin Password
+      category: Portal Knights
+      subcategory: Server
+      description: Choose the password used to access your dedicated server by the Admin user group.
+      keywords: admin,password
+      input_type: password
+      param_field_name: $.admins.credentials.password
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Choose the password used to access your dedicated server by the Admin user group.
+        Keywords: admin,password
+        FieldName: adminscredentialspassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: $.admins.credentials.password
+        IncludeInCommandLine: false
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: adminscanLogin
+      label: Admin Can Login
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Admins can log in.
+      keywords: admin,Login
+      input_type: checkbox
+      param_field_name: $.admins.canLogin
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Admin Can Login
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Admins can log in.
+        Keywords: admin,Login
+        FieldName: adminscanLogin
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.admins.canLogin
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: adminscanKickPlayers
+      label: Admin Can Kick Players
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Admins can kick other players from the server.
+      keywords: admin,Kick,Players
+      input_type: checkbox
+      param_field_name: $.admins.canKickPlayers
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Admin Can Kick Players
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Admins can kick other players from the server.
+        Keywords: admin,Kick,Players
+        FieldName: adminscanKickPlayers
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.admins.canKickPlayers
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: adminscanModifyWorld
+      label: Admin Can Modify World
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Admins can mine/build blocks/props.
+      keywords: admin,Modify,World
+      input_type: checkbox
+      param_field_name: $.admins.canModifyWorld
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Admin Can Modify World
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Admins can mine/build blocks/props.
+        Keywords: admin,Modify,World
+        FieldName: adminscanModifyWorld
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.admins.canModifyWorld
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: adminscanInteractWithCraftingStations
+      label: Admin Can Interact With Crafting Stations
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Admins can interact with crafting stations.
+      keywords: admin,Interact,Crafting,Stations
+      input_type: checkbox
+      param_field_name: $.admins.canInteractWithCraftingStations
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Admin Can Interact With Crafting Stations
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Admins can interact with crafting stations.
+        Keywords: admin,Interact,Crafting,Stations
+        FieldName: adminscanInteractWithCraftingStations
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.admins.canInteractWithCraftingStations
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: adminscanInteractWithChests
+      label: Admin Can Interact With Chests
+      category: Portal Knights
+      subcategory: Server
+      description: >-
+        Defines whether Admins can interact with chests. Should be used together with "Admin Can Modify World" in order
+        to also prevent mining of chests.
+      keywords: admin,Interact,Chests
+      input_type: checkbox
+      param_field_name: $.admins.canInteractWithChests
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Admin Can Interact With Chests
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Defines whether Admins can interact with chests. Should be used together with "Admin Can Modify World" in
+          order to also prevent mining of chests.
+        Keywords: admin,Interact,Chests
+        FieldName: adminscanInteractWithChests
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.admins.canInteractWithChests
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: adminscanInteractWithNPCs
+      label: Admin Can Interact With NPCs
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Admins can interact with NPCs.
+      keywords: admin,Interact,NPCs
+      input_type: checkbox
+      param_field_name: $.admins.canInteractWithNPCs
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Admin Can Interact With NPCs
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Admins can interact with NPCs.
+        Keywords: admin,Interact,NPCs
+        FieldName: adminscanInteractWithNPCs
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.admins.canInteractWithNPCs
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: userscredentialspassword
+      label: User Password
+      category: Portal Knights
+      subcategory: Server
+      description: Choose the password used to access your dedicated server by the User user group.
+      keywords: user,password
+      input_type: password
+      param_field_name: $.users.credentials.password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: User Password
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Choose the password used to access your dedicated server by the User user group.
+        Keywords: user,password
+        FieldName: userscredentialspassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: $.users.credentials.password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: userscanLogin
+      label: User Can Login
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Users can log in.
+      keywords: users,Login
+      input_type: checkbox
+      param_field_name: $.users.canLogin
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: User Can Login
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Users can log in.
+        Keywords: users,Login
+        FieldName: userscanLogin
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.users.canLogin
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: userscanKickPlayers
+      label: User Can Kick Players
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Users can kick other players from the server.
+      keywords: users,Kick,Players
+      input_type: checkbox
+      param_field_name: $.users.canKickPlayers
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: User Can Kick Players
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Users can kick other players from the server.
+        Keywords: users,Kick,Players
+        FieldName: userscanKickPlayers
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.users.canKickPlayers
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: userscanModifyWorld
+      label: User Can Modify World
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Users can mine/build blocks/props.
+      keywords: users,Modify,World
+      input_type: checkbox
+      param_field_name: $.users.canModifyWorld
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: User Can Modify World
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Users can mine/build blocks/props.
+        Keywords: users,Modify,World
+        FieldName: userscanModifyWorld
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.users.canModifyWorld
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: userscanInteractWithCraftingStations
+      label: User Can Interact With Crafting Stations
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Users can interact with crafting stations.
+      keywords: users,Interact,Crafting,Stations
+      input_type: checkbox
+      param_field_name: $.users.canInteractWithCraftingStations
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: User Can Interact With Crafting Stations
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Users can interact with crafting stations.
+        Keywords: users,Interact,Crafting,Stations
+        FieldName: userscanInteractWithCraftingStations
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.users.canInteractWithCraftingStations
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: userscanInteractWithChests
+      label: User Can Interact With Chests
+      category: Portal Knights
+      subcategory: Server
+      description: >-
+        Defines whether Users can interact with chests. Should be used together with "User Can Modify World" in order to
+        also prevent mining of chests.
+      keywords: users,Interact,Chests
+      input_type: checkbox
+      param_field_name: $.users.canInteractWithChests
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: User Can Interact With Chests
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Defines whether Users can interact with chests. Should be used together with "User Can Modify World" in order
+          to also prevent mining of chests.
+        Keywords: users,Interact,Chests
+        FieldName: userscanInteractWithChests
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.users.canInteractWithChests
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: userscanInteractWithNPCs
+      label: User Can Interact With NPCs
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Users can interact with NPCs.
+      keywords: users,Interact,NPCs
+      input_type: checkbox
+      param_field_name: $.users.canInteractWithNPCs
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: User Can Interact With NPCs
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Users can interact with NPCs.
+        Keywords: users,Interact,NPCs
+        FieldName: userscanInteractWithNPCs
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.users.canInteractWithNPCs
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: guestscredentialspassword
+      label: Guest Password
+      category: Portal Knights
+      subcategory: Server
+      description: Choose the password used to access your dedicated server by the Guest user group.
+      keywords: guests,password
+      input_type: password
+      param_field_name: $.guests.credentials.password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Guest Password
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Choose the password used to access your dedicated server by the Guest user group.
+        Keywords: guests,password
+        FieldName: guestscredentialspassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: $.guests.credentials.password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: guestscanLogin
+      label: Guest Can Login
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Guests can log in.
+      keywords: guests,Login
+      input_type: checkbox
+      param_field_name: $.guests.canLogin
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Guest Can Login
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Guests can log in.
+        Keywords: guests,Login
+        FieldName: guestscanLogin
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.guests.canLogin
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: guestscanKickPlayers
+      label: Guest Can Kick Players
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Guests can kick other players from the server.
+      keywords: guests,Kick,Players
+      input_type: checkbox
+      param_field_name: $.guests.canKickPlayers
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Guest Can Kick Players
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Guests can kick other players from the server.
+        Keywords: guests,Kick,Players
+        FieldName: guestscanKickPlayers
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.guests.canKickPlayers
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: guestscanModifyWorld
+      label: Guest Can Modify World
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Guests can mine/build blocks/props.
+      keywords: guests,Modify,World
+      input_type: checkbox
+      param_field_name: $.guests.canModifyWorld
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Guest Can Modify World
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Guests can mine/build blocks/props.
+        Keywords: guests,Modify,World
+        FieldName: guestscanModifyWorld
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.guests.canModifyWorld
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: guestscanInteractWithCraftingStations
+      label: Guest Can Interact With Crafting Stations
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Guests can interact with crafting stations.
+      keywords: guests,Interact,Crafting,Stations
+      input_type: checkbox
+      param_field_name: $.guests.canInteractWithCraftingStations
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Guest Can Interact With Crafting Stations
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Guests can interact with crafting stations.
+        Keywords: guests,Interact,Crafting,Stations
+        FieldName: guestscanInteractWithCraftingStations
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.guests.canInteractWithCraftingStations
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: guestscanInteractWithChests
+      label: Guest Can Interact With Chests
+      category: Portal Knights
+      subcategory: Server
+      description: >-
+        Defines whether Guests can interact with chests. Should be used together with "Guest Can Modify World" enabled
+        in order to also prevent mining of chests.
+      keywords: guests,Interact,Chests
+      input_type: checkbox
+      param_field_name: $.guests.canInteractWithChests
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Guest Can Interact With Chests
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Defines whether Guests can interact with chests. Should be used together with "Guest Can Modify World" enabled
+          in order to also prevent mining of chests.
+        Keywords: guests,Interact,Chests
+        FieldName: guestscanInteractWithChests
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.guests.canInteractWithChests
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: guestscanInteractWithNPCs
+      label: Guest Can Interact With NPCs
+      category: Portal Knights
+      subcategory: Server
+      description: Defines whether Guests can interact with NPCs.
+      keywords: guests,Interact,NPCs
+      input_type: checkbox
+      param_field_name: $.guests.canInteractWithNPCs
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Guest Can Interact With NPCs
+        Category: Portal Knights:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Defines whether Guests can interact with NPCs.
+        Keywords: guests,Interact,NPCs
+        FieldName: guestscanInteractWithNPCs
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: $.guests.canInteractWithNPCs
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+  files:
+    - path: server_config.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: server_config.json
+        AutoMap: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: name
+    label: Server Name
+    default: AMP Powered Portal Knights Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: saveFolderPath
+    label: Save Folder Path
+    default: ./savedata
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gameplayMode
+    label: Gameplay Mode
+    default: Adventure
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: universeSize
+    label: Universe Size
+    default: Normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: universeId
+    label: Universe ID
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hideConsoleWindow
+    label: Hide Console Window
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminscredentialspassword
+    label: Admin Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: adminscanLogin
+    label: Admin Can Login
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminscanKickPlayers
+    label: Admin Can Kick Players
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminscanModifyWorld
+    label: Admin Can Modify World
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminscanInteractWithCraftingStations
+    label: Admin Can Interact With Crafting Stations
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminscanInteractWithChests
+    label: Admin Can Interact With Chests
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminscanInteractWithNPCs
+    label: Admin Can Interact With NPCs
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: userscredentialspassword
+    label: User Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: userscanLogin
+    label: User Can Login
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: userscanKickPlayers
+    label: User Can Kick Players
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: userscanModifyWorld
+    label: User Can Modify World
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: userscanInteractWithCraftingStations
+    label: User Can Interact With Crafting Stations
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: userscanInteractWithChests
+    label: User Can Interact With Chests
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: userscanInteractWithNPCs
+    label: User Can Interact With NPCs
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: guestscredentialspassword
+    label: Guest Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: guestscanLogin
+    label: Guest Can Login
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: guestscanKickPlayers
+    label: Guest Can Kick Players
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: guestscanModifyWorld
+    label: Guest Can Modify World
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: guestscanInteractWithCraftingStations
+    label: Guest Can Interact With Crafting Stations
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: guestscanInteractWithChests
+    label: Guest Can Interact With Chests
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: guestscanInteractWithNPCs
+    label: Guest Can Interact With NPCs
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '374040'
+  collection_support: true
 backup:
   include:
     - /data

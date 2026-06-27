@@ -5,13 +5,16 @@ category: Imported
 summary: Barotrauma Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1026340'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1026340/DedicatedServer
+  startup: 1026340/DedicatedServer {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,3062 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 27016
+    protocol: udp
+    required: true
+config_files:
+  - path: serversettings.xml
+    type: xml
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Barotrauma
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /serversettings/@port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $QueryPort
+      label: Query Port
+      category: Barotrauma
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /serversettings/@queryport
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Port
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@queryport
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: autorestart
+      label: Auto Restart
+      category: Barotrauma
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /serversettings/@autorestart
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auto Restart
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: autorestart
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@autorestart
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues: {}
+    - key: name
+      label: Server Name
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the name of the server as it appears in the server browser
+      keywords: server,name,servername
+      input_type: text
+      param_field_name: /serversettings/@name
+      default: AMP Powered Barotrauma Server
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as it appears in the server browser
+        Keywords: server,name,servername
+        FieldName: name
+        InputType: text
+        IsFlagArgument: false
+        Required: true
+        ParamFieldName: /serversettings/@name
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Barotrauma Server
+        EnumValues: {}
+    - key: ServerMessage
+      label: Server Message
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the text displayed in the server's info box
+      keywords: server,message,servermessage
+      input_type: text
+      param_field_name: /serversettings/@ServerMessage
+      default: Welcome to Barotrauma!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Message
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the text displayed in the server's info box
+        Keywords: server,message,servermessage
+        FieldName: ServerMessage
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@ServerMessage
+        IncludeInCommandLine: false
+        DefaultValue: Welcome to Barotrauma!
+        EnumValues: {}
+    - key: IsPublic
+      label: Make Server Public
+      category: Barotrauma
+      subcategory: Server
+      description: If enabled, the server will show on the server browser
+      keywords: public
+      input_type: checkbox
+      param_field_name: /serversettings/@IsPublic
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Make Server Public
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will show on the server browser
+        Keywords: public
+        FieldName: IsPublic
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@IsPublic
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Language
+      label: Server Language
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the server language
+      keywords: server,language
+      input_type: enum
+      param_field_name: /serversettings/@Language
+      default: English
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Czech: čeština
+        Danish: dansk
+        German: Deutsch
+        English: English
+        Spanish: Español
+        Finnish: suomi
+        French: Français
+        Italian: Italiano
+        Japanese: 日本語
+        Korean: 한국어
+        Dutch: Nederlands
+        Norwegian: norsk
+        Polish: Polski
+        European Portuguese: português
+        Brazilian Portuguese: português brasileiro
+        Russian: Русский
+        Swedish: Svenska
+        Turkish: Türkçe
+        Ukrainian: украї́нська мо́ва
+        Chinese: 中文
+      raw:
+        DisplayName: Server Language
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server language
+        Keywords: server,language
+        FieldName: Language
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@Language
+        IncludeInCommandLine: false
+        DefaultValue: English
+        EnumValues:
+          Czech: čeština
+          Danish: dansk
+          German: Deutsch
+          English: English
+          Spanish: Español
+          Finnish: suomi
+          French: Français
+          Italian: Italiano
+          Japanese: 日本語
+          Korean: 한국어
+          Dutch: Nederlands
+          Norwegian: norsk
+          Polish: Polski
+          European Portuguese: português
+          Brazilian Portuguese: português brasileiro
+          Russian: Русский
+          Swedish: Svenska
+          Turkish: Türkçe
+          Ukrainian: украї́нська мо́ва
+          Chinese: 中文
+    - key: password
+      label: Server Password
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the password to join the server
+      keywords: password
+      input_type: password
+      param_field_name: /serversettings/@password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server
+        Keywords: password
+        FieldName: password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the number of players allowed to join the server at one time
+      keywords: player,limit,maxplayers
+      input_type: number
+      param_field_name: /serversettings/@MaxPlayers
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 16
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of players allowed to join the server at one time
+        Keywords: player,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '16'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@MaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: players
+        EnumValues: {}
+    - key: LevelDifficulty
+      label: Level Difficulty
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the level difficulty. 0 = easiest, 100 = hellish
+      keywords: level,difficulty
+      input_type: number
+      param_field_name: /serversettings/@LevelDifficulty
+      default: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Level Difficulty
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the level difficulty. 0 = easiest, 100 = hellish
+        Keywords: level,difficulty
+        FieldName: LevelDifficulty
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@LevelDifficulty
+        IncludeInCommandLine: false
+        DefaultValue: '20'
+        EnumValues: {}
+    - key: MissionType
+      label: Allowed Mission Types
+      category: Barotrauma
+      subcategory: Server
+      description: >-
+        Sets a comma-separated list of mission types for the server. If multiple are selected the server randomly
+        chooses one (PvP Game Mode can only run Combat). Select from Salvage, Monster, Cargo, Beacon, Nest, Mineral,
+        Combat, AbandonedOutpost, Escort, Pirate, ScanAlienRuins, ClearAlienRuins, All
+      keywords: mission,types,missiontype
+      input_type: text
+      param_field_name: /serversettings/@MissionType
+      default: All
+      placeholder: All
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Allowed Mission Types
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a comma-separated list of mission types for the server. If multiple are selected the server randomly
+          chooses one (PvP Game Mode can only run Combat). Select from Salvage, Monster, Cargo, Beacon, Nest, Mineral,
+          Combat, AbandonedOutpost, Escort, Pirate, ScanAlienRuins, ClearAlienRuins, All
+        Keywords: mission,types,missiontype
+        FieldName: MissionType
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@MissionType
+        IncludeInCommandLine: false
+        DefaultValue: All
+        Placeholder: All
+        EnumValues: {}
+    - key: SelectedSubmarine
+      label: Selected Submarine
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the submarine that will be used in a round. If empty, the server alphabetically picks the first submarine
+      keywords: selected,submarine,selectedsubmarine
+      input_type: text
+      param_field_name: /serversettings/@SelectedSubmarine
+      default: ''
+      placeholder: Azimuth
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Selected Submarine
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the submarine that will be used in a round. If empty, the server alphabetically picks the first submarine
+        Keywords: selected,submarine,selectedsubmarine
+        FieldName: SelectedSubmarine
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@SelectedSubmarine
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: Azimuth
+        EnumValues: {}
+    - key: SubSelectionMode
+      label: Submarine Selection Mode
+      category: Barotrauma
+      subcategory: Server
+      description: >-
+        Sets how the next submarine should be chosen. Manual = only a client with the SelectSub permission can select.
+        Random = submarine is randomly picked. Vote = all players can vote
+      keywords: submarine,selection,mode,subselectionmode
+      input_type: enum
+      param_field_name: /serversettings/@SubSelectionMode
+      default: Manual
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Manual: Manual (default)
+        Random: Random
+        Vote: Vote
+      raw:
+        DisplayName: Submarine Selection Mode
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets how the next submarine should be chosen. Manual = only a client with the SelectSub permission can select.
+          Random = submarine is randomly picked. Vote = all players can vote
+        Keywords: submarine,selection,mode,subselectionmode
+        FieldName: SubSelectionMode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@SubSelectionMode
+        IncludeInCommandLine: false
+        DefaultValue: Manual
+        EnumValues:
+          Manual: Manual (default)
+          Random: Random
+          Vote: Vote
+    - key: HiddenSubs
+      label: Hidden Submarines
+      category: Barotrauma
+      subcategory: Server
+      description: Sets a comma-separated list of submarines to be hidden from selection/purchase
+      keywords: hidden,submarine,hiddensubs
+      input_type: text
+      param_field_name: /serversettings/@HiddenSubs
+      default: ''
+      placeholder: Orca,Typhon
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Hidden Submarines
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a comma-separated list of submarines to be hidden from selection/purchase
+        Keywords: hidden,submarine,hiddensubs
+        FieldName: HiddenSubs
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@HiddenSubs
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: Orca,Typhon
+        EnumValues: {}
+    - key: SelectedShuttle
+      label: Selected Shuttle
+      category: Barotrauma
+      subcategory: Server
+      description: >-
+        Sets the respawn shuttle that will be used in a round. If empty, the server alphabetically picks the first
+        shuttle
+      keywords: selected,shuttle,selectedshuttle
+      input_type: text
+      param_field_name: /serversettings/@SelectedShuttle
+      default: ''
+      placeholder: Hemulen
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Selected Shuttle
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the respawn shuttle that will be used in a round. If empty, the server alphabetically picks the first
+          shuttle
+        Keywords: selected,shuttle,selectedshuttle
+        FieldName: SelectedShuttle
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@SelectedShuttle
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: Hemulen
+        EnumValues: {}
+    - key: GameModeIdentifier
+      label: Default Game Mode
+      category: Barotrauma
+      subcategory: Server
+      description: >-
+        Sets the default game mode, which will apply unless changed via the method set under "Game Mode Selection
+        Method"
+      keywords: game,mode,gamemodeidentifier
+      input_type: enum
+      param_field_name: /serversettings/@GameModeIdentifier
+      default: sandbox
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        sandbox: Sandbox (default)
+        mission: Mission
+        pvp: PvP
+        multiplayercampaign: Campaign
+      raw:
+        DisplayName: Default Game Mode
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the default game mode, which will apply unless changed via the method set under "Game Mode Selection
+          Method"
+        Keywords: game,mode,gamemodeidentifier
+        FieldName: GameModeIdentifier
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@GameModeIdentifier
+        IncludeInCommandLine: false
+        DefaultValue: sandbox
+        EnumValues:
+          sandbox: Sandbox (default)
+          mission: Mission
+          pvp: PvP
+          multiplayercampaign: Campaign
+    - key: ModeSelectionMode
+      label: Game Mode Selection Method
+      category: Barotrauma
+      subcategory: Server
+      description: >-
+        Sets how the game mode can be changed. Manual = only a client with the SelectMode permission can select. Random
+        = game mode is randomised. Vote = all players can vote
+      keywords: game,mode,selection,method,modeselectionmode
+      input_type: enum
+      param_field_name: /serversettings/@ModeSelectionMode
+      default: Manual
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Manual: Manual (default)
+        Random: Random
+        Vote: Vote
+      raw:
+        DisplayName: Game Mode Selection Method
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets how the game mode can be changed. Manual = only a client with the SelectMode permission can select.
+          Random = game mode is randomised. Vote = all players can vote
+        Keywords: game,mode,selection,method,modeselectionmode
+        FieldName: ModeSelectionMode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@ModeSelectionMode
+        IncludeInCommandLine: false
+        DefaultValue: Manual
+        EnumValues:
+          Manual: Manual (default)
+          Random: Random
+          Vote: Vote
+    - key: VoiceChatEnabled
+      label: Enable Voice Chat
+      category: Barotrauma
+      subcategory: Server
+      description: If enabled, players will be able to use voice chat
+      keywords: voice,chat,voicechatenabled
+      input_type: checkbox
+      param_field_name: /serversettings/@VoiceChatEnabled
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Voice Chat
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, players will be able to use voice chat
+        Keywords: voice,chat,voicechatenabled
+        FieldName: VoiceChatEnabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@VoiceChatEnabled
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: StartWhenClientsReady
+      label: Start When Players Ready
+      category: Barotrauma
+      subcategory: Server
+      description: >-
+        If enabled, the server will automatically start a round if enough players are ready, based on the "Minimum
+        Player Ready Ratio". Otherwise, the round must be manually started
+      keywords: start,ready,startwhenclientsready
+      input_type: checkbox
+      param_field_name: /serversettings/@StartWhenClientsReady
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Start When Players Ready
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will automatically start a round if enough players are ready, based on the "Minimum
+          Player Ready Ratio". Otherwise, the round must be manually started
+        Keywords: start,ready,startwhenclientsready
+        FieldName: StartWhenClientsReady
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@StartWhenClientsReady
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: StartWhenClientsReadyRatio
+      label: Minimum Player Ready Ratio
+      category: Barotrauma
+      subcategory: Server
+      description: >-
+        Sets the minimum ratio of players required to be ready for a round to be automatically started, if "Start When
+        Ready" is set
+      keywords: start,ready,ratio,startwhenclientsreadyratio
+      input_type: number
+      param_field_name: /serversettings/@StartWhenClientsReadyRatio
+      default: '0.8'
+      placeholder: '0.8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Player Ready Ratio
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the minimum ratio of players required to be ready for a round to be automatically started, if "Start When
+          Ready" is set
+        Keywords: start,ready,ratio,startwhenclientsreadyratio
+        FieldName: StartWhenClientsReadyRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@StartWhenClientsReadyRatio
+        IncludeInCommandLine: false
+        DefaultValue: '0.8'
+        Placeholder: '0.8'
+        EnumValues: {}
+    - key: AllowSpectating
+      label: Allow Spectating
+      category: Barotrauma
+      subcategory: Server
+      description: If enabled, dead players can spectate. Otherwise, they are sent into the lobby
+      keywords: spectate,allowspectating
+      input_type: checkbox
+      param_field_name: /serversettings/@AllowSpectating
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Spectating
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, dead players can spectate. Otherwise, they are sent into the lobby
+        Keywords: spectate,allowspectating
+        FieldName: AllowSpectating
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowSpectating
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: KickAFKTime
+      label: AFK Kick Time
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the amount of time a player must be AFK to be auto-kicked
+      keywords: kick,afk,away,time,period,kickafktime
+      input_type: number
+      param_field_name: /serversettings/@KickAFKTime
+      default: '600'
+      placeholder: '600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: AFK Kick Time
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the amount of time a player must be AFK to be auto-kicked
+        Keywords: kick,afk,away,time,period,kickafktime
+        FieldName: KickAFKTime
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@KickAFKTime
+        IncludeInCommandLine: false
+        DefaultValue: '600'
+        Placeholder: '600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: KillDisconnectedTime
+      label: Kill Disconnection Time
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the amount of time a player must be disconnected from their body for the character to be killed
+      keywords: disconnection,body,time,period,killdisconnectedtime
+      input_type: number
+      param_field_name: /serversettings/@KillDisconnectedTime
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Kill Disconnection Time
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the amount of time a player must be disconnected from their body for the character to be killed
+        Keywords: disconnection,body,time,period,killdisconnectedtime
+        FieldName: KillDisconnectedTime
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@KillDisconnectedTime
+        IncludeInCommandLine: false
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: RandomizeSeed
+      label: Randomize Seed Between Rounds
+      category: Barotrauma
+      subcategory: Server
+      description: If enabled, the server will generate a new seed each round
+      keywords: randomize,seed,randomizeseed
+      input_type: checkbox
+      param_field_name: /serversettings/@RandomizeSeed
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Randomize Seed Between Rounds
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will generate a new seed each round
+        Keywords: randomize,seed,randomizeseed
+        FieldName: RandomizeSeed
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@RandomizeSeed
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Mods
+      label: Mod Loading
+      category: Barotrauma
+      subcategory: Server
+      description: >-
+        Download mods by workshop item ID under the Updates menu. Load them by editing config_player.xml in accordance
+        with [these instructions](https://discourse.cubecoders.com/t/barotrauma-guide/3952#h-2-mods-4)
+      keywords: load,mod
+      input_type: hidden
+      param_field_name: Mods
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Mod Loading
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Download mods by workshop item ID under the Updates menu. Load them by editing config_player.xml in accordance
+          with [these instructions](https://discourse.cubecoders.com/t/barotrauma-guide/3952#h-2-mods-4)
+        Keywords: load,mod
+        FieldName: Mods
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: Mods
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: AllowFileTransfers
+      label: Share Files With Players
+      category: Barotrauma
+      subcategory: Server
+      description: >-
+        If enabled, the server will send missing files to clients (currently only .sub files). Otherwise, if a client is
+        missing required files they cannot spawn and will be sent back into the lobby
+      keywords: allow,file,transfers,allowfiletransfers
+      input_type: checkbox
+      param_field_name: /serversettings/@AllowFileTransfers
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Share Files With Players
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will send missing files to clients (currently only .sub files). Otherwise, if a client
+          is missing required files they cannot spawn and will be sent back into the lobby
+        Keywords: allow,file,transfers,allowfiletransfers
+        FieldName: AllowFileTransfers
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowFileTransfers
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AllowModDownloads
+      label: Allow Mod Downloads
+      category: Barotrauma
+      subcategory: Server
+      description: >-
+        If enabled, clients will be able to download required mods from the server. Otherwise they will need to obtain
+        the mods themselves
+      keywords: allow,client,mod,download,allowmoddownloads
+      input_type: checkbox
+      param_field_name: /serversettings/@AllowModDownloads
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Mod Downloads
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, clients will be able to download required mods from the server. Otherwise they will need to obtain
+          the mods themselves
+        Keywords: allow,client,mod,download,allowmoddownloads
+        FieldName: AllowModDownloads
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowModDownloads
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: VoteTimeout
+      label: Voting Timeout
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the timeout that applies to voting
+      keywords: vote,voting,timeout,votetimeout
+      input_type: number
+      param_field_name: /serversettings/@VoteTimeout
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Voting Timeout
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the timeout that applies to voting
+        Keywords: vote,voting,timeout,votetimeout
+        FieldName: VoteTimeout
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@VoteTimeout
+        IncludeInCommandLine: false
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: seconds
+        EnumValues: {}
+    - key: AllowedClientNameChars
+      label: Allowed Client Name Characters
+      category: Barotrauma
+      subcategory: Server
+      description: >-
+        Sets the characters approved for use in a client name. Enter as UTF-16 character code ranges. More information
+        can be found [here](https://barotraumagame.com/wiki/Serversettings.xml)
+      keywords: allowed,client,name,chars,allowedclientnamechars
+      input_type: Textarea
+      param_field_name: /serversettings/@AllowedClientNameChars
+      default: >-
+        32-33,38-46,48-57,65-90,91-91,93-93,95-122,192-255,384-591,1024-1279,4352-4607,44032-55215,19968-21327,21329-40959,13312-19903,131072-173791,173824-178207,178208-183983,63744-64255,194560-195103
+      placeholder: >-
+        32-33,38-46,48-57,65-90,91-91,93-93,95-122,192-255,384-591,1024-1279,4352-4607,44032-55215,19968-21327,21329-40959,13312-19903,131072-173791,173824-178207,178208-183983,63744-64255,194560-195103
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Allowed Client Name Characters
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the characters approved for use in a client name. Enter as UTF-16 character code ranges. More information
+          can be found [here](https://barotraumagame.com/wiki/Serversettings.xml)
+        Keywords: allowed,client,name,chars,allowedclientnamechars
+        FieldName: AllowedClientNameChars
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowedClientNameChars
+        IncludeInCommandLine: false
+        DefaultValue: >-
+          32-33,38-46,48-57,65-90,91-91,93-93,95-122,192-255,384-591,1024-1279,4352-4607,44032-55215,19968-21327,21329-40959,13312-19903,131072-173791,173824-178207,178208-183983,63744-64255,194560-195103
+        Placeholder: >-
+          32-33,38-46,48-57,65-90,91-91,93-93,95-122,192-255,384-591,1024-1279,4352-4607,44032-55215,19968-21327,21329-40959,13312-19903,131072-173791,173824-178207,178208-183983,63744-64255,194560-195103
+        EnumValues: {}
+    - key: SaveServerLogs
+      label: Save Server Logs
+      category: Barotrauma
+      subcategory: Server
+      description: If enabled, server logs will be saved in the ServerLogs folder upon server shutdown
+      keywords: save,server,logs,saveserverlogs
+      input_type: checkbox
+      param_field_name: /serversettings/@SaveServerLogs
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Save Server Logs
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, server logs will be saved in the ServerLogs folder upon server shutdown
+        Keywords: save,server,logs,saveserverlogs
+        FieldName: SaveServerLogs
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@SaveServerLogs
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: LinesPerLogFile
+      label: Log File Length
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the number of lines generated in a log file before it is rotated
+      keywords: log,file,lines,rotate,linesperlogfile
+      input_type: number
+      param_field_name: /serversettings/@LinesPerLogFile
+      default: '800'
+      placeholder: '800'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Log File Length
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of lines generated in a log file before it is rotated
+        Keywords: log,file,lines,rotate,linesperlogfile
+        FieldName: LinesPerLogFile
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@LinesPerLogFile
+        IncludeInCommandLine: false
+        DefaultValue: '800'
+        Placeholder: '800'
+        EnumValues: {}
+    - key: TickRate
+      label: Server Tickrate
+      category: Barotrauma
+      subcategory: Server
+      description: Sets the tickrate of the server
+      keywords: tickrate
+      input_type: number
+      param_field_name: /serversettings/@TickRate
+      default: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Server Tickrate
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the tickrate of the server
+        Keywords: tickrate
+        FieldName: TickRate
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@TickRate
+        IncludeInCommandLine: false
+        DefaultValue: '20'
+        EnumValues: {}
+    - key: enableupnp
+      label: Enable UPnP
+      category: Barotrauma
+      subcategory: Server
+      description: If set, UPnP will be enabled on the server. Requires a UPnP-enabled router to function
+      keywords: upnp,enableupnp
+      input_type: checkbox
+      param_field_name: /serversettings/@enableupnp
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable UPnP
+        Category: Barotrauma:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, UPnP will be enabled on the server. Requires a UPnP-enabled router to function
+        Keywords: upnp,enableupnp
+        FieldName: enableupnp
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@enableupnp
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PlayStyle
+      label: Play Style
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the server play style displayed in the server browser and lobby
+      keywords: play,style,playstyle
+      input_type: enum
+      param_field_name: /serversettings/@PlayStyle
+      default: Casual
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Serious: Serious
+        Casual: Casual (default)
+        Roleplay: Roleplay
+        Rampage: Rampage
+        SomethingDifferent: Something Different
+      raw:
+        DisplayName: Play Style
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the server play style displayed in the server browser and lobby
+        Keywords: play,style,playstyle
+        FieldName: PlayStyle
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@PlayStyle
+        IncludeInCommandLine: false
+        DefaultValue: Casual
+        EnumValues:
+          Serious: Serious
+          Casual: Casual (default)
+          Roleplay: Roleplay
+          Rampage: Rampage
+          SomethingDifferent: Something Different
+    - key: AllowEndVoting
+      label: Allow Round End Vote
+      category: Barotrauma
+      subcategory: Gameplay
+      description: If enabled, players can vote to end the round
+      keywords: vote,voting,round,end,allowendvoting
+      input_type: checkbox
+      param_field_name: /serversettings/@AllowEndVoting
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Round End Vote
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, players can vote to end the round
+        Keywords: vote,voting,round,end,allowendvoting
+        FieldName: AllowEndVoting
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowEndVoting
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: EndVoteRequiredRatio
+      label: Minimum Round End Vote Ratio
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the minimum proportion of round end votes required to end a round (if Round End Vote is enabled)
+      keywords: round,end,vote,voting,ratio,endvoterequiredratio
+      input_type: number
+      param_field_name: /serversettings/@EndVoteRequiredRatio
+      default: '0.6'
+      placeholder: '0.6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Round End Vote Ratio
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the minimum proportion of round end votes required to end a round (if Round End Vote is enabled)
+        Keywords: round,end,vote,voting,ratio,endvoterequiredratio
+        FieldName: EndVoteRequiredRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@EndVoteRequiredRatio
+        IncludeInCommandLine: false
+        DefaultValue: '0.6'
+        Placeholder: '0.6'
+        EnumValues: {}
+    - key: AllowRespawn
+      label: Allow Respawning
+      category: Barotrauma
+      subcategory: Gameplay
+      description: >-
+        If enabled, respawning of dead players will be allowed. Otherwise, dead players will have to spectate until the
+        round ends
+      keywords: respawn,allowrespawn
+      input_type: checkbox
+      param_field_name: /serversettings/@AllowRespawn
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Respawning
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, respawning of dead players will be allowed. Otherwise, dead players will have to spectate until
+          the round ends
+        Keywords: respawn,allowrespawn
+        FieldName: AllowRespawn
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowRespawn
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: RespawnInterval
+      label: Respawn Interval
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the time between each respawn wave
+      keywords: respawn,interval,respawninterval
+      input_type: number
+      param_field_name: /serversettings/@RespawnInterval
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 10000
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Respawn Interval
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time between each respawn wave
+        Keywords: respawn,interval,respawninterval
+        FieldName: RespawnInterval
+        InputType: number
+        MinValue: '1'
+        MaxValue: '10000'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@RespawnInterval
+        IncludeInCommandLine: false
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: MinRespawnRatio
+      label: Minimum Respawn Ratio
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the minimum proportion of dead/spectating players required for the respawn timer to start
+      keywords: respawn,ratio,minrespawnratio
+      input_type: number
+      param_field_name: /serversettings/@MinRespawnRatio
+      default: '0.2'
+      placeholder: '0.2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Respawn Ratio
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the minimum proportion of dead/spectating players required for the respawn timer to start
+        Keywords: respawn,ratio,minrespawnratio
+        FieldName: MinRespawnRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@MinRespawnRatio
+        IncludeInCommandLine: false
+        DefaultValue: '0.2'
+        Placeholder: '0.2'
+        EnumValues: {}
+    - key: SkillLossPercentageOnDeath
+      label: Skill Loss On Death
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the percentage of a player's skill level that is lost on death
+      keywords: skill,level,loss,death,SkillLossPercentageOnDeath
+      input_type: number
+      param_field_name: /serversettings/@SkillLossPercentageOnDeath
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Skill Loss On Death
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the percentage of a player's skill level that is lost on death
+        Keywords: skill,level,loss,death,SkillLossPercentageOnDeath
+        FieldName: SkillLossPercentageOnDeath
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@SkillLossPercentageOnDeath
+        IncludeInCommandLine: false
+        DefaultValue: '50'
+        Placeholder: '50'
+        Suffix: '%'
+        EnumValues: {}
+    - key: UseRespawnShuttle
+      label: Enable Respawn Shuttle
+      category: Barotrauma
+      subcategory: Gameplay
+      description: >-
+        If enabled, respawning players may spawn in a shuttle away from the main submarine and must dock or otherwise
+        merge with the crew. Otherwise, players are spawned in the submarine on certain job spawnpoints, depending on
+        their job
+      keywords: respawn,shuttle,userespawnshuttle
+      input_type: checkbox
+      param_field_name: /serversettings/@UseRespawnShuttle
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Respawn Shuttle
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, respawning players may spawn in a shuttle away from the main submarine and must dock or otherwise
+          merge with the crew. Otherwise, players are spawned in the submarine on certain job spawnpoints, depending on
+          their job
+        Keywords: respawn,shuttle,userespawnshuttle
+        FieldName: UseRespawnShuttle
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@UseRespawnShuttle
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: MaxTransportTime
+      label: Maximum Respawn Transport Duration
+      category: Barotrauma
+      subcategory: Gameplay
+      description: >-
+        Sets the maximum time the respawn shuttle has to dock to the submarine. If time runs out before the shuttle
+        docks it will automatically return to the first outpost
+      keywords: respawn,transport,time,maxtransporttime
+      input_type: number
+      param_field_name: /serversettings/@MaxTransportTime
+      default: '180'
+      placeholder: '180'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 10000
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Respawn Transport Duration
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the maximum time the respawn shuttle has to dock to the submarine. If time runs out before the shuttle
+          docks it will automatically return to the first outpost
+        Keywords: respawn,transport,time,maxtransporttime
+        FieldName: MaxTransportTime
+        InputType: number
+        MinValue: '1'
+        MaxValue: '10000'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@MaxTransportTime
+        IncludeInCommandLine: false
+        DefaultValue: '180'
+        Placeholder: '180'
+        Suffix: seconds
+        EnumValues: {}
+    - key: LosMode
+      label: Line Of Sight Effect Mode
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the line of sight (LOS) effect mode
+      keywords: los,line,sight,losmode
+      input_type: enum
+      param_field_name: /serversettings/@LosMode
+      default: Transparent
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        None: None
+        Transparent: Transparent (default)
+        Opaque: Opaque
+      raw:
+        DisplayName: Line Of Sight Effect Mode
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the line of sight (LOS) effect mode
+        Keywords: los,line,sight,losmode
+        FieldName: LosMode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@LosMode
+        IncludeInCommandLine: false
+        DefaultValue: Transparent
+        EnumValues:
+          None: None
+          Transparent: Transparent (default)
+          Opaque: Opaque
+    - key: ShowEnemyHealthBars
+      label: Show Enemy Health Bars
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets whether enemies' health status is shown, via health bars above their heads
+      keywords: enemy,health,status,showenemyhealthbars
+      input_type: enum
+      param_field_name: /serversettings/@ShowEnemyHealthBars
+      default: Showall
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Showall: Show all (default)
+        BossHealthBarsOnly: Show only boss health
+        HideAll: Hide all
+      raw:
+        DisplayName: Show Enemy Health Bars
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets whether enemies' health status is shown, via health bars above their heads
+        Keywords: enemy,health,status,showenemyhealthbars
+        FieldName: ShowEnemyHealthBars
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@ShowEnemyHealthBars
+        IncludeInCommandLine: false
+        DefaultValue: Showall
+        EnumValues:
+          Showall: Show all (default)
+          BossHealthBarsOnly: Show only boss health
+          HideAll: Hide all
+    - key: TraitorProbability
+      label: Traitor Probability
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the percentage probability that a traitor will be on board
+      keywords: traitor,probability,TraitorProbability
+      input_type: number
+      param_field_name: /serversettings/@TraitorProbability
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Traitor Probability
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the percentage probability that a traitor will be on board
+        Keywords: traitor,probability,TraitorProbability
+        FieldName: TraitorProbability
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@TraitorProbability
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: '%'
+        EnumValues: {}
+    - key: TraitorDangerLevel
+      label: Traitor Danger Level
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the severity of damage a traitor’s work is likely to cause during a round
+      keywords: traitor,danger,level,TraitorDangerLevel
+      input_type: number
+      param_field_name: /serversettings/@TraitorDangerLevel
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Traitor Danger Level
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the severity of damage a traitor’s work is likely to cause during a round
+        Keywords: traitor,danger,level,TraitorDangerLevel
+        FieldName: TraitorDangerLevel
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@TraitorDangerLevel
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: TraitorsMinPlayerCount
+      label: Traitor Minimum Player Count
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the minimum number of players required for a traitor to be picked
+      keywords: traitor,minimum,player,count,traitorsminplayercount
+      input_type: number
+      param_field_name: /serversettings/@TraitorsMinPlayerCount
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Traitor Minimum Player Count
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the minimum number of players required for a traitor to be picked
+        Keywords: traitor,minimum,player,count,traitorsminplayercount
+        FieldName: TraitorsMinPlayerCount
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@TraitorsMinPlayerCount
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Suffix: players
+        EnumValues: {}
+    - key: MinPercentageOfPlayersForTraitorAccusation
+      label: Traitor Accusation Minimum Player Percentage
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the minimum required percentage of players who must vote in favour to successfully accuse a traitor
+      keywords: traitor,player,percentage,accusation,MinPercentageOfPlayersForTraitorAccusation
+      input_type: number
+      param_field_name: /serversettings/@MinPercentageOfPlayersForTraitorAccusation
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Traitor Accusation Minimum Player Percentage
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the minimum required percentage of players who must vote in favour to successfully accuse a traitor
+        Keywords: traitor,player,percentage,accusation,MinPercentageOfPlayersForTraitorAccusation
+        FieldName: MinPercentageOfPlayersForTraitorAccusation
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@MinPercentageOfPlayersForTraitorAccusation
+        IncludeInCommandLine: false
+        DefaultValue: '50'
+        Placeholder: '50'
+        Suffix: '%'
+        EnumValues: {}
+    - key: MaximumMoneyTransferRequest
+      label: Maximum Money Transfer Request
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets how much money players are allowed to request from the bank. 0 = money requests disabled
+      keywords: maximum,money,transfer,request,bank,maximummoneytransferrequest
+      input_type: number
+      param_field_name: /serversettings/@MaximumMoneyTransferRequest
+      default: '999999'
+      placeholder: '999999'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Money Transfer Request
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how much money players are allowed to request from the bank. 0 = money requests disabled
+        Keywords: maximum,money,transfer,request,bank,maximummoneytransferrequest
+        FieldName: MaximumMoneyTransferRequest
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@MaximumMoneyTransferRequest
+        IncludeInCommandLine: false
+        DefaultValue: '999999'
+        Placeholder: '999999'
+        EnumValues: {}
+    - key: LootedMoneyDestination
+      label: Looted Money Destination
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets where looted money should be sent
+      keywords: loot,money,bank,wallet,destination,lootedmoneydestination
+      input_type: enum
+      param_field_name: /serversettings/@LootedMoneyDestination
+      default: Bank
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Bank: Bank (default)
+        Wallet: Looter's personal wallet
+      raw:
+        DisplayName: Looted Money Destination
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets where looted money should be sent
+        Keywords: loot,money,bank,wallet,destination,lootedmoneydestination
+        FieldName: LootedMoneyDestination
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@LootedMoneyDestination
+        IncludeInCommandLine: false
+        DefaultValue: Bank
+        EnumValues:
+          Bank: Bank (default)
+          Wallet: Looter's personal wallet
+    - key: AllowRagdollButton
+      label: Allow Ragdoll Button
+      category: Barotrauma
+      subcategory: Gameplay
+      description: >-
+        If enabled, players can ragdoll on their own if they hold the button down. Otherwise, players must be stunned
+        (or be dead) to ragdoll
+      keywords: allow,ragdoll,allowragdollbutton
+      input_type: checkbox
+      param_field_name: /serversettings/@AllowRagdollButton
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Ragdoll Button
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, players can ragdoll on their own if they hold the button down. Otherwise, players must be stunned
+          (or be dead) to ragdoll
+        Keywords: allow,ragdoll,allowragdollbutton
+        FieldName: AllowRagdollButton
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowRagdollButton
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: BotCount
+      label: Bot Count
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the number of bots that should be spawned in a round. This is limited by the "Maximum Bot Count"
+      keywords: bot,count,botcount
+      input_type: number
+      param_field_name: /serversettings/@BotCount
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: bots
+      enum_values: {}
+      raw:
+        DisplayName: Bot Count
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of bots that should be spawned in a round. This is limited by the "Maximum Bot Count"
+        Keywords: bot,count,botcount
+        FieldName: BotCount
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@BotCount
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Suffix: bots
+        EnumValues: {}
+    - key: MaxBotCount
+      label: Maximum Bot Count
+      category: Barotrauma
+      subcategory: Gameplay
+      description: Sets the maximum number of allowed bots in a round
+      keywords: maximum,bot,count,maxbotcount
+      input_type: number
+      param_field_name: /serversettings/@MaxBotCount
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 16
+      suffix: bots
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Bot Count
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of allowed bots in a round
+        Keywords: maximum,bot,count,maxbotcount
+        FieldName: MaxBotCount
+        InputType: number
+        MinValue: '0'
+        MaxValue: '16'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@MaxBotCount
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Suffix: bots
+        EnumValues: {}
+    - key: BotSpawnMode
+      label: Bot Spawn Mode
+      category: Barotrauma
+      subcategory: Gameplay
+      description: >-
+        Sets how bots should be spawned. Normal = bots fill the amount of slots set in "Bot Count". Fill = bots skip
+        that value and fully fill empty player slots
+      keywords: bot,spawn,mode,botspawnmode
+      input_type: enum
+      param_field_name: /serversettings/@BotSpawnMode
+      default: Normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Normal: Normal (default)
+        Fill: Fill
+      raw:
+        DisplayName: Bot Spawn Mode
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets how bots should be spawned. Normal = bots fill the amount of slots set in "Bot Count". Fill = bots skip
+          that value and fully fill empty player slots
+        Keywords: bot,spawn,mode,botspawnmode
+        FieldName: BotSpawnMode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@BotSpawnMode
+        IncludeInCommandLine: false
+        DefaultValue: Normal
+        EnumValues:
+          Normal: Normal (default)
+          Fill: Fill
+    - key: DisableBotConversations
+      label: Disable Bot Conversations
+      category: Barotrauma
+      subcategory: Gameplay
+      description: If set, bot conversations will not be allowed
+      keywords: disable,bot,conversations,disablebotconversations
+      input_type: checkbox
+      param_field_name: /serversettings/@DisableBotConversations
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Disable Bot Conversations
+        Category: Barotrauma:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, bot conversations will not be allowed
+        Keywords: disable,bot,conversations,disablebotconversations
+        FieldName: DisableBotConversations
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@DisableBotConversations
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AllowFriendlyFire
+      label: Allow Friendly Fire
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: If enabled, friendly fire between players will be allowed (they can deal damage to each other)
+      keywords: friendly,fire,allowfriendlyfire
+      input_type: checkbox
+      param_field_name: /serversettings/@AllowFriendlyFire
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Friendly Fire
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: If enabled, friendly fire between players will be allowed (they can deal damage to each other)
+        Keywords: friendly,fire,allowfriendlyfire
+        FieldName: AllowFriendlyFire
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowFriendlyFire
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: KillableNPCs
+      label: Enable Killable Outpost NPCs
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: If enabled, outpost NPCs will be able to be killed
+      keywords: kill,npc,killable,killablenpcs
+      input_type: checkbox
+      param_field_name: /serversettings/@KillableNPCs
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Killable Outpost NPCs
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: If enabled, outpost NPCs will be able to be killed
+        Keywords: kill,npc,killable,killablenpcs
+        FieldName: KillableNPCs
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@KillableNPCs
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: DestructibleOutposts
+      label: Enable Destructible Outposts
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: If enabled, outposts will be destructible (able to take damage)
+      keywords: destructible,outposts,damage,destructibleoutposts
+      input_type: checkbox
+      param_field_name: /serversettings/@DestructibleOutposts
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Destructible Outposts
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: If enabled, outposts will be destructible (able to take damage)
+        Keywords: destructible,outposts,damage,destructibleoutposts
+        FieldName: DestructibleOutposts
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@DestructibleOutposts
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: LockAllDefaultWires
+      label: Lock All Default Wires
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: If set, the ability to disconnect or change any default wires in a submarine will be disabled
+      keywords: lock,wires,lockalldefaultwires
+      input_type: checkbox
+      param_field_name: /serversettings/@LockAllDefaultWires
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Lock All Default Wires
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: If set, the ability to disconnect or change any default wires in a submarine will be disabled
+        Keywords: lock,wires,lockalldefaultwires
+        FieldName: LockAllDefaultWires
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@LockAllDefaultWires
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AllowRewiring
+      label: Allow Rewiring
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: If enabled, players can rewire anything except if it has been set otherwise in the submarine
+      keywords: allow,rewiring,allowrewiring
+      input_type: checkbox
+      param_field_name: /serversettings/@AllowRewiring
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Rewiring
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: If enabled, players can rewire anything except if it has been set otherwise in the submarine
+        Keywords: allow,rewiring,allowrewiring
+        FieldName: AllowRewiring
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowRewiring
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AllowLinkingWifiToChat
+      label: Allow WiFi Linking To Chat
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: If enabled, WiFi components on the submarine can be linked to chat
+      keywords: chat,wifi,link,allowlinkingwifitochat
+      input_type: checkbox
+      param_field_name: /serversettings/@AllowLinkingWifiToChat
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow WiFi Linking To Chat
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: If enabled, WiFi components on the submarine can be linked to chat
+        Keywords: chat,wifi,link,allowlinkingwifitochat
+        FieldName: AllowLinkingWifiToChat
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowLinkingWifiToChat
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AllowDisguises
+      label: Allow Disguises
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: >-
+        If enabled, players can disguise themselves by using another player's ID card. Otherwise, players will always
+        have their names above them even when covering their face
+      keywords: allow,disguises,allowdisguises
+      input_type: checkbox
+      param_field_name: /serversettings/@AllowDisguises
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Disguises
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: >-
+          If enabled, players can disguise themselves by using another player's ID card. Otherwise, players will always
+          have their names above them even when covering their face
+        Keywords: allow,disguises,allowdisguises
+        FieldName: AllowDisguises
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowDisguises
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AllowVoteKick
+      label: Allow Vote Kicking
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: If enabled, players can vote to kick others players
+      keywords: vote,voting,kick,allowvotekick
+      input_type: checkbox
+      param_field_name: /serversettings/@AllowVoteKick
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Vote Kicking
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: If enabled, players can vote to kick others players
+        Keywords: vote,voting,kick,allowvotekick
+        FieldName: AllowVoteKick
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AllowVoteKick
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: KickVoteRequiredRatio
+      label: Minimum Ratio For Vote Kicking
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: Sets the minimum proportion of votes required to vote-kick a player (if Vote Kicking is enabled)
+      keywords: kick,vote,voting,ratio,kickvoterequiredratio
+      input_type: number
+      param_field_name: /serversettings/@KickVoteRequiredRatio
+      default: '0.6'
+      placeholder: '0.6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Ratio For Vote Kicking
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: Sets the minimum proportion of votes required to vote-kick a player (if Vote Kicking is enabled)
+        Keywords: kick,vote,voting,ratio,kickvoterequiredratio
+        FieldName: KickVoteRequiredRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@KickVoteRequiredRatio
+        IncludeInCommandLine: false
+        DefaultValue: '0.6'
+        Placeholder: '0.6'
+        EnumValues: {}
+    - key: DisallowKickVoteTime
+      label: Vote Kicking Disabled Period
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: Sets the minimum time period that must pass before a player can be vote-kicked after joining
+      keywords: kick,vote,voting,disallow,DisallowKickVoteTime
+      input_type: number
+      param_field_name: /serversettings/@DisallowKickVoteTime
+      default: '120'
+      placeholder: '120'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Vote Kicking Disabled Period
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: Sets the minimum time period that must pass before a player can be vote-kicked after joining
+        Keywords: kick,vote,voting,disallow,DisallowKickVoteTime
+        FieldName: DisallowKickVoteTime
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@DisallowKickVoteTime
+        IncludeInCommandLine: false
+        DefaultValue: '120'
+        Placeholder: '120'
+        Suffix: seconds
+        EnumValues: {}
+    - key: AutoBanTime
+      label: Vote Kicking Ban Duration
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: Sets the ban duration for players who are vote-kicked
+      keywords: kick,ban,time,period,autobantime
+      input_type: number
+      param_field_name: /serversettings/@AutoBanTime
+      default: '3600'
+      placeholder: '3600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Vote Kicking Ban Duration
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: Sets the ban duration for players who are vote-kicked
+        Keywords: kick,ban,time,period,autobantime
+        FieldName: AutoBanTime
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@AutoBanTime
+        IncludeInCommandLine: false
+        DefaultValue: '3600'
+        Placeholder: '3600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: MaxAutoBanTime
+      label: Maximum Ban Time
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: Sets the maximum ban time that can be set in the lobby host UI
+      keywords: kick,ban,time,period,maximum,maxautobantime
+      input_type: number
+      param_field_name: /serversettings/@MaxAutoBanTime
+      default: '86400'
+      placeholder: '86400'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Ban Time
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: Sets the maximum ban time that can be set in the lobby host UI
+        Keywords: kick,ban,time,period,maximum,maxautobantime
+        FieldName: MaxAutoBanTime
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@MaxAutoBanTime
+        IncludeInCommandLine: false
+        DefaultValue: '86400'
+        Placeholder: '86400'
+        Suffix: seconds
+        EnumValues: {}
+    - key: BanAfterWrongPassword
+      label: Enable Ban After Incorrect Password
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: >-
+        If enabled, players will be auto-banned after exceeding the maximum password retries set under "Maximum Password
+        Retries"
+      keywords: password,ban,retry,banafterwrongpassword
+      input_type: checkbox
+      param_field_name: /serversettings/@BanAfterWrongPassword
+      default: 'True'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Ban After Incorrect Password
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: >-
+          If enabled, players will be auto-banned after exceeding the maximum password retries set under "Maximum
+          Password Retries"
+        Keywords: password,ban,retry,banafterwrongpassword
+        FieldName: BanAfterWrongPassword
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@BanAfterWrongPassword
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: MaxPasswordRetriesBeforeBan
+      label: Maximum Password Retries Before Ban
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: >-
+        Sets the maximum number of failed password attempts before a player is auto-banned. Requires "Enable Failed
+        Password Ban" to be set
+      keywords: password,ban,retry,maxpasswordretriesbeforeban
+      input_type: number
+      param_field_name: /serversettings/@MaxPasswordRetriesBeforeBan
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: retries
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Password Retries Before Ban
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: >-
+          Sets the maximum number of failed password attempts before a player is auto-banned. Requires "Enable Failed
+          Password Ban" to be set
+        Keywords: password,ban,retry,maxpasswordretriesbeforeban
+        FieldName: MaxPasswordRetriesBeforeBan
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@MaxPasswordRetriesBeforeBan
+        IncludeInCommandLine: false
+        DefaultValue: '3'
+        Placeholder: '3'
+        Suffix: retries
+        EnumValues: {}
+    - key: EnableDoSProtection
+      label: Enable DOS Protection
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: If set, the server will automatically kick players who are causing the server to perform poorly
+      keywords: dos,protection,kick,EnableDoSProtection
+      input_type: checkbox
+      param_field_name: /serversettings/@EnableDoSProtection
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable DOS Protection
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: If set, the server will automatically kick players who are causing the server to perform poorly
+        Keywords: dos,protection,kick,EnableDoSProtection
+        FieldName: EnableDoSProtection
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@EnableDoSProtection
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: MaxPacketAmount
+      label: Maximum Packet Amount
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: >-
+        The server will automatically kick players who are sending more than the set amount of network packets per
+        minute. 1200 or less = disabled
+      keywords: maximum,packets,minute,kick,MaxPacketAmount
+      input_type: number
+      param_field_name: /serversettings/@MaxPacketAmount
+      default: '4000'
+      placeholder: '4000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: packets/minute
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Packet Amount
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: >-
+          The server will automatically kick players who are sending more than the set amount of network packets per
+          minute. 1200 or less = disabled
+        Keywords: maximum,packets,minute,kick,MaxPacketAmount
+        FieldName: MaxPacketAmount
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@MaxPacketAmount
+        IncludeInCommandLine: false
+        DefaultValue: '4000'
+        Placeholder: '4000'
+        Suffix: packets/minute
+        EnumValues: {}
+    - key: KarmaEnabled
+      label: Use Karma
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: If set, the [Karma system](https://barotraumagame.com/wiki/Karma) will be enabled
+      keywords: karma,karmaenabled
+      input_type: checkbox
+      param_field_name: /serversettings/@KarmaEnabled
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Use Karma
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: If set, the [Karma system](https://barotraumagame.com/wiki/Karma) will be enabled
+        Keywords: karma,karmaenabled
+        FieldName: KarmaEnabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@KarmaEnabled
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: KarmaPreset
+      label: Karma Preset
+      category: Barotrauma
+      subcategory: Anti-Griefing
+      description: Sets the karma rules preset that should be used. Requires Karma to be enabled
+      keywords: karma,preset,karmapreset
+      input_type: enum
+      param_field_name: /serversettings/@KarmaPreset
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        default: Default
+        strict: Strict
+        custom: Custom
+      raw:
+        DisplayName: Karma Preset
+        Category: Barotrauma:stadia_controller
+        Subcategory: Anti-Griefing:security:3
+        Description: Sets the karma rules preset that should be used. Requires Karma to be enabled
+        Keywords: karma,preset,karmapreset
+        FieldName: KarmaPreset
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /serversettings/@KarmaPreset
+        IncludeInCommandLine: false
+        DefaultValue: default
+        EnumValues:
+          default: Default
+          strict: Strict
+          custom: Custom
+    - key: InstallLuaCsForBarotrauma
+      label: Install LuaCsForBarotrauma
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        If set, the [LuaCsForBarotrauma modification](https://evilfactory.github.io/LuaCsForBarotrauma/) will be
+        installed when the server is updated, providing Lua and C# modding support. Update the server after changing
+        this setting
+      keywords: modding,LuaCsForBarotrauma,lua,csharp
+      input_type: checkbox
+      param_field_name: InstallLuaCsForBarotrauma
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Install LuaCsForBarotrauma
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          If set, the [LuaCsForBarotrauma modification](https://evilfactory.github.io/LuaCsForBarotrauma/) will be
+          installed when the server is updated, providing Lua and C# modding support. Update the server after changing
+          this setting
+        Keywords: modding,LuaCsForBarotrauma,lua,csharp
+        FieldName: InstallLuaCsForBarotrauma
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: InstallLuaCsForBarotrauma
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: serversettings.xml
+      type: xml
+      subsections: []
+      raw:
+        ConfigFile: serversettings.xml
+        AutoMap: true
+        ConfigType: xml
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: autorestart
+    label: Auto Restart
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: name
+    label: Server Name
+    default: AMP Powered Barotrauma Server
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: ServerMessage
+    label: Server Message
+    default: Welcome to Barotrauma!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsPublic
+    label: Make Server Public
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Language
+    label: Server Language
+    default: English
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: LevelDifficulty
+    label: Level Difficulty
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MissionType
+    label: Allowed Mission Types
+    default: All
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SelectedSubmarine
+    label: Selected Submarine
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SubSelectionMode
+    label: Submarine Selection Mode
+    default: Manual
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HiddenSubs
+    label: Hidden Submarines
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SelectedShuttle
+    label: Selected Shuttle
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GameModeIdentifier
+    label: Default Game Mode
+    default: sandbox
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ModeSelectionMode
+    label: Game Mode Selection Method
+    default: Manual
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VoiceChatEnabled
+    label: Enable Voice Chat
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: StartWhenClientsReady
+    label: Start When Players Ready
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: StartWhenClientsReadyRatio
+    label: Minimum Player Ready Ratio
+    default: '0.8'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowSpectating
+    label: Allow Spectating
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: KickAFKTime
+    label: AFK Kick Time
+    default: '600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: KillDisconnectedTime
+    label: Kill Disconnection Time
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RandomizeSeed
+    label: Randomize Seed Between Rounds
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowFileTransfers
+    label: Share Files With Players
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowModDownloads
+    label: Allow Mod Downloads
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VoteTimeout
+    label: Voting Timeout
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowedClientNameChars
+    label: Allowed Client Name Characters
+    default: >-
+      32-33,38-46,48-57,65-90,91-91,93-93,95-122,192-255,384-591,1024-1279,4352-4607,44032-55215,19968-21327,21329-40959,13312-19903,131072-173791,173824-178207,178208-183983,63744-64255,194560-195103
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SaveServerLogs
+    label: Save Server Logs
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LinesPerLogFile
+    label: Log File Length
+    default: '800'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TickRate
+    label: Server Tickrate
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableupnp
+    label: Enable UPnP
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayStyle
+    label: Play Style
+    default: Casual
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowEndVoting
+    label: Allow Round End Vote
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EndVoteRequiredRatio
+    label: Minimum Round End Vote Ratio
+    default: '0.6'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowRespawn
+    label: Allow Respawning
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RespawnInterval
+    label: Respawn Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MinRespawnRatio
+    label: Minimum Respawn Ratio
+    default: '0.2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SkillLossPercentageOnDeath
+    label: Skill Loss On Death
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseRespawnShuttle
+    label: Enable Respawn Shuttle
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxTransportTime
+    label: Maximum Respawn Transport Duration
+    default: '180'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LosMode
+    label: Line Of Sight Effect Mode
+    default: Transparent
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ShowEnemyHealthBars
+    label: Show Enemy Health Bars
+    default: Showall
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TraitorProbability
+    label: Traitor Probability
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TraitorDangerLevel
+    label: Traitor Danger Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TraitorsMinPlayerCount
+    label: Traitor Minimum Player Count
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MinPercentageOfPlayersForTraitorAccusation
+    label: Traitor Accusation Minimum Player Percentage
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaximumMoneyTransferRequest
+    label: Maximum Money Transfer Request
+    default: '999999'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LootedMoneyDestination
+    label: Looted Money Destination
+    default: Bank
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowRagdollButton
+    label: Allow Ragdoll Button
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BotCount
+    label: Bot Count
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxBotCount
+    label: Maximum Bot Count
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BotSpawnMode
+    label: Bot Spawn Mode
+    default: Normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisableBotConversations
+    label: Disable Bot Conversations
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowFriendlyFire
+    label: Allow Friendly Fire
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: KillableNPCs
+    label: Enable Killable Outpost NPCs
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DestructibleOutposts
+    label: Enable Destructible Outposts
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LockAllDefaultWires
+    label: Lock All Default Wires
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowRewiring
+    label: Allow Rewiring
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowLinkingWifiToChat
+    label: Allow WiFi Linking To Chat
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowDisguises
+    label: Allow Disguises
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowVoteKick
+    label: Allow Vote Kicking
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: KickVoteRequiredRatio
+    label: Minimum Ratio For Vote Kicking
+    default: '0.6'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisallowKickVoteTime
+    label: Vote Kicking Disabled Period
+    default: '120'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutoBanTime
+    label: Vote Kicking Ban Duration
+    default: '3600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxAutoBanTime
+    label: Maximum Ban Time
+    default: '86400'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BanAfterWrongPassword
+    label: Enable Ban After Incorrect Password
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: MaxPasswordRetriesBeforeBan
+    label: Maximum Password Retries Before Ban
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: EnableDoSProtection
+    label: Enable DOS Protection
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxPacketAmount
+    label: Maximum Packet Amount
+    default: '4000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: KarmaEnabled
+    label: Use Karma
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: KarmaPreset
+    label: Karma Preset
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InstallLuaCsForBarotrauma
+    label: Install LuaCsForBarotrauma
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '602960'
+  collection_support: true
 backup:
   include:
     - /data

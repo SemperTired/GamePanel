@@ -5,13 +5,20 @@ category: Imported
 summary: Arma Reforger Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1874900'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1874900/ArmaReforgerServer
+  startup: >-
+    1874900/ArmaReforgerServer {PlatformArgs} -gproj "{FullBaseDir}addons/data/ArmaReforger.gproj" -profile
+    "{FullBaseDir}AReforgerMaster" -bepath "{FullBaseDir}battleye" -bindPort {GamePort} -a2sPort {QueryPort} -config
+    "{FullBaseDir}Configs/serverconfig.json" -a2sIpAddress {ApplicationIPBinding} -listScenarios -noThrow
+    {FormattedArgs} {addonsVerify}{addonsRepair}{logStats} {CustomServerArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +26,2425 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 2001
     protocol: udp
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 17777
+    protocol: udp
+    required: true
+  - key: rconport
+    name: RCON Port
+    default: 19999
+    protocol: udp
+    required: true
+config_files:
+  - path: Configs/serverconfig.json
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Arma Reforger
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: bindPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: bindPort
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $GamePort
+      label: Public Port
+      category: Arma Reforger
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: publicPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Public Port
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: publicPort
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $QueryPort
+      label: Query Port
+      category: Arma Reforger
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: a2s.port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Port
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: a2s.port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $RCONPort
+      label: RCON Port
+      category: Arma Reforger
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: rcon.port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Port
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RCONPort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: rcon.port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Server IP Binding
+      category: Arma Reforger
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: bindAddress
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server IP Binding
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: bindAddress
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: RCON IP Binding
+      category: Arma Reforger
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: rcon.address
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON IP Binding
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: rcon.address
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: RCONPermission
+      label: RCON Permission
+      category: Arma Reforger
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: hidden
+      param_field_name: rcon.permission
+      default: admin
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Permission
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: RCONPermission
+        InputType: hidden
+        Hidden: true
+        ParamFieldName: rcon.permission
+        DefaultValue: admin
+        EnumValues: {}
+    - key: name
+      label: Server Name
+      category: Arma Reforger
+      subcategory: Server
+      description: Sets the server name visible in the game browser (up to 100 characters)
+      keywords: server,name
+      input_type: text
+      param_field_name: game.name
+      default: Arma Reforger Server - Powered by AMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server name visible in the game browser (up to 100 characters)
+        Keywords: server,name
+        FieldName: name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: game.name
+        IncludeInCommandLine: false
+        DefaultValue: Arma Reforger Server - Powered by AMP
+        EnumValues: {}
+    - key: scenarioId
+      label: Server Mission/Scenario
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets the server mission/scenario. Official missions/scenarios are included in the dropdown (note that some may
+        only be available with the Experimental server). To use another mission/scenario, select "Custom" and set the
+        Custom Mission/Scenario Name
+      keywords: mission,scenario,scenarioid
+      input_type: enum
+      param_field_name: game.scenarioId
+      default: '{ECC61978EDCC2B5A}Missions/23_Campaign.conf'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{ECC61978EDCC2B5A}Missions/23_Campaign.conf': Conflict - Everon (default)
+        '{90F086877C27B6F6}Missions/99_Tutorial.conf': Training
+        '{59AD59368755F41A}Missions/21_GM_Eden.conf': Game Master - Everon
+        '{2BBBE828037C6F4B}Missions/22_GM_Arland.conf': Game Master - Arland
+        '{F45C6C15D31252E6}Missions/27_GM_Cain.conf': Game Master - Kolguyev
+        '{C700DB41F0C546E1}Missions/23_Campaign_NorthCentral.conf': Conflict - Northern Everon
+        '{28802845ADA64D52}Missions/23_Campaign_SWCoast.conf': Conflict - Southern Everon
+        '{94992A3D7CE4FF8A}Missions/23_Campaign_Western.conf': Conflict - Western Everon
+        '{FDE33AFE2ED7875B}Missions/23_Campaign_Montignac.conf': Conflict - Montignac
+        '{DAA03C6E6099D50F}Missions/24_CombatOps.conf': Combat Ops - Arland
+        '{C41618FD18E9D714}Missions/23_Campaign_Arland.conf': Conflict - Arland
+        '{DFAC5FABD11F2390}Missions/26_CombatOpsEveron.conf': Combat Ops - Everon
+        '{3F2E005F43DBD2F8}Missions/CAH_Briars_Coast.conf': 'Capture & Hold: Briars'
+        '{F1A1BEA67132113E}Missions/CAH_Castle.conf': 'Capture & Hold: Montfort Castle'
+        '{589945FB9FA7B97D}Missions/CAH_Concrete_Plant.conf': 'Capture & Hold: Concrete Plant'
+        '{9405201CBD22A30C}Missions/CAH_Factory.conf': 'Capture & Hold: Almara Factory'
+        '{1CD06B409C6FAE56}Missions/CAH_Forest.conf': 'Capture & Hold: Simon''s Wood'
+        '{7C491B1FCC0FF0E1}Missions/CAH_LeMoule.conf': 'Capture & Hold: Le Moule'
+        '{6EA2E454519E5869}Missions/CAH_Military_Base.conf': 'Capture & Hold: Camp Blake'
+        '{2B4183DF23E88249}Missions/CAH_Morton.conf': 'Capture & Hold: Morton'
+        '{C47A1A6245A13B26}Missions/SP01_ReginaV2.conf': Elimination
+        '{0648CDB32D6B02B3}Missions/SP02_AirSupport.conf': Air Support
+        '{0220741028718E7F}Missions/23_Campaign_HQC_Everon.conf': 'Conflict: HQ Commander - Everon'
+        '{68D1240A11492545}Missions/23_Campaign_HQC_Arland.conf': 'Conflict: HQ Commander - Arland'
+        '{BB5345C22DD2B655}Missions/23_Campaign_HQC_Cain.conf': 'Conflict: HQ Commander - Kolguyev'
+        '{10B8582BAD9F7040}Missions/Scenario01_Intro.conf': 'Operation Omega 01: Over The Hills And Far Away'
+        '{1D76AF6DC4DF0577}Missions/Scenario02_Steal.conf': 'Operation Omega 02: Radio Check'
+        '{D1647575BCEA5A05}Missions/Scenario03_Villa.conf': 'Operation Omega 03: Light In The Dark'
+        '{6D224A109B973DD8}Missions/Scenario04_Sabotage.conf': 'Operation Omega 04: Red Silence'
+        '{FA2AB0181129CB16}Missions/Scenario05_Hill.conf': 'Operation Omega 05: Cliffhanger'
+        '{CB347F2F10065C9C}Missions/CombatOpsCain.conf': Combat Ops - Kolguyev
+        '{{CustomMission}}': '--Custom--'
+      raw:
+        DisplayName: Server Mission/Scenario
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the server mission/scenario. Official missions/scenarios are included in the dropdown (note that some may
+          only be available with the Experimental server). To use another mission/scenario, select "Custom" and set the
+          Custom Mission/Scenario Name
+        Keywords: mission,scenario,scenarioid
+        FieldName: scenarioId
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game.scenarioId
+        IncludeInCommandLine: false
+        DefaultValue: '{ECC61978EDCC2B5A}Missions/23_Campaign.conf'
+        EnumValues:
+          '{ECC61978EDCC2B5A}Missions/23_Campaign.conf': Conflict - Everon (default)
+          '{90F086877C27B6F6}Missions/99_Tutorial.conf': Training
+          '{59AD59368755F41A}Missions/21_GM_Eden.conf': Game Master - Everon
+          '{2BBBE828037C6F4B}Missions/22_GM_Arland.conf': Game Master - Arland
+          '{F45C6C15D31252E6}Missions/27_GM_Cain.conf': Game Master - Kolguyev
+          '{C700DB41F0C546E1}Missions/23_Campaign_NorthCentral.conf': Conflict - Northern Everon
+          '{28802845ADA64D52}Missions/23_Campaign_SWCoast.conf': Conflict - Southern Everon
+          '{94992A3D7CE4FF8A}Missions/23_Campaign_Western.conf': Conflict - Western Everon
+          '{FDE33AFE2ED7875B}Missions/23_Campaign_Montignac.conf': Conflict - Montignac
+          '{DAA03C6E6099D50F}Missions/24_CombatOps.conf': Combat Ops - Arland
+          '{C41618FD18E9D714}Missions/23_Campaign_Arland.conf': Conflict - Arland
+          '{DFAC5FABD11F2390}Missions/26_CombatOpsEveron.conf': Combat Ops - Everon
+          '{3F2E005F43DBD2F8}Missions/CAH_Briars_Coast.conf': 'Capture & Hold: Briars'
+          '{F1A1BEA67132113E}Missions/CAH_Castle.conf': 'Capture & Hold: Montfort Castle'
+          '{589945FB9FA7B97D}Missions/CAH_Concrete_Plant.conf': 'Capture & Hold: Concrete Plant'
+          '{9405201CBD22A30C}Missions/CAH_Factory.conf': 'Capture & Hold: Almara Factory'
+          '{1CD06B409C6FAE56}Missions/CAH_Forest.conf': 'Capture & Hold: Simon''s Wood'
+          '{7C491B1FCC0FF0E1}Missions/CAH_LeMoule.conf': 'Capture & Hold: Le Moule'
+          '{6EA2E454519E5869}Missions/CAH_Military_Base.conf': 'Capture & Hold: Camp Blake'
+          '{2B4183DF23E88249}Missions/CAH_Morton.conf': 'Capture & Hold: Morton'
+          '{C47A1A6245A13B26}Missions/SP01_ReginaV2.conf': Elimination
+          '{0648CDB32D6B02B3}Missions/SP02_AirSupport.conf': Air Support
+          '{0220741028718E7F}Missions/23_Campaign_HQC_Everon.conf': 'Conflict: HQ Commander - Everon'
+          '{68D1240A11492545}Missions/23_Campaign_HQC_Arland.conf': 'Conflict: HQ Commander - Arland'
+          '{BB5345C22DD2B655}Missions/23_Campaign_HQC_Cain.conf': 'Conflict: HQ Commander - Kolguyev'
+          '{10B8582BAD9F7040}Missions/Scenario01_Intro.conf': 'Operation Omega 01: Over The Hills And Far Away'
+          '{1D76AF6DC4DF0577}Missions/Scenario02_Steal.conf': 'Operation Omega 02: Radio Check'
+          '{D1647575BCEA5A05}Missions/Scenario03_Villa.conf': 'Operation Omega 03: Light In The Dark'
+          '{6D224A109B973DD8}Missions/Scenario04_Sabotage.conf': 'Operation Omega 04: Red Silence'
+          '{FA2AB0181129CB16}Missions/Scenario05_Hill.conf': 'Operation Omega 05: Cliffhanger'
+          '{CB347F2F10065C9C}Missions/CombatOpsCain.conf': Combat Ops - Kolguyev
+          '{{CustomMission}}': '--Custom--'
+    - key: CustomMission
+      label: Custom Mission/Scenario Name
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets a custom mission/scenario for the server. "Custom" type must be selected under Server Mission/Scenario and
+        any required mods specified under Load Mods
+      keywords: custom,mission,scenario
+      input_type: text
+      param_field_name: CustomMission
+      default: ''
+      placeholder: '{850C623AD7B97DC7}Missions/DeadEveron.conf'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Mission/Scenario Name
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a custom mission/scenario for the server. "Custom" type must be selected under Server Mission/Scenario
+          and any required mods specified under Load Mods
+        Keywords: custom,mission,scenario
+        FieldName: CustomMission
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomMission
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: '{850C623AD7B97DC7}Missions/DeadEveron.conf'
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Steam Query IP Binding
+      category: Arma Reforger
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: hidden
+      param_field_name: a2s.address
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Steam Query IP Binding
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: hidden
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: a2s.address
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: visible
+      label: Make Server Public
+      category: Arma Reforger
+      subcategory: Server
+      description: If enabled, the server will be visible in the in-game browser
+      keywords: serverlist,public,visible
+      input_type: checkbox
+      param_field_name: game.visible
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Make Server Public
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will be visible in the in-game browser
+        Keywords: serverlist,public,visible
+        FieldName: visible
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: game.visible
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: publicAddress
+      label: Public IP Selection Mode
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+        the IP set under Server Public IP
+      keywords: public,ip,address,publicAddress
+      input_type: enum
+      param_field_name: publicAddress
+      default: '{{$ExternalIP}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{{$ExternalIP}}': Automatic (default)
+        '{{ManualPublicIP}}': Manual
+      raw:
+        DisplayName: Public IP Selection Mode
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+          the IP set under Server Public IP
+        Keywords: public,ip,address,publicAddress
+        FieldName: publicAddress
+        InputType: enum
+        ParamFieldName: publicAddress
+        DefaultValue: '{{$ExternalIP}}'
+        EnumValues:
+          '{{$ExternalIP}}': Automatic (default)
+          '{{ManualPublicIP}}': Manual
+    - key: ManualPublicIP
+      label: Server Public IP
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets the public IP advertised for the server, if "Manual" is selected as the Public IP Selection Mode. Useful if
+        the host network has multiple public IPs, or the server is behind a public proxy
+      keywords: manual,public,ip,publicAddress
+      input_type: text
+      param_field_name: ManualPublicIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Public IP
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public IP advertised for the server, if "Manual" is selected as the Public IP Selection Mode. Useful
+          if the host network has multiple public IPs, or the server is behind a public proxy
+        Keywords: manual,public,ip,publicAddress
+        FieldName: ManualPublicIP
+        InputType: text
+        ParamFieldName: ManualPublicIP
+        DefaultValue: ''
+        EnumValues: {}
+    - key: crossPlatform
+      label: Enable Crossplay
+      category: Arma Reforger
+      subcategory: Server
+      description: If enabled, crossplay between PC, Xbox and PlayStation clients will be possible
+      keywords: crossplay,pc,xbox,playstation,psn,crossplatform
+      input_type: checkbox
+      param_field_name: game.crossPlatform
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Crossplay
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, crossplay between PC, Xbox and PlayStation clients will be possible
+        Keywords: crossplay,pc,xbox,playstation,psn,crossplatform
+        FieldName: crossPlatform
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: game.crossPlatform
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: password
+      label: Server Password
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets the password required to connect to the server. Only use alphanumeric, dash or underscore characters.
+        Default is no password
+      keywords: server,password
+      input_type: password
+      param_field_name: game.password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password required to connect to the server. Only use alphanumeric, dash or underscore characters.
+          Default is no password
+        Keywords: server,password
+        FieldName: password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: game.password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: admins
+      label: Admins
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets a whitelist of IdentityIDs and/or SteamIDs of server admins. Maximum 20 IDs. Listed admins won't need to
+        use the Admin Password, and those listed by IdentityID can use the priority queue to join the server. Format is
+        "ID","ID"
+      keywords: admin,admins,whitelist
+      input_type: text
+      param_field_name: game.admins
+      default: ''
+      placeholder: '"12345678901234567","76543210987654321"'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admins
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a whitelist of IdentityIDs and/or SteamIDs of server admins. Maximum 20 IDs. Listed admins won't need to
+          use the Admin Password, and those listed by IdentityID can use the priority queue to join the server. Format
+          is "ID","ID"
+        Keywords: admin,admins,whitelist
+        FieldName: admins
+        InputType: text
+        ParamFieldName: game.admins
+        DefaultValue: ''
+        Placeholder: '"12345678901234567","76543210987654321"'
+        EnumValues: {}
+    - key: adminPassword
+      label: Admin Password
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets the password required for admin access to the server. Only use alphanumeric, dash or underscore characters.
+        Maximum 32 characters. Default is a strong random password
+      keywords: admin,password,adminpassword,passwordadmin
+      input_type: password
+      param_field_name: game.passwordAdmin
+      default: '{{randomdigits(15)}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password required for admin access to the server. Only use alphanumeric, dash or underscore
+          characters. Maximum 32 characters. Default is a strong random password
+        Keywords: admin,password,adminpassword,passwordadmin
+        FieldName: adminPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: game.passwordAdmin
+        IncludeInCommandLine: false
+        DefaultValue: '{{randomdigits(15)}}'
+        EnumValues: {}
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Arma Reforger
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's BattlEye RCON
+      keywords: rcon,password
+      input_type: hidden
+      param_field_name: rcon.password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's BattlEye RCON
+        Keywords: rcon,password
+        FieldName: $RemoteAdminPassword
+        InputType: hidden
+        ParamFieldName: rcon.password
+        EnumValues: {}
+    - key: maxClients
+      label: Maximum RCON Clients
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets the maximum number of clients that can connect to RCON at the same time. Note that AMP itself takes one
+        slot
+      keywords: rcon,maxClients
+      input_type: number
+      param_field_name: rcon.maxClients
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 16
+      enum_values: {}
+      raw:
+        DisplayName: Maximum RCON Clients
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of clients that can connect to RCON at the same time. Note that AMP itself takes one
+          slot
+        Keywords: rcon,maxClients
+        FieldName: maxClients
+        InputType: number
+        MinValue: '1'
+        MaxValue: '16'
+        IsFlagArgument: false
+        ParamFieldName: rcon.maxClients
+        IncludeInCommandLine: false
+        DefaultValue: '16'
+        Placeholder: '16'
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Server Player Limit
+      category: Arma Reforger
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: players,limit,maximum,playercountlimit,maxplayers
+      input_type: number
+      param_field_name: game.maxPlayers
+      default: '64'
+      placeholder: '64'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 256
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Server Player Limit
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: players,limit,maximum,playercountlimit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '256'
+        IsFlagArgument: false
+        ParamFieldName: game.maxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '64'
+        Placeholder: '64'
+        Suffix: players
+        EnumValues: {}
+    - key: lobbyPlayerSynchronise
+      label: Synchronise Player Count
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        If enabled, the list of players on the server is sent to the GameAPI along with the server's heartbeat, to fix
+        the discrepancy between the real and reported number of players on the server
+      keywords: lobby,player,synchronise,player,number,lobbyplayersynchronise
+      input_type: checkbox
+      param_field_name: operating.lobbyPlayerSynchronise
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Synchronise Player Count
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the list of players on the server is sent to the GameAPI along with the server's heartbeat, to fix
+          the discrepancy between the real and reported number of players on the server
+        Keywords: lobby,player,synchronise,player,number,lobbyplayersynchronise
+        FieldName: lobbyPlayerSynchronise
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: operating.lobbyPlayerSynchronise
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: disableNavmeshStreaming12
+      label: Navmesh Streaming Mode
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets the navmesh streamimg mode. Enabled components will be streamed, disabled components will be loaded into
+        memory (slightly increasing performance, significantly increasing memory use). If "Disable specific components"
+        is selected, specify them under Disabled Navmesh Components
+      keywords: disable,navmesh,streaming,disableNavmeshStreaming
+      input_type: enum
+      param_field_name: operating.disableNavmeshStreaming
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Enable all components
+        '"disableNavmeshStreaming":[ ],': Disable all components
+        '"disableNavmeshStreaming":[ {{DisabledNavmeshComponents}} ],': Disable specific components
+      raw:
+        DisplayName: Navmesh Streaming Mode
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the navmesh streamimg mode. Enabled components will be streamed, disabled components will be loaded into
+          memory (slightly increasing performance, significantly increasing memory use). If "Disable specific
+          components" is selected, specify them under Disabled Navmesh Components
+        Keywords: disable,navmesh,streaming,disableNavmeshStreaming
+        FieldName: disableNavmeshStreaming12
+        InputType: enum
+        ParamFieldName: operating.disableNavmeshStreaming
+        DefaultValue: ''
+        EnumValues:
+          '': Enable all components
+          '"disableNavmeshStreaming":[ ],': Disable all components
+          '"disableNavmeshStreaming":[ {{DisabledNavmeshComponents}} ],': Disable specific components
+    - key: DisabledNavmeshComponents
+      label: Disabled Navmesh Components
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets a list of navmesh components to disable, if "Disable specific components" is selected under Navmesh
+        Streaming Mode. Format is "Component","Component"
+      keywords: disable,navmesh,streaming,components,specific
+      input_type: text
+      param_field_name: DisabledNavmeshComponents
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Disabled Navmesh Components
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a list of navmesh components to disable, if "Disable specific components" is selected under Navmesh
+          Streaming Mode. Format is "Component","Component"
+        Keywords: disable,navmesh,streaming,components,specific
+        FieldName: DisabledNavmeshComponents
+        InputType: text
+        ParamFieldName: DisabledNavmeshComponents
+        DefaultValue: ''
+        EnumValues: {}
+    - key: mods
+      label: Load Mods
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Comma-separated [list of mods](https://reforger.armaplatform.com/workshop) required by clients, which will be
+        downloaded and activated on join. Each mod entry must be in valid JSON format. Name and version are optional.
+        Example: {"modId":"591AF5BDA9F7CE8B","name":"Capture & Hold","version":"1.0.3"}
+      keywords: mods,addons,mod
+      input_type: Textarea
+      param_field_name: game.mods
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Load Mods
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma-separated [list of mods](https://reforger.armaplatform.com/workshop) required by clients, which will be
+          downloaded and activated on join. Each mod entry must be in valid JSON format. Name and version are optional.
+          Example: {"modId":"591AF5BDA9F7CE8B","name":"Capture & Hold","version":"1.0.3"}
+        Keywords: mods,addons,mod
+        FieldName: mods
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: game.mods
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: addonsVerify
+      label: Enable Mod Verification
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        If enabled, the server will verify the integrity of all installed mods. If any corrupted mods are found, the
+        server will shut down and log the corrupted files
+      keywords: addons,mods,verify,verification,addonsVerify
+      input_type: checkbox
+      param_field_name: addonsVerify
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-addonsVerify '
+      raw:
+        DisplayName: Enable Mod Verification
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will verify the integrity of all installed mods. If any corrupted mods are found, the
+          server will shut down and log the corrupted files
+        Keywords: addons,mods,verify,verification,addonsVerify
+        FieldName: addonsVerify
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: addonsVerify
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-addonsVerify '
+    - key: addonsRepair
+      label: Enable Mod Repair
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        If enabled, the server will verify the integrity of all installed mods. If any corrupted mods are found, they
+        will be repaired automatically. If the repair fails, the server will shut down
+      keywords: addons,mods,repair,addonsRepair
+      input_type: checkbox
+      param_field_name: addonsRepair
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-addonsRepair '
+      raw:
+        DisplayName: Enable Mod Repair
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will verify the integrity of all installed mods. If any corrupted mods are found, they
+          will be repaired automatically. If the repair fails, the server will shut down
+        Keywords: addons,mods,repair,addonsRepair
+        FieldName: addonsRepair
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: addonsRepair
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-addonsRepair '
+    - key: playerSaveTime
+      label: Player Save Period
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets the default period for saving players for both Online and Local storage (player save can still be requested
+        on demand)
+      keywords: player,save,time,playersavetime
+      input_type: number
+      param_field_name: operating.playerSaveTime
+      default: '120'
+      placeholder: '120'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Player Save Period
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the default period for saving players for both Online and Local storage (player save can still be
+          requested on demand)
+        Keywords: player,save,time,playersavetime
+        FieldName: playerSaveTime
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: operating.playerSaveTime
+        IncludeInCommandLine: false
+        DefaultValue: '120'
+        Placeholder: '120'
+        Suffix: seconds
+        EnumValues: {}
+    - key: maxFPS
+      label: Server FPS Limit
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets the server FPS. Recommended to be in the range of 60 to 120 so that the server does not use all available
+        resources
+      keywords: fps,limit,maxfps
+      input_type: number
+      param_field_name: maxFPS
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: fps
+      enum_values: {}
+      raw:
+        DisplayName: Server FPS Limit
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the server FPS. Recommended to be in the range of 60 to 120 so that the server does not use all available
+          resources
+        Keywords: fps,limit,maxfps
+        FieldName: maxFPS
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: maxFPS
+        IncludeInCommandLine: true
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: fps
+        EnumValues: {}
+    - key: serverMaxViewDistance
+      label: Maximum View Distance
+      category: Arma Reforger
+      subcategory: Server
+      description: Sets the server's maximum view distance
+      keywords: maximum,view,distance,servermaxviewdistance
+      input_type: number
+      param_field_name: game.gameProperties.serverMaxViewDistance
+      default: '1600'
+      placeholder: '1600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 500
+      max: 10000
+      enum_values: {}
+      raw:
+        DisplayName: Maximum View Distance
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server's maximum view distance
+        Keywords: maximum,view,distance,servermaxviewdistance
+        FieldName: serverMaxViewDistance
+        InputType: number
+        MinValue: '500'
+        MaxValue: '10000'
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.serverMaxViewDistance
+        IncludeInCommandLine: false
+        DefaultValue: '1600'
+        Placeholder: '1600'
+        EnumValues: {}
+    - key: networkViewDistance
+      label: Network View Distance
+      category: Arma Reforger
+      subcategory: Server
+      description: Sets the server's maximum network streaming range of replicated entities
+      keywords: network,stream,view,distance,networkviewdistance
+      input_type: number
+      param_field_name: game.gameProperties.networkViewDistance
+      default: '1500'
+      placeholder: '1500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 500
+      max: 5000
+      enum_values: {}
+      raw:
+        DisplayName: Network View Distance
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server's maximum network streaming range of replicated entities
+        Keywords: network,stream,view,distance,networkviewdistance
+        FieldName: networkViewDistance
+        InputType: number
+        MinValue: '500'
+        MaxValue: '5000'
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.networkViewDistance
+        IncludeInCommandLine: false
+        DefaultValue: '1500'
+        Placeholder: '1500'
+        EnumValues: {}
+    - key: serverMinGrassDistance
+      label: Minimum Grass Distance
+      category: Arma Reforger
+      subcategory: Server
+      description: Sets the server's minimum grass distance. 0 = no distance forced. Otherwise minimum 50, maximum 150
+      keywords: minimum,grass,distance,servermingrassdistance
+      input_type: number
+      param_field_name: game.gameProperties.serverMinGrassDistance
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 150
+      suffix: metres
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Grass Distance
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server's minimum grass distance. 0 = no distance forced. Otherwise minimum 50, maximum 150
+        Keywords: minimum,grass,distance,servermingrassdistance
+        FieldName: serverMinGrassDistance
+        InputType: number
+        MinValue: '0'
+        MaxValue: '150'
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.serverMinGrassDistance
+        IncludeInCommandLine: false
+        DefaultValue: '50'
+        Placeholder: '50'
+        Suffix: metres
+        EnumValues: {}
+    - key: disableThirdPerson
+      label: Disable Third Person
+      category: Arma Reforger
+      subcategory: Server
+      description: If enabled, clients will be forced to use the first-person view
+      keywords: third,person,disablethirdperson
+      input_type: checkbox
+      param_field_name: game.gameProperties.disableThirdPerson
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable Third Person
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, clients will be forced to use the first-person view
+        Keywords: third,person,disablethirdperson
+        FieldName: disableThirdPerson
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.disableThirdPerson
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: fastValidation
+      label: Enable Fast Validation
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        If enabled, matching validation of map entities and components loaded on a client when it joins will be done
+        with minimum information. Always enable for a public server!
+      keywords: validation,checksum,fastvalidation
+      input_type: checkbox
+      param_field_name: game.gameProperties.fastValidation
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Fast Validation
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, matching validation of map entities and components loaded on a client when it joins will be done
+          with minimum information. Always enable for a public server!
+        Keywords: validation,checksum,fastvalidation
+        FieldName: fastValidation
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.fastValidation
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: battlEye
+      label: Enable BattlEye
+      category: Arma Reforger
+      subcategory: Server
+      description: If set, BattlEye anti-cheat will be enabled on the server
+      keywords: battlEye,anti-cheat,anticheat
+      input_type: checkbox
+      param_field_name: game.gameProperties.battlEye
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable BattlEye
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, BattlEye anti-cheat will be enabled on the server
+        Keywords: battlEye,anti-cheat,anticheat
+        FieldName: battlEye
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.battlEye
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: freezeCheck
+      label: Freeze Check Period
+      category: Arma Reforger
+      subcategory: Server
+      description: Sets the time period to forcefully crash on application freeze. 0 = completely disable detection
+      keywords: freeze,check,freezeCheck
+      input_type: number
+      param_field_name: freezeCheck
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 0
+      max: 600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Freeze Check Period
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time period to forcefully crash on application freeze. 0 = completely disable detection
+        Keywords: freeze,check,freezeCheck
+        FieldName: freezeCheck
+        InputType: number
+        MinValue: '0'
+        MaxValue: '600'
+        IsFlagArgument: false
+        ParamFieldName: freezeCheck
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: freezeCheckMode
+      label: Freeze Check Override
+      category: Arma Reforger
+      subcategory: Server
+      description: Overrides the server's behaviour when a freeze is detected
+      keywords: freeze,check,freezeCheckMode
+      input_type: enum
+      param_field_name: freezeCheckMode
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values:
+        '': Do not override (default)
+        crash: Force crash
+        minidump: Generate minidump and keep running (Windows only)
+        kill: Force kill (no data collection)
+      raw:
+        DisplayName: Freeze Check Override
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Overrides the server's behaviour when a freeze is detected
+        Keywords: freeze,check,freezeCheckMode
+        FieldName: freezeCheckMode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: freezeCheckMode
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues:
+          '': Do not override (default)
+          crash: Force crash
+          minidump: Generate minidump and keep running (Windows only)
+          kill: Force kill (no data collection)
+    - key: VONDisableUI
+      label: Disable VON UI
+      category: Arma Reforger
+      subcategory: Server
+      description: If set, clients will be forced to not have the VON (Voice Over Network) UI
+      keywords: disable,von,voice,network,ui,vondisableui
+      input_type: checkbox
+      param_field_name: game.gameProperties.VONDisableUI
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable VON UI
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be forced to not have the VON (Voice Over Network) UI
+        Keywords: disable,von,voice,network,ui,vondisableui
+        FieldName: VONDisableUI
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.VONDisableUI
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: VONDisableDirectSpeechUI
+      label: Disable VON Direct Speech UI
+      category: Arma Reforger
+      subcategory: Server
+      description: If set, clients will be forced to not have the VON (Voice Over Network) Direct Speech UI
+      keywords: disable,von,voice,network,direct,speech,ui,vondisabledirectspeechui
+      input_type: checkbox
+      param_field_name: game.gameProperties.VONDisableDirectSpeechUI
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable VON Direct Speech UI
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be forced to not have the VON (Voice Over Network) Direct Speech UI
+        Keywords: disable,von,voice,network,direct,speech,ui,vondisabledirectspeechui
+        FieldName: VONDisableDirectSpeechUI
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.VONDisableDirectSpeechUI
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: VONCanTransmitCrossFaction
+      label: Enable Cross-Faction VON Transmission
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        If set, players will be allowed to transmit on other factions' radios. Otherwise, players' radios will be
+        listen-only
+      keywords: cross,faction,transmit,von,voice,VONCanTransmitCrossFaction
+      input_type: checkbox
+      param_field_name: game.gameProperties.VONCanTransmitCrossFaction
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Cross-Faction VON Transmission
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, players will be allowed to transmit on other factions' radios. Otherwise, players' radios will be
+          listen-only
+        Keywords: cross,faction,transmit,von,voice,VONCanTransmitCrossFaction
+        FieldName: VONCanTransmitCrossFaction
+        InputType: checkbox
+        ParamFieldName: game.gameProperties.VONCanTransmitCrossFaction
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: missionHeader
+      label: Mission Header
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Comma-separated list of settings that will overwrite a mission/scenario's SCR_MissionHeaderCampaign. Example:
+        "m_iPlayerCount":"64","m_eEditableGameFlags":"6"
+      keywords: mission,header,missionheader
+      input_type: Textarea
+      param_field_name: game.gameProperties.missionHeader
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Mission Header
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma-separated list of settings that will overwrite a mission/scenario's SCR_MissionHeaderCampaign. Example:
+          "m_iPlayerCount":"64","m_eEditableGameFlags":"6"
+        Keywords: mission,header,missionheader
+        FieldName: missionHeader
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.missionHeader
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: autoSaveInterval
+      label: Auto Save Interval
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets the interval at which automatic saves are created, if possible for the current mission. 0 = disable
+        autosave
+      keywords: autosave,interval,save,persistence,autoSaveInterval
+      input_type: number
+      param_field_name: game.gameProperties.persistence.autoSaveInterval
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 60
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Auto Save Interval
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the interval at which automatic saves are created, if possible for the current mission. 0 = disable
+          autosave
+        Keywords: autosave,interval,save,persistence,autoSaveInterval
+        FieldName: autoSaveInterval
+        InputType: number
+        MinValue: '0'
+        MaxValue: '60'
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.persistence.autoSaveInterval
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: minutes
+        EnumValues: {}
+    - key: saveRetention
+      label: Save Retention Number
+      category: Arma Reforger
+      subcategory: Server
+      description: Sets the number of save points to keep for the current mission, if Auto Save Interval is enabled
+      keywords: save,retention,saveRetention,persistence
+      input_type: number
+      param_field_name: game.gameProperties.persistence.saveRetention
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 128
+      suffix: save points
+      enum_values: {}
+      raw:
+        DisplayName: Save Retention Number
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of save points to keep for the current mission, if Auto Save Interval is enabled
+        Keywords: save,retention,saveRetention,persistence
+        FieldName: saveRetention
+        InputType: number
+        MinValue: '1'
+        MaxValue: '128'
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.persistence.saveRetention
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: save points
+        EnumValues: {}
+    - key: loadSessionSave2
+      label: Load Session Save
+      category: Arma Reforger
+      subcategory: Server
+      description: If set, the server will automatically load the latest available save point on start
+      keywords: load,session,save,loadSessionSave,persistence
+      input_type: checkbox
+      param_field_name: game.gameProperties.persistence.loadSessionSave
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Load Session Save
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will automatically load the latest available save point on start
+        Keywords: load,session,save,loadSessionSave,persistence
+        FieldName: loadSessionSave2
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.persistence.loadSessionSave
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: keepSessionSave
+      label: Keep Session Save
+      category: Arma Reforger
+      subcategory: Server
+      description: If set, the server will keep the playthrough save points after the mission is finished
+      keywords: keep,session,save,keepSessionSave,persistence
+      input_type: checkbox
+      param_field_name: game.gameProperties.persistence.keepSessionSave
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Keep Session Save
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will keep the playthrough save points after the mission is finished
+        Keywords: keep,session,save,keepSessionSave,persistence
+        FieldName: keepSessionSave
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.persistence.keepSessionSave
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: hiveId
+      label: Persistence System Hive ID
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets a number to identify each hive (server) when they share the same persistence database. Used for separating
+        UUIDs for save game data
+      keywords: hive,id,persistence,hiveId
+      input_type: number
+      param_field_name: game.gameProperties.persistence.hiveId
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 16383
+      enum_values: {}
+      raw:
+        DisplayName: Persistence System Hive ID
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a number to identify each hive (server) when they share the same persistence database. Used for
+          separating UUIDs for save game data
+        Keywords: hive,id,persistence,hiveId
+        FieldName: hiveId
+        InputType: number
+        MinValue: '0'
+        MaxValue: '16383'
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.persistence.hiveId
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: persistenceDatabases
+      label: Persistence System Databases Overrides
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Comma-separated named objects representing an override of the system configuration-provided databases or the
+        addition of a new one. Valid child properties are 'preset' and 'options' and must be in valid JSON format. [More
+        information](https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#databases). Example: "webapi": {
+        "preset": "{0123456789ABCDEF}Configs/Systems/Persistence/Database/JsonWebApi.conf" }
+      keywords: databases,persistence
+      input_type: Textarea
+      param_field_name: game.gameProperties.persistence.databases
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Persistence System Databases Overrides
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma-separated named objects representing an override of the system configuration-provided databases or the
+          addition of a new one. Valid child properties are 'preset' and 'options' and must be in valid JSON format.
+          [More information](https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#databases). Example:
+          "webapi": { "preset": "{0123456789ABCDEF}Configs/Systems/Persistence/Database/JsonWebApi.conf" }
+        Keywords: databases,persistence
+        FieldName: persistenceDatabases
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.persistence.databases
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: persistenceStorages
+      label: Persistence System Storages Overrides
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Comma-separated named objects representing an override of the system configuration-provided storages. Valid
+        child properties are 'database' and must be in valid JSON format. [More
+        information](https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#storages). Example: "session": {
+        "database": "webapi" }
+      keywords: storage,persistence
+      input_type: Textarea
+      param_field_name: game.gameProperties.persistence.storages
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Persistence System Storages Overrides
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma-separated named objects representing an override of the system configuration-provided storages. Valid
+          child properties are 'database' and must be in valid JSON format. [More
+          information](https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#storages). Example: "session": {
+          "database": "webapi" }
+        Keywords: storage,persistence
+        FieldName: persistenceStorages
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: game.gameProperties.persistence.storages
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: aiLimit
+      label: AI Limit
+      category: Arma Reforger
+      subcategory: Server
+      description: Sets the maximum number of AIs. -1 = no limit
+      keywords: ai,limit,ailimit
+      input_type: number
+      param_field_name: operating.aiLimit
+      default: '-1'
+      placeholder: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      enum_values: {}
+      raw:
+        DisplayName: AI Limit
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of AIs. -1 = no limit
+        Keywords: ai,limit,ailimit
+        FieldName: aiLimit
+        InputType: number
+        MinValue: '-1'
+        IsFlagArgument: false
+        ParamFieldName: operating.aiLimit
+        IncludeInCommandLine: false
+        DefaultValue: '-1'
+        Placeholder: '-1'
+        EnumValues: {}
+    - key: disableAI
+      label: Disable AI
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        If set, the server will prevent initialization and ticking of AIWorld and its components, completely disabling
+        AI functionality
+      keywords: disableAI,server,AI
+      input_type: checkbox
+      param_field_name: operating.disableAI
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable AI
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server will prevent initialization and ticking of AIWorld and its components, completely disabling
+          AI functionality
+        Keywords: disableAI,server,AI
+        FieldName: disableAI
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: operating.disableAI
+        IncludeInCommandLine: false
+        DefaultValue: false
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: slotReservationTimeout
+      label: Slot Reservation Timeout
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        Sets how long the backend and server will reserve a slot for a kicked player. 5 = effectively diabled (given the
+        value is the same as for a normal disconnect)
+      keywords: slot,reservation,timeout,slotreservationtimeout
+      input_type: number
+      param_field_name: operating.slotReservationTimeout
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 5
+      max: 300
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Slot Reservation Timeout
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets how long the backend and server will reserve a slot for a kicked player. 5 = effectively diabled (given
+          the value is the same as for a normal disconnect)
+        Keywords: slot,reservation,timeout,slotreservationtimeout
+        FieldName: slotReservationTimeout
+        InputType: number
+        MinValue: '5'
+        MaxValue: '300'
+        IsFlagArgument: false
+        ParamFieldName: operating.slotReservationTimeout
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: seconds
+        EnumValues: {}
+    - key: disableCrashReporter
+      label: Disable Crash Reporter
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        If set, the automatic server-side [Crash Report](https://community.bistudio.com/wiki/Arma_Reforger:Crash_Report)
+        will be disabled
+      keywords: disable,crash,report,reporter,disableCrashReporter
+      input_type: checkbox
+      param_field_name: operating.disableCrashReporter
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable Crash Reporter
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the automatic server-side [Crash
+          Report](https://community.bistudio.com/wiki/Arma_Reforger:Crash_Report) will be disabled
+        Keywords: disable,crash,report,reporter,disableCrashReporter
+        FieldName: disableCrashReporter
+        InputType: checkbox
+        ParamFieldName: operating.disableCrashReporter
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: modsRequiredByDefault
+      label: Mods Required By Default
+      category: Arma Reforger
+      subcategory: Server
+      description: If set, the default value for 'required' will be overridden for all mods
+      keywords: mods,required,override,requiredByDefault
+      input_type: checkbox
+      param_field_name: game.modsRequiredByDefault
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Mods Required By Default
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the default value for 'required' will be overridden for all mods
+        Keywords: mods,required,override,requiredByDefault
+        FieldName: modsRequiredByDefault
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: game.modsRequiredByDefault
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: disableServerShutdown
+      label: Disable Server Shutdown
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        If set, the server will not automatically shutdown if connection to the backend is lost as a result of room
+        requests errors. Other causes like corrupted configs will still shutdown the server
+      keywords: disableServerShutdown,server,shutdown,backend,errors
+      input_type: checkbox
+      param_field_name: operating.disableServerShutdown
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable Server Shutdown
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server will not automatically shutdown if connection to the backend is lost as a result of room
+          requests errors. Other causes like corrupted configs will still shutdown the server
+        Keywords: disableServerShutdown,server,shutdown,backend,errors
+        FieldName: disableServerShutdown
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: operating.disableServerShutdown
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: maxSize
+      label: Join Queue Limit
+      category: Arma Reforger
+      subcategory: Server
+      description: Sets the limit for how many people can be in the server's join queue at one time. 0 = queue disabled
+      keywords: joinQueue,join,queue,maximum,size,maxSize
+      input_type: number
+      param_field_name: operating.joinQueue.maxSize
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 50
+      enum_values: {}
+      raw:
+        DisplayName: Join Queue Limit
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the limit for how many people can be in the server's join queue at one time. 0 = queue disabled
+        Keywords: joinQueue,join,queue,maximum,size,maxSize
+        FieldName: maxSize
+        InputType: number
+        MinValue: '0'
+        MaxValue: '50'
+        IsFlagArgument: false
+        ParamFieldName: operating.joinQueue.maxSize
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: logStats
+      label: Log Statistics
+      category: Arma Reforger
+      subcategory: Server
+      description: >-
+        If enabled, the server logs performance statistics every second or such other period set under "Statistics
+        Logging Interval"
+      keywords: log,statistics,logstats
+      input_type: checkbox
+      param_field_name: logStats
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-logStats {{logStatsInterval}}'
+      raw:
+        DisplayName: Log Statistics
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server logs performance statistics every second or such other period set under "Statistics
+          Logging Interval"
+        Keywords: log,statistics,logstats
+        FieldName: logStats
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: logStats
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-logStats {{logStatsInterval}}'
+    - key: logStatsInterval
+      label: Statistics Logging Inverval
+      category: Arma Reforger
+      subcategory: Server
+      description: Sets the interval for logging of performance statistics, if "Log Statistics" is enabled
+      keywords: log,statistics,logstats
+      input_type: number
+      param_field_name: logStatsInterval
+      default: '1000'
+      placeholder: '1000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Statistics Logging Inverval
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the interval for logging of performance statistics, if "Log Statistics" is enabled
+        Keywords: log,statistics,logstats
+        FieldName: logStatsInterval
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: logStatsInterval
+        IncludeInCommandLine: false
+        DefaultValue: '1000'
+        Placeholder: '1000'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: CustomServerArgs
+      label: Additional Server Startup Parameters
+      category: Arma Reforger
+      subcategory: Server
+      description: Specifies additional startup parameters that are not otherwise set by AMP. Use with care
+      keywords: custom,server,arguments,parameters
+      input_type: text
+      param_field_name: CustomServerArgs
+      default: ''
+      placeholder: '-debug'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Startup Parameters
+        Category: Arma Reforger:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Specifies additional startup parameters that are not otherwise set by AMP. Use with care
+        Keywords: custom,server,arguments,parameters
+        FieldName: CustomServerArgs
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomServerArgs
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: '-debug'
+        EnumValues: {}
+    - key: ReleaseVersion
+      label: Release Version
+      category: Updates
+      subcategory: Steam Downloads
+      description: >-
+        Sets the release version of the server to install. Update the server after switching versions. The corresponding
+        client version must also be used
+      keywords: server,release,version,main,experimental
+      input_type: enum
+      param_field_name: ReleaseVersion
+      default: '1874880'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1874880': Main (default)
+        '1890860': Experimental
+      raw:
+        DisplayName: Release Version
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: >-
+          Sets the release version of the server to install. Update the server after switching versions. The
+          corresponding client version must also be used
+        Keywords: server,release,version,main,experimental
+        FieldName: ReleaseVersion
+        InputType: enum
+        ParamFieldName: ReleaseVersion
+        DefaultValue: '1874880'
+        EnumValues:
+          '1874880': Main (default)
+          '1890860': Experimental
+  files:
+    - path: Configs/serverconfig.json
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: Configs/serverconfig.json
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: arma-reforger/AMP_serverconfig.json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: name
+    label: Server Name
+    default: Arma Reforger Server - Powered by AMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scenarioId
+    label: Server Mission/Scenario
+    default: '{ECC61978EDCC2B5A}Missions/23_Campaign.conf'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMission
+    label: Custom Mission/Scenario Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: visible
+    label: Make Server Public
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: publicAddress
+    label: Public IP Selection Mode
+    default: '{{$ExternalIP}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualPublicIP
+    label: Server Public IP
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: crossPlatform
+    label: Enable Crossplay
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: admins
+    label: Admins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminPassword
+    label: Admin Password
+    default: '{{randomdigits(15)}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: maxClients
+    label: Maximum RCON Clients
+    default: '16'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lobbyPlayerSynchronise
+    label: Synchronise Player Count
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disableNavmeshStreaming12
+    label: Navmesh Streaming Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisabledNavmeshComponents
+    label: Disabled Navmesh Components
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mods
+    label: Load Mods
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: addonsVerify
+    label: Enable Mod Verification
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: addonsRepair
+    label: Enable Mod Repair
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: playerSaveTime
+    label: Player Save Period
+    default: '120'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: maxFPS
+    label: Server FPS Limit
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverMaxViewDistance
+    label: Maximum View Distance
+    default: '1600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networkViewDistance
+    label: Network View Distance
+    default: '1500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverMinGrassDistance
+    label: Minimum Grass Distance
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disableThirdPerson
+    label: Disable Third Person
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fastValidation
+    label: Enable Fast Validation
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: battlEye
+    label: Enable BattlEye
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: freezeCheck
+    label: Freeze Check Period
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: freezeCheckMode
+    label: Freeze Check Override
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VONDisableUI
+    label: Disable VON UI
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VONDisableDirectSpeechUI
+    label: Disable VON Direct Speech UI
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VONCanTransmitCrossFaction
+    label: Enable Cross-Faction VON Transmission
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: missionHeader
+    label: Mission Header
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autoSaveInterval
+    label: Auto Save Interval
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: saveRetention
+    label: Save Retention Number
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: loadSessionSave2
+    label: Load Session Save
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: keepSessionSave
+    label: Keep Session Save
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hiveId
+    label: Persistence System Hive ID
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: persistenceDatabases
+    label: Persistence System Databases Overrides
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: persistenceStorages
+    label: Persistence System Storages Overrides
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: aiLimit
+    label: AI Limit
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disableAI
+    label: Disable AI
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: slotReservationTimeout
+    label: Slot Reservation Timeout
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disableCrashReporter
+    label: Disable Crash Reporter
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: modsRequiredByDefault
+    label: Mods Required By Default
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disableServerShutdown
+    label: Disable Server Shutdown
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: maxSize
+    label: Join Queue Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logStats
+    label: Log Statistics
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logStatsInterval
+    label: Statistics Logging Inverval
+    default: '1000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerArgs
+    label: Additional Server Startup Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ReleaseVersion
+    label: Release Version
+    default: '1874880'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1874880'
+  collection_support: true
 backup:
   include:
     - /data

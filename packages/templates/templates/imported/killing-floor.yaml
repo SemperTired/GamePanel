@@ -5,13 +5,20 @@ category: Imported
 summary: Killing Floor Dedicated Server
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '215350'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/System/ucc-bin-real
+  startup: >-
+    server/System/ucc-bin-real server
+    {Map}{CustomUrlArgs}?game={Game}?VACSecured={VACSecured}?MaxPlayers={MaxUsers}?multihome={ApplicationIPBinding}?AdminName=admin?AdminPassword={AdminPassword}
+    -Port={GamePort} -QueryPort={QueryPort} -WebAdminPort={WebAdminPort} -nohomedir -log=server.log {FormattedArgs}
+    {CustomSwitches}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +26,771 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 7707
     protocol: udp
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 7708
+    protocol: udp
+    required: true
+  - key: gamespyport
+    name: GameSpy Port
+    default: 7717
+    protocol: udp
+    required: true
+  - key: webadminport
+    name: Web Admin Port
+    default: 8075
+    protocol: tcp
+    required: true
+  - key: steamport
+    name: Steam Port
+    default: 20560
+    protocol: udp
+    required: true
+  - key: masterserverport
+    name: Master Server Browser Port
+    default: 28852
+    protocol: both
+    required: true
+config_files:
+  - path: System/KillingFloor.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Killing Floor
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: URL.Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        ParamFieldName: URL.Port
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $GameSpyPort
+      label: GameSpy Port
+      category: Killing Floor
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: IpDrv.UdpGamespyQuery.OldQueryPortNumber
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GameSpy Port
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GameSpyPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: IpDrv.UdpGamespyQuery.OldQueryPortNumber
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $WebAdminPort
+      label: WebAdmin Port
+      category: Killing Floor
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: UWeb.WebServer.ListenPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: WebAdmin Port
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $WebAdminPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: UWeb.WebServer.ListenPort
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: AdminName
+      label: Admin Name
+      category: Killing Floor
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Engine.GameReplicationInfo.AdminName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Name
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: AdminName
+        InputType: text
+        Hidden: true
+        ParamFieldName: Engine.GameReplicationInfo.AdminName
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Killing Floor
+      subcategory: Server
+      description: Sets the name of the server to be displayed in the server browser
+      keywords: server,name
+      input_type: text
+      param_field_name: Engine.GameReplicationInfo.ServerName
+      default: AMP Powered Killing Floor Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server to be displayed in the server browser
+        Keywords: server,name
+        FieldName: ServerName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: Engine.GameReplicationInfo.ServerName
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Killing Floor Server
+        EnumValues: {}
+    - key: Map
+      label: Starting Map
+      category: Killing Floor
+      subcategory: Server
+      description: Set the server's starting map. If "Custom" is selected, Custom Starting Map Name must also be set
+      keywords: Map
+      input_type: enum
+      param_field_name: Map
+      default: KF-Bedlam.rom
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        KF-AbusementPark.rom: Abusement Park
+        KF-Aperture.rom: Aperture
+        KF-Bedlam.rom: Bedlam (default)
+        KF-Biohazard.rom: Biohazard
+        KF-BioticsLab.rom: Biotics Lab
+        KF-Clandestine.rom: Club Clandestine
+        KF-Crash.rom: Crash
+        KF-Departed.rom: Departed
+        KF-EvilSantasLair.rom: Evil Santa's Lair
+        KF-Farm.rom: Farm
+        KF-FilthsCross.rom: Filth's Cross
+        KF-Forgotten.rom: Forgotten
+        KF-Foundry.rom: Foundry
+        KF-FrightYard.rom: Fright Yard
+        KFO-FrightYard.rom: Fright Yard (Objective)
+        KF-Hell.rom: Hell
+        KF-Hellride.rom: Hellride
+        KF-HillbillyHorror.rom: Hillbilly Horror
+        KF-Hospitalhorrors.rom: Hospital Horrors
+        KF-Icebreaker.rom: Icebreaker
+        KF-IceCave.rom: Ice Cave
+        KF-Manor.rom: Manor
+        KF-MoonBase.rom: Moon Base
+        KF-MountainPass.rom: Mountain Pass
+        KF-Offices.rom: Offices
+        KF-SirensBelch.rom: Siren's Belch
+        KF-Steamland.rom: Steamland
+        KFO-Steamland.rom: Steamland (Objective)
+        KF-Stronghold.rom: Stronghold
+        KF-Suburbia.rom: Suburbia
+        KF-ThrillsChills.rom: Thrills and Chills Amusement Park
+        KF-Transit.rom: Transit
+        KFO-Transit.rom: Transit (Objective)
+        KF-Waterworks.rom: Waterworks
+        KF-WestLondon.rom: West London
+        KF-Wyre.rom: Wyre Forest
+        '{{CustomMap}}': '--Custom--'
+      raw:
+        DisplayName: Starting Map
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set the server's starting map. If "Custom" is selected, Custom Starting Map Name must also be set
+        Keywords: Map
+        FieldName: Map
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: Map
+        IncludeInCommandLine: false
+        DefaultValue: KF-Bedlam.rom
+        EnumValues:
+          KF-AbusementPark.rom: Abusement Park
+          KF-Aperture.rom: Aperture
+          KF-Bedlam.rom: Bedlam (default)
+          KF-Biohazard.rom: Biohazard
+          KF-BioticsLab.rom: Biotics Lab
+          KF-Clandestine.rom: Club Clandestine
+          KF-Crash.rom: Crash
+          KF-Departed.rom: Departed
+          KF-EvilSantasLair.rom: Evil Santa's Lair
+          KF-Farm.rom: Farm
+          KF-FilthsCross.rom: Filth's Cross
+          KF-Forgotten.rom: Forgotten
+          KF-Foundry.rom: Foundry
+          KF-FrightYard.rom: Fright Yard
+          KFO-FrightYard.rom: Fright Yard (Objective)
+          KF-Hell.rom: Hell
+          KF-Hellride.rom: Hellride
+          KF-HillbillyHorror.rom: Hillbilly Horror
+          KF-Hospitalhorrors.rom: Hospital Horrors
+          KF-Icebreaker.rom: Icebreaker
+          KF-IceCave.rom: Ice Cave
+          KF-Manor.rom: Manor
+          KF-MoonBase.rom: Moon Base
+          KF-MountainPass.rom: Mountain Pass
+          KF-Offices.rom: Offices
+          KF-SirensBelch.rom: Siren's Belch
+          KF-Steamland.rom: Steamland
+          KFO-Steamland.rom: Steamland (Objective)
+          KF-Stronghold.rom: Stronghold
+          KF-Suburbia.rom: Suburbia
+          KF-ThrillsChills.rom: Thrills and Chills Amusement Park
+          KF-Transit.rom: Transit
+          KFO-Transit.rom: Transit (Objective)
+          KF-Waterworks.rom: Waterworks
+          KF-WestLondon.rom: West London
+          KF-Wyre.rom: Wyre Forest
+          '{{CustomMap}}': '--Custom--'
+    - key: CustomMap
+      label: Custom Starting Map Name
+      category: Killing Floor
+      subcategory: Server
+      description: Sets a custom starting map for the server. "Custom" type must be selected under Starting Map
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      placeholder: KF-QuarantineBreach.rom
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Starting Map Name
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom starting map for the server. "Custom" type must be selected under Starting Map
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        ParamFieldName: CustomMap
+        DefaultValue: ''
+        Placeholder: KF-QuarantineBreach.rom
+        EnumValues: {}
+    - key: Game
+      label: Starting Game Mode
+      category: Killing Floor
+      subcategory: Server
+      description: >-
+        Set the server's starting game mode. Not all game modes work with all maps. If "Custom" is selected, Custom
+        Starting Game Name must also be set
+      keywords: Game,mode
+      input_type: enum
+      param_field_name: Game
+      default: KFmod.KFGameType
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        KFmod.KFGameType: Killing Floor / Survival (default)
+        KFO.MOD: Objective
+        '{{CustomGame}}': '--Custom--'
+      raw:
+        DisplayName: Starting Game Mode
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Set the server's starting game mode. Not all game modes work with all maps. If "Custom" is selected, Custom
+          Starting Game Name must also be set
+        Keywords: Game,mode
+        FieldName: Game
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: Game
+        IncludeInCommandLine: false
+        DefaultValue: KFmod.KFGameType
+        EnumValues:
+          KFmod.KFGameType: Killing Floor / Survival (default)
+          KFO.MOD: Objective
+          '{{CustomGame}}': '--Custom--'
+    - key: CustomGame
+      label: Custom Starting Game Mode Name
+      category: Killing Floor
+      subcategory: Server
+      description: Sets a custom starting game mode for the server. "Custom" type must be selected under Starting Game Mode
+      keywords: custom,game,mode
+      input_type: text
+      param_field_name: CustomGame
+      default: ''
+      placeholder: KFGunGame.KFGG
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Starting Game Mode Name
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom starting game mode for the server. "Custom" type must be selected under Starting Game Mode
+        Keywords: custom,game,mode
+        FieldName: CustomGame
+        InputType: text
+        ParamFieldName: CustomGame
+        DefaultValue: ''
+        Placeholder: KFGunGame.KFGG
+        EnumValues: {}
+    - key: bEnabled
+      label: Enable Web Admin Interface
+      category: Killing Floor
+      subcategory: Server
+      description: If set, the web admin interface will be enabled, allowing the server to be managed in a browser
+      keywords: web,admin
+      input_type: checkbox
+      param_field_name: UWeb.WebServer.bEnabled
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Enable Web Admin Interface
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the web admin interface will be enabled, allowing the server to be managed in a browser
+        Keywords: web,admin
+        FieldName: bEnabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: UWeb.WebServer.bEnabled
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+    - key: AdminPassword
+      label: Admin Password
+      category: Killing Floor
+      subcategory: Server
+      description: Sets the password to become admin in-game or to use the web admin interface. Username is "admin"
+      keywords: admin,password
+      input_type: password
+      param_field_name: Engine.AccessControl.AdminPassword
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to become admin in-game or to use the web admin interface. Username is "admin"
+        Keywords: admin,password
+        FieldName: AdminPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: Engine.AccessControl.AdminPassword
+        IncludeInCommandLine: false
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: GamePassword
+      label: Server Password
+      category: Killing Floor
+      subcategory: Server
+      description: Sets the password to join the server. Empty = no password
+      keywords: game,password
+      input_type: password
+      param_field_name: Engine.AccessControl.GamePassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server. Empty = no password
+        Keywords: game,password
+        FieldName: GamePassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: Engine.AccessControl.GamePassword
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Killing Floor
+      subcategory: Server
+      description: Set the maximum number of players than can connect to the server at one time
+      keywords: max,maximum,players,player,limit,MaxPlayers
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '6'
+      placeholder: '6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set the maximum number of players than can connect to the server at one time
+        Keywords: max,maximum,players,player,limit,MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: MaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '6'
+        Placeholder: '6'
+        Suffix: players
+        EnumValues: {}
+    - key: MaxSpectators
+      label: Spectator Limit
+      category: Killing Floor
+      subcategory: Server
+      description: Set the maximum number of spectators that can connect to the server at one time
+      keywords: max,maximum,spectators,limit,MaxSpectators
+      input_type: number
+      param_field_name: Engine.GameInfo.MaxSpectators
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Spectator Limit
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set the maximum number of spectators that can connect to the server at one time
+        Keywords: max,maximum,spectators,limit,MaxSpectators
+        FieldName: MaxSpectators
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: Engine.GameInfo.MaxSpectators
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        EnumValues: {}
+    - key: VACSecured
+      label: Enable Valve Anti-cheat
+      category: Killing Floor
+      subcategory: Server
+      description: If set, Valve Anti-cheat (VAC) will be enabled
+      keywords: valve,anti,cheat,vac,VACSecured
+      input_type: checkbox
+      param_field_name: VACSecured
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Valve Anti-cheat
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, Valve Anti-cheat (VAC) will be enabled
+        Keywords: valve,anti,cheat,vac,VACSecured
+        FieldName: VACSecured
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: VACSecured
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bAdminCanPause
+      label: Allow Admins To Pause
+      category: Killing Floor
+      subcategory: Server
+      description: If set, an admin will be able to pause the game
+      keywords: admin,pause
+      input_type: checkbox
+      param_field_name: Engine.GameInfo.bAdminCanPause
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Allow Admins To Pause
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, an admin will be able to pause the game
+        Keywords: admin,pause
+        FieldName: bAdminCanPause
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: Engine.GameInfo.bAdminCanPause
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+    - key: CustomUrlArgs
+      label: Additional Command Line URL Arguments
+      category: Killing Floor
+      subcategory: Server
+      description: >-
+        Sets additional command line URL arguments for the server (those that start with a ? (question mark)). Include
+        the question mark but do not separate with a space. Don't use options already in AMP's settings!
+      keywords: custom,command,line,options,url,arguments
+      input_type: text
+      param_field_name: CustomUrlArgs
+      default: ''
+      placeholder: '?Mutator=MutKFAntiBlocker.MutKFAntiBlocker'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line URL Arguments
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets additional command line URL arguments for the server (those that start with a ? (question mark)). Include
+          the question mark but do not separate with a space. Don't use options already in AMP's settings!
+        Keywords: custom,command,line,options,url,arguments
+        FieldName: CustomUrlArgs
+        InputType: text
+        ParamFieldName: CustomUrlArgs
+        DefaultValue: ''
+        Placeholder: '?Mutator=MutKFAntiBlocker.MutKFAntiBlocker'
+        EnumValues: {}
+    - key: CustomSwitches
+      label: Additional Command Line Switches
+      category: Killing Floor
+      subcategory: Server
+      description: >-
+        Sets additional command line switches for the server (those that start with a - (dash)). Include the dash and
+        separate with a space. Don't use switches already in AMP's settings!
+      keywords: custom,command,line,switches
+      input_type: text
+      param_field_name: CustomSwitches
+      default: ''
+      placeholder: '-NoSteamClient -PreferredProcessor=2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Switches
+        Category: Killing Floor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets additional command line switches for the server (those that start with a - (dash)). Include the dash and
+          separate with a space. Don't use switches already in AMP's settings!
+        Keywords: custom,command,line,switches
+        FieldName: CustomSwitches
+        InputType: text
+        ParamFieldName: CustomSwitches
+        DefaultValue: ''
+        Placeholder: '-NoSteamClient -PreferredProcessor=2'
+        EnumValues: {}
+  files:
+    - path: System/KillingFloor.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: System/KillingFloor.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: AdminName
+    label: Admin Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered Killing Floor Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Map
+    label: Starting Map
+    default: KF-Bedlam.rom
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Starting Map Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Game
+    label: Starting Game Mode
+    default: KFmod.KFGameType
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomGame
+    label: Custom Starting Game Mode Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnabled
+    label: Enable Web Admin Interface
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AdminPassword
+    label: Admin Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: GamePassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: MaxSpectators
+    label: Spectator Limit
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VACSecured
+    label: Enable Valve Anti-cheat
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAdminCanPause
+    label: Allow Admins To Pause
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomUrlArgs
+    label: Additional Command Line URL Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomSwitches
+    label: Additional Command Line Switches
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1250'
+  collection_support: true
 backup:
   include:
     - /data

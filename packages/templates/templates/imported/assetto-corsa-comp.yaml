@@ -5,13 +5,16 @@ category: Imported
 summary: Assetto Corsa Competizione Dedicated Server
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '1430110'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: /usr/bin/wine {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1204 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: udpport
+    name: UDP Port
+    default: 9231
     protocol: udp
     required: true
-config_files: []
+  - key: tcpport
+    name: TCP Port
+    default: 9232
+    protocol: tcp
+    required: true
+config_files:
+  - path: server/cfg/configuration.json
+    type: json
+    editable: true
+  - path: server/cfg/settings.json
+    type: json
+    editable: true
+  - path: server/cfg/event.json
+    type: json
+    editable: true
+  - path: server/cfg/assistRules.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $UDPPort
+      label: UDP Port
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: udpPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: UDP Port
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $UDPPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: udpPort
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $TCPPort
+      label: TCP Port
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: tcpPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: TCP Port
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $TCPPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: tcpPort
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: serverName
+      label: Server Name
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: The name of the server as it appears publicly
+      keywords: name
+      input_type: text
+      param_field_name: serverName
+      default: Assetto Corsa Competizione Server - Powered by AMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The name of the server as it appears publicly
+        Keywords: name
+        FieldName: serverName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: serverName
+        IncludeInCommandLine: false
+        DefaultValue: Assetto Corsa Competizione Server - Powered by AMP
+        EnumValues: {}
+    - key: password
+      label: Server Password
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: Password to connect to the server as a player. Default is no password
+      keywords: password
+      input_type: password
+      param_field_name: password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Password to connect to the server as a player. Default is no password
+        Keywords: password
+        FieldName: password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: spectatorPassword
+      label: Spectator Password
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: >-
+        Password to connect to the server as a spectator. Must be different to server password if both are set. Default
+        is no password
+      keywords: spectator,password
+      input_type: password
+      param_field_name: spectatorPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Spectator Password
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Password to connect to the server as a spectator. Must be different to server password if both are set.
+          Default is no password
+        Keywords: spectator,password
+        FieldName: spectatorPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: spectatorPassword
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: adminPassword
+      label: Admin Password
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: 'In-game "admin" user password. NOTE: Change this after installing the server!'
+      keywords: admin,password
+      input_type: password
+      param_field_name: adminPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'In-game "admin" user password. NOTE: Change this after installing the server!'
+        Keywords: admin,password
+        FieldName: adminPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: adminPassword
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Connection Limit
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: Maximum number of players and spectators that can connect to the server at one time
+      keywords: connection,limit
+      input_type: number
+      param_field_name: maxConnections
+      default: '85'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: connections
+      enum_values: {}
+      raw:
+        DisplayName: Connection Limit
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Maximum number of players and spectators that can connect to the server at one time
+        Keywords: connection,limit
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: maxConnections
+        IncludeInCommandLine: false
+        DefaultValue: '85'
+        Suffix: connections
+        EnumValues: {}
+        MinValue: '1'
+    - key: maxCarSlots
+      label: Player Limit
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: Maximum number of players that may connect to the server at one time
+      keywords: players,limit
+      input_type: number
+      param_field_name: maxCarSlots
+      default: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Maximum number of players that may connect to the server at one time
+        Keywords: players,limit
+        FieldName: maxCarSlots
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: maxCarSlots
+        IncludeInCommandLine: false
+        DefaultValue: '30'
+        Suffix: players
+        EnumValues: {}
+    - key: trackMedalsRequirement
+      label: Track Medals Required
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: Sets the number of track medals that a player must have
+      keywords: track,medal
+      input_type: enum
+      param_field_name: trackMedalsRequirement
+      default: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None
+        '1': One
+        '2': Two
+        '3': Three
+      raw:
+        DisplayName: Track Medals Required
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of track medals that a player must have
+        Keywords: track,medal
+        FieldName: trackMedalsRequirement
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: trackMedalsRequirement
+        IncludeInCommandLine: false
+        DefaultValue: '3'
+        EnumValues:
+          '0': None
+          '1': One
+          '2': Two
+          '3': Three
+    - key: safetyRatingRequirement
+      label: Safety Rating Required
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: Sets the Safety Rating (SA) that a player must have to join the server. -1 = no rating
+      keywords: safety,ratimg
+      input_type: number
+      param_field_name: safetyRatingRequirement
+      default: '49'
+      placeholder: '-1 or 0 - 100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Safety Rating Required
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the Safety Rating (SA) that a player must have to join the server. -1 = no rating
+        Keywords: safety,ratimg
+        FieldName: safetyRatingRequirement
+        InputType: number
+        MinValue: '-1'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: safetyRatingRequirement
+        IncludeInCommandLine: false
+        DefaultValue: '49'
+        Placeholder: '-1 or 0 - 100'
+        EnumValues: {}
+    - key: racecraftRatingRequirement
+      label: Racecraft Rating Required
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: Sets the Racecraft Rating (RC) that a player must have to join the server. -1 = no rating
+      keywords: racecraft,rating
+      input_type: number
+      param_field_name: racecraftRatingRequirement
+      default: '-1'
+      placeholder: '-1 or 0 - 100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Racecraft Rating Required
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the Racecraft Rating (RC) that a player must have to join the server. -1 = no rating
+        Keywords: racecraft,rating
+        FieldName: racecraftRatingRequirement
+        InputType: number
+        MinValue: '-1'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: racecraftRatingRequirement
+        IncludeInCommandLine: false
+        DefaultValue: '-1'
+        Placeholder: '-1 or 0 - 100'
+        EnumValues: {}
+    - key: dumpLeaderboards
+      label: Save Leaderboard
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: If enabled, leaderboards are saved to the "results" folder
+      keywords: leaderboard
+      input_type: checkbox
+      param_field_name: dumpLeaderboards
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Save Leaderboard
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, leaderboards are saved to the "results" folder
+        Keywords: leaderboard
+        FieldName: dumpLeaderboards
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: dumpLeaderboards
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: dumpEntryList
+      label: Save Entry List
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: If enabled, entry lists are saved at the end of any qualifying session
+      keywords: dump,entry,list
+      input_type: checkbox
+      param_field_name: dumpEntryList
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Save Entry List
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, entry lists are saved at the end of any qualifying session
+        Keywords: dump,entry,list
+        FieldName: dumpEntryList
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: dumpEntryList
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: centralEntryListPath
+      label: Central Entry List Path
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: Sets a custom path to a central entry list, for sharing across servers
+      keywords: central,entry,list,path
+      input_type: text
+      param_field_name: centralEntryListPath
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Central Entry List Path
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom path to a central entry list, for sharing across servers
+        Keywords: central,entry,list,path
+        FieldName: centralEntryListPath
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: centralEntryListPath
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ignorePrematureDisconnects
+      label: Ignore Premature Disconnects
+      category: Assetto Corsa Competizione
+      subcategory: Server
+      description: If enabled, less arbitrary connections lost. On Linux hosts, disable this setting
+      keywords: ignore,premature,disconnects
+      input_type: checkbox
+      param_field_name: ignorePrematureDisconnects
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Ignore Premature Disconnects
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, less arbitrary connections lost. On Linux hosts, disable this setting
+        Keywords: ignore,premature,disconnects
+        FieldName: ignorePrematureDisconnects
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: ignorePrematureDisconnects
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: track
+      label: Track Selection
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: Sets the track for the server
+      keywords: track
+      input_type: enum
+      param_field_name: track
+      default: mount_panorama
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        barcelona: Barcelona
+        brands_hatch: Brands Hatch
+        cota: Circuit of the Americas
+        donington: Donington
+        hungaroring: Hungaroring
+        imola: Imola
+        indianapolis: Indianapolis
+        kyalami: Kyalami
+        laguna_seca: Laguna Seca
+        misano: Misano
+        monza: Monza
+        mount_panorama: Mount Panorama
+        nurburgring: Nurburgring
+        nurburgring_24h: Nurburgring 24h
+        oulton_park: Oulton Park
+        paul_ricard: Paul Ricard
+        red_bull_ring: Red Bull Ring
+        silverstone: Silverstone
+        snetterton: Snetterton
+        spa: Spa
+        suzuka: Suzuka
+        valencia: Valencia
+        watkins_glen: Watkins Glen
+        zandvoort: Zandvoort
+        zolder: Zolder
+      raw:
+        DisplayName: Track Selection
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the track for the server
+        Keywords: track
+        FieldName: track
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: track
+        IncludeInCommandLine: false
+        DefaultValue: mount_panorama
+        EnumValues:
+          barcelona: Barcelona
+          brands_hatch: Brands Hatch
+          cota: Circuit of the Americas
+          donington: Donington
+          hungaroring: Hungaroring
+          imola: Imola
+          indianapolis: Indianapolis
+          kyalami: Kyalami
+          laguna_seca: Laguna Seca
+          misano: Misano
+          monza: Monza
+          mount_panorama: Mount Panorama
+          nurburgring: Nurburgring
+          nurburgring_24h: Nurburgring 24h
+          oulton_park: Oulton Park
+          paul_ricard: Paul Ricard
+          red_bull_ring: Red Bull Ring
+          silverstone: Silverstone
+          snetterton: Snetterton
+          spa: Spa
+          suzuka: Suzuka
+          valencia: Valencia
+          watkins_glen: Watkins Glen
+          zandvoort: Zandvoort
+          zolder: Zolder
+    - key: carGroup
+      label: Car Group Selection
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: Sets the car group that is allowed on the server
+      keywords: car,group
+      input_type: enum
+      param_field_name: carGroup
+      default: GT4
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        FreeForAll: Free For All
+        GT3: GT3
+        GT4: GT4
+        GTC: GTC
+        TCX: TCX
+      raw:
+        DisplayName: Car Group Selection
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the car group that is allowed on the server
+        Keywords: car,group
+        FieldName: carGroup
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: carGroup
+        IncludeInCommandLine: false
+        DefaultValue: GT4
+        EnumValues:
+          FreeForAll: Free For All
+          GT3: GT3
+          GT4: GT4
+          GTC: GTC
+          TCX: TCX
+    - key: isRaceLocked
+      label: Lock Race
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: If enabled, the server will not allow players to join during a race session
+      keywords: race,locked
+      input_type: checkbox
+      param_field_name: isRaceLocked
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Lock Race
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the server will not allow players to join during a race session
+        Keywords: race,locked
+        FieldName: isRaceLocked
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: isRaceLocked
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: randomizeTrackWhenEmpty
+      label: Enable Random Track
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: >-
+        If enabled, the server will change to a random track when the last driver leaves. "Track Selection" will only
+        apply for the first session
+      keywords: random,track,empty
+      input_type: checkbox
+      param_field_name: randomizeTrackWhenEmpty
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Random Track
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, the server will change to a random track when the last driver leaves. "Track Selection" will only
+          apply for the first session
+        Keywords: random,track,empty
+        FieldName: randomizeTrackWhenEmpty
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: randomizeTrackWhenEmpty
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: allowAutoDQ
+      label: Enable Auto Disqualification
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: >-
+        If this is disabled, drivers receive 30 second penalties rather than automatic disqualification, allowing time
+        for incident review
+      keywords: auto,dq,disqualification
+      input_type: checkbox
+      param_field_name: allowAutoDQ
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Auto Disqualification
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If this is disabled, drivers receive 30 second penalties rather than automatic disqualification, allowing time
+          for incident review
+        Keywords: auto,dq,disqualification
+        FieldName: allowAutoDQ
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: allowAutoDQ
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: shortFormationLap
+      label: Formation Lap Length
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: Sets the formation lap length. "Long" is only usable on private servers
+      keywords: formation,lap
+      input_type: enum
+      param_field_name: shortFormationLap
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Long
+        '1': Short
+      raw:
+        DisplayName: Formation Lap Length
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the formation lap length. "Long" is only usable on private servers
+        Keywords: formation,lap
+        FieldName: shortFormationLap
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: shortFormationLap
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': Long
+          '1': Short
+    - key: formationLapType
+      label: Formation Lap Type
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: Sets the formation lap type
+      keywords: formation,lap,type
+      input_type: enum
+      param_field_name: formationLapType
+      default: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Old limiter lap
+        '1': Free lap
+        '3': Default formation
+      raw:
+        DisplayName: Formation Lap Type
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the formation lap type
+        Keywords: formation,lap,type
+        FieldName: formationLapType
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: formationLapType
+        IncludeInCommandLine: false
+        DefaultValue: '3'
+        EnumValues:
+          '0': Old limiter lap
+          '1': Free lap
+          '3': Default formation
+    - key: preRaceWaitingTimeSeconds
+      label: Race Wait Time
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: Sets the preparation time before a race (minimum 30s)
+      keywords: race,waiting,time
+      input_type: number
+      param_field_name: preRaceWaitingTimeSeconds
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 30
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Race Wait Time
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the preparation time before a race (minimum 30s)
+        Keywords: race,waiting,time
+        FieldName: preRaceWaitingTimeSeconds
+        InputType: number
+        MinValue: '30'
+        IsFlagArgument: false
+        ParamFieldName: preRaceWaitingTimeSeconds
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        Suffix: seconds
+        Placeholder: '60'
+        EnumValues: {}
+    - key: sessionOverTimeSeconds
+      label: Race Over Time
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: Sets the time to forcibly close a session once the timer reaches 0:00 (recommended 107% of the expected laptime)
+      keywords: race,over,time
+      input_type: number
+      param_field_name: sessionOverTimeSeconds
+      default: '120'
+      placeholder: '120'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Race Over Time
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the time to forcibly close a session once the timer reaches 0:00 (recommended 107% of the expected
+          laptime)
+        Keywords: race,over,time
+        FieldName: sessionOverTimeSeconds
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: sessionOverTimeSeconds
+        IncludeInCommandLine: false
+        DefaultValue: '120'
+        Suffix: seconds
+        Placeholder: '120'
+        EnumValues: {}
+    - key: ambientTemp
+      label: Ambient Temperature
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: Sets the baseline ambient temperature in °C
+      keywords: ambient,temp
+      input_type: number
+      param_field_name: ambientTemp
+      default: '26'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: °C
+      enum_values: {}
+      raw:
+        DisplayName: Ambient Temperature
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the baseline ambient temperature in °C
+        Keywords: ambient,temp
+        FieldName: ambientTemp
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: ambientTemp
+        IncludeInCommandLine: false
+        DefaultValue: '26'
+        Suffix: °C
+        EnumValues: {}
+    - key: cloudLevel
+      label: Cloud Level
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: Sets the baseline cloud level
+      keywords: cloud,level
+      input_type: number
+      param_field_name: cloudLevel
+      default: '0.3'
+      placeholder: 0.0 - 1.0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Cloud Level
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the baseline cloud level
+        Keywords: cloud,level
+        FieldName: cloudLevel
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: cloudLevel
+        IncludeInCommandLine: false
+        DefaultValue: '0.3'
+        Placeholder: 0.0 - 1.0
+        EnumValues: {}
+    - key: rain
+      label: Rain Level
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: Sets the static rain level if weather is static, or the expected rain level if weather is dynamic
+      keywords: rain
+      input_type: number
+      param_field_name: rain
+      default: '0.0'
+      placeholder: 0.0 - 1.0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Rain Level
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the static rain level if weather is static, or the expected rain level if weather is dynamic
+        Keywords: rain
+        FieldName: rain
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: rain
+        IncludeInCommandLine: false
+        DefaultValue: '0.0'
+        Placeholder: 0.0 - 1.0
+        EnumValues: {}
+    - key: weatherRandomness
+      label: Dynamic Weather
+      category: Assetto Corsa Competizione
+      subcategory: Gameplay
+      description: Sets the dynamic weather level. 0 = static, 1-4 = fairly realistic, 5-7 = more sensational
+      keywords: random,weather
+      input_type: number
+      param_field_name: weatherRandomness
+      default: '3'
+      placeholder: 0 - 7
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 7
+      enum_values: {}
+      raw:
+        DisplayName: Dynamic Weather
+        Category: Assetto Corsa Competizione:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the dynamic weather level. 0 = static, 1-4 = fairly realistic, 5-7 = more sensational
+        Keywords: random,weather
+        FieldName: weatherRandomness
+        InputType: number
+        MinValue: '0'
+        MaxValue: '7'
+        IsFlagArgument: false
+        ParamFieldName: weatherRandomness
+        IncludeInCommandLine: false
+        DefaultValue: '3'
+        Placeholder: 0 - 7
+        EnumValues: {}
+  files:
+    - path: server/cfg/configuration.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: server/cfg/configuration.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
+        ConfigEncoding: utf16-le-nobom
+    - path: server/cfg/settings.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: server/cfg/settings.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
+        ConfigEncoding: utf16-le-nobom
+    - path: server/cfg/event.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: server/cfg/event.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
+        ConfigEncoding: utf16-le-nobom
+    - path: server/cfg/assistRules.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: server/cfg/assistRules.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
+        ConfigEncoding: utf16-le-nobom
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: serverName
+    label: Server Name
+    default: Assetto Corsa Competizione Server - Powered by AMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: spectatorPassword
+    label: Spectator Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: adminPassword
+    label: Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: maxCarSlots
+    label: Player Limit
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: trackMedalsRequirement
+    label: Track Medals Required
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: safetyRatingRequirement
+    label: Safety Rating Required
+    default: '49'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: racecraftRatingRequirement
+    label: Racecraft Rating Required
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dumpLeaderboards
+    label: Save Leaderboard
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dumpEntryList
+    label: Save Entry List
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: centralEntryListPath
+    label: Central Entry List Path
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ignorePrematureDisconnects
+    label: Ignore Premature Disconnects
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: track
+    label: Track Selection
+    default: mount_panorama
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: carGroup
+    label: Car Group Selection
+    default: GT4
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: isRaceLocked
+    label: Lock Race
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: randomizeTrackWhenEmpty
+    label: Enable Random Track
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowAutoDQ
+    label: Enable Auto Disqualification
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: shortFormationLap
+    label: Formation Lap Length
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: formationLapType
+    label: Formation Lap Type
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: preRaceWaitingTimeSeconds
+    label: Race Wait Time
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sessionOverTimeSeconds
+    label: Race Over Time
+    default: '120'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ambientTemp
+    label: Ambient Temperature
+    default: '26'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: cloudLevel
+    label: Cloud Level
+    default: '0.3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rain
+    label: Rain Level
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: weatherRandomness
+    label: Dynamic Weather
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '805550'
+  collection_support: true
 backup:
   include:
     - /data

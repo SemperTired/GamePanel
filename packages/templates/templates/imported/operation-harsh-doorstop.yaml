@@ -5,13 +5,20 @@ category: Imported
 summary: 'Operation: Harsh Doorstop Dedicated Server'
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '950900'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 950900/HarshDoorstop/Binaries/Linux/HarshDoorstopServer-Linux-Shipping
+  startup: >-
+    950900/HarshDoorstop/Binaries/Linux/HarshDoorstopServer-Linux-Shipping HarshDoorstop
+    {Map}?{FormattedArgs}{bDisableKitRestrictions}{bBotAutofill}{CustomOptions} -QueryPort={QueryPort}
+    -RCONPort={RCONPort} -EnableRCON -MultiHome={ApplicationIPBinding} -RCONIP={ApplicationIPBinding}
+    -RCONPassword={RemoteAdminPassword} -SteamServerName="{ServerName}" {CustomFlags} -stdout {PlatformArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +26,1127 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: queryport
+    name: Query Port
+    default: 27005
     protocol: udp
     required: true
-config_files: []
+  - key: rconport
+    name: RCON Port
+    default: 7779
+    protocol: tcp
+    required: true
+config_files:
+  - path: HarshDoorstop/Saved/Config/WindowsServer/Game.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: ServerName
+      label: Server Name
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: Sets the name of the server as it appears publicly in the server browser
+      keywords: server,name,servername,steamservername
+      input_type: text
+      param_field_name: ServerName
+      default: 'AMP Powered Operation: Harsh Doorstop Server'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as it appears publicly in the server browser
+        Keywords: server,name,servername,steamservername
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: ServerName
+        DefaultValue: 'AMP Powered Operation: Harsh Doorstop Server'
+        EnumValues: {}
+    - key: Map
+      label: Initial Map
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: Sets the map for the server. If "Custom" is selected, Custom Map Name must also be set
+      keywords: map
+      input_type: enum
+      param_field_name: Map
+      default: AAS-TestMap
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        AAS-TestMap: AAS Test Map (default)
+        Argonne: 'WWI: Argonne'
+        SaintQuentin: 'WWI: Saint Quentin (expansion)'
+        Carentan: 'WWII: Carentan (expansion)'
+        Montecassino: 'WWII: Monte Cassino'
+        OmahaBeach: 'WWII: Omaha Beach (expansion)'
+        LamDong: 'Vietnam: Lam Dong'
+        Tan_Binh: 'Vietnam: Tan Binh (expansion)'
+        Khafji_P: 'Gulf War: Khafji'
+        Risala: 'Modern Era: Risala'
+        '{{CustomMap}}': '--Custom--'
+      raw:
+        DisplayName: Initial Map
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map for the server. If "Custom" is selected, Custom Map Name must also be set
+        Keywords: map
+        FieldName: Map
+        InputType: enum
+        ParamFieldName: Map
+        DefaultValue: AAS-TestMap
+        EnumValues:
+          AAS-TestMap: AAS Test Map (default)
+          Argonne: 'WWI: Argonne'
+          SaintQuentin: 'WWI: Saint Quentin (expansion)'
+          Carentan: 'WWII: Carentan (expansion)'
+          Montecassino: 'WWII: Monte Cassino'
+          OmahaBeach: 'WWII: Omaha Beach (expansion)'
+          LamDong: 'Vietnam: Lam Dong'
+          Tan_Binh: 'Vietnam: Tan Binh (expansion)'
+          Khafji_P: 'Gulf War: Khafji'
+          Risala: 'Modern Era: Risala'
+          '{{CustomMap}}': '--Custom--'
+    - key: CustomMap
+      label: Custom Map Name
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: >-
+        Sets a custom map for the server. "Custom" type must be selected under Map, and the map files included in
+        HarshDoorstop/Mods
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      placeholder: AAS_Trainyard
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Map Name
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a custom map for the server. "Custom" type must be selected under Map, and the map files included in
+          HarshDoorstop/Mods
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        ParamFieldName: CustomMap
+        DefaultValue: ''
+        Placeholder: AAS_Trainyard
+        EnumValues: {}
+    - key: MapCycle
+      label: Map Cycle
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: >-
+        List of [proper
+        names](https://operation-harsh-doorstop.fandom.com/wiki/Server_Install_Instructions#MapCycle.cfg) of maps to run
+        in sequence on the server after the initial map, in the order to be run
+      keywords: map,cycle,list,mapcycle
+      input_type: list
+      param_field_name: MapCycle
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./operation-harsh-doorstop/950900/HarshDoorstop/Saved/Config/WindowsServer/MapCycle.cfg
+      raw:
+        DisplayName: Map Cycle
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          List of [proper
+          names](https://operation-harsh-doorstop.fandom.com/wiki/Server_Install_Instructions#MapCycle.cfg) of maps to
+          run in sequence on the server after the initial map, in the order to be run
+        Keywords: map,cycle,list,mapcycle
+        FieldName: MapCycle
+        InputType: list
+        ParamFieldName: MapCycle
+        DefaultValue: ''
+        Special: listfile:./operation-harsh-doorstop/950900/HarshDoorstop/Saved/Config/WindowsServer/MapCycle.cfg
+        EnumValues: {}
+    - key: game
+      label: Custom Gamemode
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: Sets the path to a modded gamemode for the server to run
+      keywords: game,gamemode
+      input_type: text
+      param_field_name: game
+      default: ''
+      placeholder: /pathToGamemode/GameModeBPname.GameModeBPname_C
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Custom Gamemode
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the path to a modded gamemode for the server to run
+        Keywords: game,gamemode
+        FieldName: game
+        InputType: text
+        ParamFieldName: game
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: /pathToGamemode/GameModeBPname.GameModeBPname_C
+        EnumValues: {}
+    - key: AdminList
+      label: Server Admins
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: List of [Steam64 IDs](https://steamid.io/) for server admins
+      keywords: admins,adminlist
+      input_type: list
+      param_field_name: AdminList
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./operation-harsh-doorstop/950900/HarshDoorstop/Saved/Config/WindowsServer/Admins.cfg
+      raw:
+        DisplayName: Server Admins
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: List of [Steam64 IDs](https://steamid.io/) for server admins
+        Keywords: admins,adminlist
+        FieldName: AdminList
+        InputType: list
+        ParamFieldName: AdminList
+        DefaultValue: ''
+        Special: listfile:./operation-harsh-doorstop/950900/HarshDoorstop/Saved/Config/WindowsServer/Admins.cfg
+        EnumValues: {}
+    - key: Password
+      label: Server Password
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: Sets the password for players to join the server. Don't include a question mark
+      keywords: server,password,serverpassword
+      input_type: password
+      param_field_name: Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for players to join the server. Don't include a question mark
+        Keywords: server,password,serverpassword
+        FieldName: Password
+        InputType: password
+        ParamFieldName: Password
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: RCONPassword
+      label: RCON Password
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's RCON password
+      keywords: rcon,password
+      input_type: hidden
+      param_field_name: RCONPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's RCON password
+        Keywords: rcon,password
+        FieldName: RCONPassword
+        InputType: hidden
+        ParamFieldName: RCONPassword
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: Whitelist
+      label: Whitelisted Players
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: List of [Steam64 IDs](https://steamid.io/) for whitelisted players. Empty = whitelist disabled
+      keywords: player,whitelist
+      input_type: list
+      param_field_name: Whitelist
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./operation-harsh-doorstop/950900/HarshDoorstop/Saved/Config/WindowsServer/Whitelist.cfg
+      raw:
+        DisplayName: Whitelisted Players
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: List of [Steam64 IDs](https://steamid.io/) for whitelisted players. Empty = whitelist disabled
+        Keywords: player,whitelist
+        FieldName: Whitelist
+        InputType: list
+        ParamFieldName: Whitelist
+        DefaultValue: ''
+        Special: listfile:./operation-harsh-doorstop/950900/HarshDoorstop/Saved/Config/WindowsServer/Whitelist.cfg
+        EnumValues: {}
+    - key: BanList
+      label: Banned Players
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: List of [Steam64 IDs](https://steamid.io/) for banned players
+      keywords: player,ban,banlist
+      input_type: list
+      param_field_name: BanList
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./operation-harsh-doorstop/950900/HarshDoorstop/Saved/Config/WindowsServer/Bans.cfg
+      raw:
+        DisplayName: Banned Players
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: List of [Steam64 IDs](https://steamid.io/) for banned players
+        Keywords: player,ban,banlist
+        FieldName: BanList
+        InputType: list
+        ParamFieldName: BanList
+        DefaultValue: ''
+        Special: listfile:./operation-harsh-doorstop/950900/HarshDoorstop/Saved/Config/WindowsServer/Bans.cfg
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: Sets the maximum number of players able to join the server at one time
+      keywords: max,maximum,players,limit,maxplayers
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players able to join the server at one time
+        Keywords: max,maximum,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: MaxPlayers
+        IncludeInCommandLine: true
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: players
+        EnumValues: {}
+    - key: MinPlayers
+      label: Minimum Players To Start
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: Sets the minimum number of players required to start a match
+      keywords: min,minimum,players,minplayers
+      input_type: number
+      param_field_name: MinPlayers
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Players To Start
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum number of players required to start a match
+        Keywords: min,minimum,players,minplayers
+        FieldName: MinPlayers
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: MinPlayers
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: players
+        EnumValues: {}
+    - key: AutoAssignHuman
+      label: Auto Assign Human Team
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: >-
+        Sets the team (if any) that human-controlled players will be forcibly assigned and locked into (cannot switch
+        teams). This is useful for co-op servers
+      keywords: auto,assign,human,player,AutoAssignHuman
+      input_type: enum
+      param_field_name: AutoAssignHuman
+      default: '255'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '0': OpFor
+        '1': BluFor
+        '255': Disabled (default)
+      raw:
+        DisplayName: Auto Assign Human Team
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the team (if any) that human-controlled players will be forcibly assigned and locked into (cannot switch
+          teams). This is useful for co-op servers
+        Keywords: auto,assign,human,player,AutoAssignHuman
+        FieldName: AutoAssignHuman
+        InputType: enum
+        ParamFieldName: AutoAssignHuman
+        IncludeInCommandLine: true
+        DefaultValue: '255'
+        EnumValues:
+          '0': OpFor
+          '1': BluFor
+          '255': Disabled (default)
+    - key: bDisableKitRestrictions
+      label: Disable Kit Restrictions
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: If set, player kit restrictions will be disabled
+      keywords: disable,kit,restrictions,bDisableKitRestrictions
+      input_type: checkbox
+      param_field_name: bDisableKitRestrictions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '?bDisableKitRestrictions'
+      raw:
+        DisplayName: Disable Kit Restrictions
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, player kit restrictions will be disabled
+        Keywords: disable,kit,restrictions,bDisableKitRestrictions
+        FieldName: bDisableKitRestrictions
+        InputType: checkbox
+        ParamFieldName: bDisableKitRestrictions
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '?bDisableKitRestrictions'
+    - key: bBotAutofill
+      label: Autofill Bots
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: >-
+        If enabled, the server will fill empty slots with bots to satisfy the Minimum Players To Start number, and
+        remove them if human players join to take their place
+      keywords: auto,fill,autofill,bots,bBotAutofill
+      input_type: checkbox
+      param_field_name: bBotAutofill
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '?bBotAutofill'
+      raw:
+        DisplayName: Autofill Bots
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will fill empty slots with bots to satisfy the Minimum Players To Start number, and
+          remove them if human players join to take their place
+        Keywords: auto,fill,autofill,bots,bBotAutofill
+        FieldName: bBotAutofill
+        InputType: checkbox
+        ParamFieldName: bBotAutofill
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '?bBotAutofill'
+    - key: BluforFaction
+      label: BluFor Faction
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: >-
+        Sets the BluFor team faction. Select "Map Default" to use the default faction for the loaded map. If "Custom" is
+        selected, Custom BluFor Faction must also be set
+      keywords: blufor,faction,bluforfaction
+      input_type: enum
+      param_field_name: BluforFaction
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values:
+        '': '--Map Default--'
+        BP_OMFactionInfo_UnitedStates: 'WWI: USA'
+        BP_OMFactionInfo_Germany: 'WWI: Germany'
+        BP_OOFactionInfo_USA: 'WWII: US Army'
+        BP_OOFactionInfo_USRangers: 'WWII: US Rangers'
+        BP_OOFactionInfo_Germany: 'WWII: Fallschirmjäger (German Paratroopers)'
+        BP_OOFactionInfo_Wehrmact: 'WWII: Wehrmacht (German Army)'
+        BP_RSFactionInfo_USArmy: 'Vietnam: USA'
+        BP_RSFactionInfo_NVA: 'Vietnam: NVA'
+        BP_HDFactionInfo_UnitedStates: 'Cold War: USA'
+        BP_HDFactionInfo_Russians: 'Cold War: Soviet Union'
+        BP_HDFactionInfo_PMC: 'Modern Era: PMC'
+        BP_HDFactionInfo_Insurgents: 'Modern Era: Insurgents'
+        BP_HDFactionInfo_TG_BluFor: 'Debug: BluFor (All Kits/Eras)'
+        BP_HDFactionInfo_TG_OpFor: 'Debug: OpFor (All Kits/Eras)'
+        '{{CustomBluforFaction}}': '--Custom--'
+      raw:
+        DisplayName: BluFor Faction
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the BluFor team faction. Select "Map Default" to use the default faction for the loaded map. If "Custom"
+          is selected, Custom BluFor Faction must also be set
+        Keywords: blufor,faction,bluforfaction
+        FieldName: BluforFaction
+        InputType: enum
+        ParamFieldName: BluforFaction
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues:
+          '': '--Map Default--'
+          BP_OMFactionInfo_UnitedStates: 'WWI: USA'
+          BP_OMFactionInfo_Germany: 'WWI: Germany'
+          BP_OOFactionInfo_USA: 'WWII: US Army'
+          BP_OOFactionInfo_USRangers: 'WWII: US Rangers'
+          BP_OOFactionInfo_Germany: 'WWII: Fallschirmjäger (German Paratroopers)'
+          BP_OOFactionInfo_Wehrmact: 'WWII: Wehrmacht (German Army)'
+          BP_RSFactionInfo_USArmy: 'Vietnam: USA'
+          BP_RSFactionInfo_NVA: 'Vietnam: NVA'
+          BP_HDFactionInfo_UnitedStates: 'Cold War: USA'
+          BP_HDFactionInfo_Russians: 'Cold War: Soviet Union'
+          BP_HDFactionInfo_PMC: 'Modern Era: PMC'
+          BP_HDFactionInfo_Insurgents: 'Modern Era: Insurgents'
+          BP_HDFactionInfo_TG_BluFor: 'Debug: BluFor (All Kits/Eras)'
+          BP_HDFactionInfo_TG_OpFor: 'Debug: OpFor (All Kits/Eras)'
+          '{{CustomBluforFaction}}': '--Custom--'
+    - key: CustomBluforFaction
+      label: Custom BluFor Faction
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: >-
+        Sets a custom BluFor team faction. "Custom" type must be selected under BluFor Faction, and the faction files
+        included in HarshDoorstop/Mods
+      keywords: custom,blufor,faction,bluforfaction
+      input_type: text
+      param_field_name: CustomBluforFaction
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom BluFor Faction
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a custom BluFor team faction. "Custom" type must be selected under BluFor Faction, and the faction files
+          included in HarshDoorstop/Mods
+        Keywords: custom,blufor,faction,bluforfaction
+        FieldName: CustomBluforFaction
+        InputType: text
+        ParamFieldName: CustomBluforFaction
+        DefaultValue: ''
+        Placeholder: ''
+        EnumValues: {}
+    - key: BluforNumTickets
+      label: BluFor Tickets
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: Sets the starting number of BluFor team tickets
+      keywords: blufor,tickets,BluforNumTickets
+      input_type: number
+      param_field_name: BluforNumTickets
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: tickets
+      enum_values: {}
+      raw:
+        DisplayName: BluFor Tickets
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the starting number of BluFor team tickets
+        Keywords: blufor,tickets,BluforNumTickets
+        FieldName: BluforNumTickets
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: BluforNumTickets
+        IncludeInCommandLine: true
+        DefaultValue: '500'
+        Placeholder: '500'
+        Suffix: tickets
+        EnumValues: {}
+    - key: BluforNumBots
+      label: BluFor Bots
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: Sets the number of BluFor team bots
+      keywords: blufor,bots,BluforNumBots
+      input_type: number
+      param_field_name: BluforNumBots
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: bots
+      enum_values: {}
+      raw:
+        DisplayName: BluFor Bots
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of BluFor team bots
+        Keywords: blufor,bots,BluforNumBots
+        FieldName: BluforNumBots
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: BluforNumBots
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: bots
+        EnumValues: {}
+    - key: OpforFaction
+      label: OpFor Faction
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: >-
+        Sets the OpFor team faction. Select "Map Default" to use the default faction for the loaded map. If "Custom" is
+        selected, Custom OpFor Faction must also be set
+      keywords: opfor,faction
+      input_type: enum
+      param_field_name: OpforFaction
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values:
+        '': '--Map Default--'
+        BP_OMFactionInfo_UnitedStates: 'WWI: USA'
+        BP_OMFactionInfo_Germany: 'WWI: Germany'
+        BP_OOFactionInfo_USA: 'WWII: US Army'
+        BP_OOFactionInfo_USRangers: 'WWII: US Rangers'
+        BP_OOFactionInfo_Germany: 'WWII: Fallschirmjäger (German Paratroopers)'
+        BP_OOFactionInfo_Wehrmact: 'WWII: Wehrmacht (German Army)'
+        BP_RSFactionInfo_USArmy: 'Vietnam: USA'
+        BP_RSFactionInfo_NVA: 'Vietnam: NVA'
+        BP_HDFactionInfo_UnitedStates: 'Cold War: USA'
+        BP_HDFactionInfo_Russians: 'Cold War: Soviet Union'
+        BP_HDFactionInfo_PMC: 'Modern Era: PMC'
+        BP_HDFactionInfo_Insurgents: 'Modern Era: Insurgents'
+        BP_HDFactionInfo_TG_OpFor: 'Debug: OpFor (All Kits/Eras)'
+        BP_HDFactionInfo_TG_BluFor: 'Debug: BluFor (All Kits/Eras)'
+        '{{CustomBluforFaction}}': '--Custom--'
+      raw:
+        DisplayName: OpFor Faction
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the OpFor team faction. Select "Map Default" to use the default faction for the loaded map. If "Custom"
+          is selected, Custom OpFor Faction must also be set
+        Keywords: opfor,faction
+        FieldName: OpforFaction
+        InputType: enum
+        ParamFieldName: OpforFaction
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues:
+          '': '--Map Default--'
+          BP_OMFactionInfo_UnitedStates: 'WWI: USA'
+          BP_OMFactionInfo_Germany: 'WWI: Germany'
+          BP_OOFactionInfo_USA: 'WWII: US Army'
+          BP_OOFactionInfo_USRangers: 'WWII: US Rangers'
+          BP_OOFactionInfo_Germany: 'WWII: Fallschirmjäger (German Paratroopers)'
+          BP_OOFactionInfo_Wehrmact: 'WWII: Wehrmacht (German Army)'
+          BP_RSFactionInfo_USArmy: 'Vietnam: USA'
+          BP_RSFactionInfo_NVA: 'Vietnam: NVA'
+          BP_HDFactionInfo_UnitedStates: 'Cold War: USA'
+          BP_HDFactionInfo_Russians: 'Cold War: Soviet Union'
+          BP_HDFactionInfo_PMC: 'Modern Era: PMC'
+          BP_HDFactionInfo_Insurgents: 'Modern Era: Insurgents'
+          BP_HDFactionInfo_TG_OpFor: 'Debug: OpFor (All Kits/Eras)'
+          BP_HDFactionInfo_TG_BluFor: 'Debug: BluFor (All Kits/Eras)'
+          '{{CustomBluforFaction}}': '--Custom--'
+    - key: CustomOpforFaction
+      label: Custom OpFor Faction
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: >-
+        Sets a custom OpFor team faction. "Custom" type must be selected under OpFor Faction, and the faction files
+        included in HarshDoorstop/Mods
+      keywords: custom,opfor,faction,opforfaction
+      input_type: text
+      param_field_name: CustomOpforFaction
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom OpFor Faction
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a custom OpFor team faction. "Custom" type must be selected under OpFor Faction, and the faction files
+          included in HarshDoorstop/Mods
+        Keywords: custom,opfor,faction,opforfaction
+        FieldName: CustomOpforFaction
+        InputType: text
+        ParamFieldName: CustomOpforFaction
+        DefaultValue: ''
+        Placeholder: ''
+        EnumValues: {}
+    - key: OpforNumTickets
+      label: OpFor Tickets
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: Sets the starting number of OpFor team tickets
+      keywords: opfor,tickets,OpforNumTickets
+      input_type: number
+      param_field_name: OpforNumTickets
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: tickets
+      enum_values: {}
+      raw:
+        DisplayName: OpFor Tickets
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the starting number of OpFor team tickets
+        Keywords: opfor,tickets,OpforNumTickets
+        FieldName: OpforNumTickets
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: OpforNumTickets
+        IncludeInCommandLine: true
+        DefaultValue: '500'
+        Placeholder: '500'
+        Suffix: tickets
+        EnumValues: {}
+    - key: OpforNumBots
+      label: OpFor Bots
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: Sets the number of OpFor team bots
+      keywords: opfor,bots,OpforNumBots
+      input_type: number
+      param_field_name: OpforNumBots
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: bots
+      enum_values: {}
+      raw:
+        DisplayName: OpFor Bots
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of OpFor team bots
+        Keywords: opfor,bots,OpforNumBots
+        FieldName: OpforNumBots
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: OpforNumBots
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: bots
+        EnumValues: {}
+    - key: MultiHome
+      label: MultiHome IP Binding
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: >-
+        If required, you can change the binding of the server and Source RCON by changing the Application IP Binding for
+        this instance. Ensure AMP itself can reach that IP or the console will not work
+      keywords: ip,binding,address,multihome
+      input_type: hidden
+      param_field_name: MultiHome
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: MultiHome IP Binding
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If required, you can change the binding of the server and Source RCON by changing the Application IP Binding
+          for this instance. Ensure AMP itself can reach that IP or the console will not work
+        Keywords: ip,binding,address,multihome
+        FieldName: MultiHome
+        InputType: hidden
+        ParamFieldName: MultiHome
+        EnumValues: {}
+    - key: CustomFlags
+      label: Custom Command Line Flags
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: >-
+        Sets custom command line flags for the server (those that start with a - (dash)). Include the dash and separate
+        with a space. Don't use flags already in AMP's settings!
+      keywords: custom,command,line,flags
+      input_type: text
+      param_field_name: CustomFlags
+      default: ''
+      placeholder: '-RCONMaxActiveConnections=5 -SupportersOnly'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Command Line Flags
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets custom command line flags for the server (those that start with a - (dash)). Include the dash and
+          separate with a space. Don't use flags already in AMP's settings!
+        Keywords: custom,command,line,flags
+        FieldName: CustomFlags
+        InputType: text
+        ParamFieldName: CustomFlags
+        DefaultValue: ''
+        Placeholder: '-RCONMaxActiveConnections=5 -SupportersOnly'
+        EnumValues: {}
+    - key: CustomOptions
+      label: Custom Command Line Options
+      category: Operation Harsh Doorstop
+      subcategory: Server
+      description: >-
+        Sets custom command line options for the server (those that start with a ? (question mark)). Include the
+        question mark but do not separate with a space. Don't use options already in AMP's settings!
+      keywords: custom,command,line,options
+      input_type: text
+      param_field_name: CustomOptions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Command Line Options
+        Category: Operation Harsh Doorstop:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets custom command line options for the server (those that start with a ? (question mark)). Include the
+          question mark but do not separate with a space. Don't use options already in AMP's settings!
+        Keywords: custom,command,line,options
+        FieldName: CustomOptions
+        InputType: text
+        ParamFieldName: CustomOptions
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerBuild
+      label: Server Build
+      category: Updates
+      subcategory: Steam Downloads
+      description: Sets the server build to install. The client build must match. Update the server after changing this setting
+      keywords: server,build,developer,release
+      input_type: enum
+      param_field_name: ServerBuild
+      default: '736590'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '736590': Release build (default)
+        '1307180': Development build
+      raw:
+        DisplayName: Server Build
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: Sets the server build to install. The client build must match. Update the server after changing this setting
+        Keywords: server,build,developer,release
+        FieldName: ServerBuild
+        InputType: enum
+        ParamFieldName: ServerBuild
+        DefaultValue: '736590'
+        EnumValues:
+          '736590': Release build (default)
+          '1307180': Development build
+  files:
+    - path: HarshDoorstop/Saved/Config/WindowsServer/Game.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: HarshDoorstop/Saved/Config/WindowsServer/Game.ini
+        AutoMap: true
+        ConfigType: ini
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: 'AMP Powered Operation: Harsh Doorstop Server'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Map
+    label: Initial Map
+    default: AAS-TestMap
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Map Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MapCycle
+    label: Map Cycle
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: game
+    label: Custom Gamemode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AdminList
+    label: Server Admins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Whitelist
+    label: Whitelisted Players
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BanList
+    label: Banned Players
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MinPlayers
+    label: Minimum Players To Start
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutoAssignHuman
+    label: Auto Assign Human Team
+    default: '255'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bDisableKitRestrictions
+    label: Disable Kit Restrictions
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bBotAutofill
+    label: Autofill Bots
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BluforFaction
+    label: BluFor Faction
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomBluforFaction
+    label: Custom BluFor Faction
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BluforNumTickets
+    label: BluFor Tickets
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BluforNumBots
+    label: BluFor Bots
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OpforFaction
+    label: OpFor Faction
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomOpforFaction
+    label: Custom OpFor Faction
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OpforNumTickets
+    label: OpFor Tickets
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OpforNumBots
+    label: OpFor Bots
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomFlags
+    label: Custom Command Line Flags
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomOptions
+    label: Custom Command Line Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBuild
+    label: Server Build
+    default: '736590'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '736590'
+  collection_support: true
 backup:
   include:
     - /data

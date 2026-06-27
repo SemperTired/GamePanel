@@ -5,13 +5,16 @@ category: Imported
 summary: Eco Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '739590'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 739590/EcoServer
+  startup: 739590/EcoServer {PlatformArgs} {AuthMode}{FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,875 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: applicationport1
+    name: Server Port
+    default: 3000
     protocol: udp
     required: true
-config_files: []
+  - key: applicationport2
+    name: Web Port
+    default: 3001
+    protocol: tcp
+    required: true
+  - key: remoteadminport
+    name: RCON Port
+    default: 3002
+    protocol: tcp
+    required: true
+config_files:
+  - path: Configs/Network.eco
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $ApplicationPort1
+      label: Game Server Port
+      category: Eco
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: GameServerPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Server Port
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationPort1
+        InputType: number
+        Hidden: true
+        ParamFieldName: GameServerPort
+        EnumValues: {}
+    - key: $ApplicationPort2
+      label: Web Server Port
+      category: Eco
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: WebServerPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Web Server Port
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationPort2
+        InputType: number
+        Hidden: true
+        ParamFieldName: WebServerPort
+        EnumValues: {}
+    - key: $RemoteAdminPort
+      label: RCON Server Port
+      category: Eco
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: RconServerPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Server Port
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RemoteAdminPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: RconServerPort
+        EnumValues: {}
+    - key: Description
+      label: Server Name
+      category: Eco
+      subcategory: Server
+      description: Name of the server as it appears in the client server browser
+      keywords: name
+      input_type: text
+      param_field_name: Name
+      default: Eco Server - Powered by AMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Name of the server as it appears in the client server browser
+        Keywords: name
+        FieldName: Description
+        InputType: text
+        ParamFieldName: Name
+        DefaultValue: Eco Server - Powered by AMP
+        EnumValues: {}
+    - key: Description
+      label: Server Name
+      category: Eco
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Description
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: Description
+        InputType: text
+        Hidden: true
+        ParamFieldName: Description
+        EnumValues: {}
+    - key: DetailedDescription
+      label: Server Description
+      category: Eco
+      subcategory: Server
+      description: Long form description of the server when clicked on in the client server browser
+      keywords: description
+      input_type: Textarea
+      param_field_name: DetailedDescription
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Description
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Long form description of the server when clicked on in the client server browser
+        Keywords: description
+        FieldName: DetailedDescription
+        InputType: Textarea
+        ParamFieldName: DetailedDescription
+        DefaultValue: ''
+        EnumValues: {}
+    - key: AuthMode
+      label: Strange Cloud Authentication Mode
+      category: Eco
+      subcategory: Server
+      description: >-
+        Sets the Strange Cloud authentication mode for the server. Configure the relevant authentication settings
+        accordingly
+      keywords: strange,cloud,auth,authentication,mode
+      input_type: enum
+      param_field_name: AuthMode
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': None
+        '-offline ': Offline mode
+        '-username="{{AuthUsername}}" -password="{{AuthPassword}}" ': Username and password
+        '-userToken="{{AuthUserToken}}" ': User token
+        '-steamTicket="{{AuthSteamTicket}}" ': Steam ticket
+      raw:
+        DisplayName: Strange Cloud Authentication Mode
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the Strange Cloud authentication mode for the server. Configure the relevant authentication settings
+          accordingly
+        Keywords: strange,cloud,auth,authentication,mode
+        FieldName: AuthMode
+        InputType: enum
+        ParamFieldName: AuthMode
+        DefaultValue: ''
+        EnumValues:
+          '': None
+          '-offline ': Offline mode
+          '-username="{{AuthUsername}}" -password="{{AuthPassword}}" ': Username and password
+          '-userToken="{{AuthUserToken}}" ': User token
+          '-steamTicket="{{AuthSteamTicket}}" ': Steam ticket
+    - key: AuthUsername
+      label: Strange Cloud Auth Username
+      category: Eco
+      subcategory: Server
+      description: Sets the authentication username if 'Username and password' is selected under Strange Cloud Authentication Mode
+      keywords: strange,cloud,auth,authentication,username
+      input_type: text
+      param_field_name: AuthUsername
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Strange Cloud Auth Username
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the authentication username if 'Username and password' is selected under Strange Cloud Authentication
+          Mode
+        Keywords: strange,cloud,auth,authentication,username
+        FieldName: AuthUsername
+        InputType: text
+        ParamFieldName: AuthUsername
+        DefaultValue: ''
+        EnumValues: {}
+    - key: AuthPassword
+      label: Strange Cloud Auth Password
+      category: Eco
+      subcategory: Server
+      description: Sets the authentication password if 'Username and password' is selected under Strange Cloud Authentication Mode
+      keywords: strange,cloud,auth,authentication,password
+      input_type: password
+      param_field_name: AuthPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Strange Cloud Auth Password
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the authentication password if 'Username and password' is selected under Strange Cloud Authentication
+          Mode
+        Keywords: strange,cloud,auth,authentication,password
+        FieldName: AuthPassword
+        InputType: password
+        ParamFieldName: AuthPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: AuthUserToken
+      label: Strange Cloud Auth User Token
+      category: Eco
+      subcategory: Server
+      description: Sets the authentication user token if 'User token' is selected under Strange Cloud Authentication Mode
+      keywords: strange,cloud,auth,authentication,user,token,usertoken
+      input_type: text
+      param_field_name: AuthUserToken
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Strange Cloud Auth User Token
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the authentication user token if 'User token' is selected under Strange Cloud Authentication Mode
+        Keywords: strange,cloud,auth,authentication,user,token,usertoken
+        FieldName: AuthUserToken
+        InputType: text
+        ParamFieldName: AuthUserToken
+        DefaultValue: ''
+        EnumValues: {}
+    - key: AuthSteamTicket
+      label: Strange Cloud Auth Steam Ticket
+      category: Eco
+      subcategory: Server
+      description: Sets the authentication Steam ticket if 'Steam ticket' is selected under Strange Cloud Authentication Mode
+      keywords: strange,cloud,auth,authentication,steam,ticket,steamticket
+      input_type: text
+      param_field_name: AuthSteamTicket
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Strange Cloud Auth Steam Ticket
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the authentication Steam ticket if 'Steam ticket' is selected under Strange Cloud Authentication Mode
+        Keywords: strange,cloud,auth,authentication,steam,ticket,steamticket
+        FieldName: AuthSteamTicket
+        InputType: text
+        ParamFieldName: AuthSteamTicket
+        DefaultValue: ''
+        EnumValues: {}
+    - key: PublicServer
+      label: Make Server Public
+      category: Eco
+      subcategory: Server
+      description: If enabled, server will appear in the client server browser
+      keywords: public
+      input_type: checkbox
+      param_field_name: PublicServer
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Make Server Public
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, server will appear in the client server browser
+        Keywords: public
+        FieldName: PublicServer
+        InputType: checkbox
+        ParamFieldName: PublicServer
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: Password
+      label: Server Password
+      category: Eco
+      subcategory: Server
+      description: Password required to connect to the server (except for whitelisted players). Default is no password
+      keywords: password
+      input_type: password
+      param_field_name: Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Password required to connect to the server (except for whitelisted players). Default is no password
+        Keywords: password
+        FieldName: Password
+        InputType: password
+        ParamFieldName: Password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Eco
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's RCON
+      keywords: rcon,password
+      input_type: hidden
+      param_field_name: RconPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's RCON
+        Keywords: rcon,password
+        FieldName: $RemoteAdminPassword
+        InputType: hidden
+        ParamFieldName: RconPassword
+        EnumValues: {}
+    - key: ServerCategory
+      label: Server Category
+      category: Eco
+      subcategory: Server
+      description: Category of the server shown when clients first select a new game
+      keywords: category
+      input_type: enum
+      param_field_name: ServerCategory
+      default: None
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        None: None
+        Beginner: Beginner
+        Established: Established
+        BeginnerHard: Beginner Hard
+        Strange: Strange
+      raw:
+        DisplayName: Server Category
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Category of the server shown when clients first select a new game
+        Keywords: category
+        FieldName: ServerCategory
+        InputType: enum
+        ParamFieldName: ServerCategory
+        DefaultValue: None
+        EnumValues:
+          None: None
+          Beginner: Beginner
+          Established: Established
+          BeginnerHard: Beginner Hard
+          Strange: Strange
+    - key: $MaxUsers
+      label: Player Limit
+      category: Eco
+      subcategory: Server
+      description: Maximum number of players that may connect to the server. Default is no limit (-1)
+      keywords: players,limit
+      input_type: number
+      param_field_name: DefaultSlots
+      default: '-1'
+      placeholder: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Maximum number of players that may connect to the server. Default is no limit (-1)
+        Keywords: players,limit
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '-1'
+        ParamFieldName: DefaultSlots
+        DefaultValue: '-1'
+        Placeholder: '-1'
+        Suffix: players
+        EnumValues: {}
+    - key: IPAddress
+      label: Server IP Binding
+      category: Eco
+      subcategory: Server
+      description: Internal server IP-address the server should bind to. Default is Any (all IPs on the host)
+      keywords: ip,binding
+      input_type: text
+      param_field_name: IPAddress
+      default: Any
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server IP Binding
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Internal server IP-address the server should bind to. Default is Any (all IPs on the host)
+        Keywords: ip,binding
+        FieldName: IPAddress
+        InputType: text
+        ParamFieldName: IPAddress
+        DefaultValue: Any
+        EnumValues: {}
+    - key: RemoteAddress
+      label: Remote Address Selection Mode
+      category: Eco
+      subcategory: Server
+      description: >-
+        Sets whether and how the public/external endpoint address (IP:port or domain:port) for the server, as used by
+        the server browser, is set. If 'Address manually set' is selected, specify the desired public/external endpoint
+        address under Manual Remote Address
+      keywords: remote,address,public,external,ip,RemoteAddress
+      input_type: enum
+      param_field_name: RemoteAddress
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Address automatically set by Eco (default)
+        '{{$ExternalIP}}:{{$ApplicationPort1}}': Address automatically set by AMP
+        '{{ManualRemoteAddress}}': Address manually set
+      raw:
+        DisplayName: Remote Address Selection Mode
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether and how the public/external endpoint address (IP:port or domain:port) for the server, as used by
+          the server browser, is set. If 'Address manually set' is selected, specify the desired public/external
+          endpoint address under Manual Remote Address
+        Keywords: remote,address,public,external,ip,RemoteAddress
+        FieldName: RemoteAddress
+        InputType: enum
+        ParamFieldName: RemoteAddress
+        DefaultValue: ''
+        EnumValues:
+          '': Address automatically set by Eco (default)
+          '{{$ExternalIP}}:{{$ApplicationPort1}}': Address automatically set by AMP
+          '{{ManualRemoteAddress}}': Address manually set
+    - key: ManualRemoteAddress
+      label: Manual Remote Address
+      category: Eco
+      subcategory: Server
+      description: >-
+        Sets the public/external endpoint address (IP:port or domain:port) for the server, if 'Address manually set' is
+        selected as the Remote Address Selection Mode
+      keywords: manual,remote,address,public,external,ip,RemoteAddress
+      input_type: text
+      param_field_name: ManualRemoteAddress
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Manual Remote Address
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public/external endpoint address (IP:port or domain:port) for the server, if 'Address manually set'
+          is selected as the Remote Address Selection Mode
+        Keywords: manual,remote,address,public,external,ip,RemoteAddress
+        FieldName: ManualRemoteAddress
+        InputType: text
+        ParamFieldName: ManualRemoteAddress
+        DefaultValue: ''
+        EnumValues: {}
+    - key: RconIPAddress
+      label: RCON IP Binding
+      category: Eco
+      subcategory: Server
+      description: Internal server IP-address the RCON server should bind to. Default is Any (all IPs on the host)
+      keywords: rcon,ip,binding
+      input_type: text
+      param_field_name: RconIPAddress
+      default: Any
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON IP Binding
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Internal server IP-address the RCON server should bind to. Default is Any (all IPs on the host)
+        Keywords: rcon,ip,binding
+        FieldName: RconIPAddress
+        InputType: text
+        ParamFieldName: RconIPAddress
+        DefaultValue: Any
+        EnumValues: {}
+    - key: DiscordAddress
+      label: Discord Address
+      category: Eco
+      subcategory: Server
+      description: ID for a Discord server (the ID after "discord.gg/") to provide a link to
+      keywords: discord
+      input_type: text
+      param_field_name: DiscordAddress
+      default: ''
+      placeholder: 78xKTd
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Discord Address
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ID for a Discord server (the ID after "discord.gg/") to provide a link to
+        Keywords: discord
+        FieldName: DiscordAddress
+        InputType: text
+        ParamFieldName: DiscordAddress
+        DefaultValue: ''
+        Placeholder: 78xKTd
+        EnumValues: {}
+    - key: UPnPEnabled
+      label: Enable UPnP
+      category: Eco
+      subcategory: Server
+      description: If enabled, UPnP will be enabled on the server. Requires a UPnP-enabled router to work
+      keywords: upnp
+      input_type: checkbox
+      param_field_name: UPnPEnabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable UPnP
+        Category: Eco:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, UPnP will be enabled on the server. Requires a UPnP-enabled router to work
+        Keywords: upnp
+        FieldName: UPnPEnabled
+        InputType: checkbox
+        ParamFieldName: UPnPEnabled
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnableBeta
+      label: Enable Beta Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: >-
+        If enabled, allows beta branches (branches other than "public") to be installed. Specify the branch under
+        "Selected Beta Branch". NOTE: Update the server after switching branches!
+      keywords: enable,beta
+      input_type: checkbox
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Beta Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: >-
+          If enabled, allows beta branches (branches other than "public") to be installed. Specify the branch under
+          "Selected Beta Branch". NOTE: Update the server after switching branches!
+        Keywords: enable,beta
+        FieldName: EnableBeta
+        InputType: checkbox
+        ParamFieldName: ''
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: BetaBranch
+      label: Selected Beta Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: >-
+        [Beta branch](https://steamdb.info/app/739590/depots/) to install. Requires "Enable Beta Branch" to be enabled.
+        Set any required password under "Beta Password". NOTE: Update the server after switching branches!
+      keywords: beta,branch
+      input_type: text
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Selected Beta Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: >-
+          [Beta branch](https://steamdb.info/app/739590/depots/) to install. Requires "Enable Beta Branch" to be
+          enabled. Set any required password under "Beta Password". NOTE: Update the server after switching branches!
+        Keywords: beta,branch
+        FieldName: BetaBranch
+        InputType: text
+        ParamFieldName: ''
+        DefaultValue: ''
+        Placeholder: ''
+        EnumValues: {}
+  files:
+    - path: Configs/Network.eco
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Configs/Network.eco
+        AutoMap: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: Description
+    label: Server Name
+    default: Eco Server - Powered by AMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Description
+    label: Server Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DetailedDescription
+    label: Server Description
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AuthMode
+    label: Strange Cloud Authentication Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AuthUsername
+    label: Strange Cloud Auth Username
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AuthPassword
+    label: Strange Cloud Auth Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AuthUserToken
+    label: Strange Cloud Auth User Token
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AuthSteamTicket
+    label: Strange Cloud Auth Steam Ticket
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PublicServer
+    label: Make Server Public
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: ServerCategory
+    label: Server Category
+    default: None
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IPAddress
+    label: Server IP Binding
+    default: Any
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RemoteAddress
+    label: Remote Address Selection Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualRemoteAddress
+    label: Manual Remote Address
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RconIPAddress
+    label: RCON IP Binding
+    default: Any
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DiscordAddress
+    label: Discord Address
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UPnPEnabled
+    label: Enable UPnP
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableBeta
+    label: Enable Beta Branch
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BetaBranch
+    label: Selected Beta Branch
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '382310'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,18 @@ category: Imported
 summary: Rising World Unity Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '339010'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 339010/RisingWorldServer.x64
+  startup: >-
+    339010/RisingWorldServer.x64 {PlatformArgs} +Server_Port={ServerPort} +RCON_Port={RCONPort}
+    +Server_IP={ApplicationIPBinding} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,4940 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 4255
+    protocol: both
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 4254
+    protocol: tcp
+    required: true
+  - key: rconport
+    name: RCON Port
+    default: 4253
+    protocol: tcp
+    required: true
+config_files:
+  - path: server.properties
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Server Port
+      category: Rising World
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: Server_Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: Server_Port
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $RCONPort
+      label: RCON Port
+      category: Rising World
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: RCON_Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Port
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RCONPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: RCON_Port
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: IP Binding
+      category: Rising World
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Server_IP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: IP Binding
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        ParamFieldName: Server_IP
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: Server_RestartEnabled
+      label: Disable Restart
+      category: Rising World
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Server_RestartEnabled
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Disable Restart
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: Server_RestartEnabled
+        InputType: text
+        Hidden: true
+        ParamFieldName: Server_RestartEnabled
+        DefaultValue: 'False'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: Server_Input
+      label: Enable Console Input
+      category: Rising World
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Server_Input
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable Console Input
+        Category: Rising World:stadia_controller
+        Subcategory: Server
+        Description: ''
+        Keywords: ''
+        FieldName: Server_Input
+        InputType: text
+        Hidden: true
+        ParamFieldName: Server_Input
+        DefaultValue: 'True'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: Server_ClearConsole
+      label: Don't Clear Console On Startup
+      category: Rising World
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Server_ClearConsole
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Don't Clear Console On Startup
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: Server_ClearConsole
+        InputType: text
+        Hidden: true
+        ParamFieldName: Server_ClearConsole
+        DefaultValue: 'False'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: Server_ConfigNoComments
+      label: Include Comments In Config
+      category: Rising World
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Server_ConfigNoComments
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Include Comments In Config
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: Server_ConfigNoComments
+        InputType: text
+        Hidden: true
+        ParamFieldName: Server_ConfigNoComments
+        DefaultValue: 'False'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: Server_WebserverEnabled
+      label: Enable Webserver
+      category: Rising World
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Server_WebserverEnabled
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable Webserver
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: Server_WebserverEnabled
+        InputType: text
+        Hidden: true
+        ParamFieldName: Server_WebserverEnabled
+        IncludeInCommandLine: true
+        DefaultValue: 'True'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: Server_Logs
+      label: Enable Logs
+      category: Rising World
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Server_Logs
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable Logs
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: Server_Logs
+        InputType: text
+        Hidden: true
+        ParamFieldName: Server_Logs
+        DefaultValue: 'True'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: Server_Name
+      label: Server Name
+      category: Rising World
+      subcategory: Server
+      description: Sets the name of the server that is shown in the server list
+      keywords: server,name,Server_Name
+      input_type: text
+      param_field_name: Server_Name
+      default: AMP Powered Rising World Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that is shown in the server list
+        Keywords: server,name,Server_Name
+        FieldName: Server_Name
+        InputType: text
+        ParamFieldName: Server_Name
+        DefaultValue: AMP Powered Rising World Server
+        EnumValues: {}
+    - key: Server_ShortName
+      label: Server Short Name
+      category: Rising World
+      subcategory: Server
+      description: Sets an optional short name for the server. Maximum 32 characters
+      keywords: server,short,name,Server_ShortName
+      input_type: text
+      param_field_name: Server_ShortName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Short Name
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets an optional short name for the server. Maximum 32 characters
+        Keywords: server,short,name,Server_ShortName
+        FieldName: Server_ShortName
+        InputType: text
+        ParamFieldName: Server_ShortName
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Server_Description
+      label: Server Description
+      category: Rising World
+      subcategory: Server
+      description: >-
+        Sets an optional description for the server that is visible in the server browser when the server is selected.
+        Maximum 4096 characters
+      keywords: server,description,Server_Description
+      input_type: text
+      param_field_name: Server_Description
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Description
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets an optional description for the server that is visible in the server browser when the server is selected.
+          Maximum 4096 characters
+        Keywords: server,description,Server_Description
+        FieldName: Server_Description
+        InputType: text
+        ParamFieldName: Server_Description
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Server_Contact
+      label: Server Contact
+      category: Rising World
+      subcategory: Server
+      description: Sets an optional contact email address or website (where players may contact the server owner)
+      keywords: server,contact,Server_Contact
+      input_type: text
+      param_field_name: Server_Contact
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Contact
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets an optional contact email address or website (where players may contact the server owner)
+        Keywords: server,contact,Server_Contact
+        FieldName: Server_Contact
+        InputType: text
+        ParamFieldName: Server_Contact
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Server_Visible
+      label: Show In Server List
+      category: Rising World
+      subcategory: Server
+      description: If set, the server will be visible in the server list
+      keywords: visible,public,list,Server_Visible
+      input_type: checkbox
+      param_field_name: Server_Visible
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show In Server List
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be visible in the server list
+        Keywords: visible,public,list,Server_Visible
+        FieldName: Server_Visible
+        InputType: checkbox
+        ParamFieldName: Server_Visible
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server_Password
+      label: Server Password
+      category: Rising World
+      subcategory: Server
+      description: Sets the password to join the server. Default is no password
+      keywords: server,password,Server_Password
+      input_type: password
+      param_field_name: Server_Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server. Default is no password
+        Keywords: server,password,Server_Password
+        FieldName: Server_Password
+        InputType: password
+        ParamFieldName: Server_Password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Server_Admins
+      label: Server Admins
+      category: Rising World
+      subcategory: Server
+      description: Sets a semicolon-separated list of UIDs of server admins
+      keywords: server,admins,Server_Admins
+      input_type: text
+      param_field_name: Server_Admins
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Admins
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a semicolon-separated list of UIDs of server admins
+        Keywords: server,admins,Server_Admins
+        FieldName: Server_Admins
+        InputType: text
+        ParamFieldName: Server_Admins
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Server_CustomHeaderImage
+      label: Custom Server Header Image
+      category: Rising World
+      subcategory: Server
+      description: >-
+        Sets a relative path to an optional server header image (shown in the server browser if a user selects the
+        server). Recommended size: 1024x512 px
+      keywords: server,custom,header,image,Server_CustomHeaderImage
+      input_type: text
+      param_field_name: Server_CustomHeaderImage
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Server Header Image
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a relative path to an optional server header image (shown in the server browser if a user selects the
+          server). Recommended size: 1024x512 px
+        Keywords: server,custom,header,image,Server_CustomHeaderImage
+        FieldName: Server_CustomHeaderImage
+        InputType: text
+        ParamFieldName: Server_CustomHeaderImage
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Server_UseWhitelist
+      label: Enable Whitelist
+      category: Rising World
+      subcategory: Server
+      description: If set, the server will only accept players whose UIDs are in the 'whitelist' file
+      keywords: whitelist,Server_UseWhitelist
+      input_type: checkbox
+      param_field_name: Server_UseWhitelist
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Whitelist
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will only accept players whose UIDs are in the 'whitelist' file
+        Keywords: whitelist,Server_UseWhitelist
+        FieldName: Server_UseWhitelist
+        InputType: checkbox
+        ParamFieldName: Server_UseWhitelist
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server_UseBlacklist
+      label: Enable Blacklist
+      category: Rising World
+      subcategory: Server
+      description: If set, the server will block all players whose UIDs are in the 'blacklist' file
+      keywords: blacklist,Server_UseBlacklist
+      input_type: checkbox
+      param_field_name: Server_UseBlacklist
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Blacklist
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will block all players whose UIDs are in the 'blacklist' file
+        Keywords: blacklist,Server_UseBlacklist
+        FieldName: Server_UseBlacklist
+        InputType: checkbox
+        ParamFieldName: Server_UseBlacklist
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server_UseReservedNames
+      label: Use Reserved Names
+      category: Rising World
+      subcategory: Server
+      description: If set, the server ensures that no player uses a reserved name (unless their UID matches)
+      keywords: reserved,names,Server_UseReservedNames
+      input_type: checkbox
+      param_field_name: Server_UseReservedNames
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Use Reserved Names
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server ensures that no player uses a reserved name (unless their UID matches)
+        Keywords: reserved,names,Server_UseReservedNames
+        FieldName: Server_UseReservedNames
+        InputType: checkbox
+        ParamFieldName: Server_UseReservedNames
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server_DisableConversionSavepoints
+      label: Disable Conversion Savepoints
+      category: Rising World
+      subcategory: Server
+      description: If set, SQLite won't set up a savepoint or use a transaction when performing a world conversion
+      keywords: server,sqlite,conversion,savepoint
+      input_type: checkbox
+      param_field_name: Server_DisableConversionSavepoints
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Disable Conversion Savepoints
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, SQLite won't set up a savepoint or use a transaction when performing a world conversion
+        Keywords: server,sqlite,conversion,savepoint
+        FieldName: Server_DisableConversionSavepoints
+        InputType: checkbox
+        ParamFieldName: Server_DisableConversionSavepoints
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server_EnablePortCheck
+      label: Enable Port Check
+      category: Rising World
+      subcategory: Server
+      description: If set, the server will check if any of the server ports (UDP and TCP) are already in use
+      keywords: server,port,check,network,Server_EnablePortCheck
+      input_type: checkbox
+      param_field_name: Server_EnablePortCheck
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Port Check
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will check if any of the server ports (UDP and TCP) are already in use
+        Keywords: server,port,check,network,Server_EnablePortCheck
+        FieldName: Server_EnablePortCheck
+        InputType: checkbox
+        ParamFieldName: Server_EnablePortCheck
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Server_Framerate
+      label: Server Target Framerate
+      category: Rising World
+      subcategory: Server
+      description: Sets the server target framerate (only affects the main thread)
+      keywords: server,framerate,performance,Server_Framerate
+      input_type: number
+      param_field_name: Server_Framerate
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Target Framerate
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server target framerate (only affects the main thread)
+        Keywords: server,framerate,performance,Server_Framerate
+        FieldName: Server_Framerate
+        InputType: number
+        ParamFieldName: Server_Framerate
+        DefaultValue: '60'
+        Placeholder: '60'
+        EnumValues: {}
+    - key: Server_SteamReconnectAttempts
+      label: Steam Reconnect Attempts
+      category: Rising World
+      subcategory: Server
+      description: Sets how often Steam tries to reconnect after losing connection. -1 = unlimited retries
+      keywords: server,steam,reconnect,Server_SteamReconnectAttempts
+      input_type: number
+      param_field_name: Server_SteamReconnectAttempts
+      default: '-1'
+      placeholder: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Steam Reconnect Attempts
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how often Steam tries to reconnect after losing connection. -1 = unlimited retries
+        Keywords: server,steam,reconnect,Server_SteamReconnectAttempts
+        FieldName: Server_SteamReconnectAttempts
+        InputType: number
+        ParamFieldName: Server_SteamReconnectAttempts
+        DefaultValue: '-1'
+        Placeholder: '-1'
+        EnumValues: {}
+    - key: Server_DeleteOldLogsDays
+      label: Log Retention Period
+      category: Rising World
+      subcategory: Server
+      description: Sets the period after which old server logs should be deleted. -1 = keep all
+      keywords: server,delete,old,logs,days,Server_DeleteOldLogsDays
+      input_type: number
+      param_field_name: Server_DeleteOldLogsDays
+      default: '7'
+      placeholder: '7'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      max: 365
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Log Retention Period
+        Category: Rising World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the period after which old server logs should be deleted. -1 = keep all
+        Keywords: server,delete,old,logs,days,Server_DeleteOldLogsDays
+        FieldName: Server_DeleteOldLogsDays
+        InputType: number
+        MinValue: '-1'
+        MaxValue: '365'
+        ParamFieldName: Server_DeleteOldLogsDays
+        DefaultValue: '7'
+        Placeholder: '7'
+        Suffix: days
+        EnumValues: {}
+    - key: World_Name
+      label: World Name
+      category: Rising World
+      subcategory: World
+      description: Sets the name of the world to load, or to create if it does not exist
+      keywords: world,name,World_Name
+      input_type: text
+      param_field_name: World_Name
+      default: New World
+      placeholder: New World
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Name
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: Sets the name of the world to load, or to create if it does not exist
+        Keywords: world,name,World_Name
+        FieldName: World_Name
+        InputType: text
+        ParamFieldName: World_Name
+        DefaultValue: New World
+        Placeholder: New World
+        EnumValues: {}
+    - key: World_Seed
+      label: World Seed
+      category: Rising World
+      subcategory: World
+      description: Sets the seed used to create a new world. Empty = random seed
+      keywords: world,seed,World_Seed
+      input_type: text
+      param_field_name: World_Seed
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Seed
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: Sets the seed used to create a new world. Empty = random seed
+        Keywords: world,seed,World_Seed
+        FieldName: World_Seed
+        InputType: text
+        ParamFieldName: World_Seed
+        DefaultValue: ''
+        EnumValues: {}
+    - key: World_GameMode
+      label: World Creation Game Mode
+      category: Rising World
+      subcategory: World
+      description: Sets the default world game mode when creating a new world
+      keywords: game,mode,World_GameMode
+      input_type: enum
+      param_field_name: World_GameMode
+      default: Survival
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Survival: Survival (default)
+        Creative: Creative
+      raw:
+        DisplayName: World Creation Game Mode
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: Sets the default world game mode when creating a new world
+        Keywords: game,mode,World_GameMode
+        FieldName: World_GameMode
+        InputType: enum
+        ParamFieldName: World_GameMode
+        DefaultValue: Survival
+        EnumValues:
+          Survival: Survival (default)
+          Creative: Creative
+    - key: World_FlatWorldTerrainElevation
+      label: Flat World Terrain Elevation
+      category: Rising World
+      subcategory: World
+      description: Sets the default elevation of terrain in newly created superflat worlds
+      keywords: world,flat,terrain,elevation,World_FlatWorldTerrainElevation
+      input_type: number
+      param_field_name: World_FlatWorldTerrainElevation
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 256
+      enum_values: {}
+      raw:
+        DisplayName: Flat World Terrain Elevation
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: Sets the default elevation of terrain in newly created superflat worlds
+        Keywords: world,flat,terrain,elevation,World_FlatWorldTerrainElevation
+        FieldName: World_FlatWorldTerrainElevation
+        InputType: number
+        MinValue: '1'
+        MaxValue: '256'
+        ParamFieldName: World_FlatWorldTerrainElevation
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: World_FlatWorldTerrainID
+      label: Flat World Terrain ID
+      category: Rising World
+      subcategory: World
+      description: Sets the default terrain ID for newly created superflat worlds
+      keywords: world,flat,terrain,id,World_FlatWorldTerrainID
+      input_type: text
+      param_field_name: World_FlatWorldTerrainID
+      default: GrassDefault
+      placeholder: GrassDefault
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Flat World Terrain ID
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: Sets the default terrain ID for newly created superflat worlds
+        Keywords: world,flat,terrain,id,World_FlatWorldTerrainID
+        FieldName: World_FlatWorldTerrainID
+        InputType: text
+        ParamFieldName: World_FlatWorldTerrainID
+        DefaultValue: GrassDefault
+        Placeholder: GrassDefault
+        EnumValues: {}
+    - key: World_Flatness
+      label: World Flatness Factor
+      category: Rising World
+      subcategory: World
+      description: Sets the world flatness factor when creating a new world
+      keywords: world,flatness,factor,World_Flatness
+      input_type: enum
+      param_field_name: World_Flatness
+      default: Default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        VeryFlat: Very flat
+        Flat: Flat
+        Default: Default
+        Steep: Steep
+        VerySteep: Very steep
+      raw:
+        DisplayName: World Flatness Factor
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: Sets the world flatness factor when creating a new world
+        Keywords: world,flatness,factor,World_Flatness
+        FieldName: World_Flatness
+        InputType: enum
+        ParamFieldName: World_Flatness
+        DefaultValue: Default
+        EnumValues:
+          VeryFlat: Very flat
+          Flat: Flat
+          Default: Default
+          Steep: Steep
+          VerySteep: Very steep
+    - key: World_OreAmount
+      label: World Ore Amount
+      category: Rising World
+      subcategory: World
+      description: Sets the world ore amount when creating a new world
+      keywords: world,ore,amount,World_OreAmount
+      input_type: enum
+      param_field_name: World_OreAmount
+      default: Default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'Off': 'Off'
+        Low: Low
+        Default: Default
+        High: High
+        VeryHigh: Very high
+      raw:
+        DisplayName: World Ore Amount
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: Sets the world ore amount when creating a new world
+        Keywords: world,ore,amount,World_OreAmount
+        FieldName: World_OreAmount
+        InputType: enum
+        ParamFieldName: World_OreAmount
+        DefaultValue: Default
+        EnumValues:
+          'Off': 'Off'
+          Low: Low
+          Default: Default
+          High: High
+          VeryHigh: Very high
+    - key: World_CreateBackupBeforeConversion
+      label: Create Backup Before Conversion
+      category: Rising World
+      subcategory: World
+      description: If set, the game will automatically create a backup of the world when performing a conversion (after an update)
+      keywords: world,backup,conversion,World_CreateBackupBeforeConversion
+      input_type: checkbox
+      param_field_name: World_CreateBackupBeforeConversion
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Create Backup Before Conversion
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: >-
+          If set, the game will automatically create a backup of the world when performing a conversion (after an
+          update)
+        Keywords: world,backup,conversion,World_CreateBackupBeforeConversion
+        FieldName: World_CreateBackupBeforeConversion
+        InputType: checkbox
+        ParamFieldName: World_CreateBackupBeforeConversion
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: World_DisabledNpcs
+      label: Disabled NPCs
+      category: Rising World
+      subcategory: World
+      description: Sets an optional comma-separated list of disabled NPCs
+      keywords: world,disabled,npcs,World_DisabledNpcs
+      input_type: text
+      param_field_name: World_DisabledNpcs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Disabled NPCs
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: Sets an optional comma-separated list of disabled NPCs
+        Keywords: world,disabled,npcs,World_DisabledNpcs
+        FieldName: World_DisabledNpcs
+        InputType: text
+        ParamFieldName: World_DisabledNpcs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: World_CavesDisabled
+      label: Disable Caves
+      category: Rising World
+      subcategory: World
+      description: If set, caves will be disabled
+      keywords: world,caves,disabled,World_CavesDisabled
+      input_type: checkbox
+      param_field_name: World_CavesDisabled
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Disable Caves
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: If set, caves will be disabled
+        Keywords: world,caves,disabled,World_CavesDisabled
+        FieldName: World_CavesDisabled
+        InputType: checkbox
+        ParamFieldName: World_CavesDisabled
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: World_OceanDisabled
+      label: Disable Ocean (Water)
+      category: Rising World
+      subcategory: World
+      description: If set, the ocean (water) will be disabled
+      keywords: world,ocean,water,disabled,World_OceanDisabled
+      input_type: checkbox
+      param_field_name: World_OceanDisabled
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Disable Ocean (Water)
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: If set, the ocean (water) will be disabled
+        Keywords: world,ocean,water,disabled,World_OceanDisabled
+        FieldName: World_OceanDisabled
+        InputType: checkbox
+        ParamFieldName: World_OceanDisabled
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: World_VegetationDisabled
+      label: Disable Vegetation
+      category: Rising World
+      subcategory: World
+      description: If set, vegetation will be disabled
+      keywords: world,vegetation,disabled,World_VegetationDisabled
+      input_type: checkbox
+      param_field_name: World_VegetationDisabled
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Disable Vegetation
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: If set, vegetation will be disabled
+        Keywords: world,vegetation,disabled,World_VegetationDisabled
+        FieldName: World_VegetationDisabled
+        InputType: checkbox
+        ParamFieldName: World_VegetationDisabled
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: World_WorldType
+      label: World Terrain Type
+      category: Rising World
+      subcategory: World
+      description: 'Sets the world terrain type. Example: ''Default'', ''Superflat'' or ''FlatIslands'''
+      keywords: world,terrain,type,World_WorldType
+      input_type: text
+      param_field_name: World_WorldType
+      default: Default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Terrain Type
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: 'Sets the world terrain type. Example: ''Default'', ''Superflat'' or ''FlatIslands'''
+        Keywords: world,terrain,type,World_WorldType
+        FieldName: World_WorldType
+        InputType: text
+        ParamFieldName: World_WorldType
+        DefaultValue: Default
+        EnumValues: {}
+    - key: World_SaveWorld
+      label: Save World
+      category: Rising World
+      subcategory: World
+      description: If disabled, the game will no longer save world changes
+      keywords: world,save,changes,World_SaveWorld
+      input_type: checkbox
+      param_field_name: World_SaveWorld
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Save World
+        Category: Rising World:stadia_controller
+        Subcategory: World:globe:2
+        Description: If disabled, the game will no longer save world changes
+        Keywords: world,save,changes,World_SaveWorld
+        FieldName: World_SaveWorld
+        InputType: checkbox
+        ParamFieldName: World_SaveWorld
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_GameMode
+      label: Game Mode
+      category: Rising World
+      subcategory: General
+      description: Sets the game mode to run the server with
+      keywords: game,mode,Settings_GameMode
+      input_type: enum
+      param_field_name: Settings_GameMode
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Survival (default)
+        '1': Creative
+      raw:
+        DisplayName: Game Mode
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the game mode to run the server with
+        Keywords: game,mode,Settings_GameMode
+        FieldName: Settings_GameMode
+        InputType: enum
+        ParamFieldName: Settings_GameMode
+        DefaultValue: '0'
+        EnumValues:
+          '0': Survival (default)
+          '1': Creative
+    - key: $MaxUsers
+      label: Player Limit
+      category: Rising World
+      subcategory: General
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,slots,limit,Settings_MaxPlayers
+      input_type: number
+      param_field_name: Settings_MaxPlayers
+      default: '64'
+      placeholder: '64'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      max: 64
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,slots,limit,Settings_MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '64'
+        ParamFieldName: Settings_MaxPlayers
+        IncludeInCommandLine: true
+        DefaultValue: '64'
+        Placeholder: '64'
+        Suffix: players
+        EnumValues: {}
+    - key: Settings_ChatEnabled
+      label: Enable Chat
+      category: Rising World
+      subcategory: General
+      description: If set, the global chat will be active
+      keywords: settings,chat,enabled,Settings_ChatEnabled
+      input_type: checkbox
+      param_field_name: Settings_ChatEnabled
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Chat
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, the global chat will be active
+        Keywords: settings,chat,enabled,Settings_ChatEnabled
+        FieldName: Settings_ChatEnabled
+        InputType: checkbox
+        ParamFieldName: Settings_ChatEnabled
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_ChatShowEmojis
+      label: Show Emojis In Chat
+      category: Rising World
+      subcategory: General
+      description: If set, emojis will be shown in chat (depending on player permissions)
+      keywords: settings,chat,emojis,Settings_ChatShowEmojis
+      input_type: checkbox
+      param_field_name: Settings_ChatShowEmojis
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show Emojis In Chat
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, emojis will be shown in chat (depending on player permissions)
+        Keywords: settings,chat,emojis,Settings_ChatShowEmojis
+        FieldName: Settings_ChatShowEmojis
+        InputType: checkbox
+        ParamFieldName: Settings_ChatShowEmojis
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_ChunkLifeSpan
+      label: Chunk Life Span
+      category: Rising World
+      subcategory: General
+      description: >-
+        Sets the time period until an unused chunk gets disposed. Low values reduce memory consumption, high values
+        improve performance
+      keywords: settings,chunk,lifespan,Settings_ChunkLifeSpan
+      input_type: number
+      param_field_name: Settings_ChunkLifeSpan
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 3600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Chunk Life Span
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: >-
+          Sets the time period until an unused chunk gets disposed. Low values reduce memory consumption, high values
+          improve performance
+        Keywords: settings,chunk,lifespan,Settings_ChunkLifeSpan
+        FieldName: Settings_ChunkLifeSpan
+        InputType: number
+        MinValue: '1'
+        MaxValue: '3600'
+        ParamFieldName: Settings_ChunkLifeSpan
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Settings_ChunkWorkerThreads
+      label: Chunk Worker Threads
+      category: Rising World
+      subcategory: General
+      description: Sets the number of chunk worker threads. 0 = automatic assignment
+      keywords: settings,chunk,worker,threads,Settings_ChunkWorkerThreads
+      input_type: number
+      param_field_name: Settings_ChunkWorkerThreads
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 64
+      enum_values: {}
+      raw:
+        DisplayName: Chunk Worker Threads
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the number of chunk worker threads. 0 = automatic assignment
+        Keywords: settings,chunk,worker,threads,Settings_ChunkWorkerThreads
+        FieldName: Settings_ChunkWorkerThreads
+        InputType: number
+        MinValue: '0'
+        MaxValue: '64'
+        ParamFieldName: Settings_ChunkWorkerThreads
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: Settings_CookingDurationFactor
+      label: Cooking Duration Factor
+      category: Rising World
+      subcategory: General
+      description: >-
+        Sets the factor to modify the duration it takes to cook or process food. Example: 0.5 = cooking takes half the
+        time
+      keywords: settings,cooking,duration,factor,Settings_CookingDurationFactor
+      input_type: number
+      param_field_name: Settings_CookingDurationFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Cooking Duration Factor
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: >-
+          Sets the factor to modify the duration it takes to cook or process food. Example: 0.5 = cooking takes half the
+          time
+        Keywords: settings,cooking,duration,factor,Settings_CookingDurationFactor
+        FieldName: Settings_CookingDurationFactor
+        InputType: number
+        MinValue: '0.1'
+        MaxValue: '10'
+        ParamFieldName: Settings_CookingDurationFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_CraftingProgression
+      label: Enable Crafting Progression
+      category: Rising World
+      subcategory: General
+      description: If set, crafting progression is enabled, meaning recipes need to be unlocked first before they're available
+      keywords: settings,crafting,progression,Settings_CraftingProgression
+      input_type: checkbox
+      param_field_name: Settings_CraftingProgression
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Crafting Progression
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, crafting progression is enabled, meaning recipes need to be unlocked first before they're available
+        Keywords: settings,crafting,progression,Settings_CraftingProgression
+        FieldName: Settings_CraftingProgression
+        InputType: checkbox
+        ParamFieldName: Settings_CraftingProgression
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_DeadBodyDespawnTime
+      label: Dead Body Despawn Time
+      category: Rising World
+      subcategory: General
+      description: Sets the time until dead bodies despawn
+      keywords: settings,deadbody,despawn,time,Settings_DeadBodyDespawnTime
+      input_type: number
+      param_field_name: Settings_DeadBodyDespawnTime
+      default: '1800'
+      placeholder: '1800'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 60
+      max: 86400
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Dead Body Despawn Time
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the time until dead bodies despawn
+        Keywords: settings,deadbody,despawn,time,Settings_DeadBodyDespawnTime
+        FieldName: Settings_DeadBodyDespawnTime
+        InputType: number
+        MinValue: '60'
+        MaxValue: '86400'
+        ParamFieldName: Settings_DeadBodyDespawnTime
+        DefaultValue: '1800'
+        Placeholder: '1800'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Settings_DeleteWorldEventLogsDays
+      label: Delete World Event Logs Period
+      category: Rising World
+      subcategory: General
+      description: Sets the period after which old world event entries will be deleted. -1 = keep all entries
+      keywords: settings,worldevent,delete,logs,days,Settings_DeleteWorldEventLogsDays
+      input_type: number
+      param_field_name: Settings_DeleteWorldEventLogsDays
+      default: '7'
+      placeholder: '7'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      max: 365
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Delete World Event Logs Period
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the period after which old world event entries will be deleted. -1 = keep all entries
+        Keywords: settings,worldevent,delete,logs,days,Settings_DeleteWorldEventLogsDays
+        FieldName: Settings_DeleteWorldEventLogsDays
+        InputType: number
+        MinValue: '-1'
+        MaxValue: '365'
+        ParamFieldName: Settings_DeleteWorldEventLogsDays
+        DefaultValue: '7'
+        Placeholder: '7'
+        Suffix: days
+        EnumValues: {}
+    - key: Settings_GravityAffectsObjects
+      label: Gravity Affects Objects
+      category: Rising World
+      subcategory: General
+      description: If set, floating objects (like furniture) break under certain circumstances
+      keywords: settings,gravity,objects,Settings_GravityAffectsObjects
+      input_type: checkbox
+      param_field_name: Settings_GravityAffectsObjects
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Gravity Affects Objects
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, floating objects (like furniture) break under certain circumstances
+        Keywords: settings,gravity,objects,Settings_GravityAffectsObjects
+        FieldName: Settings_GravityAffectsObjects
+        InputType: checkbox
+        ParamFieldName: Settings_GravityAffectsObjects
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_GravityAffectsPlants
+      label: Gravity Affects Plants
+      category: Rising World
+      subcategory: General
+      description: If set, floating plants break under certain circumstances
+      keywords: settings,gravity,plants,Settings_GravityAffectsPlants
+      input_type: checkbox
+      param_field_name: Settings_GravityAffectsPlants
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Gravity Affects Plants
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, floating plants break under certain circumstances
+        Keywords: settings,gravity,plants,Settings_GravityAffectsPlants
+        FieldName: Settings_GravityAffectsPlants
+        InputType: checkbox
+        ParamFieldName: Settings_GravityAffectsPlants
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_HungerThirstDurationFactor
+      label: Hunger Thirst Duration Factor
+      category: Rising World
+      subcategory: General
+      description: >-
+        Sets the factor to modify the duration until a player gets hungry/thirsty. Smaller values make the player more
+        hungry/thirsty
+      keywords: settings,hungerthirst,duration,factor,Settings_HungerThirstDurationFactor
+      input_type: number
+      param_field_name: Settings_HungerThirstDurationFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Hunger Thirst Duration Factor
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: >-
+          Sets the factor to modify the duration until a player gets hungry/thirsty. Smaller values make the player more
+          hungry/thirsty
+        Keywords: settings,hungerthirst,duration,factor,Settings_HungerThirstDurationFactor
+        FieldName: Settings_HungerThirstDurationFactor
+        InputType: number
+        MinValue: '0.1'
+        MaxValue: '10'
+        ParamFieldName: Settings_HungerThirstDurationFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_IllegalStateLimit
+      label: Illegal State Limit
+      category: Rising World
+      subcategory: General
+      description: If too many illegal states are detected for a player, they will be kicked from the server
+      keywords: settings,illegalstate,limit,Settings_IllegalStateLimit
+      input_type: number
+      param_field_name: Settings_IllegalStateLimit
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Illegal State Limit
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If too many illegal states are detected for a player, they will be kicked from the server
+        Keywords: settings,illegalstate,limit,Settings_IllegalStateLimit
+        FieldName: Settings_IllegalStateLimit
+        InputType: number
+        MinValue: '1'
+        MaxValue: '1000'
+        ParamFieldName: Settings_IllegalStateLimit
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: Settings_ItemDespawnTime
+      label: Item Despawn Time
+      category: Rising World
+      subcategory: General
+      description: Sets the time until a dropped item despawns
+      keywords: settings,item,despawn,time,Settings_ItemDespawnTime
+      input_type: number
+      param_field_name: Settings_ItemDespawnTime
+      default: '600'
+      placeholder: '600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 60
+      max: 86400
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Item Despawn Time
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the time until a dropped item despawns
+        Keywords: settings,item,despawn,time,Settings_ItemDespawnTime
+        FieldName: Settings_ItemDespawnTime
+        InputType: number
+        MinValue: '60'
+        MaxValue: '86400'
+        ParamFieldName: Settings_ItemDespawnTime
+        DefaultValue: '600'
+        Placeholder: '600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Settings_ItemDurabilityFactor
+      label: Item Durability Factor
+      category: Rising World
+      subcategory: General
+      description: >-
+        Sets the factor for how durable items are. Examples: 2 = items are twice as durable, 0.5 = half durability. -1 =
+        infinite durability
+      keywords: settings,item,durability,factor,Settings_ItemDurabilityFactor
+      input_type: number
+      param_field_name: Settings_ItemDurabilityFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Item Durability Factor
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: >-
+          Sets the factor for how durable items are. Examples: 2 = items are twice as durable, 0.5 = half durability. -1
+          = infinite durability
+        Keywords: settings,item,durability,factor,Settings_ItemDurabilityFactor
+        FieldName: Settings_ItemDurabilityFactor
+        InputType: number
+        MinValue: '-1'
+        MaxValue: '10'
+        ParamFieldName: Settings_ItemDurabilityFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_LogWorldEvents
+      label: Log World Events
+      category: Rising World
+      subcategory: General
+      description: If set, player world events (such as placing or removing elements or terrain) will be tracked and logged
+      keywords: settings,log,worldevents,Settings_LogWorldEvents
+      input_type: checkbox
+      param_field_name: Settings_LogWorldEvents
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Log World Events
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, player world events (such as placing or removing elements or terrain) will be tracked and logged
+        Keywords: settings,log,worldevents,Settings_LogWorldEvents
+        FieldName: Settings_LogWorldEvents
+        InputType: checkbox
+        ParamFieldName: Settings_LogWorldEvents
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_MapTileResolution
+      label: Map Tile Resolution
+      category: Rising World
+      subcategory: General
+      description: Sets the resolution of a map tile (per sector). High values consume more memory (and more VRAM on clientside)
+      keywords: settings,map,tile,resolution,Settings_MapTileResolution
+      input_type: number
+      param_field_name: Settings_MapTileResolution
+      default: '1024'
+      placeholder: '1024'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 256
+      max: 4096
+      enum_values: {}
+      raw:
+        DisplayName: Map Tile Resolution
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the resolution of a map tile (per sector). High values consume more memory (and more VRAM on clientside)
+        Keywords: settings,map,tile,resolution,Settings_MapTileResolution
+        FieldName: Settings_MapTileResolution
+        InputType: number
+        MinValue: '256'
+        MaxValue: '4096'
+        ParamFieldName: Settings_MapTileResolution
+        DefaultValue: '1024'
+        Placeholder: '1024'
+        EnumValues: {}
+    - key: Settings_MaxNpcs
+      label: Maximum NPCs
+      category: Rising World
+      subcategory: General
+      description: Sets how many NPCs are allowed on the server. -1 = no limit
+      keywords: settings,npc,max,maximum,limit,Settings_MaxNpcs
+      input_type: number
+      param_field_name: Settings_MaxNpcs
+      default: '-1'
+      placeholder: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      max: 1000
+      suffix: NPCs
+      enum_values: {}
+      raw:
+        DisplayName: Maximum NPCs
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets how many NPCs are allowed on the server. -1 = no limit
+        Keywords: settings,npc,max,maximum,limit,Settings_MaxNpcs
+        FieldName: Settings_MaxNpcs
+        InputType: number
+        MinValue: '-1'
+        MaxValue: '1000'
+        ParamFieldName: Settings_MaxNpcs
+        DefaultValue: '-1'
+        Placeholder: '-1'
+        Suffix: NPCs
+        EnumValues: {}
+    - key: Settings_MoonPhase
+      label: Moon Phase
+      category: Rising World
+      subcategory: General
+      description: >-
+        Sets an optional pre-defined moon phase. If set, this moon phase will always be active. Empty = varying moon
+        phases
+      keywords: settings,moon,phase,Settings_MoonPhase
+      input_type: text
+      param_field_name: Settings_MoonPhase
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Moon Phase
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: >-
+          Sets an optional pre-defined moon phase. If set, this moon phase will always be active. Empty = varying moon
+          phases
+        Keywords: settings,moon,phase,Settings_MoonPhase
+        FieldName: Settings_MoonPhase
+        InputType: text
+        ParamFieldName: Settings_MoonPhase
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Settings_MoonSize
+      label: Moon Size
+      category: Rising World
+      subcategory: General
+      description: Sets the scale factor for the moon
+      keywords: settings,moon,size,Settings_MoonSize
+      input_type: number
+      param_field_name: Settings_MoonSize
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Moon Size
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the scale factor for the moon
+        Keywords: settings,moon,size,Settings_MoonSize
+        FieldName: Settings_MoonSize
+        InputType: number
+        MinValue: '0.1'
+        MaxValue: '10'
+        ParamFieldName: Settings_MoonSize
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_NpcDropEquippedItem
+      label: NPCs Drop Equipped Items
+      category: Rising World
+      subcategory: General
+      description: If set, killed NPCs will drop their equipped items
+      keywords: settings,npc,drop,equipped,item,Settings_NpcDropEquippedItem
+      input_type: checkbox
+      param_field_name: Settings_NpcDropEquippedItem
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: NPCs Drop Equipped Items
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, killed NPCs will drop their equipped items
+        Keywords: settings,npc,drop,equipped,item,Settings_NpcDropEquippedItem
+        FieldName: Settings_NpcDropEquippedItem
+        InputType: checkbox
+        ParamFieldName: Settings_NpcDropEquippedItem
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_NpcEnemyRespawnCooldown
+      label: NPC Enemy Respawn Cooldown
+      category: Rising World
+      subcategory: General
+      description: Sets the cooldown until the game tries to respawn enemy npcs (monsters, bandits) in a chunk
+      keywords: settings,npc,enemy,respawn,cooldown,Settings_NpcEnemyRespawnCooldown
+      input_type: number
+      param_field_name: Settings_NpcEnemyRespawnCooldown
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 3600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: NPC Enemy Respawn Cooldown
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the cooldown until the game tries to respawn enemy npcs (monsters, bandits) in a chunk
+        Keywords: settings,npc,enemy,respawn,cooldown,Settings_NpcEnemyRespawnCooldown
+        FieldName: Settings_NpcEnemyRespawnCooldown
+        InputType: number
+        MinValue: '1'
+        MaxValue: '3600'
+        ParamFieldName: Settings_NpcEnemyRespawnCooldown
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Settings_NpcHitDamageFactor
+      label: NPC Hit Damage Factor
+      category: Rising World
+      subcategory: General
+      description: Sets the factor for the damage dealt by NPCs
+      keywords: settings,npc,hit,damage,factor,Settings_NpcHitDamageFactor
+      input_type: number
+      param_field_name: Settings_NpcHitDamageFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: NPC Hit Damage Factor
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the factor for the damage dealt by NPCs
+        Keywords: settings,npc,hit,damage,factor,Settings_NpcHitDamageFactor
+        FieldName: Settings_NpcHitDamageFactor
+        InputType: number
+        MinValue: '0.1'
+        MaxValue: '10'
+        ParamFieldName: Settings_NpcHitDamageFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_NpcRespawnCooldown
+      label: NPC Respawn Cooldown
+      category: Rising World
+      subcategory: General
+      description: Sets the cooldown until the game tries to respawn NPCs in a chunk
+      keywords: settings,npc,respawn,cooldown,Settings_NpcRespawnCooldown
+      input_type: number
+      param_field_name: Settings_NpcRespawnCooldown
+      default: '1800'
+      placeholder: '1800'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 60
+      max: 86400
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: NPC Respawn Cooldown
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the cooldown until the game tries to respawn NPCs in a chunk
+        Keywords: settings,npc,respawn,cooldown,Settings_NpcRespawnCooldown
+        FieldName: Settings_NpcRespawnCooldown
+        InputType: number
+        MinValue: '60'
+        MaxValue: '86400'
+        ParamFieldName: Settings_NpcRespawnCooldown
+        DefaultValue: '1800'
+        Placeholder: '1800'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Settings_NpcSpawnMonstersAtSurface
+      label: NPC Spawn Monsters At Surface
+      category: Rising World
+      subcategory: General
+      description: If set, monsters will spawn at the surface at night. They will disappear at dawn
+      keywords: settings,npc,spawn,monsters,surface,Settings_NpcSpawnMonstersAtSurface
+      input_type: checkbox
+      param_field_name: Settings_NpcSpawnMonstersAtSurface
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: NPC Spawn Monsters At Surface
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, monsters will spawn at the surface at night. They will disappear at dawn
+        Keywords: settings,npc,spawn,monsters,surface,Settings_NpcSpawnMonstersAtSurface
+        FieldName: Settings_NpcSpawnMonstersAtSurface
+        InputType: checkbox
+        ParamFieldName: Settings_NpcSpawnMonstersAtSurface
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_NpcSpawnrateAnimals
+      label: NPC Spawnrate For Animals
+      category: Rising World
+      subcategory: General
+      description: Sets the spawn rate for animals. Lower values for less animals, higher values for more
+      keywords: settings,npc,spawnrate,animals,Settings_NpcSpawnrateAnimals
+      input_type: number
+      param_field_name: Settings_NpcSpawnrateAnimals
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: NPC Spawnrate For Animals
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the spawn rate for animals. Lower values for less animals, higher values for more
+        Keywords: settings,npc,spawnrate,animals,Settings_NpcSpawnrateAnimals
+        FieldName: Settings_NpcSpawnrateAnimals
+        InputType: number
+        MinValue: '0.1'
+        MaxValue: '10'
+        ParamFieldName: Settings_NpcSpawnrateAnimals
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_NpcSpawnrateBandits
+      label: NPC Spawnrate For Bandits
+      category: Rising World
+      subcategory: General
+      description: Sets the spawn rate for bandits and similar enemies. Lower values for less enemies, higher values for more
+      keywords: settings,npc,spawnrate,bandits,Settings_NpcSpawnrateBandits
+      input_type: number
+      param_field_name: Settings_NpcSpawnrateBandits
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: NPC Spawnrate For Bandits
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the spawn rate for bandits and similar enemies. Lower values for less enemies, higher values for more
+        Keywords: settings,npc,spawnrate,bandits,Settings_NpcSpawnrateBandits
+        FieldName: Settings_NpcSpawnrateBandits
+        InputType: number
+        MinValue: '0.1'
+        MaxValue: '10'
+        ParamFieldName: Settings_NpcSpawnrateBandits
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_NpcSpawnrateSurfaceMonsters
+      label: NPC Spawnrate For Surface Monsters
+      category: Rising World
+      subcategory: General
+      description: Sets the spawn rate for surface monsters during night. Lower values for less enemies, higher values for more
+      keywords: settings,npc,spawnrate,surface,monsters,Settings_NpcSpawnrateSurfaceMonsters
+      input_type: number
+      param_field_name: Settings_NpcSpawnrateSurfaceMonsters
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: NPC Spawnrate For Surface Monsters
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the spawn rate for surface monsters during night. Lower values for less enemies, higher values for more
+        Keywords: settings,npc,spawnrate,surface,monsters,Settings_NpcSpawnrateSurfaceMonsters
+        FieldName: Settings_NpcSpawnrateSurfaceMonsters
+        InputType: number
+        MinValue: '0.1'
+        MaxValue: '10'
+        ParamFieldName: Settings_NpcSpawnrateSurfaceMonsters
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_NpcSpawnrateUndergroundMonsters
+      label: NPC Spawnrate For Underground Monsters
+      category: Rising World
+      subcategory: General
+      description: >-
+        Sets the spawn rate for monsters which spawn underground (dungeons, hell etc). Lower values for less enemies,
+        higher values for more
+      keywords: settings,npc,spawnrate,underground,monsters,Settings_NpcSpawnrateUndergroundMonsters
+      input_type: number
+      param_field_name: Settings_NpcSpawnrateUndergroundMonsters
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: NPC Spawnrate For Underground Monsters
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: >-
+          Sets the spawn rate for monsters which spawn underground (dungeons, hell etc). Lower values for less enemies,
+          higher values for more
+        Keywords: settings,npc,spawnrate,underground,monsters,Settings_NpcSpawnrateUndergroundMonsters
+        FieldName: Settings_NpcSpawnrateUndergroundMonsters
+        InputType: number
+        MinValue: '0.1'
+        MaxValue: '10'
+        ParamFieldName: Settings_NpcSpawnrateUndergroundMonsters
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_NpcSurfaceSkeletonsHaveTorch
+      label: Surface Skeletons Have Torch
+      category: Rising World
+      subcategory: General
+      description: If set, surface skeletons will spawn with a torch at night (making them more visible)
+      keywords: settings,npc,skeletons,torch,Settings_NpcSurfaceSkeletonsHaveTorch
+      input_type: checkbox
+      param_field_name: Settings_NpcSurfaceSkeletonsHaveTorch
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Surface Skeletons Have Torch
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, surface skeletons will spawn with a torch at night (making them more visible)
+        Keywords: settings,npc,skeletons,torch,Settings_NpcSurfaceSkeletonsHaveTorch
+        FieldName: Settings_NpcSurfaceSkeletonsHaveTorch
+        InputType: checkbox
+        ParamFieldName: Settings_NpcSurfaceSkeletonsHaveTorch
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_ObjectRecoverTime
+      label: Object Recover Time
+      category: Rising World
+      subcategory: General
+      description: If a floating object breaks, it will spawn as an item if its place time is less than this value
+      keywords: settings,object,recover,time,Settings_ObjectRecoverTime
+      input_type: number
+      param_field_name: Settings_ObjectRecoverTime
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 3600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Object Recover Time
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If a floating object breaks, it will spawn as an item if its place time is less than this value
+        Keywords: settings,object,recover,time,Settings_ObjectRecoverTime
+        FieldName: Settings_ObjectRecoverTime
+        InputType: number
+        MinValue: '1'
+        MaxValue: '3600'
+        ParamFieldName: Settings_ObjectRecoverTime
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Settings_OreSmeltingDurationFactor
+      label: Ore Smelting Duration Factor
+      category: Rising World
+      subcategory: General
+      description: 'Sets the factor to modify the duration it takes to smelt ores. Example: 0.5 = smelting takes half the time'
+      keywords: settings,ore,smelting,duration,factor,Settings_OreSmeltingDurationFactor
+      input_type: number
+      param_field_name: Settings_OreSmeltingDurationFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Ore Smelting Duration Factor
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: 'Sets the factor to modify the duration it takes to smelt ores. Example: 0.5 = smelting takes half the time'
+        Keywords: settings,ore,smelting,duration,factor,Settings_OreSmeltingDurationFactor
+        FieldName: Settings_OreSmeltingDurationFactor
+        InputType: number
+        MinValue: '0.1'
+        MaxValue: '10'
+        ParamFieldName: Settings_OreSmeltingDurationFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_OverrideDeepUndergroundLocationName
+      label: Override Deep Underground Location Name
+      category: Rising World
+      subcategory: General
+      description: Sets an override for the deep underground location name ('Deep Underground')
+      keywords: settings,location,override,deep,underground,name,Settings_OverrideDeepUndergroundLocationName
+      input_type: text
+      param_field_name: Settings_OverrideDeepUndergroundLocationName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Override Deep Underground Location Name
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets an override for the deep underground location name ('Deep Underground')
+        Keywords: settings,location,override,deep,underground,name,Settings_OverrideDeepUndergroundLocationName
+        FieldName: Settings_OverrideDeepUndergroundLocationName
+        InputType: text
+        ParamFieldName: Settings_OverrideDeepUndergroundLocationName
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Settings_OverrideDefaultLocationName
+      label: Override Default Location Name
+      category: Rising World
+      subcategory: General
+      description: Sets an override for the default location name ('Wilderness')
+      keywords: settings,location,override,default,name,Settings_OverrideDefaultLocationName
+      input_type: text
+      param_field_name: Settings_OverrideDefaultLocationName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Override Default Location Name
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets an override for the default location name ('Wilderness')
+        Keywords: settings,location,override,default,name,Settings_OverrideDefaultLocationName
+        FieldName: Settings_OverrideDefaultLocationName
+        InputType: text
+        ParamFieldName: Settings_OverrideDefaultLocationName
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Settings_OverrideHellLocationName
+      label: Override Hell Location Name
+      category: Rising World
+      subcategory: General
+      description: Sets an override for the hell location name ('Hell')
+      keywords: settings,location,override,hell,name,Settings_OverrideHellLocationName
+      input_type: text
+      param_field_name: Settings_OverrideHellLocationName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Override Hell Location Name
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets an override for the hell location name ('Hell')
+        Keywords: settings,location,override,hell,name,Settings_OverrideHellLocationName
+        FieldName: Settings_OverrideHellLocationName
+        InputType: text
+        ParamFieldName: Settings_OverrideHellLocationName
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Settings_OverrideOrbitLocationName
+      label: Override Orbit Location Name
+      category: Rising World
+      subcategory: General
+      description: Sets an override for the orbit location name ('Orbit')
+      keywords: settings,location,override,orbit,name,Settings_OverrideOrbitLocationName
+      input_type: text
+      param_field_name: Settings_OverrideOrbitLocationName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Override Orbit Location Name
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets an override for the orbit location name ('Orbit')
+        Keywords: settings,location,override,orbit,name,Settings_OverrideOrbitLocationName
+        FieldName: Settings_OverrideOrbitLocationName
+        InputType: text
+        ParamFieldName: Settings_OverrideOrbitLocationName
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Settings_OverrideUndergroundLocationName
+      label: Override Underground Location Name
+      category: Rising World
+      subcategory: General
+      description: Set an override for the underground location name ('Underground')
+      keywords: settings,location,override,underground,name,Settings_OverrideUndergroundLocationName
+      input_type: text
+      param_field_name: Settings_OverrideUndergroundLocationName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Override Underground Location Name
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Set an override for the underground location name ('Underground')
+        Keywords: settings,location,override,underground,name,Settings_OverrideUndergroundLocationName
+        FieldName: Settings_OverrideUndergroundLocationName
+        InputType: text
+        ParamFieldName: Settings_OverrideUndergroundLocationName
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Settings_PackWorldItemStacks
+      label: Pack World Item Stacks
+      category: Rising World
+      subcategory: General
+      description: If set, the server will try to merge world items when spawning several at once (performance reasons)
+      keywords: settings,world,item,stacks,Settings_PackWorldItemStacks
+      input_type: checkbox
+      param_field_name: Settings_PackWorldItemStacks
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Pack World Item Stacks
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, the server will try to merge world items when spawning several at once (performance reasons)
+        Keywords: settings,world,item,stacks,Settings_PackWorldItemStacks
+        FieldName: Settings_PackWorldItemStacks
+        InputType: checkbox
+        ParamFieldName: Settings_PackWorldItemStacks
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_PeacefulMode
+      label: Enable Peaceful Mode
+      category: Rising World
+      subcategory: General
+      description: If set, peaceful mode will be active, meaning enemies do not attack (unless provoked)
+      keywords: settings,world,peaceful,mode,Settings_PeacefulMode
+      input_type: checkbox
+      param_field_name: Settings_PeacefulMode
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Peaceful Mode
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, peaceful mode will be active, meaning enemies do not attack (unless provoked)
+        Keywords: settings,world,peaceful,mode,Settings_PeacefulMode
+        FieldName: Settings_PeacefulMode
+        InputType: checkbox
+        ParamFieldName: Settings_PeacefulMode
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_PickupOnDeconstruct
+      label: Pickup On Deconstruct
+      category: Rising World
+      subcategory: General
+      description: If set, blocks will be picked up automatically when deconstructing them with a sledgehammer
+      keywords: settings,world,pickup,deconstruct,Settings_PickupOnDeconstruct
+      input_type: checkbox
+      param_field_name: Settings_PickupOnDeconstruct
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Pickup On Deconstruct
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, blocks will be picked up automatically when deconstructing them with a sledgehammer
+        Keywords: settings,world,pickup,deconstruct,Settings_PickupOnDeconstruct
+        FieldName: Settings_PickupOnDeconstruct
+        InputType: checkbox
+        ParamFieldName: Settings_PickupOnDeconstruct
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_PlantGrowthDurationFactor
+      label: Plant Growth Duration Factor
+      category: Rising World
+      subcategory: General
+      description: 'Sets the factor to modify the duration it takes for plants to grow. Example: 0.5 = growth is twice as fast'
+      keywords: settings,plant,growth,duration,factor,Settings_PlantGrowthDurationFactor
+      input_type: number
+      param_field_name: Settings_PlantGrowthDurationFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Plant Growth Duration Factor
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: 'Sets the factor to modify the duration it takes for plants to grow. Example: 0.5 = growth is twice as fast'
+        Keywords: settings,plant,growth,duration,factor,Settings_PlantGrowthDurationFactor
+        FieldName: Settings_PlantGrowthDurationFactor
+        InputType: number
+        MinValue: '0.1'
+        MaxValue: '10'
+        ParamFieldName: Settings_PlantGrowthDurationFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_PlayerListShowDistance
+      label: Player List Shows Distance
+      category: Rising World
+      subcategory: General
+      description: If set, the player list (i) will show the distance to other players
+      keywords: settings,player,list,distance,Settings_PlayerListShowDistance
+      input_type: checkbox
+      param_field_name: Settings_PlayerListShowDistance
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Player List Shows Distance
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, the player list (i) will show the distance to other players
+        Keywords: settings,player,list,distance,Settings_PlayerListShowDistance
+        FieldName: Settings_PlayerListShowDistance
+        InputType: checkbox
+        ParamFieldName: Settings_PlayerListShowDistance
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_PlayerListShowPermissionGroup
+      label: Player List Shows Permission Group
+      category: Rising World
+      subcategory: General
+      description: If set, the player list (i) will show the permission group of other players
+      keywords: settings,player,list,permission,group,Settings_PlayerListShowPermissionGroup
+      input_type: checkbox
+      param_field_name: Settings_PlayerListShowPermissionGroup
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Player List Shows Permission Group
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, the player list (i) will show the permission group of other players
+        Keywords: settings,player,list,permission,group,Settings_PlayerListShowPermissionGroup
+        FieldName: Settings_PlayerListShowPermissionGroup
+        InputType: checkbox
+        ParamFieldName: Settings_PlayerListShowPermissionGroup
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_PlayerListShowPlayTime
+      label: Player List Shows Play Time
+      category: Rising World
+      subcategory: General
+      description: If set, the player list (i) will show the total playtime of other players
+      keywords: settings,player,list,playtime,Settings_PlayerListShowPlayTime
+      input_type: checkbox
+      param_field_name: Settings_PlayerListShowPlayTime
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Player List Shows Play Time
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, the player list (i) will show the total playtime of other players
+        Keywords: settings,player,list,playtime,Settings_PlayerListShowPlayTime
+        FieldName: Settings_PlayerListShowPlayTime
+        InputType: checkbox
+        ParamFieldName: Settings_PlayerListShowPlayTime
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_PlayerUndoSteps
+      label: Player Undo Steps
+      category: Rising World
+      subcategory: General
+      description: Sets how many 'undo' steps are tracked per player
+      keywords: settings,player,undo,steps,Settings_PlayerUndoSteps
+      input_type: number
+      param_field_name: Settings_PlayerUndoSteps
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Player Undo Steps
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets how many 'undo' steps are tracked per player
+        Keywords: settings,player,undo,steps,Settings_PlayerUndoSteps
+        FieldName: Settings_PlayerUndoSteps
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: Settings_PlayerUndoSteps
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+    - key: Settings_PlayerUndoTime
+      label: Player Undo Time
+      category: Rising World
+      subcategory: General
+      description: Sets how long an undo step is valid
+      keywords: settings,player,undo,time,Settings_PlayerUndoTime
+      input_type: number
+      param_field_name: Settings_PlayerUndoTime
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 3600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Player Undo Time
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets how long an undo step is valid
+        Keywords: settings,player,undo,time,Settings_PlayerUndoTime
+        FieldName: Settings_PlayerUndoTime
+        InputType: number
+        MinValue: '1'
+        MaxValue: '3600'
+        ParamFieldName: Settings_PlayerUndoTime
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Settings_PlayHeartbeatSoundOnAttack
+      label: Play Heartbeat Sound On Attack
+      category: Rising World
+      subcategory: General
+      description: If set, players will hear a heartbeat sound when being detected by a hostile NPC
+      keywords: settings,player,heartbeat,sound,attack,Settings_PlayHeartbeatSoundOnAttack
+      input_type: checkbox
+      param_field_name: Settings_PlayHeartbeatSoundOnAttack
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Play Heartbeat Sound On Attack
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, players will hear a heartbeat sound when being detected by a hostile NPC
+        Keywords: settings,player,heartbeat,sound,attack,Settings_PlayHeartbeatSoundOnAttack
+        FieldName: Settings_PlayHeartbeatSoundOnAttack
+        InputType: checkbox
+        ParamFieldName: Settings_PlayHeartbeatSoundOnAttack
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_PvE
+      label: Advertise PvE
+      category: Rising World
+      subcategory: General
+      description: If set, the server will be advertised as a PvE server (this alone does not affect the gameplay)
+      keywords: settings,server,pve,Settings_PvE
+      input_type: checkbox
+      param_field_name: Settings_PvE
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Advertise PvE
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, the server will be advertised as a PvE server (this alone does not affect the gameplay)
+        Keywords: settings,server,pve,Settings_PvE
+        FieldName: Settings_PvE
+        InputType: checkbox
+        ParamFieldName: Settings_PvE
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_PvP
+      label: Advertise PvP
+      category: Rising World
+      subcategory: General
+      description: If set, the server will be advertised as a PvP server (this alone does not affect the gameplay)
+      keywords: settings,server,pvp,Settings_PvP
+      input_type: checkbox
+      param_field_name: Settings_PvP
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Advertise PvP
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, the server will be advertised as a PvP server (this alone does not affect the gameplay)
+        Keywords: settings,server,pvp,Settings_PvP
+        FieldName: Settings_PvP
+        InputType: checkbox
+        ParamFieldName: Settings_PvP
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_RegionalWeather
+      label: Enable Regional Weather
+      category: Rising World
+      subcategory: General
+      description: If set, there will be different weather per region (each region overrides the global weather)
+      keywords: settings,weather,regional,Settings_RegionalWeather
+      input_type: checkbox
+      param_field_name: Settings_RegionalWeather
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Regional Weather
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, there will be different weather per region (each region overrides the global weather)
+        Keywords: settings,weather,regional,Settings_RegionalWeather
+        FieldName: Settings_RegionalWeather
+        InputType: checkbox
+        ParamFieldName: Settings_RegionalWeather
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_SeasonsEnabled
+      label: Enable Seasons
+      category: Rising World
+      subcategory: General
+      description: If set, seasons will be enabled
+      keywords: settings,weather,seasons,Settings_SeasonsEnabled
+      input_type: checkbox
+      param_field_name: Settings_SeasonsEnabled
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Seasons
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, seasons will be enabled
+        Keywords: settings,weather,seasons,Settings_SeasonsEnabled
+        FieldName: Settings_SeasonsEnabled
+        InputType: checkbox
+        ParamFieldName: Settings_SeasonsEnabled
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_ShowGeneralMessages
+      label: Show General Messages
+      category: Rising World
+      subcategory: General
+      description: If set, general messages (time of day or weather changed) will show up in the chat
+      keywords: settings,server,show,general,messages,Settings_ShowGeneralMessages
+      input_type: checkbox
+      param_field_name: Settings_ShowGeneralMessages
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show General Messages
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, general messages (time of day or weather changed) will show up in the chat
+        Keywords: settings,server,show,general,messages,Settings_ShowGeneralMessages
+        FieldName: Settings_ShowGeneralMessages
+        InputType: checkbox
+        ParamFieldName: Settings_ShowGeneralMessages
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_ShowLocationDuration
+      label: Show Location Duration
+      category: Rising World
+      subcategory: General
+      description: Sets how long the current location should be shown to the player. -1 = always show the location
+      keywords: settings,server,show,location,duration,Settings_ShowLocationDuration
+      input_type: number
+      param_field_name: Settings_ShowLocationDuration
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      max: 3600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Show Location Duration
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets how long the current location should be shown to the player. -1 = always show the location
+        Keywords: settings,server,show,location,duration,Settings_ShowLocationDuration
+        FieldName: Settings_ShowLocationDuration
+        InputType: number
+        MinValue: '-1'
+        MaxValue: '3600'
+        ParamFieldName: Settings_ShowLocationDuration
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Settings_ShowPlayerConnectMessage
+      label: Show Player Connect Message
+      category: Rising World
+      subcategory: General
+      description: If set, all players will be notified when a player connects to the server
+      keywords: settings,server,show,player,connect,message,Settings_ShowPlayerConnectMessage
+      input_type: checkbox
+      param_field_name: Settings_ShowPlayerConnectMessage
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show Player Connect Message
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, all players will be notified when a player connects to the server
+        Keywords: settings,server,show,player,connect,message,Settings_ShowPlayerConnectMessage
+        FieldName: Settings_ShowPlayerConnectMessage
+        InputType: checkbox
+        ParamFieldName: Settings_ShowPlayerConnectMessage
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_ShowPlayerDeathMessage
+      label: Show Player Death Message
+      category: Rising World
+      subcategory: General
+      description: If set, all players will be notified when a player dies
+      keywords: settings,server,show,player,death,message,Settings_ShowPlayerDeathMessage
+      input_type: checkbox
+      param_field_name: Settings_ShowPlayerDeathMessage
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show Player Death Message
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, all players will be notified when a player dies
+        Keywords: settings,server,show,player,death,message,Settings_ShowPlayerDeathMessage
+        FieldName: Settings_ShowPlayerDeathMessage
+        InputType: checkbox
+        ParamFieldName: Settings_ShowPlayerDeathMessage
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_ShowPlayerDeathMessageReason
+      label: Show Player Death Message Reason
+      category: Rising World
+      subcategory: General
+      description: If set, all players will see why a player died (only if Show Player Death Message is enabled)
+      keywords: settings,server,show,player,death,message,reason,Settings_ShowPlayerDeathMessageReason
+      input_type: checkbox
+      param_field_name: Settings_ShowPlayerDeathMessageReason
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show Player Death Message Reason
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, all players will see why a player died (only if Show Player Death Message is enabled)
+        Keywords: settings,server,show,player,death,message,reason,Settings_ShowPlayerDeathMessageReason
+        FieldName: Settings_ShowPlayerDeathMessageReason
+        InputType: checkbox
+        ParamFieldName: Settings_ShowPlayerDeathMessageReason
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_ShowPlayerDisconnectMessage
+      label: Show Player Disconnect Message
+      category: Rising World
+      subcategory: General
+      description: If set, all players will be notified when a player leaves the server
+      keywords: settings,server,show,player,disconnect,message,Settings_ShowPlayerDisconnectMessage
+      input_type: checkbox
+      param_field_name: Settings_ShowPlayerDisconnectMessage
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show Player Disconnect Message
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, all players will be notified when a player leaves the server
+        Keywords: settings,server,show,player,disconnect,message,Settings_ShowPlayerDisconnectMessage
+        FieldName: Settings_ShowPlayerDisconnectMessage
+        InputType: checkbox
+        ParamFieldName: Settings_ShowPlayerDisconnectMessage
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_ShowPlayersOnMap
+      label: Show Players On Map
+      category: Rising World
+      subcategory: General
+      description: If set, all players will be visible on the in-game map
+      keywords: settings,server,show,players,map,Settings_ShowPlayersOnMap
+      input_type: checkbox
+      param_field_name: Settings_ShowPlayersOnMap
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show Players On Map
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, all players will be visible on the in-game map
+        Keywords: settings,server,show,players,map,Settings_ShowPlayersOnMap
+        FieldName: Settings_ShowPlayersOnMap
+        InputType: checkbox
+        ParamFieldName: Settings_ShowPlayersOnMap
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_ShowRestartReminder
+      label: Show Restart Reminder
+      category: Rising World
+      subcategory: General
+      description: If set, a restart reminder will be sent to all admins if the server is running for more than 24 hours
+      keywords: settings,server,show,restart,reminder,Settings_ShowRestartReminder
+      input_type: checkbox
+      param_field_name: Settings_ShowRestartReminder
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show Restart Reminder
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, a restart reminder will be sent to all admins if the server is running for more than 24 hours
+        Keywords: settings,server,show,restart,reminder,Settings_ShowRestartReminder
+        FieldName: Settings_ShowRestartReminder
+        InputType: checkbox
+        ParamFieldName: Settings_ShowRestartReminder
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_SkipLoadingAllowed
+      label: Skip Loading Allowed
+      category: Rising World
+      subcategory: General
+      description: If set, clients will be allowed to skip the loading screen when connecting to the server
+      keywords: settings,server,skip,loading,allowed,Settings_SkipLoadingAllowed
+      input_type: checkbox
+      param_field_name: Settings_SkipLoadingAllowed
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Skip Loading Allowed
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: If set, clients will be allowed to skip the loading screen when connecting to the server
+        Keywords: settings,server,skip,loading,allowed,Settings_SkipLoadingAllowed
+        FieldName: Settings_SkipLoadingAllowed
+        InputType: checkbox
+        ParamFieldName: Settings_SkipLoadingAllowed
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_SkyRotation
+      label: Sky Rotation
+      category: Rising World
+      subcategory: General
+      description: Sets the optional rotation (in degrees) of the sky (determines where the sun rises and sets)
+      keywords: settings,server,sky,rotation,Settings_SkyRotation
+      input_type: number
+      param_field_name: Settings_SkyRotation
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 360
+      suffix: degrees
+      enum_values: {}
+      raw:
+        DisplayName: Sky Rotation
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the optional rotation (in degrees) of the sky (determines where the sun rises and sets)
+        Keywords: settings,server,sky,rotation,Settings_SkyRotation
+        FieldName: Settings_SkyRotation
+        InputType: number
+        MinValue: '0'
+        MaxValue: '360'
+        ParamFieldName: Settings_SkyRotation
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: degrees
+        EnumValues: {}
+    - key: Settings_SpawnChestItemsOnDestroy
+      label: Spawn Chest Items On Destroy
+      category: Rising World
+      subcategory: General
+      description: >-
+        If set, chests will spawn all their content as world items if a player breaks them. May have performance
+        implications
+      keywords: settings,server,spawn,chest,items,destroy,Settings_SpawnChestItemsOnDestroy
+      input_type: checkbox
+      param_field_name: Settings_SpawnChestItemsOnDestroy
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Spawn Chest Items On Destroy
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: >-
+          If set, chests will spawn all their content as world items if a player breaks them. May have performance
+          implications
+        Keywords: settings,server,spawn,chest,items,destroy,Settings_SpawnChestItemsOnDestroy
+        FieldName: Settings_SpawnChestItemsOnDestroy
+        InputType: checkbox
+        ParamFieldName: Settings_SpawnChestItemsOnDestroy
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Settings_SpawnProtection
+      label: Spawn Protection Period
+      category: Rising World
+      subcategory: General
+      description: >-
+        Sets the player spawn protection period. Newly spawned players won't get attacked by NPCs during the spawn
+        protection period
+      keywords: settings,server,spawn,protection,period,Settings_SpawnProtection
+      input_type: number
+      param_field_name: Settings_SpawnProtection
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 3600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Spawn Protection Period
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: >-
+          Sets the player spawn protection period. Newly spawned players won't get attacked by NPCs during the spawn
+          protection period
+        Keywords: settings,server,spawn,protection,period,Settings_SpawnProtection
+        FieldName: Settings_SpawnProtection
+        InputType: number
+        MinValue: '0'
+        MaxValue: '3600'
+        ParamFieldName: Settings_SpawnProtection
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Settings_StartWeather
+      label: Starting Weather
+      category: Rising World
+      subcategory: General
+      description: Sets the initial weather effect (such as 'fog', 'rain' etc). Empty = default weather
+      keywords: settings,server,start,weather,Settings_StartWeather
+      input_type: text
+      param_field_name: Settings_StartWeather
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Starting Weather
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the initial weather effect (such as 'fog', 'rain' etc). Empty = default weather
+        Keywords: settings,server,start,weather,Settings_StartWeather
+        FieldName: Settings_StartWeather
+        InputType: text
+        ParamFieldName: Settings_StartWeather
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Settings_TimeDuration
+      label: Day Duration
+      category: Rising World
+      subcategory: General
+      description: Sets the duration (in real time) of one in-game day
+      keywords: settings,server,time,day,duration,Settings_TimeDuration
+      input_type: number
+      param_field_name: Settings_TimeDuration
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 1440
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Day Duration
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the duration (in real time) of one in-game day
+        Keywords: settings,server,time,day,duration,Settings_TimeDuration
+        FieldName: Settings_TimeDuration
+        InputType: number
+        MinValue: '1'
+        MaxValue: '1440'
+        ParamFieldName: Settings_TimeDuration
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: minutes
+        EnumValues: {}
+    - key: Settings_WaterUpdateInterval
+      label: Water Update Interval
+      category: Rising World
+      subcategory: General
+      description: Sets how often flowing water should be updated. 0 = disable flowing water
+      keywords: settings,server,water,update,interval,Settings_WaterUpdateInterval
+      input_type: number
+      param_field_name: Settings_WaterUpdateInterval
+      default: '0.1'
+      placeholder: '0.1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Water Update Interval
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets how often flowing water should be updated. 0 = disable flowing water
+        Keywords: settings,server,water,update,interval,Settings_WaterUpdateInterval
+        FieldName: Settings_WaterUpdateInterval
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: Settings_WaterUpdateInterval
+        DefaultValue: '0.1'
+        Placeholder: '0.1'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Settings_WaterUpdateSyncInterval
+      label: Water Update Sync Interval
+      category: Rising World
+      subcategory: General
+      description: Sets how often flowing water updates should be synced with clients
+      keywords: settings,server,water,update,sync,interval,Settings_WaterUpdateSyncInterval
+      input_type: number
+      param_field_name: Settings_WaterUpdateSyncInterval
+      default: '0.5'
+      placeholder: '0.5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Water Update Sync Interval
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets how often flowing water updates should be synced with clients
+        Keywords: settings,server,water,update,sync,interval,Settings_WaterUpdateSyncInterval
+        FieldName: Settings_WaterUpdateSyncInterval
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: Settings_WaterUpdateSyncInterval
+        DefaultValue: '0.5'
+        Placeholder: '0.5'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Settings_WaterWorkerThreads
+      label: Water Worker Threads
+      category: Rising World
+      subcategory: General
+      description: Sets the number of water worker threads (responsible for handling water updates). 0 = automatic assignment
+      keywords: settings,server,water,worker,threads,Settings_WaterWorkerThreads
+      input_type: number
+      param_field_name: Settings_WaterWorkerThreads
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 64
+      enum_values: {}
+      raw:
+        DisplayName: Water Worker Threads
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the number of water worker threads (responsible for handling water updates). 0 = automatic assignment
+        Keywords: settings,server,water,worker,threads,Settings_WaterWorkerThreads
+        FieldName: Settings_WaterWorkerThreads
+        InputType: number
+        MinValue: '0'
+        MaxValue: '64'
+        ParamFieldName: Settings_WaterWorkerThreads
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: Settings_WeatherDurationFactor
+      label: Weather Duration Factor
+      category: Rising World
+      subcategory: General
+      description: 'Sets the factor to modify the time until the weather changes. Example: 0.5 = weather changes twice as frequently'
+      keywords: settings,server,weather,duration,factor,Settings_WeatherDurationFactor
+      input_type: number
+      param_field_name: Settings_WeatherDurationFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Weather Duration Factor
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: >-
+          Sets the factor to modify the time until the weather changes. Example: 0.5 = weather changes twice as
+          frequently
+        Keywords: settings,server,weather,duration,factor,Settings_WeatherDurationFactor
+        FieldName: Settings_WeatherDurationFactor
+        InputType: number
+        MinValue: '0.1'
+        MaxValue: '10'
+        ParamFieldName: Settings_WeatherDurationFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: Settings_WeatherPreset
+      label: Weather Preset
+      category: Rising World
+      subcategory: General
+      description: Sets the weather preset
+      keywords: settings,server,weather,preset,Settings_WeatherPreset
+      input_type: enum
+      param_field_name: Settings_WeatherPreset
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Off (no weather changes)
+        '1': Default
+        '2': Sunny
+        '3': Unsettled
+      raw:
+        DisplayName: Weather Preset
+        Category: Rising World:stadia_controller
+        Subcategory: General:build:3
+        Description: Sets the weather preset
+        Keywords: settings,server,weather,preset,Settings_WeatherPreset
+        FieldName: Settings_WeatherPreset
+        InputType: enum
+        ParamFieldName: Settings_WeatherPreset
+        DefaultValue: '1'
+        EnumValues:
+          '0': Off (no weather changes)
+          '1': Default
+          '2': Sunny
+          '3': Unsettled
+    - key: Database_InMemory
+      label: Enable In-Memory Database
+      category: Rising World
+      subcategory: Database
+      description: If set, the database runs in RAM (faster) and is only stored periodically on disk. Increases memory usage
+      keywords: database,in-memory,Database_InMemory
+      input_type: checkbox
+      param_field_name: Database_InMemory
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable In-Memory Database
+        Category: Rising World:stadia_controller
+        Subcategory: Database:database:4
+        Description: If set, the database runs in RAM (faster) and is only stored periodically on disk. Increases memory usage
+        Keywords: database,in-memory,Database_InMemory
+        FieldName: Database_InMemory
+        InputType: checkbox
+        ParamFieldName: Database_InMemory
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Database_InMemoryBackupInterval
+      label: In-Memory Database Save Interval
+      category: Rising World
+      subcategory: Database
+      description: Sets the save interval for the database being saved to disk when using the in-memory database
+      keywords: database,in-memory,backup,interval,Database_InMemoryBackupInterval
+      input_type: number
+      param_field_name: Database_InMemoryBackupInterval
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 3600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: In-Memory Database Save Interval
+        Category: Rising World:stadia_controller
+        Subcategory: Database:database:4
+        Description: Sets the save interval for the database being saved to disk when using the in-memory database
+        Keywords: database,in-memory,backup,interval,Database_InMemoryBackupInterval
+        FieldName: Database_InMemoryBackupInterval
+        InputType: number
+        MinValue: '1'
+        MaxValue: '3600'
+        ParamFieldName: Database_InMemoryBackupInterval
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Database_JournalMode
+      label: Journal Mode
+      category: Rising World
+      subcategory: Database
+      description: Sets the journal mode. It's recommended to use WAL (Write-Ahead Logging)
+      keywords: database,journal,mode,Database_JournalMode
+      input_type: enum
+      param_field_name: Database_JournalMode
+      default: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': 'Off'
+        '1': Memory
+        '2': Delete
+        '3': Truncate
+        '4': Persist
+        '5': WAL (default)
+      raw:
+        DisplayName: Journal Mode
+        Category: Rising World:stadia_controller
+        Subcategory: Database:database:4
+        Description: Sets the journal mode. It's recommended to use WAL (Write-Ahead Logging)
+        Keywords: database,journal,mode,Database_JournalMode
+        FieldName: Database_JournalMode
+        InputType: enum
+        ParamFieldName: Database_JournalMode
+        DefaultValue: '5'
+        EnumValues:
+          '0': 'Off'
+          '1': Memory
+          '2': Delete
+          '3': Truncate
+          '4': Persist
+          '5': WAL (default)
+    - key: Database_SynchronousMode
+      label: Synchronous Mode
+      category: Rising World
+      subcategory: Database
+      description: Sets the synchronous mode
+      keywords: database,synchronous,mode,Database_SynchronousMode
+      input_type: enum
+      param_field_name: Database_SynchronousMode
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': 'Off'
+        '1': Normal
+        '2': Full
+      raw:
+        DisplayName: Synchronous Mode
+        Category: Rising World:stadia_controller
+        Subcategory: Database:database:4
+        Description: Sets the synchronous mode
+        Keywords: database,synchronous,mode,Database_SynchronousMode
+        FieldName: Database_SynchronousMode
+        InputType: enum
+        ParamFieldName: Database_SynchronousMode
+        DefaultValue: '1'
+        EnumValues:
+          '0': 'Off'
+          '1': Normal
+          '2': Full
+    - key: RCON_Enabled
+      label: Enable RCON
+      category: Rising World
+      subcategory: RCON
+      description: If set, the RCON tool will be enabled
+      keywords: rcon,enabled,RCON_Enabled
+      input_type: checkbox
+      param_field_name: RCON_Enabled
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable RCON
+        Category: Rising World:stadia_controller
+        Subcategory: RCON:input:5
+        Description: If set, the RCON tool will be enabled
+        Keywords: rcon,enabled,RCON_Enabled
+        FieldName: RCON_Enabled
+        InputType: checkbox
+        ParamFieldName: RCON_Enabled
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: RCON_APIOnly
+      label: Enable RCON API Only
+      category: Rising World
+      subcategory: RCON
+      description: If set, allows the use of a custom RCON tool (disables the built-in RCON tool)
+      keywords: rcon,api,only,RCON_APIOnly
+      input_type: checkbox
+      param_field_name: RCON_APIOnly
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable RCON API Only
+        Category: Rising World:stadia_controller
+        Subcategory: RCON:input:5
+        Description: If set, allows the use of a custom RCON tool (disables the built-in RCON tool)
+        Keywords: rcon,api,only,RCON_APIOnly
+        FieldName: RCON_APIOnly
+        InputType: checkbox
+        ParamFieldName: RCON_APIOnly
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: RCON_Certificate
+      label: RCON Certificate
+      category: Rising World
+      subcategory: RCON
+      description: Sets the RCON certificate path (relative to the server directory)
+      keywords: rcon,certificate,RCON_Certificate
+      input_type: text
+      param_field_name: RCON_Certificate
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Certificate
+        Category: Rising World:stadia_controller
+        Subcategory: RCON:input:5
+        Description: Sets the RCON certificate path (relative to the server directory)
+        Keywords: rcon,certificate,RCON_Certificate
+        FieldName: RCON_Certificate
+        InputType: text
+        ParamFieldName: RCON_Certificate
+        DefaultValue: ''
+        EnumValues: {}
+    - key: RCON_CertificatePassword
+      label: RCON Certificate Password
+      category: Rising World
+      subcategory: RCON
+      description: Sets the RCON certificate password
+      keywords: rcon,certificate,password,RCON_CertificatePassword
+      input_type: password
+      param_field_name: RCON_CertificatePassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Certificate Password
+        Category: Rising World:stadia_controller
+        Subcategory: RCON:input:5
+        Description: Sets the RCON certificate password
+        Keywords: rcon,certificate,password,RCON_CertificatePassword
+        FieldName: RCON_CertificatePassword
+        InputType: password
+        ParamFieldName: RCON_CertificatePassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: RCON_IP
+      label: RCON IP Binding
+      category: Rising World
+      subcategory: RCON
+      description: Sets the RCON IP binding. Empty = default server IP
+      keywords: rcon,ip,RCON_IP
+      input_type: text
+      param_field_name: RCON_IP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON IP Binding
+        Category: Rising World:stadia_controller
+        Subcategory: RCON:input:5
+        Description: Sets the RCON IP binding. Empty = default server IP
+        Keywords: rcon,ip,RCON_IP
+        FieldName: RCON_IP
+        InputType: text
+        ParamFieldName: RCON_IP
+        DefaultValue: ''
+        EnumValues: {}
+    - key: RCON_Password
+      label: RCON Password
+      category: Rising World
+      subcategory: RCON
+      description: Sets the password required for RCON login. Minimum 6 characters
+      keywords: rcon,password,RCON_Password
+      input_type: password
+      param_field_name: RCON_Password
+      default: '{{randomdigits(6)}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Rising World:stadia_controller
+        Subcategory: RCON:input:5
+        Description: Sets the password required for RCON login. Minimum 6 characters
+        Keywords: rcon,password,RCON_Password
+        FieldName: RCON_Password
+        InputType: password
+        ParamFieldName: RCON_Password
+        DefaultValue: '{{randomdigits(6)}}'
+        EnumValues: {}
+    - key: RCON_WhitelistIP
+      label: RCON Whitelist IP
+      category: Rising World
+      subcategory: RCON
+      description: Sets a semicolon-separated lists of IPs that can access the RCON tool
+      keywords: rcon,whitelist,ip,RCON_WhitelistIP
+      input_type: text
+      param_field_name: RCON_WhitelistIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Whitelist IP
+        Category: Rising World:stadia_controller
+        Subcategory: RCON:input:5
+        Description: Sets a semicolon-separated lists of IPs that can access the RCON tool
+        Keywords: rcon,whitelist,ip,RCON_WhitelistIP
+        FieldName: RCON_WhitelistIP
+        InputType: text
+        ParamFieldName: RCON_WhitelistIP
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Plugins_Enabled
+      label: Enable Plugins
+      category: Rising World
+      subcategory: Plugins
+      description: If true, plugins will be loaded. If disabled, no Java VM will be created
+      keywords: plugins,enabled,Plugins_Enabled
+      input_type: checkbox
+      param_field_name: Plugins_Enabled
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Plugins
+        Category: Rising World:stadia_controller
+        Subcategory: Plugins:extension:6
+        Description: If true, plugins will be loaded. If disabled, no Java VM will be created
+        Keywords: plugins,enabled,Plugins_Enabled
+        FieldName: Plugins_Enabled
+        InputType: checkbox
+        ParamFieldName: Plugins_Enabled
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Plugins_Memory
+      label: Plugin Memory
+      category: Rising World
+      subcategory: Plugins
+      description: Sets the amount of heap memory for the Java VM
+      keywords: plugins,memory,Plugins_Memory
+      input_type: number
+      param_field_name: Plugins_Memory
+      default: '1024'
+      placeholder: '1024'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 128
+      max: 16384
+      suffix: MB
+      enum_values: {}
+      raw:
+        DisplayName: Plugin Memory
+        Category: Rising World:stadia_controller
+        Subcategory: Plugins:extension:6
+        Description: Sets the amount of heap memory for the Java VM
+        Keywords: plugins,memory,Plugins_Memory
+        FieldName: Plugins_Memory
+        InputType: number
+        MinValue: '128'
+        MaxValue: '16384'
+        ParamFieldName: Plugins_Memory
+        DefaultValue: '1024'
+        Placeholder: '1024'
+        Suffix: MB
+        EnumValues: {}
+    - key: Plugins_VMOptions
+      label: Java VM Options
+      category: Rising World
+      subcategory: Plugins
+      description: Sets a semicolon-separated list of Java VM options
+      keywords: plugins,vm,options,Plugins_VMOptions
+      input_type: text
+      param_field_name: Plugins_VMOptions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Java VM Options
+        Category: Rising World:stadia_controller
+        Subcategory: Plugins:extension:6
+        Description: Sets a semicolon-separated list of Java VM options
+        Keywords: plugins,vm,options,Plugins_VMOptions
+        FieldName: Plugins_VMOptions
+        InputType: text
+        ParamFieldName: Plugins_VMOptions
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Plugins_DebugEvents
+      label: Debug Plugin Events
+      category: Rising World
+      subcategory: Plugins
+      description: If true, the game will track event call durations and also detects infinite loops in plugin event methods
+      keywords: plugins,debug,events,Plugins_DebugEvents
+      input_type: checkbox
+      param_field_name: Plugins_DebugEvents
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Debug Plugin Events
+        Category: Rising World:stadia_controller
+        Subcategory: Plugins:extension:6
+        Description: If true, the game will track event call durations and also detects infinite loops in plugin event methods
+        Keywords: plugins,debug,events,Plugins_DebugEvents
+        FieldName: Plugins_DebugEvents
+        InputType: checkbox
+        ParamFieldName: Plugins_DebugEvents
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Plugins_DebugEventsDurationThreshold
+      label: Debug Events Duration Threshold
+      category: Rising World
+      subcategory: Plugins
+      description: >-
+        Sets the maximum allowed duration of event calls until a log message is printed. Debug Plugin Events must be
+        enabled
+      keywords: plugins,debug,events,duration,threshold,Plugins_DebugEventsDurationThreshold
+      input_type: number
+      param_field_name: Plugins_DebugEventsDurationThreshold
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 1000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Debug Events Duration Threshold
+        Category: Rising World:stadia_controller
+        Subcategory: Plugins:extension:6
+        Description: >-
+          Sets the maximum allowed duration of event calls until a log message is printed. Debug Plugin Events must be
+          enabled
+        Keywords: plugins,debug,events,duration,threshold,Plugins_DebugEventsDurationThreshold
+        FieldName: Plugins_DebugEventsDurationThreshold
+        InputType: number
+        MinValue: '1'
+        MaxValue: '1000'
+        ParamFieldName: Plugins_DebugEventsDurationThreshold
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: Plugins_ErrorThreshold
+      label: Plugin Error Threshold
+      category: Rising World
+      subcategory: Plugins
+      description: Sets the maximum number of plugin errors until the server throws an exception
+      keywords: plugins,error,threshold,Plugins_ErrorThreshold
+      input_type: number
+      param_field_name: Plugins_ErrorThreshold
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Plugin Error Threshold
+        Category: Rising World:stadia_controller
+        Subcategory: Plugins:extension:6
+        Description: Sets the maximum number of plugin errors until the server throws an exception
+        Keywords: plugins,error,threshold,Plugins_ErrorThreshold
+        FieldName: Plugins_ErrorThreshold
+        InputType: number
+        MinValue: '1'
+        MaxValue: '1000'
+        ParamFieldName: Plugins_ErrorThreshold
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+    - key: Plugins_SuppressFatalErrorLogs
+      label: Suppress Fatal Error Logs
+      category: Rising World
+      subcategory: Plugins
+      description: If set, the Java VM will not generate hs_err_pid files in case of a native crash
+      keywords: plugins,suppress,fatal,error,logs,Plugins_SuppressFatalErrorLogs
+      input_type: checkbox
+      param_field_name: Plugins_SuppressFatalErrorLogs
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Suppress Fatal Error Logs
+        Category: Rising World:stadia_controller
+        Subcategory: Plugins:extension:6
+        Description: If set, the Java VM will not generate hs_err_pid files in case of a native crash
+        Keywords: plugins,suppress,fatal,error,logs,Plugins_SuppressFatalErrorLogs
+        FieldName: Plugins_SuppressFatalErrorLogs
+        InputType: checkbox
+        ParamFieldName: Plugins_SuppressFatalErrorLogs
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Permissions_DefaultNewPlayerPermissionGroup
+      label: Default New Player Permission Group
+      category: Rising World
+      subcategory: Permissions
+      description: Sets the default permission group for new players. Empty = default permissions
+      keywords: permissions,default,new,player,group,Permissions_DefaultNewPlayerPermissionGroup
+      input_type: text
+      param_field_name: Permissions_DefaultNewPlayerPermissionGroup
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Default New Player Permission Group
+        Category: Rising World:stadia_controller
+        Subcategory: Permissions:verified_user:7
+        Description: Sets the default permission group for new players. Empty = default permissions
+        Keywords: permissions,default,new,player,group,Permissions_DefaultNewPlayerPermissionGroup
+        FieldName: Permissions_DefaultNewPlayerPermissionGroup
+        InputType: text
+        ParamFieldName: Permissions_DefaultNewPlayerPermissionGroup
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Permissions_AdminsFullPermissions
+      label: Give Admins Full Permissions
+      category: Rising World
+      subcategory: Permissions
+      description: If set, server admins get full permissions, irrespective of their actual permission group
+      keywords: permissions,admins,full,Permissions_AdminsFullPermissions
+      input_type: checkbox
+      param_field_name: Permissions_AdminsFullPermissions
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Give Admins Full Permissions
+        Category: Rising World:stadia_controller
+        Subcategory: Permissions:verified_user:7
+        Description: If set, server admins get full permissions, irrespective of their actual permission group
+        Keywords: permissions,admins,full,Permissions_AdminsFullPermissions
+        FieldName: Permissions_AdminsFullPermissions
+        InputType: checkbox
+        ParamFieldName: Permissions_AdminsFullPermissions
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: Sets the server branch to install. Update the server after switching branches
+      keywords: server,branch,depot,beta
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        unity_previous2: Old 0.9
+        unity_previous: Old 0.8.5.2
+        unity_old: Old 0.7.5.2
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: Sets the server branch to install. Update the server after switching branches
+        Keywords: server,branch,depot,beta
+        FieldName: ServerBranch
+        InputType: enum
+        ParamFieldName: ServerBranch
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          unity_previous2: Old 0.9
+          unity_previous: Old 0.8.5.2
+          unity_old: Old 0.7.5.2
+  files:
+    - path: server.properties
+      type: kvp
+      subsections: []
+      raw:
+        ConfigFile: server.properties
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: Server_RestartEnabled
+    label: Disable Restart
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_Input
+    label: Enable Console Input
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_ClearConsole
+    label: Don't Clear Console On Startup
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_ConfigNoComments
+    label: Include Comments In Config
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_WebserverEnabled
+    label: Enable Webserver
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_Logs
+    label: Enable Logs
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_Name
+    label: Server Name
+    default: AMP Powered Rising World Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_ShortName
+    label: Server Short Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_Description
+    label: Server Description
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_Contact
+    label: Server Contact
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_Visible
+    label: Show In Server List
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Server_Admins
+    label: Server Admins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_CustomHeaderImage
+    label: Custom Server Header Image
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_UseWhitelist
+    label: Enable Whitelist
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_UseBlacklist
+    label: Enable Blacklist
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_UseReservedNames
+    label: Use Reserved Names
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_DisableConversionSavepoints
+    label: Disable Conversion Savepoints
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_EnablePortCheck
+    label: Enable Port Check
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_Framerate
+    label: Server Target Framerate
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_SteamReconnectAttempts
+    label: Steam Reconnect Attempts
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_DeleteOldLogsDays
+    label: Log Retention Period
+    default: '7'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_Name
+    label: World Name
+    default: New World
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_Seed
+    label: World Seed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_GameMode
+    label: World Creation Game Mode
+    default: Survival
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_FlatWorldTerrainElevation
+    label: Flat World Terrain Elevation
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_FlatWorldTerrainID
+    label: Flat World Terrain ID
+    default: GrassDefault
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_Flatness
+    label: World Flatness Factor
+    default: Default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_OreAmount
+    label: World Ore Amount
+    default: Default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_CreateBackupBeforeConversion
+    label: Create Backup Before Conversion
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_DisabledNpcs
+    label: Disabled NPCs
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_CavesDisabled
+    label: Disable Caves
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_OceanDisabled
+    label: Disable Ocean (Water)
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_VegetationDisabled
+    label: Disable Vegetation
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_WorldType
+    label: World Terrain Type
+    default: Default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World_SaveWorld
+    label: Save World
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_GameMode
+    label: Game Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ChatEnabled
+    label: Enable Chat
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ChatShowEmojis
+    label: Show Emojis In Chat
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ChunkLifeSpan
+    label: Chunk Life Span
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ChunkWorkerThreads
+    label: Chunk Worker Threads
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_CookingDurationFactor
+    label: Cooking Duration Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_CraftingProgression
+    label: Enable Crafting Progression
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_DeadBodyDespawnTime
+    label: Dead Body Despawn Time
+    default: '1800'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_DeleteWorldEventLogsDays
+    label: Delete World Event Logs Period
+    default: '7'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_GravityAffectsObjects
+    label: Gravity Affects Objects
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_GravityAffectsPlants
+    label: Gravity Affects Plants
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_HungerThirstDurationFactor
+    label: Hunger Thirst Duration Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_IllegalStateLimit
+    label: Illegal State Limit
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ItemDespawnTime
+    label: Item Despawn Time
+    default: '600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ItemDurabilityFactor
+    label: Item Durability Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_LogWorldEvents
+    label: Log World Events
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_MapTileResolution
+    label: Map Tile Resolution
+    default: '1024'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_MaxNpcs
+    label: Maximum NPCs
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_MoonPhase
+    label: Moon Phase
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_MoonSize
+    label: Moon Size
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_NpcDropEquippedItem
+    label: NPCs Drop Equipped Items
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_NpcEnemyRespawnCooldown
+    label: NPC Enemy Respawn Cooldown
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_NpcHitDamageFactor
+    label: NPC Hit Damage Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_NpcRespawnCooldown
+    label: NPC Respawn Cooldown
+    default: '1800'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_NpcSpawnMonstersAtSurface
+    label: NPC Spawn Monsters At Surface
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_NpcSpawnrateAnimals
+    label: NPC Spawnrate For Animals
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_NpcSpawnrateBandits
+    label: NPC Spawnrate For Bandits
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_NpcSpawnrateSurfaceMonsters
+    label: NPC Spawnrate For Surface Monsters
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_NpcSpawnrateUndergroundMonsters
+    label: NPC Spawnrate For Underground Monsters
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_NpcSurfaceSkeletonsHaveTorch
+    label: Surface Skeletons Have Torch
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ObjectRecoverTime
+    label: Object Recover Time
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_OreSmeltingDurationFactor
+    label: Ore Smelting Duration Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_OverrideDeepUndergroundLocationName
+    label: Override Deep Underground Location Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_OverrideDefaultLocationName
+    label: Override Default Location Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_OverrideHellLocationName
+    label: Override Hell Location Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_OverrideOrbitLocationName
+    label: Override Orbit Location Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_OverrideUndergroundLocationName
+    label: Override Underground Location Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PackWorldItemStacks
+    label: Pack World Item Stacks
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PeacefulMode
+    label: Enable Peaceful Mode
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PickupOnDeconstruct
+    label: Pickup On Deconstruct
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PlantGrowthDurationFactor
+    label: Plant Growth Duration Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PlayerListShowDistance
+    label: Player List Shows Distance
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PlayerListShowPermissionGroup
+    label: Player List Shows Permission Group
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PlayerListShowPlayTime
+    label: Player List Shows Play Time
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PlayerUndoSteps
+    label: Player Undo Steps
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PlayerUndoTime
+    label: Player Undo Time
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PlayHeartbeatSoundOnAttack
+    label: Play Heartbeat Sound On Attack
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PvE
+    label: Advertise PvE
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_PvP
+    label: Advertise PvP
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_RegionalWeather
+    label: Enable Regional Weather
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_SeasonsEnabled
+    label: Enable Seasons
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ShowGeneralMessages
+    label: Show General Messages
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ShowLocationDuration
+    label: Show Location Duration
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ShowPlayerConnectMessage
+    label: Show Player Connect Message
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ShowPlayerDeathMessage
+    label: Show Player Death Message
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ShowPlayerDeathMessageReason
+    label: Show Player Death Message Reason
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ShowPlayerDisconnectMessage
+    label: Show Player Disconnect Message
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ShowPlayersOnMap
+    label: Show Players On Map
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_ShowRestartReminder
+    label: Show Restart Reminder
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_SkipLoadingAllowed
+    label: Skip Loading Allowed
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_SkyRotation
+    label: Sky Rotation
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_SpawnChestItemsOnDestroy
+    label: Spawn Chest Items On Destroy
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_SpawnProtection
+    label: Spawn Protection Period
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_StartWeather
+    label: Starting Weather
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_TimeDuration
+    label: Day Duration
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_WaterUpdateInterval
+    label: Water Update Interval
+    default: '0.1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_WaterUpdateSyncInterval
+    label: Water Update Sync Interval
+    default: '0.5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_WaterWorkerThreads
+    label: Water Worker Threads
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_WeatherDurationFactor
+    label: Weather Duration Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Settings_WeatherPreset
+    label: Weather Preset
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Database_InMemory
+    label: Enable In-Memory Database
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Database_InMemoryBackupInterval
+    label: In-Memory Database Save Interval
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Database_JournalMode
+    label: Journal Mode
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Database_SynchronousMode
+    label: Synchronous Mode
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RCON_Enabled
+    label: Enable RCON
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RCON_APIOnly
+    label: Enable RCON API Only
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RCON_Certificate
+    label: RCON Certificate
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RCON_CertificatePassword
+    label: RCON Certificate Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: RCON_IP
+    label: RCON IP Binding
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RCON_Password
+    label: RCON Password
+    default: '{{randomdigits(6)}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: RCON_WhitelistIP
+    label: RCON Whitelist IP
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Plugins_Enabled
+    label: Enable Plugins
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Plugins_Memory
+    label: Plugin Memory
+    default: '1024'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Plugins_VMOptions
+    label: Java VM Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Plugins_DebugEvents
+    label: Debug Plugin Events
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Plugins_DebugEventsDurationThreshold
+    label: Debug Events Duration Threshold
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Plugins_ErrorThreshold
+    label: Plugin Error Threshold
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Plugins_SuppressFatalErrorLogs
+    label: Suppress Fatal Error Logs
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Permissions_DefaultNewPlayerPermissionGroup
+    label: Default New Player Permission Group
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Permissions_AdminsFullPermissions
+    label: Give Admins Full Permissions
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '324080'
+  collection_support: true
 backup:
   include:
     - /data

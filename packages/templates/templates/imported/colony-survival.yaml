@@ -5,13 +5,18 @@ category: Imported
 summary: Colony Survival Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '748090'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: >-
+    /usr/bin/xvfb-run {PlatformArgs} -batchmode -nographics +server.gameport {ServerPort} +server.steamport {SteamPort}
+    +server.ip {ApplicationIPBinding} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,409 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Game and RCON Port
+    default: 27004
+    protocol: both
     required: true
-config_files: []
+  - key: steamport
+    name: Steam Port
+    default: 27005
+    protocol: tcp
+    required: true
+config_files:
+  - path: colony-survivalconfig.json
+    type: json
+    editable: true
+  - path: colony-survivalmetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: server.world
+      label: World Name
+      category: Colony Survival
+      subcategory: Server
+      description: Sets the name of the world to load or create
+      keywords: world,create,load,server.world
+      input_type: text
+      param_field_name: server.world
+      default: World
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Name
+        Category: Colony Survival:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the world to load or create
+        Keywords: world,create,load,server.world
+        FieldName: server.world
+        InputType: text
+        ParamFieldName: server.world
+        IncludeInCommandLine: true
+        Required: true
+        DefaultValue: World
+        EnumValues: {}
+    - key: server.name
+      label: Server Name
+      category: Colony Survival
+      subcategory: Server
+      description: Sets the name of the server that will appear in the server browser
+      keywords: server,name,browser,list,server.name
+      input_type: text
+      param_field_name: server.name
+      default: AMP Powered Colony Survival Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Colony Survival:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that will appear in the server browser
+        Keywords: server,name,browser,list,server.name
+        FieldName: server.name
+        InputType: text
+        ParamFieldName: server.name
+        IncludeInCommandLine: true
+        DefaultValue: AMP Powered Colony Survival Server
+        EnumValues: {}
+    - key: server.networktype
+      label: Connection Mode
+      category: Colony Survival
+      subcategory: Server
+      description: Sets the connection mode for the server
+      keywords: network,type,connection,mode,lan,steam,server.networktype
+      input_type: enum
+      param_field_name: server.networktype
+      default: SteamOnline
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        SteamNonPublic: Non-public server
+        SteamOnline: Online server (default)
+      raw:
+        DisplayName: Connection Mode
+        Category: Colony Survival:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the connection mode for the server
+        Keywords: network,type,connection,mode,lan,steam,server.networktype
+        FieldName: server.networktype
+        InputType: enum
+        ParamFieldName: server.networktype
+        IncludeInCommandLine: true
+        DefaultValue: SteamOnline
+        EnumValues:
+          SteamNonPublic: Non-public server
+          SteamOnline: Online server (default)
+    - key: server.password
+      label: Server Password
+      category: Colony Survival
+      subcategory: Server
+      description: Sets the password required for players to join the server. Default is no password
+      keywords: password,server,server.password
+      input_type: password
+      param_field_name: server.password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Colony Survival:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for players to join the server. Default is no password
+        Keywords: password,server,server.password
+        FieldName: server.password
+        InputType: password
+        ParamFieldName: server.password
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: server.rconpassword
+      label: RCON Password
+      category: Colony Survival
+      subcategory: Server
+      description: Sets the password required to connect to the server's RCON. Default is no password (RCON not enabled)
+      keywords: password,rcon,server.rconpassword
+      input_type: password
+      param_field_name: server.rconpassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Colony Survival:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server's RCON. Default is no password (RCON not enabled)
+        Keywords: password,rcon,server.rconpassword
+        FieldName: server.rconpassword
+        InputType: password
+        ParamFieldName: server.rconpassword
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Colony Survival
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: max,maximum,players,limit,server.maxplayers
+      input_type: number
+      param_field_name: server.maxplayers
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Colony Survival:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: max,maximum,players,limit,server.maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: server.maxplayers
+        IncludeInCommandLine: true
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: players
+        EnumValues: {}
+    - key: server.usevac
+      label: Enable VAC
+      category: Colony Survival
+      subcategory: Server
+      description: If set, Valve Anti-Cheat (VAC) will be enabled on the server
+      keywords: vac,security,filterserver.usevac
+      input_type: checkbox
+      param_field_name: server.usevac
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable VAC
+        Category: Colony Survival:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, Valve Anti-Cheat (VAC) will be enabled on the server
+        Keywords: vac,security,filterserver.usevac
+        FieldName: server.usevac
+        InputType: checkbox
+        ParamFieldName: server.usevac
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: server.seed
+      label: World Seed
+      category: Colony Survival
+      subcategory: Server
+      description: Sets the seed for generating a new world. Default is a random seed
+      keywords: world,seed,generation,server.seed
+      input_type: number
+      param_field_name: server.seed
+      default: '{{randomdigits(8)}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      max: 2147483648
+      enum_values: {}
+      raw:
+        DisplayName: World Seed
+        Category: Colony Survival:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the seed for generating a new world. Default is a random seed
+        Keywords: world,seed,generation,server.seed
+        FieldName: server.seed
+        InputType: number
+        MinValue: '0'
+        MaxValue: '2147483648'
+        ParamFieldName: server.seed
+        IncludeInCommandLine: true
+        DefaultValue: '{{randomdigits(8)}}'
+        EnumValues: {}
+    - key: server.daydifficulty
+      label: Monsters Day Difficulty Level
+      category: Colony Survival
+      subcategory: Server
+      description: Sets the day difficulty level for monsters when generating a new world
+      keywords: monsters,spawn,day,difficulty,server.daydifficulty
+      input_type: enum
+      param_field_name: server.daydifficulty
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '0': None (default)
+        '1': Minimum
+        '2': Low
+        '3': High
+        '4': Maximum
+      raw:
+        DisplayName: Monsters Day Difficulty Level
+        Category: Colony Survival:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the day difficulty level for monsters when generating a new world
+        Keywords: monsters,spawn,day,difficulty,server.daydifficulty
+        FieldName: server.daydifficulty
+        InputType: enum
+        ParamFieldName: server.daydifficulty
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          '0': None (default)
+          '1': Minimum
+          '2': Low
+          '3': High
+          '4': Maximum
+    - key: server.nightdifficulty
+      label: Monsters Night Difficulty Level
+      category: Colony Survival
+      subcategory: Server
+      description: Sets the night difficulty level for monsters when generating a new world
+      keywords: monsters,spawn,night,difficulty,server.nightdifficulty
+      input_type: enum
+      param_field_name: server.nightdifficulty
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '0': None
+        '1': Minimum
+        '2': Low (default)
+        '3': High
+        '4': Maximum
+      raw:
+        DisplayName: Monsters Night Difficulty Level
+        Category: Colony Survival:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the night difficulty level for monsters when generating a new world
+        Keywords: monsters,spawn,night,difficulty,server.nightdifficulty
+        FieldName: server.nightdifficulty
+        InputType: enum
+        ParamFieldName: server.nightdifficulty
+        IncludeInCommandLine: true
+        DefaultValue: '2'
+        EnumValues:
+          '0': None
+          '1': Minimum
+          '2': Low (default)
+          '3': High
+          '4': Maximum
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: server.world
+    label: World Name
+    default: World
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: server.name
+    label: Server Name
+    default: AMP Powered Colony Survival Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server.networktype
+    label: Connection Mode
+    default: SteamOnline
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server.password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: server.rconpassword
+    label: RCON Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: server.usevac
+    label: Enable VAC
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server.seed
+    label: World Seed
+    default: '{{randomdigits(8)}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server.daydifficulty
+    label: Monsters Day Difficulty Level
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server.nightdifficulty
+    label: Monsters Night Difficulty Level
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '366090'
+  collection_support: true
 backup:
   include:
     - /data

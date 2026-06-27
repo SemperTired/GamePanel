@@ -4,14 +4,17 @@ name: SinusBot
 category: Imported
 summary: SinusBot - TeamSpeak 3/6 and Discord music bot
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://michael.frie.se/sinusbot-1.1f-amd64.tar.bz2
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: sinusbot
+  startup: sinusbot {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +22,242 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: listenport
+    name: Listen Port
+    default: 9087
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: config.ini
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $ListenPort
+      label: Listen Port
+      category: SinusBot
+      subcategory: Bot
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: ListenPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Listen Port
+        Category: SinusBot:code
+        Subcategory: Bot:settings:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ListenPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: ListenPort
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Listen Host
+      category: SinusBot
+      subcategory: Bot
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: ListenHost
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Listen Host
+        Category: SinusBot:code
+        Subcategory: Bot:settings:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        ParamFieldName: ListenHost
+        EnumValues: {}
+    - key: YoutubeDLPath
+      label: YoutubeDL Path
+      category: SinusBot
+      subcategory: Bot
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: YoutubeDLPath
+      default: ./yt-dlp/yt-dlp
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: YoutubeDL Path
+        Category: SinusBot:code
+        Subcategory: Bot:settings:1
+        Description: ''
+        Keywords: ''
+        FieldName: YoutubeDLPath
+        InputType: text
+        Hidden: true
+        ParamFieldName: YoutubeDLPath
+        DefaultValue: ./yt-dlp/yt-dlp
+        EnumValues: {}
+    - key: DataDir
+      label: Data Dir
+      category: SinusBot
+      subcategory: Bot
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: DataDir
+      default: ./data
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Data Dir
+        Category: SinusBot:code
+        Subcategory: Bot:settings:1
+        Description: ''
+        Keywords: ''
+        FieldName: DataDir
+        InputType: text
+        Hidden: true
+        ParamFieldName: DataDir
+        DefaultValue: ./data
+        EnumValues: {}
+    - key: BotMode
+      label: Bot Mode
+      category: SinusBot
+      subcategory: Bot
+      description: >-
+        Sets whether to run SinusBot for Discord only, or for both Discord and TeamSpeak 3/6. Delete the 'data'
+        directory and update the server after selecting 'Discord + TeamSpeak 3/6'
+      keywords: bot,mode,discord,teamspeak
+      input_type: enum
+      param_field_name: TS3Path
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Discord only
+        ./TeamSpeak3-Client-linux_amd64/ts3client_linux_amd64: Discord + TeamSpeak 3/6
+      raw:
+        DisplayName: Bot Mode
+        Category: SinusBot:code
+        Subcategory: Bot:settings:1
+        Description: >-
+          Sets whether to run SinusBot for Discord only, or for both Discord and TeamSpeak 3/6. Delete the 'data'
+          directory and update the server after selecting 'Discord + TeamSpeak 3/6'
+        Keywords: bot,mode,discord,teamspeak
+        FieldName: BotMode
+        InputType: enum
+        ParamFieldName: TS3Path
+        DefaultValue: ''
+        EnumValues:
+          '': Discord only
+          ./TeamSpeak3-Client-linux_amd64/ts3client_linux_amd64: Discord + TeamSpeak 3/6
+    - key: override-password
+      label: Custom Admin Password
+      category: SinusBot
+      subcategory: Bot
+      description: >-
+        Sets a custom admin password to log in to SinusBot. This will override the default random password that SinusBot
+        generates and displays on first start
+      keywords: password,admin,overridepassword
+      input_type: password
+      param_field_name: override-password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Custom Admin Password
+        Category: SinusBot:code
+        Subcategory: Bot:settings:1
+        Description: >-
+          Sets a custom admin password to log in to SinusBot. This will override the default random password that
+          SinusBot generates and displays on first start
+        Keywords: password,admin,overridepassword
+        FieldName: override-password
+        InputType: password
+        ParamFieldName: override-password
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+  files:
+    - path: config.ini
+      type: kvp
+      format: '{0} = "{1}"'
+      subsections: []
+      raw:
+        ConfigFile: config.ini
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormat: '{0} = "{1}"'
+        ConfigFormatRegex: ^(?<key>.+?) = "(?<value>.*?)"$
+    - path: config.ini
+      type: kvp
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: config.ini
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^(?<key>.+?) = (?<value>[^"]*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: YoutubeDLPath
+    label: YoutubeDL Path
+    default: ./yt-dlp/yt-dlp
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DataDir
+    label: Data Dir
+    default: ./data
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BotMode
+    label: Bot Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: override-password
+    label: Custom Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
 workshop:
   enabled: false
   providers: []

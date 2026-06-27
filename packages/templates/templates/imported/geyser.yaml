@@ -4,14 +4,19 @@ name: Geyser
 category: Imported
 summary: Geyser Minecraft Proxy
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/standalone
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: java/bin/java
+  startup: >-
+    java/bin/java -Xms{MinMemory}M -Xmx{MaxMemory}M {CustomJavaArgs} -jar Geyser.jar {PlatformArgs}
+    --bedrock.port={ServerPort} {FormattedArgs} nogui
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +24,193 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 19132
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: geyserconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: JavaVersion
+      label: Java Version
+      category: Geyser
+      subcategory: Java
+      description: >-
+        Sets the Eclipse Temurin Java version to install. Check the [Geyser
+        wiki](https://wiki.geysermc.org/geyser/setup/) for versions compatible with Geyser. Update the server after
+        changing this setting
+      keywords: java,version
+      input_type: enum
+      param_field_name: JavaVersion
+      default: '21'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '17': 17 - LTS
+        '18': '18'
+        '19': '19'
+        '20': '20'
+        '21': 21 - LTS (default)
+        '22': '22'
+        '23': '23'
+        '24': '24'
+        '25': 25 - LTS
+      raw:
+        DisplayName: Java Version
+        Category: Geyser
+        Subcategory: Java:settings:1
+        Description: >-
+          Sets the Eclipse Temurin Java version to install. Check the [Geyser
+          wiki](https://wiki.geysermc.org/geyser/setup/) for versions compatible with Geyser. Update the server after
+          changing this setting
+        Keywords: java,version
+        FieldName: JavaVersion
+        InputType: enum
+        ParamFieldName: JavaVersion
+        IncludeInCommandLine: false
+        DefaultValue: '21'
+        EnumValues:
+          '17': 17 - LTS
+          '18': '18'
+          '19': '19'
+          '20': '20'
+          '21': 21 - LTS (default)
+          '22': '22'
+          '23': '23'
+          '24': '24'
+          '25': 25 - LTS
+    - key: MinMemory
+      label: Minimum Memory
+      category: Geyser
+      subcategory: Java
+      description: Java's minimum heap size
+      keywords: minimum,memory,heap
+      input_type: number
+      param_field_name: MinMemory
+      default: '1024'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: MB
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Memory
+        Category: Geyser
+        Subcategory: Java:settings:1
+        Description: Java's minimum heap size
+        Keywords: minimum,memory,heap
+        FieldName: MinMemory
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: MinMemory
+        IncludeInCommandLine: false
+        DefaultValue: '1024'
+        Suffix: MB
+        EnumValues: {}
+    - key: MaxMemory
+      label: Maximum Memory
+      category: Geyser
+      subcategory: Java
+      description: Java's maximum heap size
+      keywords: maximum,memory,heap
+      input_type: number
+      param_field_name: MaxMemory
+      default: '1024'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: MB
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Memory
+        Category: Geyser
+        Subcategory: Java:settings:1
+        Description: Java's maximum heap size
+        Keywords: maximum,memory,heap
+        FieldName: MaxMemory
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: MaxMemory
+        IncludeInCommandLine: false
+        DefaultValue: '1024'
+        Suffix: MB
+        EnumValues: {}
+    - key: CustomJavaArgs
+      label: Additional Java Startup Parameters
+      category: Geyser
+      subcategory: Java
+      description: >-
+        Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AMP. Use
+        with care
+      keywords: custom,java,arguments,parameters
+      input_type: text
+      param_field_name: CustomJavaArgs
+      default: ''
+      placeholder: '-XX:+UseG1GC'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Java Startup Parameters
+        Category: Geyser
+        Subcategory: Java:settings:1
+        Description: >-
+          Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AMP. Use
+          with care
+        Keywords: custom,java,arguments,parameters
+        FieldName: CustomJavaArgs
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomJavaArgs
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: '-XX:+UseG1GC'
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: JavaVersion
+    label: Java Version
+    default: '21'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MinMemory
+    label: Minimum Memory
+    default: '1024'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxMemory
+    label: Maximum Memory
+    default: '1024'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomJavaArgs
+    label: Additional Java Startup Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

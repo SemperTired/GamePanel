@@ -744,7 +744,8 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
     if (!service) return;
     const data = await api<any>(`/services/${service.id}/configuration`);
     setConfig(data);
-    setValues(Object.fromEntries((data.startup_variables || []).map((variable: any) => [variable.key, variable.value || ""])));
+    const allFields = [...(data.config_schema?.fields || []), ...(data.startup_variables || [])];
+    setValues(Object.fromEntries(allFields.map((field: any) => [field.key, field.value ?? field.default ?? ""])));
   }
 
   async function save() {
@@ -777,11 +778,72 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
     return startup.replace(/\{([a-zA-Z0-9_]+)\}/g, (_match: string, key: string) => merged[key] ?? `{${key}}`);
   }
 
+  const visibleFields = (config?.config_schema?.fields || []).filter((field: any) => !field.hidden);
+  const groupedFields = visibleFields.reduce((groups: Record<string, any[]>, field: any) => {
+    const key = `${field.category || "General"} / ${field.subcategory || "General"}`;
+    groups[key] = [...(groups[key] || []), field];
+    return groups;
+  }, {});
+
+  function renderConfigControl(field: any) {
+    const value = values[field.key] ?? "";
+    const update = (next: string) => setValues((current) => ({ ...current, [field.key]: next }));
+    const inputType = String(field.input_type || "text").toLowerCase();
+    if (inputType === "enum" || Object.keys(field.enum_values || {}).length) {
+      return <select className="field" value={value} onChange={(event) => update(event.target.value)} disabled={!field.customer_editable}>
+        {Object.entries(field.enum_values || {}).map(([optionValue, label]) => <option key={optionValue} value={optionValue}>{String(label)}</option>)}
+        {!Object.keys(field.enum_values || {}).length && <option value={value}>{value || "Default"}</option>}
+      </select>;
+    }
+    if (inputType === "checkbox") {
+      const checked = ["true", "1", "yes", "on"].includes(String(value).toLowerCase());
+      return <button type="button" className={`toggle-row ${checked ? "active" : ""}`} onClick={() => update(checked ? "false" : "true")} disabled={!field.customer_editable}>
+        <span>{checked ? "Enabled" : "Disabled"}</span>
+        <span className="toggle-dot" />
+      </button>;
+    }
+    if (inputType === "textarea" || inputType === "list") {
+      return <textarea className="field min-h-28 resize-y" value={value} placeholder={field.placeholder || ""} onChange={(event) => update(event.target.value)} disabled={!field.customer_editable} />;
+    }
+    return <input className="field" type={inputType === "password" ? "password" : inputType === "number" ? "number" : "text"} value={value} placeholder={field.placeholder || ""} min={field.min} max={field.max} onChange={(event) => update(event.target.value)} disabled={!field.customer_editable} />;
+  }
+
   useEffect(() => { load().catch((error) => setMessage(error.message)); }, [service?.id]);
 
   if (!service) return <div className="empty-state"><SlidersHorizontal className="mx-auto mb-4 h-12 w-12 text-cyan" /><h2>Select a server</h2><p>Configuration is generated from the selected game template.</p></div>;
   return <div className="space-y-5">
     <div className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Instance Config</div><h2 className="font-display text-4xl font-bold">{service.name}</h2></div></div>
+    <div className="command-panel rounded-3xl p-5">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 className="font-display text-2xl">Game Settings</h3>
+          <p className="text-sm text-slate-400">{visibleFields.length} controls imported from AMP metadata for this game template.</p>
+        </div>
+        <button className="primary-button" onClick={save}><Save className="h-4 w-4" /> Save Settings</button>
+      </div>
+      <div className="space-y-5">
+        {Object.entries(groupedFields).map(([group, fields]) => <section key={group} className="config-group">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h4 className="font-display text-xl text-white">{group}</h4>
+            <span className="status-pill">{(fields as any[]).length} settings</span>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {(fields as any[]).map((field) => <label key={field.key} className="setting-card">
+              <span className="flex items-start justify-between gap-3">
+                <span>
+                  <span className="block font-semibold text-white">{field.label}</span>
+                  <span className="mt-1 block text-xs uppercase tracking-[0.16em] text-cyan/80">{field.key}{field.required ? " · required" : ""}</span>
+                </span>
+                {field.sensitive && <span className="status-pill">secret</span>}
+              </span>
+              <span className="mt-3 block">{renderConfigControl(field)}</span>
+              {field.description && <span className="mt-2 block text-xs leading-relaxed text-slate-400">{field.description}</span>}
+            </label>)}
+          </div>
+        </section>)}
+        {!visibleFields.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">This template has not imported AMP config metadata yet.</div>}
+      </div>
+    </div>
     <div className="grid grid-cols-2 gap-5">
       <div className="command-panel rounded-3xl p-5">
         <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">Startup Variables</h3><button className="primary-button" onClick={save}><Save className="h-4 w-4" /> Save</button></div>

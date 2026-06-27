@@ -5,13 +5,23 @@ category: Imported
 summary: The Front Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2612550'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/ProjectWar/Binaries/Linux/TheFrontServer
+  startup: >-
+    server/ProjectWar/Binaries/Linux/TheFrontServer ProjectWar
+    ProjectWar_Start?DedicatedServer?MaxPlayers={MaxUsers}{UseSteamSocket} -server -game -ConfigServerName="AMP"
+    -Port={GamePort} -QueryPort={SteamQueryPort} -BeaconPort={BeaconPort} -ShutDownServicePort={ShutDownServicePort}
+    -OutIPAddress={PublicIP} -QueueThreshold={MaxUsers} -ServerAdminAccounts={ServerAdminAccounts}
+    -EnableParallelCharacterMovementTickFunction -EnableParallelCharacterTickFunction -UseDynamicPhysicsScene
+    -fullcrashdumpalways -Game.PhysicsVehicle={GamePhysicsVehicle} -ansimalloc -Game.MaxFrameRate={GameMaxFrameRate}
+    -MaxQueueSize=50 -QueueValidTime=120 -UseEAC={UseEAC} {FormattedArgs} {CustomServerArgs} {PlatformArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +29,5157 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 5001
+    protocol: udp
+    required: true
+  - key: steamqueryport
+    name: Steam Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+  - key: beaconport
+    name: Beacon Port
+    default: 5002
+    protocol: udp
+    required: true
+  - key: shutdownserviceport
+    name: Shutdown Service Port
+    default: 5003
+    protocol: tcp
+    required: true
+config_files:
+  - path: TheFrontManager/ServerConfig_AMP.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: The Front
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: BaseServerConfig.Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        ParamFieldName: BaseServerConfig.Port
+        EnumValues: {}
+    - key: $BeaconPort
+      label: Beacon Port
+      category: The Front
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: BaseServerConfig.BeaconPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Beacon Port
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $BeaconPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: BaseServerConfig.BeaconPort
+        EnumValues: {}
+    - key: $ShutDownServicePort
+      label: Shutdown Service Port
+      category: The Front
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: BaseServerConfig.ShutDownServicePort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Shutdown Service Port
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ShutDownServicePort
+        InputType: number
+        Hidden: true
+        ParamFieldName: BaseServerConfig.ShutDownServicePort
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: The Front
+      subcategory: Server
+      description: Sets the name of the server to be displayed in the server list
+      keywords: server,name,ServerName
+      input_type: text
+      param_field_name: BaseServerConfig.ServerName
+      default: AMP Powered The Front Server
+      placeholder: AMP Powered The Front Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server to be displayed in the server list
+        Keywords: server,name,ServerName
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: BaseServerConfig.ServerName
+        DefaultValue: AMP Powered The Front Server
+        Placeholder: AMP Powered The Front Server
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: The Front
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: SteamServerName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: ServerName
+        InputType: text
+        Hidden: true
+        ParamFieldName: SteamServerName
+        IncludeInCommandLine: true
+        EnumValues: {}
+    - key: ServerTitle
+      label: Server Description
+      category: The Front
+      subcategory: Server
+      description: Sets a description of the server to be displayed in the server list
+      keywords: server,description,ServerTitle
+      input_type: text
+      param_field_name: ServerTitle
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Description
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a description of the server to be displayed in the server list
+        Keywords: server,description,ServerTitle
+        FieldName: ServerTitle
+        InputType: text
+        ParamFieldName: ServerTitle
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerTags
+      label: Server Tags
+      category: The Front
+      subcategory: Server
+      description: >-
+        Comma separated list of up to 5 server tags to display in the server list. Available tags: 0 (PvP), 1 (PvE), 2
+        (EXP Multiplier), 3 (Gathering Rate), 4 (Keep Inventory), 5 (45 day wipe), 6 (15 day wipe), 7 (30 day wipe), 8
+        (60 day wipe)
+      keywords: server,tags,ServerTags
+      input_type: text
+      param_field_name: ServerTags
+      default: ''
+      placeholder: 0,2,3
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Tags
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma separated list of up to 5 server tags to display in the server list. Available tags: 0 (PvP), 1 (PvE), 2
+          (EXP Multiplier), 3 (Gathering Rate), 4 (Keep Inventory), 5 (45 day wipe), 6 (15 day wipe), 7 (30 day wipe), 8
+          (60 day wipe)
+        Keywords: server,tags,ServerTags
+        FieldName: ServerTags
+        InputType: text
+        ParamFieldName: ServerTags
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: 0,2,3
+        EnumValues: {}
+    - key: ServerID
+      label: Server ID
+      category: The Front
+      subcategory: Server
+      description: Sets a unique ID for the server. Default = random 8 digit number
+      keywords: server,id,ServerID
+      input_type: text
+      param_field_name: ServerID
+      default: '{{randomdigits(8)}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server ID
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a unique ID for the server. Default = random 8 digit number
+        Keywords: server,id,ServerID
+        FieldName: ServerID
+        InputType: text
+        ParamFieldName: ServerID
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '{{randomdigits(8)}}'
+        EnumValues: {}
+    - key: ServerPassword
+      label: Server Password
+      category: The Front
+      subcategory: Server
+      description: Sets the password required to connect to the server. Default is no password
+      keywords: server,password,ServerPassword
+      input_type: password
+      param_field_name: BaseServerConfig.ServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server. Default is no password
+        Keywords: server,password,ServerPassword
+        FieldName: ServerPassword
+        InputType: password
+        ParamFieldName: BaseServerConfig.ServerPassword
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: The Front
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,clients,limit,MaxPlayers
+      input_type: number
+      param_field_name: BaseServerConfig.QueueThreshold
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 80
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,clients,limit,MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '80'
+        ParamFieldName: BaseServerConfig.QueueThreshold
+        DefaultValue: '40'
+        Placeholder: '40'
+        Suffix: players
+        EnumValues: {}
+    - key: ServerAdminAccounts
+      label: Server Admins
+      category: The Front
+      subcategory: Server
+      description: Semi-colon separated list of [Steam64 IDs](https://steamid.io/) of server admins
+      keywords: server,admins,ServerAdminAccounts
+      input_type: text
+      param_field_name: BaseServerConfig.ServerAdminAccounts
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Admins
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Semi-colon separated list of [Steam64 IDs](https://steamid.io/) of server admins
+        Keywords: server,admins,ServerAdminAccounts
+        FieldName: ServerAdminAccounts
+        InputType: text
+        ParamFieldName: BaseServerConfig.ServerAdminAccounts
+        DefaultValue: ''
+        EnumValues: {}
+    - key: IsShowGmTitle
+      label: Show Admin Icon
+      category: The Front
+      subcategory: Server
+      description: If enabled, the special admin icon will be shown
+      keywords: label,admin,icon,IsShowGmTitle
+      input_type: checkbox
+      param_field_name: BaseServerConfig.IsShowGmTitle
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Show Admin Icon
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the special admin icon will be shown
+        Keywords: label,admin,icon,IsShowGmTitle
+        FieldName: IsShowGmTitle
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.IsShowGmTitle
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: UseEAC
+      label: Enable Anticheat
+      category: The Front
+      subcategory: Server
+      description: If set, the server's anticheat system will be enabled
+      keywords: anticheat,UseEAC
+      input_type: checkbox
+      param_field_name: UseEAC
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Anticheat
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server's anticheat system will be enabled
+        Keywords: anticheat,UseEAC
+        FieldName: UseEAC
+        InputType: checkbox
+        ParamFieldName: UseEAC
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ClearSeverTime
+      label: Server Wipe Time
+      category: The Front
+      subcategory: Server
+      description: 'Sets the next date on which all server data will be wiped. Format: YYYY-MM-DD'
+      keywords: server,wipe,clear,ClearSeverTime
+      input_type: text
+      param_field_name: BaseServerConfig.ClearSeverTime
+      default: ''
+      placeholder: '2023-10-17'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Wipe Time
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Sets the next date on which all server data will be wiped. Format: YYYY-MM-DD'
+        Keywords: server,wipe,clear,ClearSeverTime
+        FieldName: ClearSeverTime
+        InputType: text
+        ParamFieldName: BaseServerConfig.ClearSeverTime
+        DefaultValue: ''
+        Placeholder: '2023-10-17'
+        EnumValues: {}
+    - key: GameMaxFrameRate
+      label: Server Framerate
+      category: The Front
+      subcategory: Server
+      description: Sets the server framerate
+      keywords: server,framerate,Game.MaxFrameRate
+      input_type: number
+      param_field_name: GameMaxFrameRate
+      default: '35'
+      placeholder: '35'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Framerate
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server framerate
+        Keywords: server,framerate,Game.MaxFrameRate
+        FieldName: GameMaxFrameRate
+        InputType: number
+        ParamFieldName: GameMaxFrameRate
+        DefaultValue: '35'
+        Placeholder: '35'
+        EnumValues: {}
+    - key: SaveWorldInterval
+      label: Autosave Interval
+      category: The Front
+      subcategory: Server
+      description: Sets the server autosave interval
+      keywords: server,save,interval,SaveWorldInterval
+      input_type: number
+      param_field_name: BaseServerConfig.SaveWorldInterval
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 150
+      max: 600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Autosave Interval
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server autosave interval
+        Keywords: server,save,interval,SaveWorldInterval
+        FieldName: SaveWorldInterval
+        InputType: number
+        MinValue: '150'
+        MaxValue: '600'
+        ParamFieldName: BaseServerConfig.SaveWorldInterval
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: BackupTimesPerDay
+      label: Daily Backups Quantity
+      category: The Front
+      subcategory: Server
+      description: Sets the number of backups performed by the server each day
+      keywords: backup,times,day,daily,quantity,BackupTimesPerDay
+      input_type: number
+      param_field_name: BaseServerConfig.BackupTimesPerDay
+      default: '6'
+      placeholder: '6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: backups
+      enum_values: {}
+      raw:
+        DisplayName: Daily Backups Quantity
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of backups performed by the server each day
+        Keywords: backup,times,day,daily,quantity,BackupTimesPerDay
+        FieldName: BackupTimesPerDay
+        InputType: number
+        ParamFieldName: BaseServerConfig.BackupTimesPerDay
+        DefaultValue: '6'
+        Placeholder: '6'
+        Suffix: backups
+        EnumValues: {}
+    - key: BackupRetainedDays
+      label: Backups Retention Period
+      category: The Front
+      subcategory: Server
+      description: Sets the period after which a backup will be overwritten by new backups
+      keywords: backup,retention,retained,days,period,BackupRetainedDays
+      input_type: number
+      param_field_name: BaseServerConfig.BackupRetainedDays
+      default: '7'
+      placeholder: '7'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Backups Retention Period
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the period after which a backup will be overwritten by new backups
+        Keywords: backup,retention,retained,days,period,BackupRetainedDays
+        FieldName: BackupRetainedDays
+        InputType: number
+        ParamFieldName: BaseServerConfig.BackupRetainedDays
+        DefaultValue: '7'
+        Placeholder: '7'
+        Suffix: days
+        EnumValues: {}
+    - key: UseSteamSocket
+      label: Use Steam Socket
+      category: The Front
+      subcategory: Server
+      description: >-
+        If enabled, Steam servers will be used for network penetration. Enable this if you don't have a public IP but
+        want to allow players from outside your network to join the server. DON'T enable this if you have a public IP.
+        This setting will impact server latency
+      keywords: steam,socket,network,penetration,udrs,UseSteamSocket
+      input_type: checkbox
+      param_field_name: UseSteamSocket
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '?udrs=steam'
+      raw:
+        DisplayName: Use Steam Socket
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, Steam servers will be used for network penetration. Enable this if you don't have a public IP but
+          want to allow players from outside your network to join the server. DON'T enable this if you have a public IP.
+          This setting will impact server latency
+        Keywords: steam,socket,network,penetration,udrs,UseSteamSocket
+        FieldName: UseSteamSocket
+        InputType: checkbox
+        ParamFieldName: UseSteamSocket
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '?udrs=steam'
+    - key: PublicIP
+      label: Out IP Address Selection Mode
+      category: The Front
+      subcategory: Server
+      description: >-
+        Sets whether AMP should automatically select the public IP advertised as the OutIPAddress for the server, or
+        whether it should use the IP set under Server Public IP
+      keywords: public,ip,publicip
+      input_type: enum
+      param_field_name: PublicIP
+      default: '{{$ExternalIP}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{{$ExternalIP}}': Automatic (default)
+        '{{ManualPublicIP}}': Manual
+      raw:
+        DisplayName: Out IP Address Selection Mode
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether AMP should automatically select the public IP advertised as the OutIPAddress for the server, or
+          whether it should use the IP set under Server Public IP
+        Keywords: public,ip,publicip
+        FieldName: PublicIP
+        InputType: enum
+        ParamFieldName: PublicIP
+        DefaultValue: '{{$ExternalIP}}'
+        EnumValues:
+          '{{$ExternalIP}}': Automatic (default)
+          '{{ManualPublicIP}}': Manual
+    - key: ManualPublicIP
+      label: Server Public IP
+      category: The Front
+      subcategory: Server
+      description: >-
+        Sets the public IP advertised for the server, if "Manual" is selected as the Out IP Address Selection Mode.
+        Useful if the host network has multiple public IPs, or the server is behind a public proxy
+      keywords: manual,public,ip,publicip
+      input_type: text
+      param_field_name: ManualPublicIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Public IP
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public IP advertised for the server, if "Manual" is selected as the Out IP Address Selection Mode.
+          Useful if the host network has multiple public IPs, or the server is behind a public proxy
+        Keywords: manual,public,ip,publicip
+        FieldName: ManualPublicIP
+        InputType: text
+        ParamFieldName: ManualPublicIP
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomServerArgs
+      label: Additional Command Line Parameters
+      category: The Front
+      subcategory: Server
+      description: Specifies additional command line parameters that are not otherwise set by AMP. ONE LINE ONLY! Use with care
+      keywords: custom,server,arguments,variables,cvars,convars,parameters
+      input_type: Textarea
+      param_field_name: CustomServerArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Parameters
+        Category: The Front:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Specifies additional command line parameters that are not otherwise set by AMP. ONE LINE ONLY! Use with care
+        Keywords: custom,server,arguments,variables,cvars,convars,parameters
+        FieldName: CustomServerArgs
+        InputType: Textarea
+        ParamFieldName: CustomServerArgs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerFightModeType
+      label: Enable PvE / Disable PvP
+      category: The Front
+      subcategory: Gameplay
+      description: >-
+        If set, PvE mode will be enabled, and PvP mode disabled. In PvP mode, players can attack other players and their
+        structures. In PvE mode they cannot
+      keywords: pve,pvp,game,mode,ServerFightModeType
+      input_type: checkbox
+      param_field_name: BaseServerConfig.ServerFightModeType
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable PvE / Disable PvP
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, PvE mode will be enabled, and PvP mode disabled. In PvP mode, players can attack other players and
+          their structures. In PvE mode they cannot
+        Keywords: pve,pvp,game,mode,ServerFightModeType
+        FieldName: ServerFightModeType
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.ServerFightModeType
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: IsCanSelfDamage
+      label: Allow Damage To Self
+      category: The Front
+      subcategory: Gameplay
+      description: If enabled, players can damage themselves
+      keywords: damage,self,IsCanSelfDamage
+      input_type: checkbox
+      param_field_name: BaseServerConfig.IsCanSelfDamage
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Damage To Self
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, players can damage themselves
+        Keywords: damage,self,IsCanSelfDamage
+        FieldName: IsCanSelfDamage
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.IsCanSelfDamage
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: IsCanFriendDamage
+      label: Allow Damage To Allies
+      category: The Front
+      subcategory: Gameplay
+      description: If enabled, squadmates can damage each other
+      keywords: damage,friends,allies,IsCanFriendDamage
+      input_type: checkbox
+      param_field_name: BaseServerConfig.IsCanFriendDamage
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Damage To Allies
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, squadmates can damage each other
+        Keywords: damage,friends,allies,IsCanFriendDamage
+        FieldName: IsCanFriendDamage
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.IsCanFriendDamage
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: GamePhysicsVehicle
+      label: Enable Realistic Vehicle Physics
+      category: The Front
+      subcategory: Gameplay
+      description: If enabled, realistic physics behaviour will apply to vehicles, stopping them drifting on corners
+      keywords: vehicle,physics,Game.PhysicsVehicle
+      input_type: checkbox
+      param_field_name: GamePhysicsVehicle
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Realistic Vehicle Physics
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, realistic physics behaviour will apply to vehicles, stopping them drifting on corners
+        Keywords: vehicle,physics,Game.PhysicsVehicle
+        FieldName: GamePhysicsVehicle
+        InputType: checkbox
+        ParamFieldName: GamePhysicsVehicle
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: GuildMemberMax
+      label: Maximum Squad Size
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the maximum number of members allowed for each squad
+      keywords: squad,maximum,members,size,GuildMemberMax
+      input_type: number
+      param_field_name: BaseServerConfig.GuildMemberMax
+      default: '6'
+      placeholder: '6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 20
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Squad Size
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of members allowed for each squad
+        Keywords: squad,maximum,members,size,GuildMemberMax
+        FieldName: GuildMemberMax
+        InputType: number
+        MinValue: '1'
+        MaxValue: '20'
+        ParamFieldName: BaseServerConfig.GuildMemberMax
+        DefaultValue: '6'
+        Placeholder: '6'
+        EnumValues: {}
+    - key: GMOverlapRatio
+      label: Item Stack Rate
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the stack limit for each type of item
+      keywords: item,stack,rate,stack,limit,GMOverlapRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMOverlapRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Item Stack Rate
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the stack limit for each type of item
+        Keywords: item,stack,rate,stack,limit,GMOverlapRatio
+        FieldName: GMOverlapRatio
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMOverlapRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: IsUnLockAllTalentAndRecipe
+      label: Unlock All Recipes And Talents
+      category: The Front
+      subcategory: Gameplay
+      description: When enabled, all recipes and talents will be unlocked for new characters
+      keywords: unlock,recipes,talents,IsUnLockAllTalentAndRecipe
+      input_type: checkbox
+      param_field_name: BaseServerConfig.IsUnLockAllTalentAndRecipe
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Unlock All Recipes And Talents
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: When enabled, all recipes and talents will be unlocked for new characters
+        Keywords: unlock,recipes,talents,IsUnLockAllTalentAndRecipe
+        FieldName: IsUnLockAllTalentAndRecipe
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.IsUnLockAllTalentAndRecipe
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: GMBagInitGirdNum
+      label: Starting Inventory Size
+      category: The Front
+      subcategory: Gameplay
+      description: Sets how many inventory slots a new character gets by default
+      keywords: starting,inventory,size,slots,GMBagInitGirdNum
+      input_type: number
+      param_field_name: BaseServerConfig.GMBagInitGirdNum
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 80
+      enum_values: {}
+      raw:
+        DisplayName: Starting Inventory Size
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how many inventory slots a new character gets by default
+        Keywords: starting,inventory,size,slots,GMBagInitGirdNum
+        FieldName: GMBagInitGirdNum
+        InputType: number
+        MinValue: '1'
+        MaxValue: '80'
+        ParamFieldName: BaseServerConfig.GMBagInitGirdNum
+        DefaultValue: '40'
+        Placeholder: '40'
+        EnumValues: {}
+    - key: GreenHand
+      label: Enable Novice Protection
+      category: The Front
+      subcategory: Gameplay
+      description: If enabled, new characters will receive novice protection
+      keywords: novice,protection,GreenHand
+      input_type: checkbox
+      param_field_name: BaseServerConfig.GreenHand
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Novice Protection
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, new characters will receive novice protection
+        Keywords: novice,protection,GreenHand
+        FieldName: GreenHand
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.GreenHand
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: CharacterInitItem
+      label: Items On Respawn
+      category: The Front
+      subcategory: Gameplay
+      description: 'Semi-colon separated list of items a character gets on respawn. Format: ItemID, Quality, Amount'
+      keywords: items,respawn,CharacterInitItem
+      input_type: text
+      param_field_name: BaseServerConfig.CharacterInitItem
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Items On Respawn
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: 'Semi-colon separated list of items a character gets on respawn. Format: ItemID, Quality, Amount'
+        Keywords: items,respawn,CharacterInitItem
+        FieldName: CharacterInitItem
+        InputType: text
+        ParamFieldName: BaseServerConfig.CharacterInitItem
+        DefaultValue: ''
+        EnumValues: {}
+    - key: GMDeathDropMode
+      label: Drop Items On Death
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the mode for dropping items on death
+      keywords: drop,items,death,mode,GMDeathDropMode
+      input_type: enum
+      param_field_name: BaseServerConfig.GMDeathDropMode
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No drops
+        '1': Drop all (default)
+        '2': Drop inventory (not equipped or hotkey items)
+      raw:
+        DisplayName: Drop Items On Death
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the mode for dropping items on death
+        Keywords: drop,items,death,mode,GMDeathDropMode
+        FieldName: GMDeathDropMode
+        InputType: enum
+        ParamFieldName: BaseServerConfig.GMDeathDropMode
+        DefaultValue: '1'
+        EnumValues:
+          '0': No drops
+          '1': Drop all (default)
+          '2': Drop inventory (not equipped or hotkey items)
+    - key: GMDeathInventoryLifeSpan
+      label: Dropped Items Despawn
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the amount of time after which items dropped on death will disappear
+      keywords: dropped,items,despawn,life,span,GMDeathInventoryLifeSpan
+      input_type: number
+      param_field_name: BaseServerConfig.GMDeathInventoryLifeSpan
+      default: '1800'
+      placeholder: '1800'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 3600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Dropped Items Despawn
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the amount of time after which items dropped on death will disappear
+        Keywords: dropped,items,despawn,life,span,GMDeathInventoryLifeSpan
+        FieldName: GMDeathInventoryLifeSpan
+        InputType: number
+        MinValue: '0'
+        MaxValue: '3600'
+        ParamFieldName: BaseServerConfig.GMDeathInventoryLifeSpan
+        DefaultValue: '1800'
+        Placeholder: '1800'
+        Suffix: seconds
+        EnumValues: {}
+    - key: CorpsePickAuthority
+      label: Corpse Loot Permissions
+      category: The Front
+      subcategory: Gameplay
+      description: Sets which players can loot corpses
+      keywords: corpse,loot,permission,CorpsePickAuthority
+      input_type: enum
+      param_field_name: BaseServerConfig.CorpsePickAuthority
+      default: '2'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Self only
+        '1': Squadmates
+        '2': Everyone (default)
+      raw:
+        DisplayName: Corpse Loot Permissions
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets which players can loot corpses
+        Keywords: corpse,loot,permission,CorpsePickAuthority
+        FieldName: CorpsePickAuthority
+        InputType: enum
+        ParamFieldName: BaseServerConfig.CorpsePickAuthority
+        DefaultValue: '2'
+        EnumValues:
+          '0': Self only
+          '1': Squadmates
+          '2': Everyone (default)
+    - key: GMCanDropItem
+      label: Enable Creatures/Structures Drop
+      category: The Front
+      subcategory: Gameplay
+      description: If enabled, creatures and structures will drop items when killed/destroyed
+      keywords: creatures,constructs,structures,kill,destroy,drop,GMCanDropItem
+      input_type: checkbox
+      param_field_name: BaseServerConfig.GMCanDropItem
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Creatures/Structures Drop
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, creatures and structures will drop items when killed/destroyed
+        Keywords: creatures,constructs,structures,kill,destroy,drop,GMCanDropItem
+        FieldName: GMCanDropItem
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.GMCanDropItem
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: GMCanDiscardItem
+      label: Allow Item Discard
+      category: The Front
+      subcategory: Gameplay
+      description: If enabled, players can discard items
+      keywords: allow,item,discard,GMCanDiscardItem
+      input_type: checkbox
+      param_field_name: BaseServerConfig.GMCanDiscardItem
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Item Discard
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, players can discard items
+        Keywords: allow,item,discard,GMCanDiscardItem
+        FieldName: GMCanDiscardItem
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.GMCanDiscardItem
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: GMDiscardBoxLifeSpan
+      label: Discarded Items Despawn
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the amount of time after which items discarded will disappear
+      keywords: discarded,items,despawn,life,span,GMDiscardBoxLifeSpan
+      input_type: number
+      param_field_name: BaseServerConfig.GMDiscardBoxLifeSpan
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Discarded Items Despawn
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the amount of time after which items discarded will disappear
+        Keywords: discarded,items,despawn,life,span,GMDiscardBoxLifeSpan
+        FieldName: GMDiscardBoxLifeSpan
+        InputType: number
+        MinValue: '0'
+        MaxValue: '600'
+        ParamFieldName: BaseServerConfig.GMDiscardBoxLifeSpan
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: GMRebirthBaseCD
+      label: Initial Respawn Cooldown
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the basic (or starting) revival cooldown duration
+      keywords: initial,respawn,basic,revival,cooldown,GMRebirthBaseCD
+      input_type: number
+      param_field_name: BaseServerConfig.GMRebirthBaseCD
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 60
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Initial Respawn Cooldown
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the basic (or starting) revival cooldown duration
+        Keywords: initial,respawn,basic,revival,cooldown,GMRebirthBaseCD
+        FieldName: GMRebirthBaseCD
+        InputType: number
+        MinValue: '0'
+        MaxValue: '60'
+        ParamFieldName: BaseServerConfig.GMRebirthBaseCD
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: seconds
+        EnumValues: {}
+    - key: GMRebirthExtraCD
+      label: Respawn Cooldown Penalty
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the amount of time by which the revival cooldown increases after multiple deaths
+      keywords: respawn,revival,cooldown,penalty,GMRebirthExtraCD
+      input_type: number
+      param_field_name: BaseServerConfig.GMRebirthExtraCD
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 20
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Respawn Cooldown Penalty
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the amount of time by which the revival cooldown increases after multiple deaths
+        Keywords: respawn,revival,cooldown,penalty,GMRebirthExtraCD
+        FieldName: GMRebirthExtraCD
+        InputType: number
+        MinValue: '0'
+        MaxValue: '20'
+        ParamFieldName: BaseServerConfig.GMRebirthExtraCD
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: seconds
+        EnumValues: {}
+    - key: GMPenaltiesMaxNum
+      label: Death Penalty Stack Limit
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the maximum number of death cooldown penalties to be applied
+      keywords: death,penalty,times,GMPenaltiesMaxNum
+      input_type: number
+      param_field_name: BaseServerConfig.GMPenaltiesMaxNum
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Death Penalty Stack Limit
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of death cooldown penalties to be applied
+        Keywords: death,penalty,times,GMPenaltiesMaxNum
+        FieldName: GMPenaltiesMaxNum
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.GMPenaltiesMaxNum
+        DefaultValue: '5'
+        Placeholder: '5'
+        EnumValues: {}
+    - key: GMPenaltiesCD
+      label: Death Penalties Respawn Time
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the time after which stacked revival cooldowns are reset
+      keywords: death,penalties,respawn,revival,cooldowns,time,GMPenaltiesCD
+      input_type: number
+      param_field_name: BaseServerConfig.GMPenaltiesCD
+      default: '600'
+      placeholder: '600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 600
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Death Penalties Respawn Time
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time after which stacked revival cooldowns are reset
+        Keywords: death,penalties,respawn,revival,cooldowns,time,GMPenaltiesCD
+        FieldName: GMPenaltiesCD
+        InputType: number
+        MinValue: '0'
+        MaxValue: '600'
+        ParamFieldName: BaseServerConfig.GMPenaltiesCD
+        DefaultValue: '600'
+        Placeholder: '600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: ConstructEnableRot
+      label: Enable Structure Decay
+      category: The Front
+      subcategory: Gameplay
+      description: If enabled, structures will decay
+      keywords: set,construct,structure,decay,rot,ConstructEnableRot
+      input_type: checkbox
+      param_field_name: BaseServerConfig.ConstructEnableRot
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Structure Decay
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, structures will decay
+        Keywords: set,construct,structure,decay,rot,ConstructEnableRot
+        FieldName: ConstructEnableRot
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.ConstructEnableRot
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: HeadNameDisplayDist_Team
+      label: Friendly Name Display Distance
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the maximum distance at which a player can see a squadmate's name
+      keywords: friendly,name,display,distance,HeadNameDisplayDist_Team
+      input_type: number
+      param_field_name: BaseServerConfig.HeadNameDisplayDist_Team
+      default: '200'
+      placeholder: '200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 400
+      suffix: metres
+      enum_values: {}
+      raw:
+        DisplayName: Friendly Name Display Distance
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum distance at which a player can see a squadmate's name
+        Keywords: friendly,name,display,distance,HeadNameDisplayDist_Team
+        FieldName: HeadNameDisplayDist_Team
+        InputType: number
+        MinValue: '0'
+        MaxValue: '400'
+        ParamFieldName: BaseServerConfig.HeadNameDisplayDist_Team
+        DefaultValue: '200'
+        Placeholder: '200'
+        Suffix: metres
+        EnumValues: {}
+    - key: HeadNameDisplayDist_Enemy
+      label: Non-friendly Name Display Distance
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the maximum distance at which a player can see a non-squadmate's name
+      keywords: non,friendly,enemy,name,display,distance,HeadNameDisplayDist_Enemy
+      input_type: number
+      param_field_name: BaseServerConfig.HeadNameDisplayDist_Enemy
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 40
+      suffix: metres
+      enum_values: {}
+      raw:
+        DisplayName: Non-friendly Name Display Distance
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum distance at which a player can see a non-squadmate's name
+        Keywords: non,friendly,enemy,name,display,distance,HeadNameDisplayDist_Enemy
+        FieldName: HeadNameDisplayDist_Enemy
+        InputType: number
+        MinValue: '0'
+        MaxValue: '40'
+        ParamFieldName: BaseServerConfig.HeadNameDisplayDist_Enemy
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: metres
+        EnumValues: {}
+    - key: NpcDisplayDistance
+      label: NPC Name Display Distance
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the maximum distance at which a player can see an NPC's name
+      keywords: npc,name,display,distance,NpcDisplayDistance
+      input_type: number
+      param_field_name: BaseServerConfig.NpcDisplayDistance
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 50
+      suffix: metres
+      enum_values: {}
+      raw:
+        DisplayName: NPC Name Display Distance
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum distance at which a player can see an NPC's name
+        Keywords: npc,name,display,distance,NpcDisplayDistance
+        FieldName: NpcDisplayDistance
+        InputType: number
+        MinValue: '0'
+        MaxValue: '50'
+        ParamFieldName: BaseServerConfig.NpcDisplayDistance
+        DefaultValue: '50'
+        Placeholder: '50'
+        Suffix: metres
+        EnumValues: {}
+    - key: OpenAllHouseFlag
+      label: Show All Spacetime Beacons
+      category: The Front
+      subcategory: Gameplay
+      description: If enabled, the location of other players' beacons will be displayed on the map
+      keywords: show,spacetime,beacons,location,display,map,OpenAllHouseFlag
+      input_type: checkbox
+      param_field_name: BaseServerConfig.OpenAllHouseFlag
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Show All Spacetime Beacons
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the location of other players' beacons will be displayed on the map
+        Keywords: show,spacetime,beacons,location,display,map,OpenAllHouseFlag
+        FieldName: OpenAllHouseFlag
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.OpenAllHouseFlag
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: IsCanChat
+      label: Allow Chat Including Voice
+      category: The Front
+      subcategory: Gameplay
+      description: If enabled, players will be able to send chat messages in-game
+      keywords: allow,chat,voice,IsCanChat
+      input_type: checkbox
+      param_field_name: BaseServerConfig.IsCanChat
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Chat Including Voice
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, players will be able to send chat messages in-game
+        Keywords: allow,chat,voice,IsCanChat
+        FieldName: IsCanChat
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.IsCanChat
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: IsShowBlood
+      label: Enable Blood Effects
+      category: The Front
+      subcategory: Gameplay
+      description: If enabled, blood effects will appear when damaged
+      keywords: blood,effects,show,IsShowBlood
+      input_type: checkbox
+      param_field_name: BaseServerConfig.IsShowBlood
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Blood Effects
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, blood effects will appear when damaged
+        Keywords: blood,effects,show,IsShowBlood
+        FieldName: IsShowBlood
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.IsShowBlood
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: SensitiveWords
+      label: Allow Profanity
+      category: The Front
+      subcategory: Gameplay
+      description: If set, the profanity filter will be disabled
+      keywords: profanity,sensitive,words,filter,SensitiveWords
+      input_type: checkbox
+      param_field_name: BaseServerConfig.SensitiveWords
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Profanity
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the profanity filter will be disabled
+        Keywords: profanity,sensitive,words,filter,SensitiveWords
+        FieldName: SensitiveWords
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.SensitiveWords
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: HealthDyingState
+      label: Enable Wounded State
+      category: The Front
+      subcategory: Gameplay
+      description: If enabled, the wounded state will be triggered when HP falls to 0, rather than the player immediately dying
+      keywords: wounded,state,health,dying,HealthDyingState
+      input_type: checkbox
+      param_field_name: BaseServerConfig.HealthDyingState
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Wounded State
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the wounded state will be triggered when HP falls to 0, rather than the player immediately dying
+        Keywords: wounded,state,health,dying,HealthDyingState
+        FieldName: HealthDyingState
+        InputType: checkbox
+        ParamFieldName: BaseServerConfig.HealthDyingState
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: AnimalBodyStayTime
+      label: Monster NPC Corpse Despawn
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the amount of time after which animal NPC corpses will disappear
+      keywords: monster,npc,corpse,despawn,time,AnimalBodyStayTime
+      input_type: number
+      param_field_name: BaseServerConfig.AnimalBodyStayTime
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 10
+      max: 300
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Monster NPC Corpse Despawn
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the amount of time after which animal NPC corpses will disappear
+        Keywords: monster,npc,corpse,despawn,time,AnimalBodyStayTime
+        FieldName: AnimalBodyStayTime
+        InputType: number
+        MinValue: '10'
+        MaxValue: '300'
+        ParamFieldName: BaseServerConfig.AnimalBodyStayTime
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: HumanBodyStayTime
+      label: Human NPC Corpse Despawn
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the amount of time after which human NPC corpses will disappear
+      keywords: human,corpse,despawn,time,HumanBodyStayTime
+      input_type: number
+      param_field_name: BaseServerConfig.HumanBodyStayTime
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 60
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Human NPC Corpse Despawn
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the amount of time after which human NPC corpses will disappear
+        Keywords: human,corpse,despawn,time,HumanBodyStayTime
+        FieldName: HumanBodyStayTime
+        InputType: number
+        MinValue: '0'
+        MaxValue: '60'
+        ParamFieldName: BaseServerConfig.HumanBodyStayTime
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: seconds
+        EnumValues: {}
+    - key: GMMaxHouseFlagNumber
+      label: Player Beacon Limit
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the maximum number of beacons each player can build
+      keywords: player,beacon,limit,GMMaxHouseFlagNumber
+      input_type: number
+      param_field_name: BaseServerConfig.GMMaxHouseFlagNumber
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Player Beacon Limit
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of beacons each player can build
+        Keywords: player,beacon,limit,GMMaxHouseFlagNumber
+        FieldName: GMMaxHouseFlagNumber
+        InputType: number
+        MinValue: '1'
+        MaxValue: '5'
+        ParamFieldName: BaseServerConfig.GMMaxHouseFlagNumber
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMHFTrapMaxNum
+      label: Beacon Trap Limit
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the maximum number of traps that can be within beacon coverage
+      keywords: beacon,trap,limit,GMHFTrapMaxNum
+      input_type: number
+      param_field_name: BaseServerConfig.GMHFTrapMaxNum
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10000
+      enum_values: {}
+      raw:
+        DisplayName: Beacon Trap Limit
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of traps that can be within beacon coverage
+        Keywords: beacon,trap,limit,GMHFTrapMaxNum
+        FieldName: GMHFTrapMaxNum
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10000'
+        ParamFieldName: BaseServerConfig.GMHFTrapMaxNum
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: GMHFTurretMaxNum
+      label: Beacon Turret Limit
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the maximum number of turrets that can be within beacon coverage
+      keywords: beacon,turret,limit,GMHFTurretMaxNum
+      input_type: number
+      param_field_name: BaseServerConfig.GMHFTurretMaxNum
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10000
+      enum_values: {}
+      raw:
+        DisplayName: Beacon Turret Limit
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of turrets that can be within beacon coverage
+        Keywords: beacon,turret,limit,GMHFTurretMaxNum
+        FieldName: GMHFTurretMaxNum
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10000'
+        ParamFieldName: BaseServerConfig.GMHFTurretMaxNum
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: GMHouseFlagExcitantTime
+      label: Beacon Daily Non-Protection Duration
+      category: The Front
+      subcategory: Gameplay
+      description: Sets the amount of time daily that beacons can be attacked
+      keywords: beacon,daily,non-protection,attack,time,GMHouseFlagExcitantTime
+      input_type: number
+      param_field_name: BaseServerConfig.GMHouseFlagExcitantTime
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 24
+      enum_values: {}
+      raw:
+        DisplayName: Beacon Daily Non-Protection Duration
+        Category: The Front:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the amount of time daily that beacons can be attacked
+        Keywords: beacon,daily,non-protection,attack,time,GMHouseFlagExcitantTime
+        FieldName: GMHouseFlagExcitantTime
+        InputType: number
+        MinValue: '0'
+        MaxValue: '24'
+        ParamFieldName: BaseServerConfig.GMHouseFlagExcitantTime
+        DefaultValue: '3'
+        Placeholder: '3'
+        EnumValues: {}
+    - key: NpcRespawnRatio
+      label: All Monster Respawn Time Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the time before dead wild NPCs can respawn
+      keywords: monster,npc,respawn,time,rate,multiplier,NpcRespawnRatio
+      input_type: number
+      param_field_name: BaseServerConfig.NpcRespawnRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: All Monster Respawn Time Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the time before dead wild NPCs can respawn
+        Keywords: monster,npc,respawn,time,rate,multiplier,NpcRespawnRatio
+        FieldName: NpcRespawnRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.NpcRespawnRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMAttackCityCdRatio
+      label: Monster Raid Cooldown Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the cooldown time between supply deliveries
+      keywords: monster,npc,raid,cooldown,rate,multiplier,GMAttackCityCdRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMAttackCityCdRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Monster Raid Cooldown Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the cooldown time between supply deliveries
+        Keywords: monster,npc,raid,cooldown,rate,multiplier,GMAttackCityCdRatio
+        FieldName: GMAttackCityCdRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.GMAttackCityCdRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerHotDefAddRate
+      label: Heat Resistance Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for character heat resistance
+      keywords: heat,resistance,rate,multiplier,PlayerHotDefAddRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerHotDefAddRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Heat Resistance Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for character heat resistance
+        Keywords: heat,resistance,rate,multiplier,PlayerHotDefAddRate
+        FieldName: PlayerHotDefAddRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.PlayerHotDefAddRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerIceDefAddRate
+      label: Cold Resistance Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for character cold resistance
+      keywords: cold,resistance,rate,multiplier,PlayerIceDefAddRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerIceDefAddRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Cold Resistance Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for character cold resistance
+        Keywords: cold,resistance,rate,multiplier,PlayerIceDefAddRate
+        FieldName: PlayerIceDefAddRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.PlayerIceDefAddRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerDeathAvatarItemDurableRate
+      label: Inventory Item Durability Death Penalty
+      category: The Front
+      subcategory: Multipliers
+      description: >-
+        On death, the durability of equipped items will fall by the maximum durability multiplied by this amount (does
+        not affect drops)
+      keywords: inventory,item,durability,death,penalty,PlayerDeathAvatarItemDurableRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerDeathAvatarItemDurableRate
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Inventory Item Durability Death Penalty
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: >-
+          On death, the durability of equipped items will fall by the maximum durability multiplied by this amount (does
+          not affect drops)
+        Keywords: inventory,item,durability,death,penalty,PlayerDeathAvatarItemDurableRate
+        FieldName: PlayerDeathAvatarItemDurableRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: BaseServerConfig.PlayerDeathAvatarItemDurableRate
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: PlayerDeatShortcutItemDurableRate
+      label: Hotbar Item Durability Death Penalty
+      category: The Front
+      subcategory: Multipliers
+      description: >-
+        On death, the durability of hotbar items will fall by the maximum durability multiplied by this amount (does not
+        affect drops)
+      keywords: hotbar,item,durability,death,penalty,PlayerDeatShortcutItemDurableRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerDeatShortcutItemDurableRate
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Hotbar Item Durability Death Penalty
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: >-
+          On death, the durability of hotbar items will fall by the maximum durability multiplied by this amount (does
+          not affect drops)
+        Keywords: hotbar,item,durability,death,penalty,PlayerDeatShortcutItemDurableRate
+        FieldName: PlayerDeatShortcutItemDurableRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: BaseServerConfig.PlayerDeatShortcutItemDurableRate
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: GMCraftTimeRate
+      label: Crafting/Repair Time Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the item crafting/repair time
+      keywords: crafting,repair,time,rate,multiplier,GMCraftTimeRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMCraftTimeRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Crafting/Repair Time Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the item crafting/repair time
+        Keywords: crafting,repair,time,rate,multiplier,GMCraftTimeRate
+        FieldName: GMCraftTimeRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.GMCraftTimeRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerAddExpRate
+      label: All XP Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for all XP earned
+      keywords: all,xp,rate,multiplier,PlayerAddExpRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerAddExpRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: All XP Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for all XP earned
+        Keywords: all,xp,rate,multiplier,PlayerAddExpRate
+        FieldName: PlayerAddExpRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.PlayerAddExpRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerKillAddExpRate
+      label: Kill XP Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for XP earned from killing monsters
+      keywords: kill,xp,rate,multiplier,PlayerKillAddExpRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerKillAddExpRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Kill XP Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for XP earned from killing monsters
+        Keywords: kill,xp,rate,multiplier,PlayerKillAddExpRate
+        FieldName: PlayerKillAddExpRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.PlayerKillAddExpRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerFarmAddExpRate
+      label: Collection XP Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for XP earned from collecting resources
+      keywords: collection,xp,rate,multiplier,PlayerFarmAddExpRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerFarmAddExpRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Collection XP Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for XP earned from collecting resources
+        Keywords: collection,xp,rate,multiplier,PlayerFarmAddExpRate
+        FieldName: PlayerFarmAddExpRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.PlayerFarmAddExpRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerCraftAddExpRate
+      label: Crafting XP Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for XP earned from crafting items
+      keywords: crafting,xp,rate,multiplier,PlayerCraftAddExpRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerCraftAddExpRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Crafting XP Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for XP earned from crafting items
+        Keywords: crafting,xp,rate,multiplier,PlayerCraftAddExpRate
+        FieldName: PlayerCraftAddExpRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.PlayerCraftAddExpRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: MoveSpeedRate
+      label: Movement Speed Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for movement speed
+      keywords: speed,rate,multiplier,MoveSpeedRate
+      input_type: number
+      param_field_name: BaseServerConfig.MoveSpeedRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Movement Speed Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for movement speed
+        Keywords: speed,rate,multiplier,MoveSpeedRate
+        FieldName: MoveSpeedRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: BaseServerConfig.MoveSpeedRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: JumpRate
+      label: Jump Height Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for jump height
+      keywords: jump,height,rate,multiplier,JumpRate
+      input_type: number
+      param_field_name: BaseServerConfig.JumpRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Jump Height Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for jump height
+        Keywords: jump,height,rate,multiplier,JumpRate
+        FieldName: JumpRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: BaseServerConfig.JumpRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerLandedDamageRate
+      label: Fall Damage Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for damage taken from falls
+      keywords: fall,damage,boost,multiplier,PlayerLandedDamageRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerLandedDamageRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Fall Damage Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for damage taken from falls
+        Keywords: fall,damage,boost,multiplier,PlayerLandedDamageRate
+        FieldName: PlayerLandedDamageRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.PlayerLandedDamageRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerMaxHealthRate
+      label: HP Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for maximum HP
+      keywords: hp,rate,multiplier,PlayerMaxHealthRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerMaxHealthRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: HP Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for maximum HP
+        Keywords: hp,rate,multiplier,PlayerMaxHealthRate
+        FieldName: PlayerMaxHealthRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.PlayerMaxHealthRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: HealthRecoverRate
+      label: HP Recovery Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the amount by which HP recovery will be multiplied
+      keywords: hp,recovery,rate,multiplier,HealthRecoverRate
+      input_type: number
+      param_field_name: BaseServerConfig.HealthRecoverRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: HP Recovery Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the amount by which HP recovery will be multiplied
+        Keywords: hp,recovery,rate,multiplier,HealthRecoverRate
+        FieldName: HealthRecoverRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.HealthRecoverRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerMaxStaminaRate
+      label: Maximum Stamina Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for maximum stamina
+      keywords: stamina,rate,multiplier,PlayerMaxStaminaRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerMaxStaminaRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Stamina Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for maximum stamina
+        Keywords: stamina,rate,multiplier,PlayerMaxStaminaRate
+        FieldName: PlayerMaxStaminaRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.PlayerMaxStaminaRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: StaminaRecoverRate
+      label: Stamina Recovery Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the amount by which stamina recovery will be multiplied
+      keywords: stamina,recovery,rate,multiplier,StaminaRecoverRate
+      input_type: number
+      param_field_name: BaseServerConfig.StaminaRecoverRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Stamina Recovery Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the amount by which stamina recovery will be multiplied
+        Keywords: stamina,recovery,rate,multiplier,StaminaRecoverRate
+        FieldName: StaminaRecoverRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.StaminaRecoverRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerStaminaCostRate
+      label: Stamina Loss Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the stamina consumption speed
+      keywords: stamina,loss,rate,multiplier,PlayerStaminaCostRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerStaminaCostRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Stamina Loss Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the stamina consumption speed
+        Keywords: stamina,loss,rate,multiplier,PlayerStaminaCostRate
+        FieldName: PlayerStaminaCostRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.PlayerStaminaCostRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerMaxHungerRate
+      label: Maximum Fullness Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for maximum fullness
+      keywords: maximum,fullness,hunger,multiplier,PlayerMaxHungerRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerMaxHungerRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Fullness Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for maximum fullness
+        Keywords: maximum,fullness,hunger,multiplier,PlayerMaxHungerRate
+        FieldName: PlayerMaxHungerRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.PlayerMaxHungerRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMHungerDecRatio
+      label: Fullness Loss Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the fullness consumption speed
+      keywords: fullness,loss,rate,multiplier,GMHungerDecRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMHungerDecRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Fullness Loss Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the fullness consumption speed
+        Keywords: fullness,loss,rate,multiplier,GMHungerDecRatio
+        FieldName: GMHungerDecRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.GMHungerDecRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMBodyHungerAddRate
+      label: Fullness From Food Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of fullness recovered by eating
+      keywords: fullness,food,hunger,rate,multiplier,GMBodyHungerAddRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMBodyHungerAddRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Fullness From Food Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of fullness recovered by eating
+        Keywords: fullness,food,hunger,rate,multiplier,GMBodyHungerAddRate
+        FieldName: GMBodyHungerAddRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMBodyHungerAddRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: MaxBodyWaterRate
+      label: Maximum Hydration Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for maximum hydration
+      keywords: maximum,hydration,rate,multiplier,MaxBodyWaterRate
+      input_type: number
+      param_field_name: BaseServerConfig.MaxBodyWaterRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Hydration Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for maximum hydration
+        Keywords: maximum,hydration,rate,multiplier,MaxBodyWaterRate
+        FieldName: MaxBodyWaterRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.MaxBodyWaterRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMWaterDecRatio
+      label: Hydration Loss Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the hydration consumption speed
+      keywords: hydration,loss,rate,hydration,GMWaterDecRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMWaterDecRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Hydration Loss Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the hydration consumption speed
+        Keywords: hydration,loss,rate,hydration,GMWaterDecRatio
+        FieldName: GMWaterDecRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.GMWaterDecRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMBodyWaterAddRate
+      label: Hydration From Water Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of hydration recovered by drinking
+      keywords: hydration,water,rate,multiplier,GMBodyWaterAddRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMBodyWaterAddRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Hydration From Water Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of hydration recovered by drinking
+        Keywords: hydration,water,rate,multiplier,GMBodyWaterAddRate
+        FieldName: GMBodyWaterAddRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMBodyWaterAddRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: MaxBreathRate
+      label: Maximum Oxygen Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for maximum oxygen
+      keywords: maximum,o2,oxygen,rate,multiplier,MaxBreathRate
+      input_type: number
+      param_field_name: BaseServerConfig.MaxBreathRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Oxygen Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for maximum oxygen
+        Keywords: maximum,o2,oxygen,rate,multiplier,MaxBreathRate
+        FieldName: MaxBreathRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.MaxBreathRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: BreathRecoverRate
+      label: Oxygen Recovery Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the amount by which oxygen recovery will be multiplied
+      keywords: o2,oxygen,breath,recover,rate,multiplier,BreathRecoverRate
+      input_type: number
+      param_field_name: BaseServerConfig.BreathRecoverRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Oxygen Recovery Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the amount by which oxygen recovery will be multiplied
+        Keywords: o2,oxygen,breath,recover,rate,multiplier,BreathRecoverRate
+        FieldName: BreathRecoverRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.BreathRecoverRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: PlayerBreathCostRate
+      label: Oxygen Loss Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the oxygen consumption speed
+      keywords: o2,oxygen,breath,loss,rate,multiplierPlayerBreathCostRate
+      input_type: number
+      param_field_name: BaseServerConfig.PlayerBreathCostRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Oxygen Loss Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the oxygen consumption speed
+        Keywords: o2,oxygen,breath,loss,rate,multiplierPlayerBreathCostRate
+        FieldName: PlayerBreathCostRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.PlayerBreathCostRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMPlayerHealthRate
+      label: Medication HP Recovery Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of HP recovered from medication
+      keywords: med,medication,recovery,rate,multiplier,GMPlayerHealthRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMPlayerHealthRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Medication HP Recovery Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of HP recovered from medication
+        Keywords: med,medication,recovery,rate,multiplier,GMPlayerHealthRate
+        FieldName: GMPlayerHealthRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMPlayerHealthRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMFoodDragDurationRate
+      label: Food And Medication Effect Duration Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier applied to the duration of effect of food and medication
+      keywords: food,med,medication,duration,effect,rate,multiplier,GMFoodDragDurationRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMFoodDragDurationRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Food And Medication Effect Duration Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier applied to the duration of effect of food and medication
+        Keywords: food,med,medication,duration,effect,rate,multiplier,GMFoodDragDurationRate
+        FieldName: GMFoodDragDurationRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.GMFoodDragDurationRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMNPCLootableItemRatio
+      label: Wild NPC Corpse Drop Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of items dropped by a wild NPC on death
+      keywords: wild,npc,corpse,drop,rate,multiplier,GMNPCLootableItemRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMNPCLootableItemRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Wild NPC Corpse Drop Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of items dropped by a wild NPC on death
+        Keywords: wild,npc,corpse,drop,rate,multiplier,GMNPCLootableItemRatio
+        FieldName: GMNPCLootableItemRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMNPCLootableItemRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: NpcSpawnLevelRatio
+      label: Wild NPC Starting Level Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the starting level of wild NPCs, making them more powerful
+      keywords: wild,starting,level,rate,multiplier,NpcSpawnLevelRatio
+      input_type: number
+      param_field_name: BaseServerConfig.NpcSpawnLevelRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Wild NPC Starting Level Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the starting level of wild NPCs, making them more powerful
+        Keywords: wild,starting,level,rate,multiplier,NpcSpawnLevelRatio
+        FieldName: NpcSpawnLevelRatio
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.NpcSpawnLevelRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: WildNPCDamageRate
+      label: Wild NPC Damage Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the damage dealt by wild NPCs
+      keywords: wild,npc,damage,rate,multiplier,WildNPCDamageRate
+      input_type: number
+      param_field_name: BaseServerConfig.WildNPCDamageRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Wild NPC Damage Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the damage dealt by wild NPCs
+        Keywords: wild,npc,damage,rate,multiplier,WildNPCDamageRate
+        FieldName: WildNPCDamageRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.WildNPCDamageRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: WildNPCHealthRate
+      label: Wild NPC HP Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the HP of wild NPCs. Minimum is 0.1
+      keywords: wild,npc,hp,health,rate,multiplier,WildNPCHealthRate
+      input_type: number
+      param_field_name: BaseServerConfig.WildNPCHealthRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Wild NPC HP Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the HP of wild NPCs. Minimum is 0.1
+        Keywords: wild,npc,hp,health,rate,multiplier,WildNPCHealthRate
+        FieldName: WildNPCHealthRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.WildNPCHealthRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: WildNPCSpeedRate
+      label: Wild NPC Movement Speed Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the movement speed of wild NPCs. Minimum is 0.1
+      keywords: wild,npc,movement,speed,rate,multiplier,WildNPCSpeedRate
+      input_type: number
+      param_field_name: BaseServerConfig.WildNPCSpeedRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Wild NPC Movement Speed Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the movement speed of wild NPCs. Minimum is 0.1
+        Keywords: wild,npc,movement,speed,rate,multiplier,WildNPCSpeedRate
+        FieldName: WildNPCSpeedRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: BaseServerConfig.WildNPCSpeedRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: CityNPCLevelRate
+      label: Raid NPC Level Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the level of raid NPCs, making them more powerful
+      keywords: raid,level,rate,multiplier,CityNPCLevelRate
+      input_type: number
+      param_field_name: BaseServerConfig.CityNPCLevelRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Raid NPC Level Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the level of raid NPCs, making them more powerful
+        Keywords: raid,level,rate,multiplier,CityNPCLevelRate
+        FieldName: CityNPCLevelRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.CityNPCLevelRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: CityNPCDamageRate
+      label: Raid NPC Damage Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the damage dealt by raid NPCs
+      keywords: raid,npc,damage,rate,multiplier,CityNPCDamageRate
+      input_type: number
+      param_field_name: BaseServerConfig.CityNPCDamageRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Raid NPC Damage Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the damage dealt by raid NPCs
+        Keywords: raid,npc,damage,rate,multiplier,CityNPCDamageRate
+        FieldName: CityNPCDamageRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.CityNPCDamageRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: CityNPCHealthRate
+      label: Raid NPC HP Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the HP of raid NPCs. Minimum is 0.1
+      keywords: raid,npc,hp,rate,multiplier,CityNPCHealthRate
+      input_type: number
+      param_field_name: BaseServerConfig.CityNPCHealthRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Raid NPC HP Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the HP of raid NPCs. Minimum is 0.1
+        Keywords: raid,npc,hp,rate,multiplier,CityNPCHealthRate
+        FieldName: CityNPCHealthRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.CityNPCHealthRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: CityNPCSpeedRate
+      label: Raid NPC Movement Speed Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the movement speed of raid NPCs. Minimum is 0.1
+      keywords: raid,npc,movement,speed,rate,multiplier,rate,CityNPCSpeedRate
+      input_type: number
+      param_field_name: BaseServerConfig.CityNPCSpeedRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Raid NPC Movement Speed Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the movement speed of raid NPCs. Minimum is 0.1
+        Keywords: raid,npc,movement,speed,rate,multiplier,rate,CityNPCSpeedRate
+        FieldName: CityNPCSpeedRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: BaseServerConfig.CityNPCSpeedRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: CityNPCNumRate
+      label: Raid NPC Amount Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the total number of raid NPCs summoned each round. Minimum is 0.1
+      keywords: raid,npc,amount,rate,multiplier,CityNPCNumRate
+      input_type: number
+      param_field_name: BaseServerConfig.CityNPCNumRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Raid NPC Amount Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the total number of raid NPCs summoned each round. Minimum is 0.1
+        Keywords: raid,npc,amount,rate,multiplier,CityNPCNumRate
+        FieldName: CityNPCNumRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.CityNPCNumRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMInventoryGainRate
+      label: Collectible Resource Spawn Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of resources received upon collection
+      keywords: collectible,inventory,resource,spawn,rate,multiplier,GMInventoryGainRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMInventoryGainRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Collectible Resource Spawn Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of resources received upon collection
+        Keywords: collectible,inventory,resource,spawn,rate,multiplier,GMInventoryGainRate
+        FieldName: GMInventoryGainRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMInventoryGainRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMCityATKNPCLootItemRatio
+      label: Raid Corpse Drop Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of items dropped by a raid NPC upon death
+      keywords: raid,corpse,drop,rate,multiplier,GMCityATKNPCLootItemRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMCityATKNPCLootItemRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Raid Corpse Drop Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of items dropped by a raid NPC upon death
+        Keywords: raid,corpse,drop,rate,multiplier,GMCityATKNPCLootItemRatio
+        FieldName: GMCityATKNPCLootItemRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMCityATKNPCLootItemRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMSetGJConstructMaxNumRatio
+      label: Player Work-Type Structures Limit Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the maximum number of work-type structures each player can build
+      keywords: player,work,construct,structure,limit,maximum,multiplier,GMSetGJConstructMaxNumRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMSetGJConstructMaxNumRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Player Work-Type Structures Limit Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the maximum number of work-type structures each player can build
+        Keywords: player,work,construct,structure,limit,maximum,multiplier,GMSetGJConstructMaxNumRatio
+        FieldName: GMSetGJConstructMaxNumRatio
+        InputType: number
+        MinValue: '1'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.GMSetGJConstructMaxNumRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMConstructDefenseRatio
+      label: Non-Trap Structure Damage Resistance Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets multiplier for the damage taken by structures other than traps, turrets and beacons
+      keywords: non-trap,construct,structure,damage,resistance,rate,multiplier,GMConstructDefenseRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMConstructDefenseRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Non-Trap Structure Damage Resistance Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets multiplier for the damage taken by structures other than traps, turrets and beacons
+        Keywords: non-trap,construct,structure,damage,resistance,rate,multiplier,GMConstructDefenseRatio
+        FieldName: GMConstructDefenseRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMConstructDefenseRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMTrapDefenseRatio
+      label: Trap Damage Resistance Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the damage taken by traps
+      keywords: trap,damage,resistance,rate,multiplier,GMTrapDefenseRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMTrapDefenseRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Trap Damage Resistance Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the damage taken by traps
+        Keywords: trap,damage,resistance,rate,multiplier,GMTrapDefenseRatio
+        FieldName: GMTrapDefenseRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMTrapDefenseRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMTurretDefenseRatio
+      label: Turret Damage Resistance Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the damage taken by turrets
+      keywords: turret,damage,resistance,rate,multiplier,GMTurretDefenseRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMTurretDefenseRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Turret Damage Resistance Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the damage taken by turrets
+        Keywords: turret,damage,resistance,rate,multiplier,GMTurretDefenseRatio
+        FieldName: GMTurretDefenseRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMTurretDefenseRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMTrapDamageRatio
+      label: Trap Damage Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the damage dealt by traps
+      keywords: trap,damage,rate,multiplier,GMTrapDamageRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMTrapDamageRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Trap Damage Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the damage dealt by traps
+        Keywords: trap,damage,rate,multiplier,GMTrapDamageRatio
+        FieldName: GMTrapDamageRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMTrapDamageRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMTurretDamageRatio
+      label: Turret Damage Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the damage dealt by turrets
+      keywords: turret,damage,rate,multiplier,GMTurretDamageRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMTurretDamageRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Turret Damage Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the damage dealt by turrets
+        Keywords: turret,damage,rate,multiplier,GMTurretDamageRatio
+        FieldName: GMTurretDamageRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMTurretDamageRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMConstructMaxHealthRatio
+      label: Structure Durability Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the maximum durability of structures. Minimum is 0.1
+      keywords: construct,structure,maximum,durability,health,rate,multiplier,GMConstructMaxHealthRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMConstructMaxHealthRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Structure Durability Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the maximum durability of structures. Minimum is 0.1
+        Keywords: construct,structure,maximum,durability,health,rate,multiplier,GMConstructMaxHealthRatio
+        FieldName: GMConstructMaxHealthRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMConstructMaxHealthRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMConstructReturnHPRatio
+      label: Structure Durability Recovery Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the durability recovery speed of placed structures
+      keywords: construct,structure,durability,recovery,rate,multiplier,GMConstructReturnHPRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMConstructReturnHPRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Structure Durability Recovery Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the durability recovery speed of placed structures
+        Keywords: construct,structure,durability,recovery,rate,multiplier,GMConstructReturnHPRatio
+        FieldName: GMConstructReturnHPRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMConstructReturnHPRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMHouseFlagRepairHealthRatio
+      label: Spacetime Beacon Auto-repair Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the durability recovery speed of structures within the auto-repair range of a beacon
+      keywords: spacetime,beacon,auto-repair,durability,recovery,rate,multiplier,GMHouseFlagRepairHealthRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMHouseFlagRepairHealthRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Spacetime Beacon Auto-repair Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the durability recovery speed of structures within the auto-repair range of a beacon
+        Keywords: spacetime,beacon,auto-repair,durability,recovery,rate,multiplier,GMHouseFlagRepairHealthRatio
+        FieldName: GMHouseFlagRepairHealthRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMHouseFlagRepairHealthRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMTTC_Oil_Rate
+      label: Oil Well Work Production Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for resources collected from oil wells
+      keywords: oil,well,work,production,rate,multiplier,GMTTC_Oil_Rate
+      input_type: number
+      param_field_name: BaseServerConfig.GMTTC_Oil_Rate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Oil Well Work Production Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for resources collected from oil wells
+        Keywords: oil,well,work,production,rate,multiplier,GMTTC_Oil_Rate
+        FieldName: GMTTC_Oil_Rate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMTTC_Oil_Rate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMWaterCollecter_Rate
+      label: Dew Collector Work Production Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for resources collected from dew collectors
+      keywords: dew,water,collector,work,production,rate,multiplier,GMWaterCollecter_Rate
+      input_type: number
+      param_field_name: BaseServerConfig.GMWaterCollecter_Rate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Dew Collector Work Production Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for resources collected from dew collectors
+        Keywords: dew,water,collector,work,production,rate,multiplier,GMWaterCollecter_Rate
+        FieldName: GMWaterCollecter_Rate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMWaterCollecter_Rate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMTTC_Ore_Rate
+      label: Mine Work Production Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for resources collected from mines
+      keywords: mine,ore,work,production,rate,multiplier,GMTTC_Ore_Rate
+      input_type: number
+      param_field_name: BaseServerConfig.GMTTC_Ore_Rate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Mine Work Production Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for resources collected from mines
+        Keywords: mine,ore,work,production,rate,multiplier,GMTTC_Ore_Rate
+        FieldName: GMTTC_Ore_Rate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMTTC_Ore_Rate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMTTC_Fish_Rate
+      label: Fish Basket Work Production Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for resources collected from fish baskets
+      keywords: fish,basket,work,production,rate,multiplier,GMTTC_Fish_Rate
+      input_type: number
+      param_field_name: BaseServerConfig.GMTTC_Fish_Rate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Fish Basket Work Production Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for resources collected from fish baskets
+        Keywords: fish,basket,work,production,rate,multiplier,GMTTC_Fish_Rate
+        FieldName: GMTTC_Fish_Rate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMTTC_Fish_Rate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: CHFDamagedByPlayer
+      label: Beacon Player Gun Damage Resistance Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the damage that beacons take from player firearms
+      keywords: beacon,player,gun,damage,resistance,rate,multiplier,CHFDamagedByPlayer
+      input_type: number
+      param_field_name: BaseServerConfig.CHFDamagedByPlayer
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Beacon Player Gun Damage Resistance Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the damage that beacons take from player firearms
+        Keywords: beacon,player,gun,damage,resistance,rate,multiplier,CHFDamagedByPlayer
+        FieldName: CHFDamagedByPlayer
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.CHFDamagedByPlayer
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: CHFDamagedByVehicle
+      label: Beacon Player Vehicle Damage Resistance Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the damage that beacons take from player vehicles
+      keywords: beacon,player,vehicle,damage,resistance,rate,multiplier,CHFDamagedByVehicle
+      input_type: number
+      param_field_name: BaseServerConfig.CHFDamagedByVehicle
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Beacon Player Vehicle Damage Resistance Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the damage that beacons take from player vehicles
+        Keywords: beacon,player,vehicle,damage,resistance,rate,multiplier,CHFDamagedByVehicle
+        FieldName: CHFDamagedByVehicle
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.CHFDamagedByVehicle
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: CHFDamagedByNpc
+      label: Beacon NPC Damage Resistance Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the damage that beacons take from NPCs
+      keywords: beacon,npc,damage,resistance,rate,multiplier,CHFDamagedByNpc
+      input_type: number
+      param_field_name: BaseServerConfig.CHFDamagedByNpc
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Beacon NPC Damage Resistance Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the damage that beacons take from NPCs
+        Keywords: beacon,npc,damage,resistance,rate,multiplier,CHFDamagedByNpc
+        FieldName: CHFDamagedByNpc
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.CHFDamagedByNpc
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMMaxRetrieveProductsRate
+      label: Resource Collection Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: >-
+        Sets the multiplier for the maximum gains from collection. This value must be bigger than other collection
+        multipliers
+      keywords: resource,collection,rate,multiplier,GMMaxRetrieveProductsRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMMaxRetrieveProductsRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Resource Collection Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: >-
+          Sets the multiplier for the maximum gains from collection. This value must be bigger than other collection
+          multipliers
+        Keywords: resource,collection,rate,multiplier,GMMaxRetrieveProductsRate
+        FieldName: GMMaxRetrieveProductsRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1000'
+        ParamFieldName: BaseServerConfig.GMMaxRetrieveProductsRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMTreeGainRate
+      label: Wood Production Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of wood collected
+      keywords: wood,tree,production,rate,multiplier,GMTreeGainRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMTreeGainRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Wood Production Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of wood collected
+        Keywords: wood,tree,production,rate,multiplier,GMTreeGainRate
+        FieldName: GMTreeGainRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1000'
+        ParamFieldName: BaseServerConfig.GMTreeGainRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMBushGainRate
+      label: Plant Production Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of plants collected
+      keywords: plant,bush,production,rate,multiplier,GMBushGainRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMBushGainRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Plant Production Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of plants collected
+        Keywords: plant,bush,production,rate,multiplier,GMBushGainRate
+        FieldName: GMBushGainRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1000'
+        ParamFieldName: BaseServerConfig.GMBushGainRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMOreGainRate
+      label: Ore Production Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of ore collected
+      keywords: ore,production,rate,multiplier,GMOreGainRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMOreGainRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Ore Production Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of ore collected
+        Keywords: ore,production,rate,multiplier,GMOreGainRate
+        FieldName: GMOreGainRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1000'
+        ParamFieldName: BaseServerConfig.GMOreGainRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMCropVegetableReapRatio
+      label: Crop Production Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of crops collected
+      keywords: crop,production,rate,multiplier,GMCropVegetableReapRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMCropVegetableReapRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Crop Production Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of crops collected
+        Keywords: crop,production,rate,multiplier,GMCropVegetableReapRatio
+        FieldName: GMCropVegetableReapRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1000'
+        ParamFieldName: BaseServerConfig.GMCropVegetableReapRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMFleshGainRate
+      label: Animal Production Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of items collected from corpses
+      keywords: animal,production,corpse,items,rate,multiplier,GMFleshGainRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMFleshGainRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Animal Production Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of items collected from corpses
+        Keywords: animal,production,corpse,items,rate,multiplier,GMFleshGainRate
+        FieldName: GMFleshGainRate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '1000'
+        ParamFieldName: BaseServerConfig.GMFleshGainRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMCropVegetableGrowRatio
+      label: Crop Growth Speed Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the growth speed of planted crops
+      keywords: crop,growth,speed,rate,multiplier,GMCropVegetableGrowRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMCropVegetableGrowRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Crop Growth Speed Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the growth speed of planted crops
+        Keywords: crop,growth,speed,rate,multiplier,GMCropVegetableGrowRatio
+        FieldName: GMCropVegetableGrowRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMCropVegetableGrowRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMMeleeNpcDamageRatio
+      label: Melee Damage Vs NPC Multipler
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for melee weapon damage that characters deal to NPCs
+      keywords: melee,damage,weapon,npc,rate,multiplier,GMMeleeNpcDamageRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMMeleeNpcDamageRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Melee Damage Vs NPC Multipler
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for melee weapon damage that characters deal to NPCs
+        Keywords: melee,damage,weapon,npc,rate,multiplier,GMMeleeNpcDamageRatio
+        FieldName: GMMeleeNpcDamageRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMMeleeNpcDamageRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMRangedNpcDamageRatio
+      label: Ranged Damage Vs NPC Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for ranged weapon damage that characters deal to NPCs
+      keywords: ranged,damage,weapon,npc,rate,multiplier,GMRangedNpcDamageRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMRangedNpcDamageRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Ranged Damage Vs NPC Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for ranged weapon damage that characters deal to NPCs
+        Keywords: ranged,damage,weapon,npc,rate,multiplier,GMRangedNpcDamageRatio
+        FieldName: GMRangedNpcDamageRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMRangedNpcDamageRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMMeleePlayerDamageRatio
+      label: Melee PvP Damage Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for melee weapon damage that characters deal to players
+      keywords: melee,pvp,damage,weapon,rate,multiplier,GMMeleePlayerDamageRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMMeleePlayerDamageRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Melee PvP Damage Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for melee weapon damage that characters deal to players
+        Keywords: melee,pvp,damage,weapon,rate,multiplier,GMMeleePlayerDamageRatio
+        FieldName: GMMeleePlayerDamageRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMMeleePlayerDamageRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMRangedPlayerDamageRatio
+      label: Ranged PvP Damage Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for ranged weapon damage that characters deal to players
+      keywords: ranged,pvp,damage,weapon,rate,multiplier,GMRangedPlayerDamageRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMRangedPlayerDamageRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Ranged PvP Damage Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for ranged weapon damage that characters deal to players
+        Keywords: ranged,pvp,damage,weapon,rate,multiplier,GMRangedPlayerDamageRatio
+        FieldName: GMRangedPlayerDamageRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMRangedPlayerDamageRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMMeleeConstructDamageRatio
+      label: Melee Damage Vs Structure Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for melee weapon damage that characters deal to structures
+      keywords: melee,damage,weapon,construct,structure,rate,multiplier,GMMeleeConstructDamageRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMMeleeConstructDamageRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Melee Damage Vs Structure Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for melee weapon damage that characters deal to structures
+        Keywords: melee,damage,weapon,construct,structure,rate,multiplier,GMMeleeConstructDamageRatio
+        FieldName: GMMeleeConstructDamageRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMMeleeConstructDamageRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMRangedConstructDamageRatio
+      label: Ranged Damage Vs Structure Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for ranged weapon damage that characters deal to structures
+      keywords: ranged,damage,weapon,construct,structure,rate,multiplier,GMRangedConstructDamageRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMRangedConstructDamageRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Ranged Damage Vs Structure Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for ranged weapon damage that characters deal to structures
+        Keywords: ranged,damage,weapon,construct,structure,rate,multiplier,GMRangedConstructDamageRatio
+        FieldName: GMRangedConstructDamageRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMRangedConstructDamageRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMToolDamageRate
+      label: Collection Tool Damage Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the damage that tools deal to resources
+      keywords: collection,tool,damage,rate,multiplier,GMToolDamageRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMToolDamageRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Collection Tool Damage Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the damage that tools deal to resources
+        Keywords: collection,tool,damage,rate,multiplier,GMToolDamageRate
+        FieldName: GMToolDamageRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMToolDamageRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMDurabilityCostRatio
+      label: Durability Loss Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the durability lost when using tools, weapons and armour
+      keywords: durability,loss,multiplier,rate,tools,weapons,armour,armor,GMDurabilityCostRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMDurabilityCostRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Durability Loss Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the durability lost when using tools, weapons and armour
+        Keywords: durability,loss,multiplier,rate,tools,weapons,armour,armor,GMDurabilityCostRatio
+        FieldName: GMDurabilityCostRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: BaseServerConfig.GMDurabilityCostRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMVehiclePlayerDamageRatio
+      label: Vehicle Vs Player Damage Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of damage vehicles deal to players
+      keywords: vehicle,player,damage,rate,multiplier,GMVehiclePlayerDamageRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMVehiclePlayerDamageRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Vehicle Vs Player Damage Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of damage vehicles deal to players
+        Keywords: vehicle,player,damage,rate,multiplier,GMVehiclePlayerDamageRatio
+        FieldName: GMVehiclePlayerDamageRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMVehiclePlayerDamageRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMVehicleConstructDamageRatio
+      label: Vehicle Vs Structure Damage Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of damage vehicles deal to structures
+      keywords: vehicle,construct,structure,damage,rate,multiplier,GMVehicleConstructDamageRatio
+      input_type: number
+      param_field_name: BaseServerConfig.GMVehicleConstructDamageRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Vehicle Vs Structure Damage Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of damage vehicles deal to structures
+        Keywords: vehicle,construct,structure,damage,rate,multiplier,GMVehicleConstructDamageRatio
+        FieldName: GMVehicleConstructDamageRatio
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMVehicleConstructDamageRatio
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: GMVehicleDamageRate
+      label: Vehicle Collection Multiplier
+      category: The Front
+      subcategory: Multipliers
+      description: Sets the multiplier for the amount of resources collected by vehicles
+      keywords: vehicle,collection,rate,multiplier,GMVehicleDamageRate
+      input_type: number
+      param_field_name: BaseServerConfig.GMVehicleDamageRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Vehicle Collection Multiplier
+        Category: The Front:stadia_controller
+        Subcategory: Multipliers:speed:3
+        Description: Sets the multiplier for the amount of resources collected by vehicles
+        Keywords: vehicle,collection,rate,multiplier,GMVehicleDamageRate
+        FieldName: GMVehicleDamageRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: BaseServerConfig.GMVehicleDamageRate
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+  files:
+    - path: TheFrontManager/ServerConfig_AMP.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: TheFrontManager/ServerConfig_AMP.ini
+        ConfigType: ini
+        AutoMap: true
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered The Front Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerTitle
+    label: Server Description
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerTags
+    label: Server Tags
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerID
+    label: Server ID
+    default: '{{randomdigits(8)}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: ServerAdminAccounts
+    label: Server Admins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsShowGmTitle
+    label: Show Admin Icon
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseEAC
+    label: Enable Anticheat
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ClearSeverTime
+    label: Server Wipe Time
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GameMaxFrameRate
+    label: Server Framerate
+    default: '35'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SaveWorldInterval
+    label: Autosave Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BackupTimesPerDay
+    label: Daily Backups Quantity
+    default: '6'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BackupRetainedDays
+    label: Backups Retention Period
+    default: '7'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseSteamSocket
+    label: Use Steam Socket
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PublicIP
+    label: Out IP Address Selection Mode
+    default: '{{$ExternalIP}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualPublicIP
+    label: Server Public IP
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerArgs
+    label: Additional Command Line Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerFightModeType
+    label: Enable PvE / Disable PvP
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsCanSelfDamage
+    label: Allow Damage To Self
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsCanFriendDamage
+    label: Allow Damage To Allies
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GamePhysicsVehicle
+    label: Enable Realistic Vehicle Physics
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GuildMemberMax
+    label: Maximum Squad Size
+    default: '6'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMOverlapRatio
+    label: Item Stack Rate
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsUnLockAllTalentAndRecipe
+    label: Unlock All Recipes And Talents
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMBagInitGirdNum
+    label: Starting Inventory Size
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GreenHand
+    label: Enable Novice Protection
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CharacterInitItem
+    label: Items On Respawn
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMDeathDropMode
+    label: Drop Items On Death
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMDeathInventoryLifeSpan
+    label: Dropped Items Despawn
+    default: '1800'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CorpsePickAuthority
+    label: Corpse Loot Permissions
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: GMCanDropItem
+    label: Enable Creatures/Structures Drop
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMCanDiscardItem
+    label: Allow Item Discard
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMDiscardBoxLifeSpan
+    label: Discarded Items Despawn
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMRebirthBaseCD
+    label: Initial Respawn Cooldown
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMRebirthExtraCD
+    label: Respawn Cooldown Penalty
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMPenaltiesMaxNum
+    label: Death Penalty Stack Limit
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMPenaltiesCD
+    label: Death Penalties Respawn Time
+    default: '600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ConstructEnableRot
+    label: Enable Structure Decay
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HeadNameDisplayDist_Team
+    label: Friendly Name Display Distance
+    default: '200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HeadNameDisplayDist_Enemy
+    label: Non-friendly Name Display Distance
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NpcDisplayDistance
+    label: NPC Name Display Distance
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OpenAllHouseFlag
+    label: Show All Spacetime Beacons
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsCanChat
+    label: Allow Chat Including Voice
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsShowBlood
+    label: Enable Blood Effects
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SensitiveWords
+    label: Allow Profanity
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HealthDyingState
+    label: Enable Wounded State
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AnimalBodyStayTime
+    label: Monster NPC Corpse Despawn
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HumanBodyStayTime
+    label: Human NPC Corpse Despawn
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMMaxHouseFlagNumber
+    label: Player Beacon Limit
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMHFTrapMaxNum
+    label: Beacon Trap Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMHFTurretMaxNum
+    label: Beacon Turret Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMHouseFlagExcitantTime
+    label: Beacon Daily Non-Protection Duration
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NpcRespawnRatio
+    label: All Monster Respawn Time Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMAttackCityCdRatio
+    label: Monster Raid Cooldown Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerHotDefAddRate
+    label: Heat Resistance Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerIceDefAddRate
+    label: Cold Resistance Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerDeathAvatarItemDurableRate
+    label: Inventory Item Durability Death Penalty
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerDeatShortcutItemDurableRate
+    label: Hotbar Item Durability Death Penalty
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMCraftTimeRate
+    label: Crafting/Repair Time Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerAddExpRate
+    label: All XP Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerKillAddExpRate
+    label: Kill XP Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerFarmAddExpRate
+    label: Collection XP Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerCraftAddExpRate
+    label: Crafting XP Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MoveSpeedRate
+    label: Movement Speed Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JumpRate
+    label: Jump Height Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerLandedDamageRate
+    label: Fall Damage Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerMaxHealthRate
+    label: HP Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HealthRecoverRate
+    label: HP Recovery Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerMaxStaminaRate
+    label: Maximum Stamina Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: StaminaRecoverRate
+    label: Stamina Recovery Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerStaminaCostRate
+    label: Stamina Loss Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerMaxHungerRate
+    label: Maximum Fullness Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMHungerDecRatio
+    label: Fullness Loss Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMBodyHungerAddRate
+    label: Fullness From Food Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxBodyWaterRate
+    label: Maximum Hydration Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMWaterDecRatio
+    label: Hydration Loss Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMBodyWaterAddRate
+    label: Hydration From Water Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxBreathRate
+    label: Maximum Oxygen Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BreathRecoverRate
+    label: Oxygen Recovery Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerBreathCostRate
+    label: Oxygen Loss Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMPlayerHealthRate
+    label: Medication HP Recovery Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMFoodDragDurationRate
+    label: Food And Medication Effect Duration Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMNPCLootableItemRatio
+    label: Wild NPC Corpse Drop Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NpcSpawnLevelRatio
+    label: Wild NPC Starting Level Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WildNPCDamageRate
+    label: Wild NPC Damage Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WildNPCHealthRate
+    label: Wild NPC HP Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WildNPCSpeedRate
+    label: Wild NPC Movement Speed Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CityNPCLevelRate
+    label: Raid NPC Level Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CityNPCDamageRate
+    label: Raid NPC Damage Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CityNPCHealthRate
+    label: Raid NPC HP Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CityNPCSpeedRate
+    label: Raid NPC Movement Speed Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CityNPCNumRate
+    label: Raid NPC Amount Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMInventoryGainRate
+    label: Collectible Resource Spawn Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMCityATKNPCLootItemRatio
+    label: Raid Corpse Drop Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMSetGJConstructMaxNumRatio
+    label: Player Work-Type Structures Limit Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMConstructDefenseRatio
+    label: Non-Trap Structure Damage Resistance Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMTrapDefenseRatio
+    label: Trap Damage Resistance Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMTurretDefenseRatio
+    label: Turret Damage Resistance Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMTrapDamageRatio
+    label: Trap Damage Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMTurretDamageRatio
+    label: Turret Damage Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMConstructMaxHealthRatio
+    label: Structure Durability Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMConstructReturnHPRatio
+    label: Structure Durability Recovery Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMHouseFlagRepairHealthRatio
+    label: Spacetime Beacon Auto-repair Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMTTC_Oil_Rate
+    label: Oil Well Work Production Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMWaterCollecter_Rate
+    label: Dew Collector Work Production Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMTTC_Ore_Rate
+    label: Mine Work Production Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMTTC_Fish_Rate
+    label: Fish Basket Work Production Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CHFDamagedByPlayer
+    label: Beacon Player Gun Damage Resistance Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CHFDamagedByVehicle
+    label: Beacon Player Vehicle Damage Resistance Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CHFDamagedByNpc
+    label: Beacon NPC Damage Resistance Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMMaxRetrieveProductsRate
+    label: Resource Collection Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMTreeGainRate
+    label: Wood Production Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMBushGainRate
+    label: Plant Production Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMOreGainRate
+    label: Ore Production Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMCropVegetableReapRatio
+    label: Crop Production Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMFleshGainRate
+    label: Animal Production Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMCropVegetableGrowRatio
+    label: Crop Growth Speed Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMMeleeNpcDamageRatio
+    label: Melee Damage Vs NPC Multipler
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMRangedNpcDamageRatio
+    label: Ranged Damage Vs NPC Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMMeleePlayerDamageRatio
+    label: Melee PvP Damage Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMRangedPlayerDamageRatio
+    label: Ranged PvP Damage Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMMeleeConstructDamageRatio
+    label: Melee Damage Vs Structure Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMRangedConstructDamageRatio
+    label: Ranged Damage Vs Structure Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMToolDamageRate
+    label: Collection Tool Damage Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMDurabilityCostRatio
+    label: Durability Loss Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMVehiclePlayerDamageRatio
+    label: Vehicle Vs Player Damage Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMVehicleConstructDamageRatio
+    label: Vehicle Vs Structure Damage Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GMVehicleDamageRate
+    label: Vehicle Collection Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '2285150'
+  collection_support: true
 backup:
   include:
     - /data

@@ -4,14 +4,16 @@ name: MariaDB
 category: Imported
 summary: MariaDB Service Instance
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: custom
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: mariadb/bin/mariadb
+  startup: mariadb/bin/mariadb {CustomClientOptions} {PlatformArgs} --reconnect --force {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +21,313 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 3306
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: my.cnf
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: WindowsSocketName
+      label: Windows Socket Name
+      category: MariaDB
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: WindowsSocketName
+      default: '{{newguid()}}'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Windows Socket Name
+        Category: MariaDB:database
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: WindowsSocketName
+        InputType: text
+        Hidden: true
+        ParamFieldName: WindowsSocketName
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: RootPassword
+      label: Root User Password (Windows)
+      category: MariaDB
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: RootPassword
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Root User Password (Windows)
+        Category: MariaDB:database
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: RootPassword
+        InputType: text
+        Hidden: true
+        ParamFieldName: RootPassword
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: database
+      label: Database Name
+      category: MariaDB
+      subcategory: Server
+      description: >-
+        Optionally sets the initial database to connect to when the client run in AMP is started. The database must
+        exist on the server. Alternatively send the command 'use <database name>' in the AMP console to switch to a
+        specific database
+      keywords: database,name
+      input_type: text
+      param_field_name: database
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Database Name
+        Category: MariaDB:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Optionally sets the initial database to connect to when the client run in AMP is started. The database must
+          exist on the server. Alternatively send the command 'use <database name>' in the AMP console to switch to a
+          specific database
+        Keywords: database,name
+        FieldName: database
+        InputType: text
+        ParamFieldName: database
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: OptionsFileSettings
+      label: Server Options File Settings
+      category: MariaDB
+      subcategory: Server
+      description: >-
+        Specifies [options file settings](https://mariadb.com/kb/en/configuring-mariadb-with-option-files/) to include
+        in 'my.cnf' for the MariaDB server that are not otherwise set by AMP. One setting per line, including the option
+        group heading. Additional information on [server variables](https://mariadb.com/kb/en/server-system-variables/)
+      keywords: options,file,settings
+      input_type: Textarea
+      param_field_name: OptionsFileSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Options File Settings
+        Category: MariaDB:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies [options file settings](https://mariadb.com/kb/en/configuring-mariadb-with-option-files/) to include
+          in 'my.cnf' for the MariaDB server that are not otherwise set by AMP. One setting per line, including the
+          option group heading. Additional information on [server
+          variables](https://mariadb.com/kb/en/server-system-variables/)
+        Keywords: options,file,settings
+        FieldName: OptionsFileSettings
+        InputType: Textarea
+        ParamFieldName: OptionsFileSettings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomClientOptions
+      label: Additional Client Command Line Options
+      category: MariaDB
+      subcategory: Server
+      description: >-
+        Specifies [additional command line options](https://mariadb.com/kb/en/mariadb-command-line-client/) for the
+        MariaDB client run by AMP (a super user called 'amp' on Linux and 'root' on Windows) that are not otherwise set
+        by AMP. Use with care
+      keywords: custom,client,options,arguments
+      input_type: Textarea
+      param_field_name: CustomClientOptions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Client Command Line Options
+        Category: MariaDB:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies [additional command line options](https://mariadb.com/kb/en/mariadb-command-line-client/) for the
+          MariaDB client run by AMP (a super user called 'amp' on Linux and 'root' on Windows) that are not otherwise
+          set by AMP. Use with care
+        Keywords: custom,client,options,arguments
+        FieldName: CustomClientOptions
+        InputType: Textarea
+        ParamFieldName: CustomClientOptions
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerVersion
+      label: MariaDB Release Stream
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the MariaDB release stream from which to install the latest version, unless a specific version is specified
+        under MariaDB Version. WARNING: SWITCHING BETWEEN RELEASE STREAMS OR DOWNGRADING VERSIONS MAY CORRUPT DATA!
+        Update the server after changing this setting
+      keywords: mariadb,release,stream,MariaDBRelease
+      input_type: enum
+      param_field_name: MariaDBRelease
+      default: '11.4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '12.0': '12.0'
+        '11.8': 11.8 - LTS
+        '11.4': 11.4 - LTS (default)
+        '10.11': 10.11 - LTS
+        '10.6': 10.6 - LTS
+      raw:
+        DisplayName: MariaDB Release Stream
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the MariaDB release stream from which to install the latest version, unless a specific version is
+          specified under MariaDB Version. WARNING: SWITCHING BETWEEN RELEASE STREAMS OR DOWNGRADING VERSIONS MAY
+          CORRUPT DATA! Update the server after changing this setting
+        Keywords: mariadb,release,stream,MariaDBRelease
+        FieldName: ServerVersion
+        InputType: enum
+        ParamFieldName: MariaDBRelease
+        DefaultValue: '11.4'
+        EnumValues:
+          '12.0': '12.0'
+          '11.8': 11.8 - LTS
+          '11.4': 11.4 - LTS (default)
+          '10.11': 10.11 - LTS
+          '10.6': 10.6 - LTS
+    - key: CustomServerVersion
+      label: MariaDB Version
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [MariaDB version](https://mariadb.org/mariadb/all-releases/) to install. Empty = latest version for the
+        release stream specified under MariaDB Release Stream. WARNING: SWITCHING BETWEEN RELEASE STREAMS OR DOWNGRADING
+        VERSIONS MAY CORRUPT DATA! Update the server after changing this setting
+      keywords: mariadb,version,MariaDBVersion
+      input_type: text
+      param_field_name: MariaDBVersion
+      default: ''
+      placeholder: 10.11.4
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: MariaDB Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [MariaDB version](https://mariadb.org/mariadb/all-releases/) to install. Empty = latest version for
+          the release stream specified under MariaDB Release Stream. WARNING: SWITCHING BETWEEN RELEASE STREAMS OR
+          DOWNGRADING VERSIONS MAY CORRUPT DATA! Update the server after changing this setting
+        Keywords: mariadb,version,MariaDBVersion
+        FieldName: CustomServerVersion
+        InputType: text
+        ParamFieldName: MariaDBVersion
+        DefaultValue: ''
+        Placeholder: 10.11.4
+        EnumValues: {}
+  files:
+    - path: my.cnf
+      type: kvp
+      format: '{0}{1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            '': OptionsFileSettings
+      raw:
+        ConfigFile: my.cnf
+        ConfigType: kvp
+        ConfigFormat: '{0}{1}'
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              '': OptionsFileSettings
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: WindowsSocketName
+    label: Windows Socket Name
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RootPassword
+    label: Root User Password (Windows)
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: database
+    label: Database Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OptionsFileSettings
+    label: Server Options File Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomClientOptions
+    label: Additional Client Command Line Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerVersion
+    label: MariaDB Release Stream
+    default: '11.4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerVersion
+    label: MariaDB Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

@@ -5,13 +5,16 @@ category: Imported
 summary: Blackwake Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '423410'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: /usr/bin/xvfb-run {PlatformArgs} -batchmode -nographics {FormattedArgs} -logfile -
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1088 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 25001
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: Server.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Blackwake
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Blackwake:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $QueryPort
+      label: Query Port
+      category: Blackwake
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: sport
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Port
+        Category: Blackwake:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: sport
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Server IP Binding
+      category: Blackwake
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: useIp
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server IP Binding
+        Category: Blackwake:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: useIp
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: serverName
+      label: Server Name
+      category: Blackwake
+      subcategory: Server
+      description: Sets the name of the server
+      keywords: server,name
+      input_type: text
+      param_field_name: serverName
+      default: AMP Powered Blackwake Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Blackwake:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server
+        Keywords: server,name
+        FieldName: serverName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: serverName
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Blackwake Server
+        EnumValues: {}
+    - key: hideFromList
+      label: Hide Server
+      category: Blackwake
+      subcategory: Server
+      description: If enabled, the server will be hidden from the Steam server list
+      keywords: hide,steam
+      input_type: checkbox
+      param_field_name: hideFromList
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Hide Server
+        Category: Blackwake:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will be hidden from the Steam server list
+        Keywords: hide,steam
+        FieldName: hideFromList
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: hideFromList
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: password
+      label: Server Password
+      category: Blackwake
+      subcategory: Server
+      description: Sets the password to join the server. Must be longer than three characters. Default is no password
+      keywords: password
+      input_type: password
+      param_field_name: password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Blackwake:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server. Must be longer than three characters. Default is no password
+        Keywords: password
+        FieldName: password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: discordLink
+      label: Discord Link
+      category: Blackwake
+      subcategory: Server
+      description: >-
+        Sets the discord link to show in the server list browser. A server name that is too long may cause the link not
+        to display
+      keywords: discord,link
+      input_type: text
+      param_field_name: discordLink
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Discord Link
+        Category: Blackwake:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the discord link to show in the server list browser. A server name that is too long may cause the link
+          not to display
+        Keywords: discord,link
+        FieldName: discordLink
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: discordLink
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: restartHour
+      label: Restart Time
+      category: Blackwake
+      subcategory: Server
+      description: Sets the local hour to automatically restart the game server. -1 = disabled
+      keywords: restart,hour
+      input_type: number
+      param_field_name: restartHour
+      default: '-1'
+      placeholder: '-1 to 23'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      max: 23
+      enum_values: {}
+      raw:
+        DisplayName: Restart Time
+        Category: Blackwake:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the local hour to automatically restart the game server. -1 = disabled
+        Keywords: restart,hour
+        FieldName: restartHour
+        InputType: number
+        MinValue: '-1'
+        MaxValue: '23'
+        IsFlagArgument: false
+        ParamFieldName: restartHour
+        IncludeInCommandLine: false
+        DefaultValue: '-1'
+        Placeholder: '-1 to 23'
+        EnumValues: {}
+    - key: useBots
+      label: Enable Bots
+      category: Blackwake
+      subcategory: Gameplay
+      description: If enabled, bots will be allowed on the server. Disabling bots requires a server password to be set
+      keywords: bots
+      input_type: checkbox
+      param_field_name: useBots
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Bots
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, bots will be allowed on the server. Disabling bots requires a server password to be set
+        Keywords: bots
+        FieldName: useBots
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: useBots
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: compCTB
+      label: Disable Time Limit
+      category: Blackwake
+      subcategory: Gameplay
+      description: If enabled, the time limit for tournaments will be disabled
+      keywords: tournament,time,limit
+      input_type: checkbox
+      param_field_name: compCTB
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Disable Time Limit
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the time limit for tournaments will be disabled
+        Keywords: tournament,time,limit
+        FieldName: compCTB
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: compCTB
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: teamCount
+      label: Total Team Count
+      category: Blackwake
+      subcategory: Gameplay
+      description: Sets the total team count, with the number of teams dividend evenly between each faction
+      keywords: team,crew,count
+      input_type: enum
+      param_field_name: teamCount
+      default: '6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '2': Two (1 vs 1)
+        '4': Four (2 vs 2)
+        '6': Six (3 vs 3)
+      raw:
+        DisplayName: Total Team Count
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the total team count, with the number of teams dividend evenly between each faction
+        Keywords: team,crew,count
+        FieldName: teamCount
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: teamCount
+        IncludeInCommandLine: false
+        DefaultValue: '6'
+        EnumValues:
+          '2': Two (1 vs 1)
+          '4': Four (2 vs 2)
+          '6': Six (3 vs 3)
+    - key: captureSpeedMultiplier
+      label: Capture Speed Multiplier
+      category: Blackwake
+      subcategory: Gameplay
+      description: Sets the capture speed multiplier (0.5 = 50%, 1 = 100%, 2 = 200% and so on)
+      keywords: capture,speed,multiplier
+      input_type: number
+      param_field_name: captureSpeedMultiplier
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Capture Speed Multiplier
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the capture speed multiplier (0.5 = 50%, 1 = 100%, 2 = 200% and so on)
+        Keywords: capture,speed,multiplier
+        FieldName: captureSpeedMultiplier
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: captureSpeedMultiplier
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues: {}
+    - key: resourceGainMultiplier
+      label: Resource Gain Multiplier
+      category: Blackwake
+      subcategory: Gameplay
+      description: Sets the resource gain multiplier (0.5 = 50%, 1 = 100%, 2 = 200% and so on)
+      keywords: resource,gain,multiplier
+      input_type: number
+      param_field_name: resourceGainMultiplier
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Resource Gain Multiplier
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the resource gain multiplier (0.5 = 50%, 1 = 100%, 2 = 200% and so on)
+        Keywords: resource,gain,multiplier
+        FieldName: resourceGainMultiplier
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: resourceGainMultiplier
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues: {}
+    - key: useAndWinByTickets
+      label: Use Tickets
+      category: Blackwake
+      subcategory: Gameplay
+      description: If enabled, tickets will be used
+      keywords: use,tickets
+      input_type: checkbox
+      param_field_name: useAndWinByTickets
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Use Tickets
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, tickets will be used
+        Keywords: use,tickets
+        FieldName: useAndWinByTickets
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: useAndWinByTickets
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: ticketAmount
+      label: Ticket Amount
+      category: Blackwake
+      subcategory: Gameplay
+      description: Sets the number of tickets. Requires Use Tickets to be enabled
+      keywords: ticket,amount
+      input_type: number
+      param_field_name: ticketAmount
+      default: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: tickets
+      enum_values: {}
+      raw:
+        DisplayName: Ticket Amount
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of tickets. Requires Use Tickets to be enabled
+        Keywords: ticket,amount
+        FieldName: ticketAmount
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: ticketAmount
+        IncludeInCommandLine: false
+        DefaultValue: '300'
+        Suffix: tickets
+        EnumValues: {}
+    - key: useTicketScaling
+      label: Enable Ticket Scaling
+      category: Blackwake
+      subcategory: Gameplay
+      description: If enabled, tickets will be scaled
+      keywords: ticket,scaling
+      input_type: checkbox
+      param_field_name: useTicketScaling
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Ticket Scaling
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, tickets will be scaled
+        Keywords: ticket,scaling
+        FieldName: useTicketScaling
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: useTicketScaling
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: friendlyFireCanToggle
+      label: Enable Friendly Fire Toggle
+      category: Blackwake
+      subcategory: Gameplay
+      description: If enabled, friendly fire can be toggled
+      keywords: friendly,fire,toggle
+      input_type: checkbox
+      param_field_name: friendlyFireCanToggle
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Friendly Fire Toggle
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, friendly fire can be toggled
+        Keywords: friendly,fire,toggle
+        FieldName: friendlyFireCanToggle
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: friendlyFireCanToggle
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: allowFortModes
+      label: Enable Fort Modes
+      category: Blackwake
+      subcategory: Gameplay
+      description: If enabled, fort modes will be enabled
+      keywords: fort,modes
+      input_type: checkbox
+      param_field_name: allowFortModes
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Fort Modes
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, fort modes will be enabled
+        Keywords: fort,modes
+        FieldName: allowFortModes
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: allowFortModes
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: shipSpeedFactor
+      label: Ship Speed Multiplier
+      category: Blackwake
+      subcategory: Gameplay
+      description: Sets the ship speed multiplier (0.5 = 50%, 1 = 100%, 2 = 200% and so on)
+      keywords: ship,speed,factor
+      input_type: number
+      param_field_name: shipSpeedFactor
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Ship Speed Multiplier
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the ship speed multiplier (0.5 = 50%, 1 = 100%, 2 = 200% and so on)
+        Keywords: ship,speed,factor
+        FieldName: shipSpeedFactor
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: shipSpeedFactor
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues: {}
+    - key: gateExplosiveAmount
+      label: Gate Explosive Amount
+      category: Blackwake
+      subcategory: Gameplay
+      description: Sets the gate explosive amount
+      keywords: gate,explosive
+      input_type: number
+      param_field_name: gateExplosiveAmount
+      default: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Gate Explosive Amount
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the gate explosive amount
+        Keywords: gate,explosive
+        FieldName: gateExplosiveAmount
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: gateExplosiveAmount
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        EnumValues: {}
+    - key: towerHealthHits
+      label: Tower Health Hits
+      category: Blackwake
+      subcategory: Gameplay
+      description: Sets the tower health hits
+      keywords: tower,health,hits
+      input_type: number
+      param_field_name: towerHealthHits
+      default: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Tower Health Hits
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the tower health hits
+        Keywords: tower,health,hits
+        FieldName: towerHealthHits
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: towerHealthHits
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        EnumValues: {}
+    - key: friendlyPlayerCollision
+      label: Enable Player Collison
+      category: Blackwake
+      subcategory: Gameplay
+      description: If enabled, collision of friendly players will be possible
+      keywords: friendly,player,collision
+      input_type: checkbox
+      param_field_name: friendlyPlayerCollision
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Player Collison
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, collision of friendly players will be possible
+        Keywords: friendly,player,collision
+        FieldName: friendlyPlayerCollision
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: friendlyPlayerCollision
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: friendlySpreadFires
+      label: Enable Fire Spread
+      category: Blackwake
+      subcategory: Gameplay
+      description: If enabled, fires will spread fires when friendly players collide. Requires Player Collision to be enabled
+      keywords: friendly,fire,spread
+      input_type: checkbox
+      param_field_name: friendlySpreadFires
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Fire Spread
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, fires will spread fires when friendly players collide. Requires Player Collision to be enabled
+        Keywords: friendly,fire,spread
+        FieldName: friendlySpreadFires
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: friendlySpreadFires
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: friendlyFire
+      label: Enable Hand Weapon Damage
+      category: Blackwake
+      subcategory: Gameplay
+      description: If enabled, hand weapons can cause damage to friendly players
+      keywords: friendly,hand,weapon,damage
+      input_type: checkbox
+      param_field_name: friendlyFire
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Hand Weapon Damage
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, hand weapons can cause damage to friendly players
+        Keywords: friendly,hand,weapon,damage
+        FieldName: friendlyFire
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: friendlyFire
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: friendlyShipDamage
+      label: Enable Ship Weapon Damage
+      category: Blackwake
+      subcategory: Gameplay
+      description: If enabled, ship weapons can cause damage to friendly players
+      keywords: friendly,ship,weapon,damage
+      input_type: checkbox
+      param_field_name: friendlyShipDamage
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Ship Weapon Damage
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, ship weapons can cause damage to friendly players
+        Keywords: friendly,ship,weapon,damage
+        FieldName: friendlyShipDamage
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: friendlyShipDamage
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: forceEqualFactions
+      label: Enable Auto Team Balance
+      category: Blackwake
+      subcategory: Gameplay
+      description: If enabled, teams will be automatically balanced
+      keywords: team,balance,force,equal,factions
+      input_type: checkbox
+      param_field_name: forceEqualFactions
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Auto Team Balance
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, teams will be automatically balanced
+        Keywords: team,balance,force,equal,factions
+        FieldName: forceEqualFactions
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: forceEqualFactions
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: playerUpdateRate
+      label: Position Update Rate
+      category: Blackwake
+      subcategory: Gameplay
+      description: >-
+        Sets the times per second a player's position is updated. Higher values cause more network usage but will reduce
+        sliding/delay during melee fighting
+      keywords: update,position,rate
+      input_type: number
+      param_field_name: playerUpdateRate
+      default: '15'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 10
+      enum_values: {}
+      raw:
+        DisplayName: Position Update Rate
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the times per second a player's position is updated. Higher values cause more network usage but will
+          reduce sliding/delay during melee fighting
+        Keywords: update,position,rate
+        FieldName: playerUpdateRate
+        InputType: number
+        MinValue: '10'
+        IsFlagArgument: false
+        ParamFieldName: playerUpdateRate
+        IncludeInCommandLine: false
+        DefaultValue: '15'
+        EnumValues: {}
+    - key: allowGlobalVoice
+      label: Enable Global Voice
+      category: Blackwake
+      subcategory: Gameplay
+      description: >-
+        If enabled, global voice will be allowed during the round. Otherwise it only be allowed during voting and the
+        win screen
+      keywords: global,voice
+      input_type: checkbox
+      param_field_name: allowGlobalVoice
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Global Voice
+        Category: Blackwake:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, global voice will be allowed during the round. Otherwise it only be allowed during voting and the
+          win screen
+        Keywords: global,voice
+        FieldName: allowGlobalVoice
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: allowGlobalVoice
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+  files:
+    - path: Server.cfg
+      type: kvp
+      subsections: []
+      raw:
+        ConfigFile: Server.cfg
+        AutoMap: true
+        ConfigType: kvp
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: serverName
+    label: Server Name
+    default: AMP Powered Blackwake Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hideFromList
+    label: Hide Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: discordLink
+    label: Discord Link
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: restartHour
+    label: Restart Time
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: useBots
+    label: Enable Bots
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: compCTB
+    label: Disable Time Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: teamCount
+    label: Total Team Count
+    default: '6'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: captureSpeedMultiplier
+    label: Capture Speed Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resourceGainMultiplier
+    label: Resource Gain Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: useAndWinByTickets
+    label: Use Tickets
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ticketAmount
+    label: Ticket Amount
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: useTicketScaling
+    label: Enable Ticket Scaling
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: friendlyFireCanToggle
+    label: Enable Friendly Fire Toggle
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowFortModes
+    label: Enable Fort Modes
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: shipSpeedFactor
+    label: Ship Speed Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gateExplosiveAmount
+    label: Gate Explosive Amount
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: towerHealthHits
+    label: Tower Health Hits
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: friendlyPlayerCollision
+    label: Enable Player Collison
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: friendlySpreadFires
+    label: Enable Fire Spread
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: friendlyFire
+    label: Enable Hand Weapon Damage
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: friendlyShipDamage
+    label: Enable Ship Weapon Damage
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: forceEqualFactions
+    label: Enable Auto Team Balance
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: playerUpdateRate
+    label: Position Update Rate
+    default: '15'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowGlobalVoice
+    label: Enable Global Voice
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '420290'
+  collection_support: true
 backup:
   include:
     - /data

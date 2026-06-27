@@ -5,13 +5,19 @@ category: Imported
 summary: Conan Exiles Enhanced UE5 Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '443030'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 443030/ConanSandbox/Binaries/Linux/ConanSandboxServer-Linux-Shipping
+  startup: >-
+    443030/ConanSandbox/Binaries/Linux/ConanSandboxServer-Linux-Shipping {PlatformArgs} ConanSandbox {Map} -stdout
+    -FullStdOutLogOutput -Port={GamePort} -QueryPort={QueryPort} -RconPort={RCONPort} -RconEnabled=1
+    -RconPassword="{RemoteAdminPassword}" -MaxPlayers={MaxUsers} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +25,638 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: gameport
+    name: Game and Mods Port
+    default: 7777
+    protocol: both
+    required: true
+  - key: pingerport
+    name: Pinger Port
+    default: 7778
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+  - key: rconport
+    name: RCON Port
+    default: 25575
+    protocol: tcp
+    required: true
+config_files:
+  - path: ConanSandbox/Saved/Config/WindowsServer/ServerSettings.ini
+    type: ini
+    editable: true
+  - path: ConanSandbox/Saved/Config/WindowsServer/Game.ini
+    type: ini
+    editable: true
+  - path: ConanSandbox/Saved/Config/WindowsServer/Engine.ini
+    type: ini
+    editable: true
+  - path: ConanSandbox/Saved/Config/LinuxServer/ServerSettings.ini
+    type: ini
+    editable: true
+  - path: ConanSandbox/Saved/Config/LinuxServer/Game.ini
+    type: ini
+    editable: true
+  - path: ConanSandbox/Saved/Config/LinuxServer/Engine.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Conan Exiles
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: URL.Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: URL.Port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: DownloadPortOffset
+      label: Download Port Offset
+      category: Conan Exiles
+      subcategory: Server
+      description: Mod download port matches the Game Port.
+      keywords: ''
+      input_type: number
+      param_field_name: /Script/ConanSandbox.SystemSettings.ModFileDownload.DownloadPortOffset
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Download Port Offset
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Mod download port matches the Game Port.
+        Keywords: ''
+        FieldName: DownloadPortOffset
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: /Script/ConanSandbox.SystemSettings.ModFileDownload.DownloadPortOffset
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: $QueryPort
+      label: Query Port
+      category: Conan Exiles
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: OnlineSubsystemNull.GameServerQueryPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Port
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: OnlineSubsystemNull.GameServerQueryPort
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $RCONPort
+      label: RCON Port
+      category: Conan Exiles
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: RconPlugin.RconPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Port
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RCONPort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: RconPlugin.RconPort
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Conan Exiles
+      subcategory: Server
+      description: Name of the server shown in the server browser.
+      keywords: name
+      input_type: text
+      param_field_name: ServerName
+      default: Conan Exiles Server - Powered by AMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Name of the server shown in the server browser.
+        Keywords: name
+        FieldName: ServerName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: ServerName
+        IncludeInCommandLine: true
+        DefaultValue: Conan Exiles Server - Powered by AMP
+        EnumValues: {}
+    - key: Map
+      label: Map
+      category: Conan Exiles
+      subcategory: Server
+      description: Sets the map to load on startup.
+      keywords: map
+      input_type: enum
+      param_field_name: Map
+      default: /Game/Maps/ConanSandbox/ConanSandbox
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{{CustomMap}}': Custom
+        /Game/Maps/ConanSandbox/ConanSandbox: Exiled Lands & Isle of Siptah (default)
+      raw:
+        DisplayName: Map
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map to load on startup.
+        Keywords: map
+        FieldName: Map
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: Map
+        IncludeInCommandLine: false
+        DefaultValue: /Game/Maps/ConanSandbox/ConanSandbox
+        EnumValues:
+          '{{CustomMap}}': Custom
+          /Game/Maps/ConanSandbox/ConanSandbox: Exiled Lands & Isle of Siptah (default)
+    - key: CustomMap
+      label: Custom Map
+      category: Conan Exiles
+      subcategory: Server
+      description: If using a custom map, enter it here. Choose Custom from the Map option.
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      placeholder: /Game/Mods/Savage_Wilds/Savage_Wilds
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Map
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If using a custom map, enter it here. Choose Custom from the Map option.
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomMap
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: /Game/Mods/Savage_Wilds/Savage_Wilds
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Conan Exiles
+      subcategory: Server
+      description: Maximum number of players that may connect to the server.
+      keywords: maximum,players
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Maximum number of players that may connect to the server.
+        Keywords: maximum,players
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: MaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '40'
+        Suffix: players
+        EnumValues: {}
+    - key: ServerPassword
+      label: Server Password
+      category: Conan Exiles
+      subcategory: Server
+      description: Password to connect to the server. Default is no password.
+      keywords: password
+      input_type: password
+      param_field_name: ServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Password to connect to the server. Default is no password.
+        Keywords: password
+        FieldName: ServerPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: ServerPassword
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        SkipIfEmpty: true
+        EnumValues: {}
+    - key: AdminPassword
+      label: Admin Password
+      category: Conan Exiles
+      subcategory: Server
+      description: >-
+        To allow use of the in-game admin panel, set the 'admin' user password in ServerSettings.ini. Add the setting on
+        a new line immediately after the [ServerSettings] header, in the format: AdminPassword=yourpassword
+      keywords: admin,password
+      input_type: hidden
+      param_field_name: AdminPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          To allow use of the in-game admin panel, set the 'admin' user password in ServerSettings.ini. Add the setting
+          on a new line immediately after the [ServerSettings] header, in the format: AdminPassword=yourpassword
+        Keywords: admin,password
+        FieldName: AdminPassword
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: AdminPassword
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Conan Exiles
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's RCON.
+      keywords: rcon,password
+      input_type: hidden
+      param_field_name: RconPlugin.RconPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's RCON.
+        Keywords: rcon,password
+        FieldName: $RemoteAdminPassword
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: RconPlugin.RconPassword
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: serverRegion
+      label: Server Region
+      category: Conan Exiles
+      subcategory: Server
+      description: Sets the server region, which affects how the server is filtered in the server list.
+      keywords: region
+      input_type: enum
+      param_field_name: ServerSettings.serverRegion
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Europe
+        '1': America
+        '2': Asia
+        '3': Oceania
+        '4': LATAM
+        '5': Japan
+        '6': All
+      raw:
+        DisplayName: Server Region
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server region, which affects how the server is filtered in the server list.
+        Keywords: region
+        FieldName: serverRegion
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ServerSettings.serverRegion
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Europe
+          '1': America
+          '2': Asia
+          '3': Oceania
+          '4': LATAM
+          '5': Japan
+          '6': All
+    - key: IsBattlEyeEnabled
+      label: Enable BattlEye
+      category: Conan Exiles
+      subcategory: Server
+      description: If enabled, BattlEye cheat protection will apply to the server.
+      keywords: battleye,cheats
+      input_type: checkbox
+      param_field_name: ServerSettings.IsBattlEyeEnabled
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Enable BattlEye
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, BattlEye cheat protection will apply to the server.
+        Keywords: battleye,cheats
+        FieldName: IsBattlEyeEnabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: ServerSettings.IsBattlEyeEnabled
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+    - key: IsVACEnabled
+      label: Enable Valve Anti-cheat (Steam VAC)
+      category: Conan Exiles
+      subcategory: Server
+      description: ''
+      keywords: VAC,cheat
+      input_type: checkbox
+      param_field_name: ServerSettings.IsVACEnabled
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'True'
+        'False': 'False'
+      raw:
+        DisplayName: Enable Valve Anti-cheat (Steam VAC)
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: VAC,cheat
+        FieldName: IsVACEnabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: ServerSettings.IsVACEnabled
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'True': 'True'
+          'False': 'False'
+    - key: ModList
+      label: Mods List
+      category: Conan Exiles
+      subcategory: Server
+      description: >-
+        To download mods, enter each ID into "Steam workshop items" under the Updates menu (or use the Store to do so),
+        and update the server. To load the mods, specify in the box below the path to each mod's .pak file in the
+        'ConanSandbox/Mods' directory. Example: 2377569193\Savage_Wilds.pak (on Windows) or 2377569193/Savage_Wilds.pak
+        (on Linux).
+      keywords: workshop,mod,list
+      input_type: list
+      param_field_name: ModList
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./conan-exiles/443030/ConanSandbox/Mods/modlist.txt
+      raw:
+        DisplayName: Mods List
+        Category: Conan Exiles:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          To download mods, enter each ID into "Steam workshop items" under the Updates menu (or use the Store to do
+          so), and update the server. To load the mods, specify in the box below the path to each mod's .pak file in the
+          'ConanSandbox/Mods' directory. Example: 2377569193\Savage_Wilds.pak (on Windows) or
+          2377569193/Savage_Wilds.pak (on Linux).
+        Keywords: workshop,mod,list
+        FieldName: ModList
+        InputType: list
+        IsFlagArgument: false
+        ParamFieldName: ModList
+        DefaultValue: ''
+        Special: listfile:./conan-exiles/443030/ConanSandbox/Mods/modlist.txt
+        EnumValues: {}
+  files:
+    - path: ConanSandbox/Saved/Config/WindowsServer/ServerSettings.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: ConanSandbox/Saved/Config/WindowsServer/ServerSettings.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: ConanSandbox/Saved/Config/WindowsServer/Game.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: ConanSandbox/Saved/Config/WindowsServer/Game.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: ConanSandbox/Saved/Config/WindowsServer/Engine.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: ConanSandbox/Saved/Config/WindowsServer/Engine.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: ConanSandbox/Saved/Config/LinuxServer/ServerSettings.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: ConanSandbox/Saved/Config/LinuxServer/ServerSettings.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: ConanSandbox/Saved/Config/LinuxServer/Game.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: ConanSandbox/Saved/Config/LinuxServer/Game.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: ConanSandbox/Saved/Config/LinuxServer/Engine.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: ConanSandbox/Saved/Config/LinuxServer/Engine.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: DownloadPortOffset
+    label: Download Port Offset
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: Conan Exiles Server - Powered by AMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Map
+    label: Map
+    default: /Game/Maps/ConanSandbox/ConanSandbox
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Map
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: serverRegion
+    label: Server Region
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsBattlEyeEnabled
+    label: Enable BattlEye
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsVACEnabled
+    label: Enable Valve Anti-cheat (Steam VAC)
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ModList
+    label: Mods List
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '440900'
+  collection_support: true
 backup:
   include:
     - /data

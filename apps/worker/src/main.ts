@@ -3,7 +3,7 @@ import { Worker } from "bullmq";
 import { Pool } from "pg";
 import { createDockerRuntime } from "@aetherpanel/runtime-docker";
 import { RuntimePortBinding, RuntimeTarget } from "@aetherpanel/shared";
-import { buildInstallPlan, loadTemplates, prepareServiceFiles } from "@aetherpanel/templates";
+import { buildInstallPlan, loadTemplates, prepareServiceFiles, writeManagedConfigFiles } from "@aetherpanel/templates";
 
 const connection = {
   host: process.env.REDIS_HOST || "127.0.0.1",
@@ -38,7 +38,8 @@ async function prepareInstallFiles(service: any, template: any, requestId: strin
   const plan = buildInstallPlan(template, service.id);
   await updateJob(requestId, "installing", { step: "prepare_files", install: plan });
   if (process.env.AETHERPANEL_RUN_INSTALLERS === "true" && plan.commands.length) await updateJob(requestId, "installing", { step: "run_installer", command_count: plan.commands.length });
-  await prepareServiceFiles(plan, { runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true" });
+  await prepareServiceFiles(plan, { runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true", variables: service.startup_variables || {} });
+  await writeManagedConfigFiles(plan, template, service.startup_variables || {});
   return plan;
 }
 
@@ -81,7 +82,7 @@ async function provisionService(serviceId: string, requestId: string) {
     serviceId: service.id,
     name: service.name,
     image: installPlan.image,
-    environment: template.environment,
+    environment: { ...template.environment, ...(service.startup_variables || {}) },
     ports: service.ports as RuntimePortBinding[],
     volumeName: `aether_${service.id.replaceAll("-", "").slice(0, 12)}`,
     hostDataPath: installPlan.servicePath,

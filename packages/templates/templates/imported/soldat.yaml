@@ -5,13 +5,18 @@ category: Imported
 summary: Soldat Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '638500'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 638500/soldatserver
+  startup: >-
+    638500/soldatserver {PlatformArgs} -p {ServerPort} -b "{ApplicationIPBinding}" -l {MaxUsers} -k "{Game_Password}" -c
+    soldat.ini {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,387 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 23073
+    protocol: both
     required: true
-config_files: []
+  - key: filesport
+    name: Files Port
+    default: 23083
+    protocol: tcp
+    required: true
+config_files:
+  - path: soldat.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Game Port
+      category: Soldat
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: password
+      param_field_name: NETWORK.Port
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Soldat:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: password
+        Hidden: true
+        ParamFieldName: NETWORK.Port
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: Dedicated
+      label: Dedicated
+      category: Soldat
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: password
+      param_field_name: NETWORK.Dedicated
+      default: '1'
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Dedicated
+        Category: Soldat:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: Dedicated
+        InputType: password
+        Hidden: true
+        ParamFieldName: NETWORK.Dedicated
+        ExcludeFromImport: true
+        DefaultValue: '1'
+        EnumValues: {}
+    - key: Server_Name
+      label: Server Name
+      category: Soldat
+      subcategory: Server
+      description: Sets the name of the server that will be displayed in the lobby list. Maximum 24 characters
+      keywords: server,name,Server_Name
+      input_type: text
+      param_field_name: NETWORK.Server_Name
+      default: AMP Soldat Server
+      placeholder: AMP Soldat Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Soldat:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that will be displayed in the lobby list. Maximum 24 characters
+        Keywords: server,name,Server_Name
+        FieldName: Server_Name
+        InputType: text
+        ParamFieldName: NETWORK.Server_Name
+        DefaultValue: AMP Soldat Server
+        Placeholder: AMP Soldat Server
+        EnumValues: {}
+    - key: Lobby_Register
+      label: Show In Lobby
+      category: Soldat
+      subcategory: Server
+      description: If set, the server will be visible in the lobby list
+      keywords: register,show,lobby,Lobby_Register
+      input_type: checkbox
+      param_field_name: NETWORK.Lobby_Register
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Show In Lobby
+        Category: Soldat:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be visible in the lobby list
+        Keywords: register,show,lobby,Lobby_Register
+        FieldName: Lobby_Register
+        InputType: checkbox
+        ParamFieldName: NETWORK.Lobby_Register
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: ASE_Register
+      label: Register With All Seeing Eye
+      category: Soldat
+      subcategory: Server
+      description: If set, the server will be registered with the All Seeing Eye
+      keywords: register,all,seeing,eye,ASE,ASE_Register
+      input_type: checkbox
+      param_field_name: NETWORK.ASE_Register
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Register With All Seeing Eye
+        Category: Soldat:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be registered with the All Seeing Eye
+        Keywords: register,all,seeing,eye,ASE,ASE_Register
+        FieldName: ASE_Register
+        InputType: checkbox
+        ParamFieldName: NETWORK.ASE_Register
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: Connection
+      label: Connection Mode
+      category: Soldat
+      subcategory: Server
+      description: Sets the connection mode. LAN enables bullets hitting kits
+      keywords: connection,internet,LAN,Connection
+      input_type: enum
+      param_field_name: NETWORK.Connection
+      default: Internet
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Internet: Internet (default)
+        LAN: LAN
+      raw:
+        DisplayName: Connection Mode
+        Category: Soldat:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the connection mode. LAN enables bullets hitting kits
+        Keywords: connection,internet,LAN,Connection
+        FieldName: Connection
+        InputType: enum
+        ParamFieldName: NETWORK.Connection
+        DefaultValue: Internet
+        EnumValues:
+          Internet: Internet (default)
+          LAN: LAN
+    - key: Game_Password
+      label: Server Password
+      category: Soldat
+      subcategory: Server
+      description: Sets the password required for players to join the server. Default is no password
+      keywords: password,server,Game_Password
+      input_type: password
+      param_field_name: NETWORK.Game_Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Soldat:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for players to join the server. Default is no password
+        Keywords: password,server,Game_Password
+        FieldName: Game_Password
+        InputType: password
+        ParamFieldName: NETWORK.Game_Password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Admin_Password
+      label: Admin Password
+      category: Soldat
+      subcategory: Server
+      description: Sets the admin password for remote and in-game administration. Default is a random password
+      keywords: admin,password,Admin_Password
+      input_type: password
+      param_field_name: NETWORK.Admin_Password
+      default: '{{newguid()}}'
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Soldat:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the admin password for remote and in-game administration. Default is a random password
+        Keywords: admin,password,Admin_Password
+        FieldName: Admin_Password
+        InputType: password
+        ParamFieldName: NETWORK.Admin_Password
+        DefaultValue: '{{newguid()}}'
+        Required: true
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Soldat
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,maximum,players,limit,connection,Max_Players
+      input_type: number
+      param_field_name: NETWORK.Max_Players
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 20
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Soldat:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,maximum,players,limit,connection,Max_Players
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '20'
+        ParamFieldName: NETWORK.Max_Players
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: players
+        EnumValues: {}
+    - key: Mapslist_File
+      label: Mapslist File
+      category: Soldat
+      subcategory: Server
+      description: Sets the mapslist file to load
+      keywords: map,maps,list,file,Maplist_File
+      input_type: text
+      param_field_name: m
+      default: mapslist.txt
+      placeholder: mapslist.txt
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Mapslist File
+        Category: Soldat:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the mapslist file to load
+        Keywords: map,maps,list,file,Maplist_File
+        FieldName: Mapslist_File
+        InputType: text
+        ParamFieldName: m
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: mapslist.txt
+        Placeholder: mapslist.txt
+        EnumValues: {}
+  files:
+    - path: soldat.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: soldat.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: Dedicated
+    label: Dedicated
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Server_Name
+    label: Server Name
+    default: AMP Soldat Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Lobby_Register
+    label: Show In Lobby
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ASE_Register
+    label: Register With All Seeing Eye
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Connection
+    label: Connection Mode
+    default: Internet
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Game_Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Admin_Password
+    label: Admin Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: Mapslist_File
+    label: Mapslist File
+    default: mapslist.txt
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '638490'
+  collection_support: true
 backup:
   include:
     - /data

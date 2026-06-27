@@ -5,13 +5,18 @@ category: Imported
 summary: No One Survived Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2329680'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: >-
+    /usr/bin/wine {PlatformArgs} WRSH -server -stdout -FullStdOutLogOutput -Port={GamePort} -QueryPort={QueryPort}
+    -MultiHome={ApplicationIPBinding} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,1171 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 7777
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: WRSH/Saved/Config/WindowsServer/Game.ini
+    type: ini
+    editable: true
+  - path: WRSH/Saved/Config/WindowsServer/Engine.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: No One Survived
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: URL.Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: No One Survived:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: URL.Port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $QueryPort
+      label: Steam Query Port
+      category: No One Survived
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: OnlineSubsystemSteam.GameServerQueryPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Steam Query Port
+        Category: No One Survived:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: OnlineSubsystemSteam.GameServerQueryPort
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: No One Survived
+      subcategory: Server
+      description: Sets the name shown in the server browser
+      keywords: server,name
+      input_type: text
+      param_field_name: ServerName
+      default: AMP Powered No One Survived Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: No One Survived:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name shown in the server browser
+        Keywords: server,name
+        FieldName: ServerName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: ServerName
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered No One Survived Server
+        EnumValues: {}
+    - key: SaveName
+      label: Save Name
+      category: No One Survived
+      subcategory: Server
+      description: Sets the name of the server save file, which will also be the save loaded by default
+      keywords: save,name
+      input_type: text
+      param_field_name: SaveName
+      default: MySave
+      placeholder: MySave
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Save Name
+        Category: No One Survived:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server save file, which will also be the save loaded by default
+        Keywords: save,name
+        FieldName: SaveName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: SaveName
+        IncludeInCommandLine: false
+        DefaultValue: MySave
+        Placeholder: MySave
+        EnumValues: {}
+    - key: NeedPassword
+      label: Require Server Password
+      category: No One Survived
+      subcategory: Server
+      description: If enabled, the password set under "Server Password" will be required to connect to the server
+      keywords: need,server,password,needpassword
+      input_type: checkbox
+      param_field_name: NeedPassword
+      default: 'False'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Require Server Password
+        Category: No One Survived:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the password set under "Server Password" will be required to connect to the server
+        Keywords: need,server,password,needpassword
+        FieldName: NeedPassword
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: NeedPassword
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Password
+      label: Server Password
+      category: No One Survived
+      subcategory: Server
+      description: Sets the password for the server. Default is no password. Only applies if "Require Server Password" is enabled
+      keywords: server,password
+      input_type: password
+      param_field_name: Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: No One Survived:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for the server. Default is no password. Only applies if "Require Server Password" is enabled
+        Keywords: server,password
+        FieldName: Password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: Password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: AdminPassword
+      label: Admin Password
+      category: No One Survived
+      subcategory: Server
+      description: Sets the server administrator password. Default is a strong random password
+      keywords: admin,password,adminpassword
+      input_type: password
+      param_field_name: AdminPassword
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: No One Survived:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server administrator password. Default is a strong random password
+        Keywords: admin,password,adminpassword
+        FieldName: AdminPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: AdminPassword
+        IncludeInCommandLine: false
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: OpenMap
+      label: Server Map
+      category: No One Survived
+      subcategory: Server
+      description: Sets the server map
+      keywords: map,map01,map02,openmap
+      input_type: enum
+      param_field_name: OpenMap
+      default: Map01
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Map01: Large map (default)
+        Map02: Small map
+      raw:
+        DisplayName: Server Map
+        Category: No One Survived:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server map
+        Keywords: map,map01,map02,openmap
+        FieldName: OpenMap
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: OpenMap
+        IncludeInCommandLine: false
+        DefaultValue: Map01
+        EnumValues:
+          Map01: Large map (default)
+          Map02: Small map
+    - key: $MaxUsers
+      label: Player Limit
+      category: No One Survived
+      subcategory: Server
+      description: Sets the maximum number of players that can connect to the server at any given time
+      keywords: maximum,players,limit,maxplayers
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 2
+      max: 50
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: No One Survived:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that can connect to the server at any given time
+        Keywords: maximum,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '2'
+        MaxValue: '50'
+        IsFlagArgument: false
+        ParamFieldName: MaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '50'
+        Placeholder: '50'
+        Suffix: players
+        EnumValues: {}
+    - key: Region
+      label: Server Region
+      category: No One Survived
+      subcategory: Server
+      description: Sets the server region
+      keywords: region
+      input_type: enum
+      param_field_name: Region
+      default: All
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        All: All / Non-registered region
+        AF: Africa
+        AS: Asia
+        EU: Europe
+        NA: North America
+        OC: Oceania
+        SA: South America
+      raw:
+        DisplayName: Server Region
+        Category: No One Survived:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server region
+        Keywords: region
+        FieldName: Region
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: Region
+        IncludeInCommandLine: false
+        DefaultValue: All
+        EnumValues:
+          All: All / Non-registered region
+          AF: Africa
+          AS: Asia
+          EU: Europe
+          NA: North America
+          OC: Oceania
+          SA: South America
+    - key: PVP
+      label: Enable PvP / Disable PvE
+      category: No One Survived
+      subcategory: Gameplay
+      description: If set, PvP mode will be enabled, and PvE mode disabled
+      keywords: pve,pvp
+      input_type: checkbox
+      param_field_name: PVP
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable PvP / Disable PvE
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, PvP mode will be enabled, and PvE mode disabled
+        Keywords: pve,pvp
+        FieldName: PVP
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: PVP
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: ZombieAttack
+      label: Enable Zombie Attack Wave
+      category: No One Survived
+      subcategory: Gameplay
+      description: If set, the zombie attack wave will be enabled
+      keywords: zombie,corpse,attack,tide,wave,zombieattack
+      input_type: checkbox
+      param_field_name: ZombieAttack
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Zombie Attack Wave
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the zombie attack wave will be enabled
+        Keywords: zombie,corpse,attack,tide,wave,zombieattack
+        FieldName: ZombieAttack
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: ZombieAttack
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: NumOfZombieSpawn
+      label: Zombie Spawn Amount
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets the number of zombies spawned per player in the attack wave
+      keywords: zombie,corpse,spawn,number,amount,numofzombiespawn
+      input_type: number
+      param_field_name: NumOfZombieSpawn
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 25
+      max: 100
+      suffix: zombies
+      enum_values: {}
+      raw:
+        DisplayName: Zombie Spawn Amount
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of zombies spawned per player in the attack wave
+        Keywords: zombie,corpse,spawn,number,amount,numofzombiespawn
+        FieldName: NumOfZombieSpawn
+        InputType: number
+        MinValue: '25'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: NumOfZombieSpawn
+        IncludeInCommandLine: false
+        DefaultValue: '50'
+        Placeholder: '50'
+        Suffix: zombies
+        EnumValues: {}
+    - key: ZombieAttackDay
+      label: Zombie Attack Cycle
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets the number of days between zombie attack waves
+      keywords: zombie,corpse,attack,cycle,zombieattackday
+      input_type: number
+      param_field_name: ZombieAttackDay
+      default: '7'
+      placeholder: '7'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 30
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Zombie Attack Cycle
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of days between zombie attack waves
+        Keywords: zombie,corpse,attack,cycle,zombieattackday
+        FieldName: ZombieAttackDay
+        InputType: number
+        MinValue: '1'
+        MaxValue: '30'
+        IsFlagArgument: false
+        ParamFieldName: ZombieAttackDay
+        IncludeInCommandLine: false
+        DefaultValue: '7'
+        Placeholder: '7'
+        Suffix: days
+        EnumValues: {}
+    - key: AttackZombieNum
+      label: Zombie Attack Multiplier
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets the multiplier for the zombie attack wave
+      keywords: zombie,corpse,attack,scale,multiplier,attackzombienum
+      input_type: number
+      param_field_name: AttackZombieNum
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Zombie Attack Multiplier
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the multiplier for the zombie attack wave
+        Keywords: zombie,corpse,attack,scale,multiplier,attackzombienum
+        FieldName: AttackZombieNum
+        InputType: number
+        MinValue: '1'
+        MaxValue: '5'
+        IsFlagArgument: false
+        ParamFieldName: AttackZombieNum
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        Placeholder: '2'
+        EnumValues: {}
+    - key: ZombieNum
+      label: Zombie Respawn Multiplier
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets the multiplier for the respawn of zombies (higher = more difficult)
+      keywords: zombie,corpse,respawn,multiplier,zombienum
+      input_type: number
+      param_field_name: ZombieNum
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 3
+      enum_values: {}
+      raw:
+        DisplayName: Zombie Respawn Multiplier
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the multiplier for the respawn of zombies (higher = more difficult)
+        Keywords: zombie,corpse,respawn,multiplier,zombienum
+        FieldName: ZombieNum
+        InputType: number
+        MinValue: '1'
+        MaxValue: '3'
+        IsFlagArgument: false
+        ParamFieldName: ZombieNum
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        Placeholder: '2'
+        EnumValues: {}
+    - key: RunZombiePercent
+      label: Sprinter Zombies Proportion
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets the proportion of sprinter zombies
+      keywords: zombie,corpse,running,sprinter,percentage,runzombiepercent
+      input_type: number
+      param_field_name: RunZombiePercent
+      default: '0.5'
+      placeholder: '0.5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Sprinter Zombies Proportion
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the proportion of sprinter zombies
+        Keywords: zombie,corpse,running,sprinter,percentage,runzombiepercent
+        FieldName: RunZombiePercent
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: RunZombiePercent
+        IncludeInCommandLine: false
+        DefaultValue: '0.5'
+        Placeholder: '0.5'
+        EnumValues: {}
+    - key: ZombieStreng
+      label: Zombie Strength
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets the strength of zombies
+      keywords: zombie,strength,zombiestreng
+      input_type: enum
+      param_field_name: ZombieStreng
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Weak
+        '1': Average (default)
+        '2': Strong
+        '3': Very strong
+      raw:
+        DisplayName: Zombie Strength
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the strength of zombies
+        Keywords: zombie,strength,zombiestreng
+        FieldName: ZombieStreng
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ZombieStreng
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': Weak
+          '1': Average (default)
+          '2': Strong
+          '3': Very strong
+    - key: SpecialZombie
+      label: Enable Special Zombies
+      category: No One Survived
+      subcategory: Gameplay
+      description: If set, the special zombies will be enabled on the server
+      keywords: special,zombies,specialzombie
+      input_type: checkbox
+      param_field_name: SpecialZombie
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Special Zombies
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the special zombies will be enabled on the server
+        Keywords: special,zombies,specialzombie
+        FieldName: SpecialZombie
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SpecialZombie
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: YearDay
+      label: Year Duration
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets the number of days in one in-game year
+      keywords: year,duration,day,yearday
+      input_type: number
+      param_field_name: YearDay
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 365
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Year Duration
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of days in one in-game year
+        Keywords: year,duration,day,yearday
+        FieldName: YearDay
+        InputType: number
+        MinValue: '1'
+        MaxValue: '365'
+        IsFlagArgument: false
+        ParamFieldName: YearDay
+        IncludeInCommandLine: false
+        DefaultValue: '40'
+        Placeholder: '40'
+        Suffix: days
+        EnumValues: {}
+    - key: DayLength
+      label: Day Length
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets the length of an in-game day (in real-world minutes)
+      keywords: day,length,daylength
+      input_type: enum
+      param_field_name: DayLength
+      default: '120'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '45': 45 minutes
+        '90': 90 minutes
+        '120': 120 minutes (default)
+      raw:
+        DisplayName: Day Length
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the length of an in-game day (in real-world minutes)
+        Keywords: day,length,daylength
+        FieldName: DayLength
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: DayLength
+        IncludeInCommandLine: false
+        DefaultValue: '120'
+        EnumValues:
+          '45': 45 minutes
+          '90': 90 minutes
+          '120': 120 minutes (default)
+    - key: PermanentDead
+      label: Enable Permanent Death
+      category: No One Survived
+      subcategory: Gameplay
+      description: If set, permanent death will be enabled
+      keywords: death,permanent,permanentdead
+      input_type: checkbox
+      param_field_name: PermanentDead
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Permanent Death
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, permanent death will be enabled
+        Keywords: death,permanent,permanentdead
+        FieldName: PermanentDead
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: PermanentDead
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: MaterialNum
+      label: Loot Distribution
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets how abundant loot is
+      keywords: loot,material,item,quantity,distribution,materialnum
+      input_type: enum
+      param_field_name: MaterialNum
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Rare
+        '1': Normal (default)
+        '2': Abundant
+        '3': Very abundant
+      raw:
+        DisplayName: Loot Distribution
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how abundant loot is
+        Keywords: loot,material,item,quantity,distribution,materialnum
+        FieldName: MaterialNum
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: MaterialNum
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues:
+          '0': Rare
+          '1': Normal (default)
+          '2': Abundant
+          '3': Very abundant
+    - key: ItemSpawn
+      label: Loot Respawn Time
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets the number of days before loot is respawned. 0 = disabled
+      keywords: loot,spawn,refresh,date,itemspawn
+      input_type: number
+      param_field_name: ItemSpawn
+      default: '15'
+      placeholder: '15'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Loot Respawn Time
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of days before loot is respawned. 0 = disabled
+        Keywords: loot,spawn,refresh,date,itemspawn
+        FieldName: ItemSpawn
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: ItemSpawn
+        IncludeInCommandLine: false
+        DefaultValue: '15'
+        Placeholder: '15'
+        Suffix: days
+        EnumValues: {}
+    - key: NPCItemSpawn
+      label: Merchant Restock Time
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets the number of days before merchant items are restocked
+      keywords: merchant,item,spawn,refresh,restock,date,npcitemspawn
+      input_type: number
+      param_field_name: NPCItemSpawn
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Merchant Restock Time
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of days before merchant items are restocked
+        Keywords: merchant,item,spawn,refresh,restock,date,npcitemspawn
+        FieldName: NPCItemSpawn
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: NPCItemSpawn
+        IncludeInCommandLine: false
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: days
+        EnumValues: {}
+    - key: VirusFatalityRate
+      label: Virus Fatality Rate
+      category: No One Survived
+      subcategory: Gameplay
+      description: Sets the virus fatality rate
+      keywords: virus,fatality,rate,virusfatalityrate
+      input_type: number
+      param_field_name: VirusFatalityRate
+      default: '0.5'
+      placeholder: '0.5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Virus Fatality Rate
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the virus fatality rate
+        Keywords: virus,fatality,rate,virusfatalityrate
+        FieldName: VirusFatalityRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: VirusFatalityRate
+        IncludeInCommandLine: false
+        DefaultValue: '0.5'
+        Placeholder: '0.5'
+        EnumValues: {}
+    - key: GiftBagForNovices
+      label: Starter Kits
+      category: No One Survived
+      subcategory: Gameplay
+      description: If set, starter kits will be enabled for novices
+      keywords: starter,kit,gift,bag,novice,giftbagfornovices
+      input_type: checkbox
+      param_field_name: GiftBagForNovices
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Starter Kits
+        Category: No One Survived:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, starter kits will be enabled for novices
+        Keywords: starter,kit,gift,bag,novice,giftbagfornovices
+        FieldName: GiftBagForNovices
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: GiftBagForNovices
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+  files:
+    - path: WRSH/Saved/Config/WindowsServer/Game.ini
+      type: ini
+      format: '{0}={1}'
+      subsections:
+        - heading: GameSettings
+          setting_mappings:
+            ZombieAttack: ZombieAttack
+            ZombieAttackDay: ZombieAttackDay
+            AttackZombieNum: AttackZombieNum
+            ZombieNum: ZombieNum
+            RunZombiePercent: RunZombiePercent
+            ZombieStreng: ZombieStreng
+            YearDay: YearDay
+            PermanentDead: PermanentDead
+            MaterialNum: MaterialNum
+            ItemSpawn: ItemSpawn
+            VirusFatalityRate: VirusFatalityRate
+            GiftBagForNovices: GiftBagForNovices
+            NPCItemSpawn: NPCItemSpawn
+            PVP: PVP
+            SpecialZombie: SpecialZombie
+            DayLength: DayLength
+        - heading: ServerSetting
+          setting_mappings:
+            SaveName: SaveName
+            ServerName: ServerName
+            OpenMap: OpenMap
+            NeedPassword: NeedPassword
+            Password: Password
+            MaxPlayers: $MaxUsers
+            NumOfZombieSpawn: NumOfZombieSpawn
+            Region: Region
+            AdminPassword: AdminPassword
+      raw:
+        ConfigFile: WRSH/Saved/Config/WindowsServer/Game.ini
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        Subsections:
+          - Heading: GameSettings
+            SettingMappings:
+              ZombieAttack: ZombieAttack
+              ZombieAttackDay: ZombieAttackDay
+              AttackZombieNum: AttackZombieNum
+              ZombieNum: ZombieNum
+              RunZombiePercent: RunZombiePercent
+              ZombieStreng: ZombieStreng
+              YearDay: YearDay
+              PermanentDead: PermanentDead
+              MaterialNum: MaterialNum
+              ItemSpawn: ItemSpawn
+              VirusFatalityRate: VirusFatalityRate
+              GiftBagForNovices: GiftBagForNovices
+              NPCItemSpawn: NPCItemSpawn
+              PVP: PVP
+              SpecialZombie: SpecialZombie
+              DayLength: DayLength
+          - Heading: ServerSetting
+            SettingMappings:
+              SaveName: SaveName
+              ServerName: ServerName
+              OpenMap: OpenMap
+              NeedPassword: NeedPassword
+              Password: Password
+              MaxPlayers: $MaxUsers
+              NumOfZombieSpawn: NumOfZombieSpawn
+              Region: Region
+              AdminPassword: AdminPassword
+    - path: WRSH/Saved/Config/WindowsServer/Engine.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: WRSH/Saved/Config/WindowsServer/Engine.ini
+        AutoMap: true
+        ConfigType: ini
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered No One Survived Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SaveName
+    label: Save Name
+    default: MySave
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NeedPassword
+    label: Require Server Password
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AdminPassword
+    label: Admin Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: OpenMap
+    label: Server Map
+    default: Map01
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Region
+    label: Server Region
+    default: All
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PVP
+    label: Enable PvP / Disable PvE
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieAttack
+    label: Enable Zombie Attack Wave
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NumOfZombieSpawn
+    label: Zombie Spawn Amount
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieAttackDay
+    label: Zombie Attack Cycle
+    default: '7'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AttackZombieNum
+    label: Zombie Attack Multiplier
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieNum
+    label: Zombie Respawn Multiplier
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RunZombiePercent
+    label: Sprinter Zombies Proportion
+    default: '0.5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ZombieStreng
+    label: Zombie Strength
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecialZombie
+    label: Enable Special Zombies
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: YearDay
+    label: Year Duration
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DayLength
+    label: Day Length
+    default: '120'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PermanentDead
+    label: Enable Permanent Death
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaterialNum
+    label: Loot Distribution
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ItemSpawn
+    label: Loot Respawn Time
+    default: '15'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NPCItemSpawn
+    label: Merchant Restock Time
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VirusFatalityRate
+    label: Virus Fatality Rate
+    default: '0.5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GiftBagForNovices
+    label: Starter Kits
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1963370'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,18 @@ category: Imported
 summary: CryoFall Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1061710'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1061710/dotnet/dotnet
+  startup: >-
+    1061710/dotnet/dotnet {PlatformArgs} ./CryoFall_Server.dll loadOrNew +server.port {ServerPort} +server.ip
+    {ApplicationIPBinding}  +server.maxplayers {MaxUsers} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,840 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 6000
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: Data/SettingsServer.xml
+    type: xml
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Server Port
+      category: CryoFall
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /settings/network/port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: /settings/network/port
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Server IP Binding
+      category: CryoFall
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /settings/network/ip
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server IP Binding
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        ParamFieldName: /settings/network/ip
+        EnumValues: {}
+    - key: is_public_server
+      label: Make Server Public
+      category: CryoFall
+      subcategory: Server
+      description: If set, the server will be added to the public server list
+      keywords: public,is_public_server
+      input_type: checkbox
+      param_field_name: /settings/network/is_public_server
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Make Server Public
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be added to the public server list
+        Keywords: public,is_public_server
+        FieldName: is_public_server
+        InputType: checkbox
+        ParamFieldName: /settings/network/is_public_server
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: public_server_host_name
+      label: Public Server Domain Name
+      category: CryoFall
+      subcategory: Server
+      description: >-
+        Sets a domain name to display to clients instead of the server IP address. The domain name must match the server
+        IP. May require the server binding to be changed
+      keywords: server,domain,name,hostname,public_server_host_name
+      input_type: text
+      param_field_name: /settings/network/public_server_host_name
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Public Server Domain Name
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a domain name to display to clients instead of the server IP address. The domain name must match the
+          server IP. May require the server binding to be changed
+        Keywords: server,domain,name,hostname,public_server_host_name
+        FieldName: public_server_host_name
+        InputType: text
+        ParamFieldName: /settings/network/public_server_host_name
+        DefaultValue: ''
+        EnumValues: {}
+    - key: name
+      label: Server Name
+      category: CryoFall
+      subcategory: Server
+      description: Sets the server name visible to clients. Maximum 64 characters
+      keywords: server,name
+      input_type: text
+      param_field_name: /settings/server/name
+      default: AMP Powered CryoFall Server
+      placeholder: AMP Powered CryoFall Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server name visible to clients. Maximum 64 characters
+        Keywords: server,name
+        FieldName: name
+        InputType: text
+        ParamFieldName: /settings/server/name
+        DefaultValue: AMP Powered CryoFall Server
+        Placeholder: AMP Powered CryoFall Server
+        EnumValues: {}
+    - key: description
+      label: Server Description
+      category: CryoFall
+      subcategory: Server
+      description: Sets the server description visible to clients. Maximum 600 characters
+      keywords: server,description
+      input_type: text
+      param_field_name: /settings/server/description
+      default: AMP Powered CryoFall Server.
+      placeholder: AMP Powered CryoFall Server.
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Description
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server description visible to clients. Maximum 600 characters
+        Keywords: server,description
+        FieldName: description
+        InputType: text
+        ParamFieldName: /settings/server/description
+        DefaultValue: AMP Powered CryoFall Server.
+        Placeholder: AMP Powered CryoFall Server.
+        EnumValues: {}
+    - key: welcome_message
+      label: Server MOTD
+      category: CryoFall
+      subcategory: Server
+      description: >-
+        Sets the player welcome message (MOTD) displayed on login. Maximum 4096 characters. Text formatting allowed:
+        [b]Bold[/b], [u]underscore[/u], [color=#FF0000]colors[/color], [*] for list bullet points [*] and [br] for a new
+        line
+      keywords: motd,welcome,message,welcome_message
+      input_type: Textarea
+      param_field_name: /settings/server/welcome_message
+      default: Welcome to my CryoFall server!
+      placeholder: Welcome to my CryoFall server!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server MOTD
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the player welcome message (MOTD) displayed on login. Maximum 4096 characters. Text formatting allowed:
+          [b]Bold[/b], [u]underscore[/u], [color=#FF0000]colors[/color], [*] for list bullet points [*] and [br] for a
+          new line
+        Keywords: motd,welcome,message,welcome_message
+        FieldName: welcome_message
+        InputType: Textarea
+        ParamFieldName: /settings/server/welcome_message
+        DefaultValue: Welcome to my CryoFall server!
+        Placeholder: Welcome to my CryoFall server!
+        EnumValues: {}
+    - key: savegame_slot_id
+      label: Savegame Slot ID
+      category: CryoFall
+      subcategory: Server
+      description: >-
+        Sets the slot ID for the savegame. Each slot ID will be for a unique world. To start a new world for a given
+        slot, delete the associated savegame in 'Data/Saves'
+      keywords: server,save,savegame,slot,id,savegame_slot_id
+      input_type: number
+      param_field_name: /settings/server/savegame_slot_id
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Savegame Slot ID
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the slot ID for the savegame. Each slot ID will be for a unique world. To start a new world for a given
+          slot, delete the associated savegame in 'Data/Saves'
+        Keywords: server,save,savegame,slot,id,savegame_slot_id
+        FieldName: savegame_slot_id
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: /settings/server/savegame_slot_id
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: server_operators_list
+      label: Server Operators/Admins
+      category: CryoFall
+      subcategory: Server
+      description: >-
+        Comma separated list of server operators (users with admin access). Use the in-game username as written in the
+        bottom right corner of the main menu for each operator
+      keywords: server,operators,server_operators_list
+      input_type: text
+      param_field_name: /settings/server/server_operators_list
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Operators/Admins
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma separated list of server operators (users with admin access). Use the in-game username as written in the
+          bottom right corner of the main menu for each operator
+        Keywords: server,operators,server_operators_list
+        FieldName: server_operators_list
+        InputType: text
+        ParamFieldName: /settings/server/server_operators_list
+        DefaultValue: ''
+        EnumValues: {}
+    - key: server_moderators_list
+      label: Server Moderators
+      category: CryoFall
+      subcategory: Server
+      description: >-
+        Comma separated list of server moderators (users with moderator access). Use the in-game username as written in
+        the bottom right corner of the main menu for each moderator. Operators already have moderator access
+      keywords: server,moderators,server_moderators_list
+      input_type: text
+      param_field_name: /settings/server/server_moderators_list
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Moderators
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma separated list of server moderators (users with moderator access). Use the in-game username as written
+          in the bottom right corner of the main menu for each moderator. Operators already have moderator access
+        Keywords: server,moderators,server_moderators_list
+        FieldName: server_moderators_list
+        InputType: text
+        ParamFieldName: /settings/server/server_moderators_list
+        DefaultValue: ''
+        EnumValues: {}
+    - key: access_whitelist_enabled
+      label: Enable Player Whitelist
+      category: CryoFall
+      subcategory: Server
+      description: If set, the player whitelist will be enabled. Set the allowed players under Whitelisted Players
+      keywords: whitelist,access,enable,access_whitelist_enabled
+      input_type: checkbox
+      param_field_name: /settings/server/access_whitelist_enabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Player Whitelist
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the player whitelist will be enabled. Set the allowed players under Whitelisted Players
+        Keywords: whitelist,access,enable,access_whitelist_enabled
+        FieldName: access_whitelist_enabled
+        InputType: checkbox
+        ParamFieldName: /settings/server/access_whitelist_enabled
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: access_whitelist
+      label: Whitelisted Players
+      category: CryoFall
+      subcategory: Server
+      description: Comma separated list of whitelisted players. Requires Player Whitelist to be enabled
+      keywords: whitelist,access,access_whitelist
+      input_type: text
+      param_field_name: /settings/server/access_whitelist
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Whitelisted Players
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Comma separated list of whitelisted players. Requires Player Whitelist to be enabled
+        Keywords: whitelist,access,access_whitelist
+        FieldName: access_whitelist
+        InputType: text
+        ParamFieldName: /settings/server/access_whitelist
+        DefaultValue: ''
+        EnumValues: {}
+    - key: access_blacklist
+      label: Blacklisted Players
+      category: CryoFall
+      subcategory: Server
+      description: Comma separated list of blacklisted players
+      keywords: blacklist,access,access_blacklist
+      input_type: text
+      param_field_name: /settings/server/access_blacklist
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Blacklisted Players
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Comma separated list of blacklisted players
+        Keywords: blacklist,access,access_blacklist
+        FieldName: access_blacklist
+        InputType: text
+        ParamFieldName: /settings/server/access_blacklist
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: CryoFall
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,clients,limit,players_max_count
+      input_type: number
+      param_field_name: /settings/server/players_max_count
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,clients,limit,players_max_count
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: /settings/server/players_max_count
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: players
+        EnumValues: {}
+    - key: no_client_mods
+      label: Prohibit Client Mods
+      category: CryoFall
+      subcategory: Server
+      description: If set, client mods will be disallowed. Recommended to enable this setting for PvP servers
+      keywords: prohibit,disallow,mods,modifications,no_client_mods
+      input_type: checkbox
+      param_field_name: /settings/server/no_client_mods
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Prohibit Client Mods
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, client mods will be disallowed. Recommended to enable this setting for PvP servers
+        Keywords: prohibit,disallow,mods,modifications,no_client_mods
+        FieldName: no_client_mods
+        InputType: checkbox
+        ParamFieldName: /settings/server/no_client_mods
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: modsconfig
+      label: Server Mods
+      category: CryoFall
+      subcategory: Server
+      description: >-
+        Server mods can be loaded by installing them in the 'Data/Mods' directory and specifying them in
+        'Data/ModsConfig.xml'. See [these
+        instructions](https://cryofall.fandom.com/wiki/Mod_Installation?action=edit&section=2)
+      keywords: server,mods,modsconfig
+      input_type: hidden
+      param_field_name: modsconfig
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Mods
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Server mods can be loaded by installing them in the 'Data/Mods' directory and specifying them in
+          'Data/ModsConfig.xml'. See [these
+          instructions](https://cryofall.fandom.com/wiki/Mod_Installation?action=edit&section=2)
+        Keywords: server,mods,modsconfig
+        FieldName: modsconfig
+        InputType: hidden
+        ParamFieldName: modsconfig
+        EnumValues: {}
+    - key: autosave_interval
+      label: Autosave Interval
+      category: CryoFall
+      subcategory: Server
+      description: Sets the server autosave interval
+      keywords: server,autosave,interval,autosave_interval
+      input_type: number
+      param_field_name: /settings/server/autosave_interval
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Autosave Interval
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server autosave interval
+        Keywords: server,autosave,interval,autosave_interval
+        FieldName: autosave_interval
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: /settings/server/autosave_interval
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: minutes
+        EnumValues: {}
+    - key: save_backups_count
+      label: Backup Limit
+      category: CryoFall
+      subcategory: Server
+      description: >-
+        Sets the limit on the number of backup copies to store for the savegame for each slot. Keep to a reasonable
+        number as each savegame usually takes 20-40MB
+      keywords: server,save,backup,limit,count,save_backups_count
+      input_type: number
+      param_field_name: /settings/server/save_backups_count
+      default: '25'
+      placeholder: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 3
+      max: 100
+      suffix: backups
+      enum_values: {}
+      raw:
+        DisplayName: Backup Limit
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the limit on the number of backup copies to store for the savegame for each slot. Keep to a reasonable
+          number as each savegame usually takes 20-40MB
+        Keywords: server,save,backup,limit,count,save_backups_count
+        FieldName: save_backups_count
+        InputType: number
+        MinValue: '3'
+        MaxValue: '100'
+        ParamFieldName: /settings/server/save_backups_count
+        DefaultValue: '25'
+        Placeholder: '25'
+        Suffix: backups
+        EnumValues: {}
+    - key: fps
+      label: Server Framerate
+      category: CryoFall
+      subcategory: Server
+      description: 'Sets the server framerate (tick rate). Recommended: 40'
+      keywords: framerate,frames,tick,rate,fps
+      input_type: number
+      param_field_name: /settings/server/fps
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 20
+      max: 60
+      suffix: fps
+      enum_values: {}
+      raw:
+        DisplayName: Server Framerate
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Sets the server framerate (tick rate). Recommended: 40'
+        Keywords: framerate,frames,tick,rate,fps
+        FieldName: fps
+        InputType: number
+        MinValue: '20'
+        MaxValue: '60'
+        ParamFieldName: /settings/server/fps
+        DefaultValue: '40'
+        Placeholder: '40'
+        Suffix: fps
+        EnumValues: {}
+    - key: fps_network_physics_update
+      label: Physics Update Rate
+      category: CryoFall
+      subcategory: Server
+      description: >-
+        Sets the rate at which physics updates are sent to players. Affects game latency. Recommended: 20. At least 10
+        for smooth movement required, higher than 30 not needed but possibly useful for fast-paced servers. Best to keep
+        in exact ratio with Server Framerate (eg 1:1, 1:2)
+      keywords: physics,update,rate,fps_network_physics_update
+      input_type: number
+      param_field_name: /settings/server/fps_network_physics_update
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 10
+      max: 60
+      enum_values: {}
+      raw:
+        DisplayName: Physics Update Rate
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the rate at which physics updates are sent to players. Affects game latency. Recommended: 20. At least 10
+          for smooth movement required, higher than 30 not needed but possibly useful for fast-paced servers. Best to
+          keep in exact ratio with Server Framerate (eg 1:1, 1:2)
+        Keywords: physics,update,rate,fps_network_physics_update
+        FieldName: fps_network_physics_update
+        InputType: number
+        MinValue: '10'
+        MaxValue: '60'
+        ParamFieldName: /settings/server/fps_network_physics_update
+        DefaultValue: '20'
+        Placeholder: '20'
+        EnumValues: {}
+    - key: min_log_severity
+      label: Minimum Logging Level
+      category: CryoFall
+      subcategory: Server
+      description: Sets the server's minimum logging level. AMP requires at least an Important level
+      keywords: log,logging,level,min_log_severity
+      input_type: enum
+      param_field_name: /settings/misc/min_log_severity
+      default: Important
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Debug: Debug
+        Info: Info
+        Important: Important (default)
+      raw:
+        DisplayName: Minimum Logging Level
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server's minimum logging level. AMP requires at least an Important level
+        Keywords: log,logging,level,min_log_severity
+        FieldName: min_log_severity
+        InputType: enum
+        ParamFieldName: /settings/misc/min_log_severity
+        DefaultValue: Important
+        EnumValues:
+          Debug: Debug
+          Info: Info
+          Important: Important (default)
+    - key: DotnetVersion
+      label: Dotnet Version
+      category: CryoFall
+      subcategory: Server
+      description: >-
+        Sets the [ASP.NET Core Runtime 6.0 version](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) to install.
+        Empty = latest. Update the server after switching versions!
+      keywords: dotnet,version
+      input_type: text
+      param_field_name: DotnetVersion
+      default: ''
+      placeholder: 6.0.24
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Dotnet Version
+        Category: CryoFall:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [ASP.NET Core Runtime 6.0 version](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) to
+          install. Empty = latest. Update the server after switching versions!
+        Keywords: dotnet,version
+        FieldName: DotnetVersion
+        InputType: text
+        ParamFieldName: DotnetVersion
+        DefaultValue: ''
+        Placeholder: 6.0.24
+        EnumValues: {}
+  files:
+    - path: Data/SettingsServer.xml
+      type: xml
+      subsections: []
+      raw:
+        ConfigFile: Data/SettingsServer.xml
+        AutoMap: true
+        ConfigType: xml
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: is_public_server
+    label: Make Server Public
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: public_server_host_name
+    label: Public Server Domain Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: name
+    label: Server Name
+    default: AMP Powered CryoFall Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: description
+    label: Server Description
+    default: AMP Powered CryoFall Server.
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: welcome_message
+    label: Server MOTD
+    default: Welcome to my CryoFall server!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: savegame_slot_id
+    label: Savegame Slot ID
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_operators_list
+    label: Server Operators/Admins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_moderators_list
+    label: Server Moderators
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: access_whitelist_enabled
+    label: Enable Player Whitelist
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: access_whitelist
+    label: Whitelisted Players
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: access_blacklist
+    label: Blacklisted Players
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: no_client_mods
+    label: Prohibit Client Mods
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autosave_interval
+    label: Autosave Interval
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: save_backups_count
+    label: Backup Limit
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fps
+    label: Server Framerate
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fps_network_physics_update
+    label: Physics Update Rate
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: min_log_severity
+    label: Minimum Logging Level
+    default: Important
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DotnetVersion
+    label: Dotnet Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '829590'
+  collection_support: true
 backup:
   include:
     - /data

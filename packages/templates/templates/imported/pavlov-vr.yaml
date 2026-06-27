@@ -5,13 +5,18 @@ category: Imported
 summary: Pavlov VR Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '622970'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 622970/Pavlov/Binaries/Linux/PavlovServer-Linux-Shipping
+  startup: >-
+    622970/Pavlov/Binaries/Linux/PavlovServer-Linux-Shipping Pavlov -PORT={ApplicationPort1} {FormattedArgs} -stdout
+    -forcelogflush
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,829 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: applicationport1
+    name: Main Game Port
+    default: 7777
+    protocol: both
     required: true
-config_files: []
+  - key: applicationport2
+    name: Secondary Game Port
+    default: 8177
+    protocol: both
+    required: true
+  - key: remoteadminport
+    name: RCON Port
+    default: 9100
+    protocol: tcp
+    required: true
+config_files:
+  - path: Pavlov/Saved/Config/LinuxServer/Game.ini
+    type: ini
+    editable: true
+  - path: Pavlov/Saved/Config/RconSettings.txt
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: ServerName
+      label: Server Name
+      category: Pavlov VR
+      subcategory: Server
+      description: Sets the server name visible in the server list. Maximum 35 characters (approx)
+      keywords: server,name,servername
+      input_type: text
+      param_field_name: /Script/Pavlov.DedicatedServer.ServerName
+      default: Pavlov VR Server - Powered by AMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server name visible in the server list. Maximum 35 characters (approx)
+        Keywords: server,name,servername
+        FieldName: ServerName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.ServerName
+        IncludeInCommandLine: false
+        DefaultValue: Pavlov VR Server - Powered by AMP
+        EnumValues: {}
+    - key: bEnabled
+      label: Include In Server List
+      category: Pavlov VR
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /Script/Pavlov.DedicatedServer.bEnabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Include In Server List
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: bEnabled
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.bEnabled
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues: {}
+    - key: ApiKey
+      label: API Key
+      category: Pavlov VR
+      subcategory: Server
+      description: >-
+        Sets a unique API key to allow the server to appear in the server list. [Get your API
+        key](https://pavlov-ms.vankrupt.com/servers/v1/key)
+      keywords: api,key,apikey
+      input_type: password
+      param_field_name: /Script/Pavlov.DedicatedServer.ApiKey
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: API Key
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a unique API key to allow the server to appear in the server list. [Get your API
+          key](https://pavlov-ms.vankrupt.com/servers/v1/key)
+        Keywords: api,key,apikey
+        FieldName: ApiKey
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.ApiKey
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Password
+      label: Server Password
+      category: Pavlov VR
+      subcategory: Server
+      description: 'Sets a four digit PIN to connect to the server. NOTE: Change this after installing the server'
+      keywords: password,pin
+      input_type: password
+      param_field_name: /Script/Pavlov.DedicatedServer.Password
+      default: '{{randomdigits(4)}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Sets a four digit PIN to connect to the server. NOTE: Change this after installing the server'
+        Keywords: password,pin
+        FieldName: Password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.Password
+        IncludeInCommandLine: false
+        DefaultValue: '{{randomdigits(4)}}'
+        EnumValues: {}
+    - key: RCONPassword
+      label: RCON Password
+      category: Pavlov VR
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's RCON
+      keywords: rcon,password
+      input_type: hidden
+      param_field_name: RCONPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's RCON
+        Keywords: rcon,password
+        FieldName: RCONPassword
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: RCONPassword
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: bSecured
+      label: Enable Valve Anti-Cheat (Steam VAC)
+      category: Pavlov VR
+      subcategory: Server
+      description: ''
+      keywords: anti-cheat,vac,cheat,bsecured
+      input_type: checkbox
+      param_field_name: /Script/Pavlov.DedicatedServer.bSecured
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Valve Anti-Cheat (Steam VAC)
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: anti-cheat,vac,cheat,bsecured
+        FieldName: bSecured
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.bSecured
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bCustomServer
+      label: Enable Custom Server
+      category: Pavlov VR
+      subcategory: Server
+      description: If enabled, activates new modding tools. Required for blacklist functionality
+      keywords: custom,bcustomserver
+      input_type: checkbox
+      param_field_name: /Script/Pavlov.DedicatedServer.bCustomServer
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Custom Server
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, activates new modding tools. Required for blacklist functionality
+        Keywords: custom,bcustomserver
+        FieldName: bCustomServer
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.bCustomServer
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bCompetitive
+      label: Enable Competitive Mode
+      category: Pavlov VR
+      subcategory: Server
+      description: If enabled, sets the server to competitive mode for SND
+      keywords: competitive,bcompetitive
+      input_type: checkbox
+      param_field_name: /Script/Pavlov.DedicatedServer.bCompetitive
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Competitive Mode
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, sets the server to competitive mode for SND
+        Keywords: competitive,bcompetitive
+        FieldName: bCompetitive
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.bCompetitive
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: $MaxUsers
+      label: Player Limit
+      category: Pavlov VR
+      subcategory: Server
+      description: >-
+        Sets the maximum number of players that may connect to the server. No more than 20 to 24 recommended for large
+        maps
+      keywords: players,limit,maxplayers
+      input_type: number
+      param_field_name: /Script/Pavlov.DedicatedServer.MaxPlayers
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of players that may connect to the server. No more than 20 to 24 recommended for large
+          maps
+        Keywords: players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.MaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: players
+        EnumValues: {}
+    - key: bWhitelist
+      label: Enable Whitelist
+      category: Pavlov VR
+      subcategory: Server
+      description: If enabled, only whitelisted players can join
+      keywords: whitelist,bwhitelist
+      input_type: checkbox
+      param_field_name: /Script/Pavlov.DedicatedServer.bWhitelist
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Whitelist
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, only whitelisted players can join
+        Keywords: whitelist,bwhitelist
+        FieldName: bWhitelist
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.bWhitelist
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: whitelist
+      label: Whitelisted Players
+      category: Pavlov VR
+      subcategory: Server
+      description: List of [Steam64 IDs](https://steamid.io/) for whitelisted players
+      keywords: whitelist
+      input_type: list
+      param_field_name: whitelist
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./pavlovserver/622970/Pavlov/Saved/Config/whitelist.txt
+      raw:
+        DisplayName: Whitelisted Players
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: List of [Steam64 IDs](https://steamid.io/) for whitelisted players
+        Keywords: whitelist
+        FieldName: whitelist
+        InputType: list
+        IsFlagArgument: false
+        ParamFieldName: whitelist
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Special: listfile:./pavlovserver/622970/Pavlov/Saved/Config/whitelist.txt
+        EnumValues: {}
+    - key: blacklist
+      label: Blacklisted Players
+      category: Pavlov VR
+      subcategory: Server
+      description: List of [Steam64 IDs](https://steamid.io/) for blacklisted players
+      keywords: blacklist,banned
+      input_type: list
+      param_field_name: blacklist
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./pavlovserver/622970/Pavlov/Saved/Config/blacklist.txt
+      raw:
+        DisplayName: Blacklisted Players
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: List of [Steam64 IDs](https://steamid.io/) for blacklisted players
+        Keywords: blacklist,banned
+        FieldName: blacklist
+        InputType: list
+        IsFlagArgument: false
+        ParamFieldName: blacklist
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Special: listfile:./pavlovserver/622970/Pavlov/Saved/Config/blacklist.txt
+        EnumValues: {}
+    - key: mods
+      label: Server Moderators
+      category: Pavlov VR
+      subcategory: Server
+      description: List of [Steam64 IDs](https://steamid.io/) for server moderators/admins (functionality may currently be limited)
+      keywords: moderators,admins,mods
+      input_type: list
+      param_field_name: mods
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./pavlovserver/622970/Pavlov/Saved/Config/mods.txt
+      raw:
+        DisplayName: Server Moderators
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          List of [Steam64 IDs](https://steamid.io/) for server moderators/admins (functionality may currently be
+          limited)
+        Keywords: moderators,admins,mods
+        FieldName: mods
+        InputType: list
+        IsFlagArgument: false
+        ParamFieldName: mods
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Special: listfile:./pavlovserver/622970/Pavlov/Saved/Config/mods.txt
+        EnumValues: {}
+    - key: RefreshListTime
+      label: Refresh Interval
+      category: Pavlov VR
+      subcategory: Server
+      description: Sets how often the server checks for updates in whitelist/blacklist/modlist
+      keywords: refresh,list,refreshlisttime
+      input_type: number
+      param_field_name: /Script/Pavlov.DedicatedServer.RefreshListTime
+      default: '120'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Refresh Interval
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how often the server checks for updates in whitelist/blacklist/modlist
+        Keywords: refresh,list,refreshlisttime
+        FieldName: RefreshListTime
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.RefreshListTime
+        IncludeInCommandLine: false
+        DefaultValue: '120'
+        Suffix: seconds
+        EnumValues: {}
+    - key: TickRate
+      label: Server Tick Rate
+      category: Pavlov VR
+      subcategory: Server
+      description: Sets the server tickrate. Between 50 and 120 is most stable
+      keywords: tick,rate,tickrate
+      input_type: number
+      param_field_name: /Script/Pavlov.DedicatedServer.TickRate
+      default: '90'
+      placeholder: '90'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Server Tick Rate
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server tickrate. Between 50 and 120 is most stable
+        Keywords: tick,rate,tickrate
+        FieldName: TickRate
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.TickRate
+        IncludeInCommandLine: false
+        DefaultValue: '90'
+        Placeholder: '90'
+        EnumValues: {}
+    - key: TimeLimit
+      label: Map Time Limit
+      category: Pavlov VR
+      subcategory: Server
+      description: Sets the time limit for each map
+      keywords: map,time,limit,timelimit
+      input_type: number
+      param_field_name: /Script/Pavlov.DedicatedServer.TimeLimit
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Map Time Limit
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time limit for each map
+        Keywords: map,time,limit,timelimit
+        FieldName: TimeLimit
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.TimeLimit
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        Placeholder: '60'
+        EnumValues: {}
+    - key: BalanceTableURL
+      label: Balance Table URL
+      category: Pavlov VR
+      subcategory: Server
+      description: >-
+        Reference for custom balance table on GitHub. [Follow the
+        instructions](https://github.com/vankruptgames/BalancingTable) to create your own. Note: You may need to use the
+        Beta_5.1 branch on GitHub for server builds based on Unity 5
+      keywords: balance,table,URL,balancetableurl
+      input_type: text
+      param_field_name: /Script/Pavlov.DedicatedServer.BalanceTableURL
+      default: ''
+      placeholder: vankruptgames/BalancingTable/main
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Balance Table URL
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Reference for custom balance table on GitHub. [Follow the
+          instructions](https://github.com/vankruptgames/BalancingTable) to create your own. Note: You may need to use
+          the Beta_5.1 branch on GitHub for server builds based on Unity 5
+        Keywords: balance,table,URL,balancetableurl
+        FieldName: BalanceTableURL
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.BalanceTableURL
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: vankruptgames/BalancingTable/main
+        EnumValues: {}
+    - key: LimitedAmmoType
+      label: Limited Ammo Mode
+      category: Pavlov VR
+      subcategory: Server
+      description: ''
+      keywords: limited,ammo,limitedammotype
+      input_type: enum
+      param_field_name: /Script/Pavlov.DedicatedServer.LimitedAmmoType
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Unlimited
+        '1': Limited Generic
+        '2': Limited Specific
+        '3': Custom (for modders)
+        '4': Limited Special
+        '5': Boxless Mode
+      raw:
+        DisplayName: Limited Ammo Mode
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: limited,ammo,limitedammotype
+        FieldName: LimitedAmmoType
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.LimitedAmmoType
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Unlimited
+          '1': Limited Generic
+          '2': Limited Specific
+          '3': Custom (for modders)
+          '4': Limited Special
+          '5': Boxless Mode
+    - key: bVerboseLogging
+      label: Enable Verbose Logging
+      category: Pavlov VR
+      subcategory: Server
+      description: If enabled, logging will be significantly increased, mostly with detailed statistics
+      keywords: verbose,logging,statistics,bverboselogging
+      input_type: checkbox
+      param_field_name: /Script/Pavlov.DedicatedServer.bVerboseLogging
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Verbose Logging
+        Category: Pavlov VR:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, logging will be significantly increased, mostly with detailed statistics
+        Keywords: verbose,logging,statistics,bverboselogging
+        FieldName: bVerboseLogging
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/Pavlov.DedicatedServer.bVerboseLogging
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ServerVersion
+      label: Server Release Version
+      category: Updates
+      subcategory: Steam Downloads
+      description: 'Sets the server release version to install. NOTE: Update the server after changing this setting!'
+      keywords: server,version,pc,shack,beta,rc
+      input_type: enum
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: PC Server (Non-Beta)
+        beta_server: PC Beta
+        shack: Shack Live (Quest)
+        shack_beta: Shack RC (Quest)
+      raw:
+        DisplayName: Server Release Version
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: 'Sets the server release version to install. NOTE: Update the server after changing this setting!'
+        Keywords: server,version,pc,shack,beta,rc
+        FieldName: ServerVersion
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ''
+        IncludeInCommandLine: false
+        DefaultValue: public
+        EnumValues:
+          public: PC Server (Non-Beta)
+          beta_server: PC Beta
+          shack: Shack Live (Quest)
+          shack_beta: Shack RC (Quest)
+  files:
+    - path: Pavlov/Saved/Config/LinuxServer/Game.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: Pavlov/Saved/Config/LinuxServer/Game.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: Pavlov/Saved/Config/RconSettings.txt
+      type: kvp
+      format: '{0}={1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            Password: $RemoteAdminPassword
+            Port: $RemoteAdminPort
+      raw:
+        ConfigFile: Pavlov/Saved/Config/RconSettings.txt
+        ConfigType: kvp
+        ConfigFormat: '{0}={1}'
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              Password: $RemoteAdminPassword
+              Port: $RemoteAdminPort
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: Pavlov VR Server - Powered by AMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnabled
+    label: Include In Server List
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ApiKey
+    label: API Key
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Password
+    label: Server Password
+    default: '{{randomdigits(4)}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: bSecured
+    label: Enable Valve Anti-Cheat (Steam VAC)
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bCustomServer
+    label: Enable Custom Server
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bCompetitive
+    label: Enable Competitive Mode
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bWhitelist
+    label: Enable Whitelist
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: whitelist
+    label: Whitelisted Players
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: blacklist
+    label: Blacklisted Players
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mods
+    label: Server Moderators
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RefreshListTime
+    label: Refresh Interval
+    default: '120'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TickRate
+    label: Server Tick Rate
+    default: '90'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TimeLimit
+    label: Map Time Limit
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BalanceTableURL
+    label: Balance Table URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LimitedAmmoType
+    label: Limited Ammo Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bVerboseLogging
+    label: Enable Verbose Logging
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerVersion
+    label: Server Release Version
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '555160'
+  collection_support: true
 backup:
   include:
     - /data

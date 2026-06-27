@@ -5,13 +5,19 @@ category: Imported
 summary: Last Oasis Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '920720'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 920720/Mist/Binaries/Linux/MistServer-Linux-Shipping
+  startup: >-
+    920720/Mist/Binaries/Linux/MistServer-Linux-Shipping {PlatformArgs} Mist -force_steamclient_link -messaging
+    -NoLiveServer -EnableCheats -backendapiurloverride="{backendapiurloverride}" -slots={MaxUsers}
+    -port={ApplicationPort1} -QueryPort={ApplicationPort2} {OverrideConnectionAddress} {noeac}{noupnp}{FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +25,415 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: applicationport1
     name: Game Port
+    default: 5555
+    protocol: udp
+    required: true
+  - key: applicationport3
+    name: Game Port +1
+    default: 5556
+    protocol: udp
+    required: true
+  - key: applicationport2
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: last-oasisconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: ProviderKey
+      label: Provider Key
+      category: Last Oasis
+      subcategory: Server
+      description: Your provider key from my [Last Oasis MyRealm site](https://myrealm.lastoasis.gg/)
+      keywords: provider,key,providerkey
+      input_type: password
+      param_field_name: ProviderKey
+      default: ''
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Provider Key
+        Category: Last Oasis:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Your provider key from my [Last Oasis MyRealm site](https://myrealm.lastoasis.gg/)
+        Keywords: provider,key,providerkey
+        FieldName: ProviderKey
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: ProviderKey
+        IncludeInCommandLine: true
+        Required: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomerKey
+      label: Customer Key
+      category: Last Oasis
+      subcategory: Server
+      description: Your customer key from my [Last Oasis MyRealm site](https://myrealm.lastoasis.gg/)
+      keywords: customer,key,customerkey
+      input_type: password
+      param_field_name: CustomerKey
+      default: ''
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Customer Key
+        Category: Last Oasis:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Your customer key from my [Last Oasis MyRealm site](https://myrealm.lastoasis.gg/)
+        Keywords: customer,key,customerkey
+        FieldName: CustomerKey
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: CustomerKey
+        IncludeInCommandLine: true
+        Required: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: identifier
+      label: Identifier
+      category: Last Oasis
+      subcategory: Server
+      description: A unique name for your server to identify it
+      keywords: identifier,name
+      input_type: text
+      param_field_name: identifier
+      default: ''
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Identifier
+        Category: Last Oasis:stadia_controller
+        Subcategory: Server:dns:1
+        Description: A unique name for your server to identify it
+        Keywords: identifier,name
+        FieldName: identifier
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: identifier
+        IncludeInCommandLine: true
+        Required: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Maximum Players
+      category: Last Oasis
+      subcategory: Server
+      description: The number of player slots that this server can accomodate
+      keywords: max,maximum,players,slots,limit
+      input_type: number
+      param_field_name: slots
+      default: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Players
+        Category: Last Oasis:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The number of player slots that this server can accomodate
+        Keywords: max,maximum,players,slots,limit
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: slots
+        IncludeInCommandLine: false
+        DefaultValue: '8'
+        EnumValues: {}
+    - key: noeac
+      label: Disable EasyAntiCheat
+      category: Last Oasis
+      subcategory: Server
+      description: If set, the server will be started without EasyAntiCheat (EAC)
+      keywords: easy,anti,cheat,eac,noeac
+      input_type: checkbox
+      param_field_name: noeac
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-noeac '
+      raw:
+        DisplayName: Disable EasyAntiCheat
+        Category: Last Oasis:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be started without EasyAntiCheat (EAC)
+        Keywords: easy,anti,cheat,eac,noeac
+        FieldName: noeac
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: noeac
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-noeac '
+    - key: noupnp
+      label: Disable UPnP
+      category: Last Oasis
+      subcategory: Server
+      description: If set, the server's UPnP functionality will be disabled
+      keywords: upnp,noupnp
+      input_type: checkbox
+      param_field_name: noupnp
+      default: '-noupnp '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-noupnp '
+      raw:
+        DisplayName: Disable UPnP
+        Category: Last Oasis:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server's UPnP functionality will be disabled
+        Keywords: upnp,noupnp
+        FieldName: noupnp
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: noupnp
+        IncludeInCommandLine: false
+        DefaultValue: '-noupnp '
+        EnumValues:
+          'False': ''
+          'True': '-noupnp '
+    - key: backendapiurloverride
+      label: Backend API URL Override
+      category: Last Oasis
+      subcategory: Server
+      description: Sets the backend API URL override, as appropriate to the server branch
+      keywords: backend,api,url,override,backendapiurloverride
+      input_type: enum
+      param_field_name: backendapiurloverride
+      default: backend-production.last-oasis.com
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        backend-production.last-oasis.com: Production backend (default)
+        classic-backend.last-oasis.com: Classic S4 backend
+      raw:
+        DisplayName: Backend API URL Override
+        Category: Last Oasis:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the backend API URL override, as appropriate to the server branch
+        Keywords: backend,api,url,override,backendapiurloverride
+        FieldName: backendapiurloverride
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: backendapiurloverride
+        IncludeInCommandLine: false
+        DefaultValue: backend-production.last-oasis.com
+        EnumValues:
+          backend-production.last-oasis.com: Production backend (default)
+          classic-backend.last-oasis.com: Classic S4 backend
+    - key: OverrideConnectionAddress
+      label: Connection Address Selection Mode
+      category: Last Oasis
+      subcategory: Server
+      description: >-
+        Sets how the connection address advertised for the server is set. "Server IP address" = the server's IP address,
+        "Automatic public IP address" = the public IP address automatically selected by AMP, "Manual address" = the
+        address set under Manual Connection Address
+      keywords: override,connection,address,mode,overrideconnectionaddress,external,public,ip
+      input_type: enum
+      param_field_name: OverrideConnectionAddress
+      default: '-OverrideConnectionAddress'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '-OverrideConnectionAddress': Server IP address (default)
+        '-OverrideConnectionAddress={{$ExternalIP}}': Automatic public IP address
+        '-OverrideConnectionAddress={{ManualConnectionAddress}}': Manual address
+      raw:
+        DisplayName: Connection Address Selection Mode
+        Category: Last Oasis:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets how the connection address advertised for the server is set. "Server IP address" = the server's IP
+          address, "Automatic public IP address" = the public IP address automatically selected by AMP, "Manual address"
+          = the address set under Manual Connection Address
+        Keywords: override,connection,address,mode,overrideconnectionaddress,external,public,ip
+        FieldName: OverrideConnectionAddress
+        InputType: enum
+        ParamFieldName: OverrideConnectionAddress
+        DefaultValue: '-OverrideConnectionAddress'
+        EnumValues:
+          '-OverrideConnectionAddress': Server IP address (default)
+          '-OverrideConnectionAddress={{$ExternalIP}}': Automatic public IP address
+          '-OverrideConnectionAddress={{ManualConnectionAddress}}': Manual address
+    - key: ManualConnectionAddress
+      label: Manual Connection Address
+      category: Last Oasis
+      subcategory: Server
+      description: >-
+        Sets the connection address advertised for the server, if "Manual address" is selected as the Connection Address
+        Selection Mode
+      keywords: manual,connection,address,public,local,ip
+      input_type: text
+      param_field_name: ManualConnectionAddress
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Manual Connection Address
+        Category: Last Oasis:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the connection address advertised for the server, if "Manual address" is selected as the Connection
+          Address Selection Mode
+        Keywords: manual,connection,address,public,local,ip
+        FieldName: ManualConnectionAddress
+        InputType: text
+        ParamFieldName: ManualConnectionAddress
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: Sets the server branch to install. Update the server after switching branches
+      keywords: server,branch,beta,public,classic,sdktest
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        classic: Classic S4
+        sdktest: SDK Test Server
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: Sets the server branch to install. Update the server after switching branches
+        Keywords: server,branch,beta,public,classic,sdktest
+        FieldName: ServerBranch
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ServerBranch
+        IncludeInCommandLine: false
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          classic: Classic S4
+          sdktest: SDK Test Server
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ProviderKey
+    label: Provider Key
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: CustomerKey
+    label: Customer Key
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: identifier
+    label: Identifier
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: noeac
+    label: Disable EasyAntiCheat
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: noupnp
+    label: Disable UPnP
+    default: '-noupnp '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: backendapiurloverride
+    label: Backend API URL Override
+    default: backend-production.last-oasis.com
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OverrideConnectionAddress
+    label: Connection Address Selection Mode
+    default: '-OverrideConnectionAddress'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualConnectionAddress
+    label: Manual Connection Address
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '903950'
+  collection_support: true
 backup:
   include:
     - /data

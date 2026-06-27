@@ -4,14 +4,21 @@ name: Hytale
 category: Imported
 summary: Hytale Dedicated Server
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://downloader.hytale.com/hytale-downloader.zip
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: '{{JavaVersion}}'
+  startup: >-
+    {JavaVersion} -Xms{MinMemory}M -Xmx{MaxMemory}M {EnableAOTCache}{JavaArgs} -Dterminal.jline=false
+    -Dterminal.ansi=true -jar {StartupJar} --assets ../Assets.zip --bind {ApplicationIPBinding}:{ServerPort}
+    --backup-dir "{{backup-dir}}" {{accept-early-plugins}}{{allow-op}}{backup}{{disable-sentry}}{FormattedArgs}
+    {CustomArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +26,1195 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 5520
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: Server/config.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: session-token
+      label: GSP Server Session Token
+      category: Hytale
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: session-token
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GSP Server Session Token
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: session-token
+        InputType: text
+        Hidden: true
+        ParamFieldName: session-token
+        ExcludeFromImport: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: identity-token
+      label: GSP Server Identity Token
+      category: Hytale
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: identity-token
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GSP Server Identity Token
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: identity-token
+        InputType: text
+        Hidden: true
+        ParamFieldName: identity-token
+        ExcludeFromImport: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: StartupJar
+      label: Server Jar
+      category: Hytale
+      subcategory: Server
+      description: >-
+        Sets the jar to start the server with. Default is 'HytaleServer.jar', the official server jar. Custom jars must
+        be placed in the 'Server' directory, or an absolute path or path relative to the 'Server' directory must be
+        specified
+      keywords: server,jar,startup,StartupJar
+      input_type: text
+      param_field_name: StartupJar
+      default: HytaleServer.jar
+      placeholder: HytaleServer.jar
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Jar
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the jar to start the server with. Default is 'HytaleServer.jar', the official server jar. Custom jars
+          must be placed in the 'Server' directory, or an absolute path or path relative to the 'Server' directory must
+          be specified
+        Keywords: server,jar,startup,StartupJar
+        FieldName: StartupJar
+        InputType: text
+        ParamFieldName: StartupJar
+        DefaultValue: HytaleServer.jar
+        Placeholder: HytaleServer.jar
+        Required: true
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Hytale
+      subcategory: Server
+      description: Sets the server name shown to players
+      keywords: server,name,servername,display
+      input_type: text
+      param_field_name: $.ServerName
+      default: AMP Powered Hytale Server
+      placeholder: AMP Powered Hytale Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server name shown to players
+        Keywords: server,name,servername,display
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: $.ServerName
+        DefaultValue: AMP Powered Hytale Server
+        Placeholder: AMP Powered Hytale Server
+        EnumValues: {}
+    - key: MOTD
+      label: Server MOTD
+      category: Hytale
+      subcategory: Server
+      description: Sets the message of the day (MOTD) shown to players on join
+      keywords: motd,message,day,welcome
+      input_type: text
+      param_field_name: $.MOTD
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server MOTD
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the message of the day (MOTD) shown to players on join
+        Keywords: motd,message,day,welcome
+        FieldName: MOTD
+        InputType: text
+        ParamFieldName: $.MOTD
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Password
+      label: Server Password
+      category: Hytale
+      subcategory: Server
+      description: Sets the password required to join the server. Default is no password
+      keywords: server,password
+      input_type: password
+      param_field_name: $.Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to join the server. Default is no password
+        Keywords: server,password
+        FieldName: Password
+        InputType: password
+        ParamFieldName: $.Password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Hytale
+      subcategory: Server
+      description: Sets the maximum number of players that can connect to the server at one time
+      keywords: players,maxplayers,concurrent,max,maximum,limit
+      input_type: number
+      param_field_name: $.MaxPlayers
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that can connect to the server at one time
+        Keywords: players,maxplayers,concurrent,max,maximum,limit
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: $.MaxPlayers
+        DefaultValue: '100'
+        Placeholder: '100'
+        Suffix: players
+        EnumValues: {}
+    - key: Defaults.World
+      label: World Name
+      category: Hytale
+      subcategory: Server
+      description: Sets the name of the world to load, or to create if it does not exist. Worlds are stored in 'universe/worlds'
+      keywords: world,name,spawn
+      input_type: text
+      param_field_name: $.Defaults.World
+      default: default
+      placeholder: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Name
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the world to load, or to create if it does not exist. Worlds are stored in 'universe/worlds'
+        Keywords: world,name,spawn
+        FieldName: Defaults.World
+        InputType: text
+        ParamFieldName: $.Defaults.World
+        DefaultValue: default
+        Placeholder: default
+        EnumValues: {}
+    - key: Defaults.GameMode
+      label: Game Mode
+      category: Hytale
+      subcategory: Server
+      description: Sets the default game mode for new players
+      keywords: gamemode,default,mode,adventure,creative
+      input_type: enum
+      param_field_name: $.Defaults.GameMode
+      default: Adventure
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Adventure: Adventure (default)
+        Creative: Creative
+      raw:
+        DisplayName: Game Mode
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the default game mode for new players
+        Keywords: gamemode,default,mode,adventure,creative
+        FieldName: Defaults.GameMode
+        InputType: enum
+        ParamFieldName: $.Defaults.GameMode
+        DefaultValue: Adventure
+        EnumValues:
+          Adventure: Adventure (default)
+          Creative: Creative
+    - key: MaxViewRadius
+      label: Maximum View Radius
+      category: Hytale
+      subcategory: Server
+      description: >-
+        Sets how far players can see. Recommended to limit to 12 for both performance and gameplay. Higher values will
+        significantly increase RAM usage
+      keywords: view,render,radius,chunks,MaxViewRadius
+      input_type: number
+      param_field_name: $.MaxViewRadius
+      default: '12'
+      placeholder: '12'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: chunks
+      enum_values: {}
+      raw:
+        DisplayName: Maximum View Radius
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets how far players can see. Recommended to limit to 12 for both performance and gameplay. Higher values will
+          significantly increase RAM usage
+        Keywords: view,render,radius,chunks,MaxViewRadius
+        FieldName: MaxViewRadius
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: $.MaxViewRadius
+        DefaultValue: '12'
+        Placeholder: '12'
+        Suffix: chunks
+        EnumValues: {}
+    - key: accept-early-plugins
+      label: Accept Early Plugins
+      category: Hytale
+      subcategory: Server
+      description: >-
+        If set, the server will accept early plugins. Note that loading early plugins is unsupported and may cause
+        stability issues
+      keywords: plugins,early,accept-early-plugins
+      input_type: checkbox
+      param_field_name: accept-early-plugins
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '--accept-early-plugins '
+      raw:
+        DisplayName: Accept Early Plugins
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server will accept early plugins. Note that loading early plugins is unsupported and may cause
+          stability issues
+        Keywords: plugins,early,accept-early-plugins
+        FieldName: accept-early-plugins
+        InputType: checkbox
+        ParamFieldName: accept-early-plugins
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '--accept-early-plugins '
+    - key: allow-op
+      label: Allow Op Command
+      category: Hytale
+      subcategory: Server
+      description: >-
+        If set, any player will be allowed to use the '/op' command to make themselves or another player an operator on
+        the server
+      keywords: op,allow-op,operator
+      input_type: checkbox
+      param_field_name: allow-op
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '--allow-op '
+      raw:
+        DisplayName: Allow Op Command
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, any player will be allowed to use the '/op' command to make themselves or another player an operator
+          on the server
+        Keywords: op,allow-op,operator
+        FieldName: allow-op
+        InputType: checkbox
+        ParamFieldName: allow-op
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '--allow-op '
+    - key: auth-mode
+      label: Authentication Mode
+      category: Hytale
+      subcategory: Server
+      description: Sets the server's authentication mode. 'Offline' mode allows players to connect without authentication
+      keywords: auth,authentication,authenticated,offline,auth-mode
+      input_type: enum
+      param_field_name: auth-mode
+      default: authenticated
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        authenticated: Authenticated (default)
+        offline: Offline
+        insecure: Insecure
+      raw:
+        DisplayName: Authentication Mode
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server's authentication mode. 'Offline' mode allows players to connect without authentication
+        Keywords: auth,authentication,authenticated,offline,auth-mode
+        FieldName: auth-mode
+        InputType: enum
+        ParamFieldName: auth-mode
+        IncludeInCommandLine: true
+        DefaultValue: authenticated
+        EnumValues:
+          authenticated: Authenticated (default)
+          offline: Offline
+          insecure: Insecure
+    - key: backup
+      label: Enable Automatic Backups
+      category: Hytale
+      subcategory: Server
+      description: >-
+        If set, the server's automatic backups system will be enabled. Backups will be stored in the directory set under
+        Automatic Backup Directory. This is separate from AMP's own backup system, which uses the 'Backups' directory by
+        default
+      keywords: backup,automatic,enable
+      input_type: checkbox
+      param_field_name: backup
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '--backup '
+      raw:
+        DisplayName: Enable Automatic Backups
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server's automatic backups system will be enabled. Backups will be stored in the directory set
+          under Automatic Backup Directory. This is separate from AMP's own backup system, which uses the 'Backups'
+          directory by default
+        Keywords: backup,automatic,enable
+        FieldName: backup
+        InputType: checkbox
+        ParamFieldName: backup
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '--backup '
+    - key: backup-dir
+      label: Automatic Backup Directory
+      category: Hytale
+      subcategory: Server
+      description: >-
+        Sets the directory where the server's automatic backups will be stored. Specify either an absolute path or a
+        path relative to the Server directory
+      keywords: backup,directory,automatic,backup-dir
+      input_type: text
+      param_field_name: backup-dir
+      default: ./autobackups
+      placeholder: ./autobackups
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Automatic Backup Directory
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the directory where the server's automatic backups will be stored. Specify either an absolute path or a
+          path relative to the Server directory
+        Keywords: backup,directory,automatic,backup-dir
+        FieldName: backup-dir
+        InputType: text
+        ParamFieldName: backup-dir
+        DefaultValue: ./autobackups
+        Placeholder: ./autobackups
+        Required: true
+        EnumValues: {}
+    - key: backup-frequency
+      label: Automatic Backup Frequency
+      category: Hytale
+      subcategory: Server
+      description: Sets the backup interval for the server's automatic backup system, if enabled
+      keywords: backup,frequency,backup-frequency
+      input_type: number
+      param_field_name: backup-frequency
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 1
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Automatic Backup Frequency
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the backup interval for the server's automatic backup system, if enabled
+        Keywords: backup,frequency,backup-frequency
+        FieldName: backup-frequency
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: backup-frequency
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: minutes
+        EnumValues: {}
+    - key: backup-max-count
+      label: Maximum Automatic Backup Count
+      category: Hytale
+      subcategory: Server
+      description: >-
+        Sets the maximum number of backups to keep when automatic backups are enabled. Older backups will be deleted
+        when this limit is reached
+      keywords: backup,maximum,count,backup-max-count
+      input_type: number
+      param_field_name: backup-max-count
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      suffix: backups
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Automatic Backup Count
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of backups to keep when automatic backups are enabled. Older backups will be deleted
+          when this limit is reached
+        Keywords: backup,maximum,count,backup-max-count
+        FieldName: backup-max-count
+        InputType: number
+        ParamFieldName: backup-max-count
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: backups
+        EnumValues: {}
+    - key: LocalCompressionEnabled
+      label: Enable Local Compression
+      category: Hytale
+      subcategory: Server
+      description: If set, local network compression will be enabled
+      keywords: compression,network,local,LocalCompressionEnabled
+      input_type: checkbox
+      param_field_name: $.LocalCompressionEnabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Local Compression
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, local network compression will be enabled
+        Keywords: compression,network,local,LocalCompressionEnabled
+        FieldName: LocalCompressionEnabled
+        InputType: checkbox
+        ParamFieldName: $.LocalCompressionEnabled
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: disable-sentry
+      label: Disable Sentry Crash Reporting
+      category: Hytale
+      subcategory: Server
+      description: >-
+        If set, the server's Sentry crash reporting will be disabled. This should be set during plugin development to
+        avoid excessive crash reporting
+      keywords: sentry,crash,reporting,disable-sentry
+      input_type: checkbox
+      param_field_name: disable-sentry
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '--disable-sentry '
+      raw:
+        DisplayName: Disable Sentry Crash Reporting
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server's Sentry crash reporting will be disabled. This should be set during plugin development to
+          avoid excessive crash reporting
+        Keywords: sentry,crash,reporting,disable-sentry
+        FieldName: disable-sentry
+        InputType: checkbox
+        ParamFieldName: disable-sentry
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '--disable-sentry '
+    - key: CustomArgs
+      label: Custom Command Line Arguments
+      category: Hytale
+      subcategory: Server
+      description: >-
+        Specifies any command line arguments to pass to the server (NOT arguments to run Java wth). Arguments must be
+        preceded with --
+      keywords: command,line,arguments,jar,CustomArgs
+      input_type: text
+      param_field_name: CustomArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Command Line Arguments
+        Category: Hytale:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies any command line arguments to pass to the server (NOT arguments to run Java wth). Arguments must be
+          preceded with --
+        Keywords: command,line,arguments,jar,CustomArgs
+        FieldName: CustomArgs
+        InputType: text
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: JavaVersion
+      label: Java Version
+      category: Hytale
+      subcategory: Java and Memory
+      description: >-
+        Sets the Java version to run the server with. Minimum Java 25 required. The version must be accessible to AMP.
+        For "Specific system version", also set Specific System Java Version. For "Specific instance version", also set
+        Specific Instance Java Version. Ensure the version is compatible with the server
+      keywords: java,version,JavaVersion
+      input_type: enum
+      param_field_name: JavaVersion
+      default: '{{Windows:java\bin\java.exe}}{{Linux:java/bin/java}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}': System default
+        '{{SpecificJavaVersion}}': Specific system version
+        '{{Windows:java\bin\java.exe}}{{Linux:java/bin/java}}': Specific instance version
+      raw:
+        DisplayName: Java Version
+        Category: Hytale:stadia_controller
+        Subcategory: Java and Memory:code:2
+        Description: >-
+          Sets the Java version to run the server with. Minimum Java 25 required. The version must be accessible to AMP.
+          For "Specific system version", also set Specific System Java Version. For "Specific instance version", also
+          set Specific Instance Java Version. Ensure the version is compatible with the server
+        Keywords: java,version,JavaVersion
+        FieldName: JavaVersion
+        InputType: enum
+        ParamFieldName: JavaVersion
+        DefaultValue: '{{Windows:java\bin\java.exe}}{{Linux:java/bin/java}}'
+        EnumValues:
+          '{{Windows:$PATH\java.exe}}{{Linux:/usr/bin/java}}': System default
+          '{{SpecificJavaVersion}}': Specific system version
+          '{{Windows:java\bin\java.exe}}{{Linux:java/bin/java}}': Specific instance version
+    - key: SpecificJavaVersion
+      label: Specific System Java Version
+      category: Hytale
+      subcategory: Java and Memory
+      description: >-
+        Sets the full path to the Java executable on the system, if "Specific system version" is selected under Java
+        Version
+      keywords: java,version,system,SpecificJavaVersion
+      input_type: text
+      param_field_name: SpecificJavaVersion
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Specific System Java Version
+        Category: Hytale:stadia_controller
+        Subcategory: Java and Memory:code:2
+        Description: >-
+          Sets the full path to the Java executable on the system, if "Specific system version" is selected under Java
+          Version
+        Keywords: java,version,system,SpecificJavaVersion
+        FieldName: SpecificJavaVersion
+        InputType: text
+        ParamFieldName: SpecificJavaVersion
+        DefaultValue: ''
+        EnumValues: {}
+    - key: SpecificInstanceJavaVersion
+      label: Specific Instance Java Version
+      category: Hytale
+      subcategory: Java and Memory
+      description: >-
+        Sets the Eclipse Temurin Java version to install in the instance to run the server with, if "Specific instance
+        version" is selected under Java Version. Useful for using a Java version that is not installed on the system or
+        in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+      keywords: java,version,instance,SpecificInstanceJavaVersion
+      input_type: enum
+      param_field_name: SpecificInstanceJavaVersion
+      default: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '25': 25 - LTS (default)
+      raw:
+        DisplayName: Specific Instance Java Version
+        Category: Hytale:stadia_controller
+        Subcategory: Java and Memory:code:2
+        Description: >-
+          Sets the Eclipse Temurin Java version to install in the instance to run the server with, if "Specific instance
+          version" is selected under Java Version. Useful for using a Java version that is not installed on the system
+          or in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+        Keywords: java,version,instance,SpecificInstanceJavaVersion
+        FieldName: SpecificInstanceJavaVersion
+        InputType: enum
+        ParamFieldName: SpecificInstanceJavaVersion
+        IncludeInCommandLine: false
+        DefaultValue: '25'
+        EnumValues:
+          '25': 25 - LTS (default)
+    - key: MaxMemory
+      label: Maximum Memory
+      category: Hytale
+      subcategory: Java and Memory
+      description: Sets Java's maximum heap size
+      keywords: maximum,memory,heap
+      input_type: number
+      param_field_name: MaxMemory
+      default: '4096'
+      placeholder: '4096'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: MB
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Memory
+        Category: Hytale:stadia_controller
+        Subcategory: Java and Memory:code:2
+        Description: Sets Java's maximum heap size
+        Keywords: maximum,memory,heap
+        FieldName: MaxMemory
+        InputType: number
+        ParamFieldName: MaxMemory
+        IncludeInCommandLine: false
+        DefaultValue: '4096'
+        Placeholder: '4096'
+        Suffix: MB
+        EnumValues: {}
+    - key: MinMemory
+      label: Minimum Memory
+      category: Hytale
+      subcategory: Java and Memory
+      description: Sets Java's minimum heap size
+      keywords: minimum,memory,heap
+      input_type: number
+      param_field_name: MinMemory
+      default: '512'
+      placeholder: '512'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: MB
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Memory
+        Category: Hytale:stadia_controller
+        Subcategory: Java and Memory:code:2
+        Description: Sets Java's minimum heap size
+        Keywords: minimum,memory,heap
+        FieldName: MinMemory
+        InputType: number
+        ParamFieldName: MinMemory
+        IncludeInCommandLine: false
+        DefaultValue: '512'
+        Placeholder: '512'
+        Suffix: MB
+        EnumValues: {}
+    - key: EnableAOTCache
+      label: Enable AOT Cache
+      category: Hytale
+      subcategory: Java and Memory
+      description: >-
+        If set, enables the pre-trained AOT cache (HytaleServer.aot) that improves boot times by skipping JIT warmup.
+        See [JEP-514](https://openjdk.org/jeps/514)
+      keywords: aot,cache,boot,time,jit,warmup
+      input_type: checkbox
+      param_field_name: EnableAOTCache
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-XX:AOTCache=HytaleServer.aot '
+      raw:
+        DisplayName: Enable AOT Cache
+        Category: Hytale:stadia_controller
+        Subcategory: Java and Memory:code:2
+        Description: >-
+          If set, enables the pre-trained AOT cache (HytaleServer.aot) that improves boot times by skipping JIT warmup.
+          See [JEP-514](https://openjdk.org/jeps/514)
+        Keywords: aot,cache,boot,time,jit,warmup
+        FieldName: EnableAOTCache
+        InputType: checkbox
+        ParamFieldName: EnableAOTCache
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-XX:AOTCache=HytaleServer.aot '
+    - key: JavaArgs
+      label: Additional Java Arguments
+      category: Hytale
+      subcategory: Java and Memory
+      description: >-
+        Specifies any [command line arguments](https://www.baeldung.com/jvm-parameters) to run Java with that are not
+        otherwise set by AMP (NOT options passed to the server jar)
+      keywords: command,line,arguments,args,java,JavaArgs
+      input_type: text
+      param_field_name: JavaArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Java Arguments
+        Category: Hytale:stadia_controller
+        Subcategory: Java and Memory:code:2
+        Description: >-
+          Specifies any [command line arguments](https://www.baeldung.com/jvm-parameters) to run Java with that are not
+          otherwise set by AMP (NOT options passed to the server jar)
+        Keywords: command,line,arguments,args,java,JavaArgs
+        FieldName: JavaArgs
+        InputType: text
+        ParamFieldName: JavaArgs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerBuildChannel
+      label: Server Build Channel
+      category: Updates
+      subcategory: Server Updates
+      description: Sets the build channel from which to download the server. Update the server after changing this setting
+      keywords: server,version,build,channel,patchline,release,pre-release
+      input_type: enum
+      param_field_name: ServerBuildChannel
+      default: release
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        release: Release channel (default)
+        pre-release: Pre-release channel
+      raw:
+        DisplayName: Server Build Channel
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: Sets the build channel from which to download the server. Update the server after changing this setting
+        Keywords: server,version,build,channel,patchline,release,pre-release
+        FieldName: ServerBuildChannel
+        InputType: enum
+        ParamFieldName: ServerBuildChannel
+        DefaultValue: release
+        EnumValues:
+          release: Release channel (default)
+          pre-release: Pre-release channel
+    - key: disable-server-download
+      label: Disable Server Download
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        If set, the server files will not be automatically downloaded when the server is updated. The server files
+        (Assets.zip and the Server directory) must be manually transferred from the Hytale launcher files to the
+        'hytale' directory in the instance datastore (the base directory in the instance's File Manager or SFTP)
+      keywords: disable,server,download,manual,disable-server-download
+      input_type: checkbox
+      param_field_name: disable-server-download
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Disable Server Download
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          If set, the server files will not be automatically downloaded when the server is updated. The server files
+          (Assets.zip and the Server directory) must be manually transferred from the Hytale launcher files to the
+          'hytale' directory in the instance datastore (the base directory in the instance's File Manager or SFTP)
+        Keywords: disable,server,download,manual,disable-server-download
+        FieldName: disable-server-download
+        InputType: checkbox
+        ParamFieldName: disable-server-download
+        ExcludeFromImport: true
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: performance-saver-install
+      label: Install Performance Saver Plugin
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        If set, the [Nitrado Performance Saver plugin](https://github.com/nitrado/hytale-plugin-performance-saver) will
+        be installed when the server is updated. Configure the plugin in 'mods/Nitrado_PerformanceSaver/config.json'
+        after installation
+      keywords: install,performance,saver,plugin,performance-saver-install
+      input_type: checkbox
+      param_field_name: performance-saver-install
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Install Performance Saver Plugin
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          If set, the [Nitrado Performance Saver plugin](https://github.com/nitrado/hytale-plugin-performance-saver)
+          will be installed when the server is updated. Configure the plugin in
+          'mods/Nitrado_PerformanceSaver/config.json' after installation
+        Keywords: install,performance,saver,plugin,performance-saver-install
+        FieldName: performance-saver-install
+        InputType: checkbox
+        ParamFieldName: performance-saver-install
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: Server/config.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Server/config.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: session-token
+    label: GSP Server Session Token
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: identity-token
+    label: GSP Server Identity Token
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: StartupJar
+    label: Server Jar
+    default: HytaleServer.jar
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered Hytale Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MOTD
+    label: Server MOTD
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Defaults.World
+    label: World Name
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Defaults.GameMode
+    label: Game Mode
+    default: Adventure
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxViewRadius
+    label: Maximum View Radius
+    default: '12'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: accept-early-plugins
+    label: Accept Early Plugins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow-op
+    label: Allow Op Command
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: auth-mode
+    label: Authentication Mode
+    default: authenticated
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: backup
+    label: Enable Automatic Backups
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: backup-dir
+    label: Automatic Backup Directory
+    default: ./autobackups
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: backup-frequency
+    label: Automatic Backup Frequency
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: backup-max-count
+    label: Maximum Automatic Backup Count
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LocalCompressionEnabled
+    label: Enable Local Compression
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disable-sentry
+    label: Disable Sentry Crash Reporting
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Custom Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JavaVersion
+    label: Java Version
+    default: '{{Windows:java\bin\java.exe}}{{Linux:java/bin/java}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificJavaVersion
+    label: Specific System Java Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificInstanceJavaVersion
+    label: Specific Instance Java Version
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxMemory
+    label: Maximum Memory
+    default: '4096'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MinMemory
+    label: Minimum Memory
+    default: '512'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableAOTCache
+    label: Enable AOT Cache
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JavaArgs
+    label: Additional Java Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBuildChannel
+    label: Server Build Channel
+    default: release
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disable-server-download
+    label: Disable Server Download
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: performance-saver-install
+    label: Install Performance Saver Plugin
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

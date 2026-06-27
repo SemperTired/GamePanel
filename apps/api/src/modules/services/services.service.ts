@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { PortProtocol, RuntimeTarget, createServiceSchema } from "@aetherpanel/shared";
 import { createDockerRuntime } from "@aetherpanel/runtime-docker";
-import { buildInstallPlan, prepareServiceFiles, refreshInstallCache } from "@aetherpanel/templates";
+import { buildInstallPlan, prepareServiceFiles, refreshInstallCache, writeManagedConfigFiles } from "@aetherpanel/templates";
 import { DataStore, ServiceRecord } from "../data.module.js";
 import { TemplatesService } from "../templates/templates.service.js";
 import { InfrastructureService } from "../infrastructure/infrastructure.service.js";
@@ -129,6 +129,7 @@ export class ServicesService {
       const installPlan = buildInstallPlan(template, service.id);
       this.assertInstallReadiness(installPlan, service.startup_variables || {});
       await prepareServiceFiles(installPlan, { runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true", variables: service.startup_variables || {} });
+      await writeManagedConfigFiles(installPlan, template, service.startup_variables || {});
       const runtime = createDockerRuntime(this.runtimeTargetForService(service));
       const runtimeId = await runtime.create({
         serviceId: service.id,

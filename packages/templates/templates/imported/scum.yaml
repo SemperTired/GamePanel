@@ -5,13 +5,18 @@ category: Imported
 summary: SCUM Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '3792580'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: .proton/proton
+  startup: >-
+    .proton/proton {PlatformArgs} SCUM -Port={ServerPort} -QueryPort={QueryPort} -MaxPlayers={MaxUsers}
+    {nobattleye}{FormattedArgs} {CustomArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,386 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: serverport
+    name: Server Port
+    default: 7777
+    protocol: udp
+    required: true
+  - key: clientport
+    name: Client Port
+    default: 7779
+    protocol: tcp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: SCUM/Saved/Config/WindowsServer/ServerSettings.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: ServerSettings
+      label: Server Settings
+      category: SCUM
+      subcategory: Server
+      description: >-
+        Settings for the server can be configured in 'SCUM/Saved/Config/WindowsServer/ServerSettings.ini', or in-game by
+        admins listed under Admin Users For Server Settings
+      keywords: ''
+      input_type: hidden
+      param_field_name: ServerSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Settings
+        Category: SCUM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Settings for the server can be configured in 'SCUM/Saved/Config/WindowsServer/ServerSettings.ini', or in-game
+          by admins listed under Admin Users For Server Settings
+        Keywords: ''
+        FieldName: ServerSettings
+        InputType: hidden
+        ParamFieldName: ServerSettings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: SCUM
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,clients,limit,maxplayers,slots
+      input_type: number
+      param_field_name: General.scum.MaxPlayers
+      default: '64'
+      placeholder: '64'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 128
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: SCUM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,clients,limit,maxplayers,slots
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '128'
+        ParamFieldName: General.scum.MaxPlayers
+        DefaultValue: '64'
+        Placeholder: '64'
+        Suffix: players
+        EnumValues: {}
+    - key: ExclusiveUsers
+      label: Exclusive Join List
+      category: SCUM
+      subcategory: Server
+      description: >-
+        List of [Steam64 IDs](https://steamid.io/) of players who are allowed to join the server. If any IDs are set,
+        only those players will be able to connect, turning the server into a 'whitelist' server
+      keywords: exclusive,users,join,list,whitelist,ExclusiveUsers
+      input_type: list
+      param_field_name: ExclusiveUsers
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./scum/3792580/SCUM/Saved/Config/WindowsServer/ExclusiveUsers.ini
+      raw:
+        DisplayName: Exclusive Join List
+        Category: SCUM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          List of [Steam64 IDs](https://steamid.io/) of players who are allowed to join the server. If any IDs are set,
+          only those players will be able to connect, turning the server into a 'whitelist' server
+        Keywords: exclusive,users,join,list,whitelist,ExclusiveUsers
+        FieldName: ExclusiveUsers
+        InputType: list
+        ParamFieldName: ExclusiveUsers
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Special: listfile:./scum/3792580/SCUM/Saved/Config/WindowsServer/ExclusiveUsers.ini
+        EnumValues: {}
+    - key: WhitelistedUsers
+      label: Reserved List
+      category: SCUM
+      subcategory: Server
+      description: >-
+        List of [Steam64 IDs](https://steamid.io/) of players who are allowed to join the server even if it is otherwise
+        full. Commonly used as a VIP list. If the server is full, a random player will be kicked from the server to
+        allow a reserved player to join
+      keywords: reserved,users,WhitelistedUsers
+      input_type: list
+      param_field_name: WhitelistedUsers
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./scum/3792580/SCUM/Saved/Config/WindowsServer/WhitelistedUsers.ini
+      raw:
+        DisplayName: Reserved List
+        Category: SCUM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          List of [Steam64 IDs](https://steamid.io/) of players who are allowed to join the server even if it is
+          otherwise full. Commonly used as a VIP list. If the server is full, a random player will be kicked from the
+          server to allow a reserved player to join
+        Keywords: reserved,users,WhitelistedUsers
+        FieldName: WhitelistedUsers
+        InputType: list
+        ParamFieldName: WhitelistedUsers
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Special: listfile:./scum/3792580/SCUM/Saved/Config/WindowsServer/WhitelistedUsers.ini
+        EnumValues: {}
+    - key: AdminUsers
+      label: Admin Users
+      category: SCUM
+      subcategory: Server
+      description: >-
+        List of [Steam64 IDs](https://steamid.io/) for users who will be allowed to use admin commands in-game and (if
+        desired) their specific permissions. Specific permissions must be specified in square brackets immediately after
+        the Steam64 ID (no spaces), such as: 3456789098765432[SetGodMode,RestartServer]
+      keywords: admin,users,permissions,AdminUsers
+      input_type: list
+      param_field_name: AdminUsers
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./scum/3792580/SCUM/Saved/Config/WindowsServer/AdminUsers.ini
+      raw:
+        DisplayName: Admin Users
+        Category: SCUM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          List of [Steam64 IDs](https://steamid.io/) for users who will be allowed to use admin commands in-game and (if
+          desired) their specific permissions. Specific permissions must be specified in square brackets immediately
+          after the Steam64 ID (no spaces), such as: 3456789098765432[SetGodMode,RestartServer]
+        Keywords: admin,users,permissions,AdminUsers
+        FieldName: AdminUsers
+        InputType: list
+        ParamFieldName: AdminUsers
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Special: listfile:./scum/3792580/SCUM/Saved/Config/WindowsServer/AdminUsers.ini
+        EnumValues: {}
+    - key: ServerSettingsAdminUsers
+      label: Admin Users For Server Settings
+      category: SCUM
+      subcategory: Server
+      description: List of [Steam64 IDs](https://steamid.io/) for users who will be allowed to change server settings in-game
+      keywords: admin,users,server,settings,ServerSettingsAdminUsers
+      input_type: list
+      param_field_name: ServerSettingsAdminUsers
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./scum/3792580/SCUM/Saved/Config/WindowsServer/ServerSettingsAdminUsers.ini
+      raw:
+        DisplayName: Admin Users For Server Settings
+        Category: SCUM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: List of [Steam64 IDs](https://steamid.io/) for users who will be allowed to change server settings in-game
+        Keywords: admin,users,server,settings,ServerSettingsAdminUsers
+        FieldName: ServerSettingsAdminUsers
+        InputType: list
+        ParamFieldName: ServerSettingsAdminUsers
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Special: listfile:./scum/3792580/SCUM/Saved/Config/WindowsServer/ServerSettingsAdminUsers.ini
+        EnumValues: {}
+    - key: nobattleye
+      label: Disable BattlEye
+      category: SCUM
+      subcategory: Server
+      description: If set, BattlEye anti-cheat will be disabled on the server
+      keywords: battleye,anti,cheat,nobattleye
+      input_type: checkbox
+      param_field_name: nobattleye
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-nobattleye '
+      raw:
+        DisplayName: Disable BattlEye
+        Category: SCUM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, BattlEye anti-cheat will be disabled on the server
+        Keywords: battleye,anti,cheat,nobattleye
+        FieldName: nobattleye
+        InputType: checkbox
+        ParamFieldName: nobattleye
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-nobattleye '
+    - key: CustomArgs
+      label: Additional Command Line Arguments
+      category: SCUM
+      subcategory: Server
+      description: >-
+        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AMP.
+        Use with care
+      keywords: custom,server,arguments,parameters
+      input_type: text
+      param_field_name: CustomArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Arguments
+        Category: SCUM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by
+          AMP. Use with care
+        Keywords: custom,server,arguments,parameters
+        FieldName: CustomArgs
+        InputType: text
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: SpecificReleaseVersion
+      label: Proton GE Release Version (Linux)
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+        Empty = latest. Example: GE-Proton9-1
+      keywords: proton,release,version
+      input_type: text
+      param_field_name: SpecificReleaseVersion
+      default: ''
+      placeholder: GE-Proton9-1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Proton GE Release Version (Linux)
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+          Empty = latest. Example: GE-Proton9-1
+        Keywords: proton,release,version
+        FieldName: SpecificReleaseVersion
+        InputType: text
+        ParamFieldName: SpecificReleaseVersion
+        DefaultValue: ''
+        Placeholder: GE-Proton9-1
+        EnumValues: {}
+  files:
+    - path: SCUM/Saved/Config/WindowsServer/ServerSettings.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: SCUM/Saved/Config/WindowsServer/ServerSettings.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ExclusiveUsers
+    label: Exclusive Join List
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WhitelistedUsers
+    label: Reserved List
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AdminUsers
+    label: Admin Users
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerSettingsAdminUsers
+    label: Admin Users For Server Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: nobattleye
+    label: Disable BattlEye
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Additional Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificReleaseVersion
+    label: Proton GE Release Version (Linux)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '513710'
+  collection_support: true
 backup:
   include:
     - /data

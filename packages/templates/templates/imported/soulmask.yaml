@@ -5,13 +5,20 @@ category: Imported
 summary: Soulmask Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '3017310'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/WS/Binaries/Linux/WSServer-Linux-Shipping
+  startup: >-
+    server/WS/Binaries/Linux/WSServer-Linux-Shipping WS {Map}{CustomGameMode} -server -SteamServerName="{ServerName}"
+    -Port={ServerPort} -QueryPort={QueryPort} -EchoPort={EchoPort} -RconPort={RCONPort} -RconAddr={ApplicationIPBinding}
+    -UTF8Output -MultiHome={ApplicationIPBinding} -forcepassthrough {PvEPvPMode}{initbackup}{FormattedArgs}
+    -mod=\"{mod}\" {ClusterMode}{CustomParameters} {PlatformArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +26,730 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: serverport
+    name: Server Port
+    default: 8777
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+  - key: echoport
+    name: Telnet Port
+    default: 18888
+    protocol: tcp
+    required: true
+  - key: rconport
+    name: RCON Port
+    default: 19000
+    protocol: tcp
+    required: true
+  - key: clusterport
+    name: Cluster Broadcast Port
+    default: 20000
+    protocol: tcp
+    required: true
+config_files:
+  - path: soulmaskconfig.json
+    type: json
+    editable: true
+  - path: soulmaskmetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: ServerName
+      label: Server Name
+      category: Soulmask
+      subcategory: Server
+      description: Sets the name of the server that is shown in the server browser
+      keywords: server,name,ServerName
+      input_type: text
+      param_field_name: ServerName
+      default: AMP Powered Soulmask Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that is shown in the server browser
+        Keywords: server,name,ServerName
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: ServerName
+        DefaultValue: AMP Powered Soulmask Server
+        EnumValues: {}
+    - key: PSW
+      label: Server Password
+      category: Soulmask
+      subcategory: Server
+      description: Sets the password to join the server. Default is no password
+      keywords: server,password,PSW
+      input_type: password
+      param_field_name: PSW
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server. Default is no password
+        Keywords: server,password,PSW
+        FieldName: PSW
+        InputType: password
+        ParamFieldName: PSW
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: adminpsw
+      label: Admin Password
+      category: Soulmask
+      subcategory: Server
+      description: Sets the administrator password for the [GM panel](https://soulmask.fandom.com/wiki/Private_Server)
+      keywords: admin,administrator,password,panel,adminpsw
+      input_type: password
+      param_field_name: adminpsw
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the administrator password for the [GM panel](https://soulmask.fandom.com/wiki/Private_Server)
+        Keywords: admin,administrator,password,panel,adminpsw
+        FieldName: adminpsw
+        InputType: password
+        ParamFieldName: adminpsw
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: RconPSW
+      label: RCON Password
+      category: Soulmask
+      subcategory: Server
+      description: Sets the password to connect to RCON. Default is no password, meaning RCON is disabled
+      keywords: rcon,password,RconPSW
+      input_type: password
+      param_field_name: RconPSW
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to connect to RCON. Default is no password, meaning RCON is disabled
+        Keywords: rcon,password,RconPSW
+        FieldName: RconPSW
+        InputType: password
+        ParamFieldName: RconPSW
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Map
+      label: Initial Game Scene/Map
+      category: Soulmask
+      subcategory: Server
+      description: Sets the game scene/map to start the server with
+      keywords: game,scene,map
+      input_type: enum
+      param_field_name: Map
+      default: Level01_Main
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Level01_Main: Cloud Mist Forest (default)
+        DLC_Level01_Main: Shifting Sands
+      raw:
+        DisplayName: Initial Game Scene/Map
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the game scene/map to start the server with
+        Keywords: game,scene,map
+        FieldName: Map
+        InputType: enum
+        ParamFieldName: Map
+        DefaultValue: Level01_Main
+        EnumValues:
+          Level01_Main: Cloud Mist Forest (default)
+          DLC_Level01_Main: Shifting Sands
+    - key: CustomGameMode
+      label: Custom Game Mode
+      category: Soulmask
+      subcategory: Server
+      description: Sets the game mode to start the server with
+      keywords: game,mode,custom,survival,tribe,warrior,pvp,customgamemode
+      input_type: enum
+      param_field_name: CustomGameMode
+      default: '?CustomGameMode=0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '?CustomGameMode=0': Survival (default)
+      raw:
+        DisplayName: Custom Game Mode
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the game mode to start the server with
+        Keywords: game,mode,custom,survival,tribe,warrior,pvp,customgamemode
+        FieldName: CustomGameMode
+        InputType: enum
+        ParamFieldName: CustomGameMode
+        DefaultValue: '?CustomGameMode=0'
+        EnumValues:
+          '?CustomGameMode=0': Survival (default)
+    - key: $MaxUsers
+      label: Player Limit
+      category: Soulmask
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,slots,limit,maxplayers
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,slots,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: MaxPlayers
+        IncludeInCommandLine: true
+        DefaultValue: '50'
+        Placeholder: '50'
+        Suffix: players
+        EnumValues: {}
+    - key: PvEPvPMode
+      label: PvE / PvP Mode
+      category: Soulmask
+      subcategory: Server
+      description: Sets whether to run the server in PvE or PvP mode
+      keywords: pvp,pve
+      input_type: enum
+      param_field_name: PvEPvPMode
+      default: '-pve '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '-pve ': PvE
+        '-pvp ': PvP
+      raw:
+        DisplayName: PvE / PvP Mode
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether to run the server in PvE or PvP mode
+        Keywords: pvp,pve
+        FieldName: PvEPvPMode
+        InputType: enum
+        ParamFieldName: PvEPvPMode
+        DefaultValue: '-pve '
+        EnumValues:
+          '-pve ': PvE
+          '-pvp ': PvP
+    - key: mod
+      label: Mod List
+      category: Soulmask
+      subcategory: Server
+      description: >-
+        Comma separated list of [Steam Workshop IDs](https://steamcommunity.com/app/2646460/workshop/) of mods to
+        install and load when the server is started. ONE LINE ONLY!
+      keywords: mod,mods,workshop,steam,ids
+      input_type: Textarea
+      param_field_name: mod
+      default: ''
+      placeholder: 3324057706,3330908154
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Mod List
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma separated list of [Steam Workshop IDs](https://steamcommunity.com/app/2646460/workshop/) of mods to
+          install and load when the server is started. ONE LINE ONLY!
+        Keywords: mod,mods,workshop,steam,ids
+        FieldName: mod
+        InputType: Textarea
+        ParamFieldName: mod
+        DefaultValue: ''
+        Placeholder: 3324057706,3330908154
+        EnumValues: {}
+    - key: backup
+      label: Database Write Interval
+      category: Soulmask
+      subcategory: Server
+      description: Sets the interval for writing the game database to disk
+      keywords: backup,database,write,interval
+      input_type: number
+      param_field_name: backup
+      default: '900'
+      placeholder: '900'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Database Write Interval
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the interval for writing the game database to disk
+        Keywords: backup,database,write,interval
+        FieldName: backup
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: backup
+        IncludeInCommandLine: true
+        DefaultValue: '900'
+        Placeholder: '900'
+        Suffix: seconds
+        EnumValues: {}
+    - key: saving
+      label: Game Objects Write Interval
+      category: Soulmask
+      subcategory: Server
+      description: Sets the interval for writing game objects to the database
+      keywords: database,write,saving,interval,game,objects
+      input_type: number
+      param_field_name: saving
+      default: '600'
+      placeholder: '600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Game Objects Write Interval
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the interval for writing game objects to the database
+        Keywords: database,write,saving,interval,game,objects
+        FieldName: saving
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: saving
+        IncludeInCommandLine: true
+        DefaultValue: '600'
+        Placeholder: '600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: initbackup
+      label: Backup World Save On Start
+      category: Soulmask
+      subcategory: Server
+      description: If set, game saves will be backed up when the server starts
+      keywords: world,save,game,backup,start,initbackup
+      input_type: checkbox
+      param_field_name: initbackup
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-initbackup '
+      raw:
+        DisplayName: Backup World Save On Start
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, game saves will be backed up when the server starts
+        Keywords: world,save,game,backup,start,initbackup
+        FieldName: initbackup
+        InputType: checkbox
+        ParamFieldName: initbackup
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-initbackup '
+    - key: backupinterval
+      label: World Save Backup Interval
+      category: Soulmask
+      subcategory: Server
+      description: Sets the interval for automatically backing up the world save
+      keywords: backup,interval,world,save,backupinterval
+      input_type: number
+      param_field_name: backupinterval
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: World Save Backup Interval
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the interval for automatically backing up the world save
+        Keywords: backup,interval,world,save,backupinterval
+        FieldName: backupinterval
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: backupinterval
+        IncludeInCommandLine: true
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: minutes
+        EnumValues: {}
+    - key: CustomParameters
+      label: Additional Command Line Parameters
+      category: Soulmask
+      subcategory: Server
+      description: >-
+        Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by AMP.
+        Use with care
+      keywords: custom,server,arguments,variables,cvars,convars,parameters
+      input_type: text
+      param_field_name: CustomParameters
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Parameters
+        Category: Soulmask:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by
+          AMP. Use with care
+        Keywords: custom,server,arguments,variables,cvars,convars,parameters
+        FieldName: CustomParameters
+        InputType: text
+        ParamFieldName: CustomParameters
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ClusterMode
+      label: Cluster Mode
+      category: Soulmask
+      subcategory: Clusters
+      description: >-
+        Sets whether and in what mode the server is part of a cluster, allowing cross-server linkage. Each cluster
+        server must have the same Server Password. Cluster character data is stored in 'Saved/Accounts/account.db' on
+        the main cluster server
+      keywords: cluster,cross,transfer,linkage,mode
+      input_type: enum
+      param_field_name: ClusterMode
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Standalone - no cluster (default)
+        '-mainserverport={{$ClusterPort}} -serverid={{serverid}} ': Main cluster server
+        '-clientserverconnect={{MainServerIP}}:{{MainServerPort}} -serverid={{serverid}} ': Child cluster server
+      raw:
+        DisplayName: Cluster Mode
+        Category: Soulmask:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: >-
+          Sets whether and in what mode the server is part of a cluster, allowing cross-server linkage. Each cluster
+          server must have the same Server Password. Cluster character data is stored in 'Saved/Accounts/account.db' on
+          the main cluster server
+        Keywords: cluster,cross,transfer,linkage,mode
+        FieldName: ClusterMode
+        InputType: enum
+        ParamFieldName: ClusterMode
+        DefaultValue: ''
+        EnumValues:
+          '': Standalone - no cluster (default)
+          '-mainserverport={{$ClusterPort}} -serverid={{serverid}} ': Main cluster server
+          '-clientserverconnect={{MainServerIP}}:{{MainServerPort}} -serverid={{serverid}} ': Child cluster server
+    - key: serverid
+      label: Cluster Server ID
+      category: Soulmask
+      subcategory: Clusters
+      description: >-
+        Sets the ID of the server within a cluster. Each cluster server (main or child) must have a unique ID. Requires
+        Cluster Mode to be set to the appropriate cluster server mode
+      keywords: cluster,server,id
+      input_type: number
+      param_field_name: serverid
+      default: '{{randomdigits(1)}}'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Cluster Server ID
+        Category: Soulmask:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: >-
+          Sets the ID of the server within a cluster. Each cluster server (main or child) must have a unique ID.
+          Requires Cluster Mode to be set to the appropriate cluster server mode
+        Keywords: cluster,server,id
+        FieldName: serverid
+        InputType: number
+        ParamFieldName: serverid
+        DefaultValue: '{{randomdigits(1)}}'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: MainServerIP
+      label: Main Cluster Server Connection IP
+      category: Soulmask
+      subcategory: Clusters
+      description: >-
+        Sets the IP address of the main cluster server to connect to. Only used for child cluster servers - requires
+        Cluster Mode to be set to 'Child cluster server'
+      keywords: cluster,main,server,ip
+      input_type: text
+      param_field_name: MainServerIP
+      default: 127.0.0.1
+      placeholder: 127.0.0.1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Main Cluster Server Connection IP
+        Category: Soulmask:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: >-
+          Sets the IP address of the main cluster server to connect to. Only used for child cluster servers - requires
+          Cluster Mode to be set to 'Child cluster server'
+        Keywords: cluster,main,server,ip
+        FieldName: MainServerIP
+        InputType: text
+        ParamFieldName: MainServerIP
+        DefaultValue: 127.0.0.1
+        Placeholder: 127.0.0.1
+        EnumValues: {}
+    - key: MainServerPort
+      label: Main Cluster Server Connection Port
+      category: Soulmask
+      subcategory: Clusters
+      description: >-
+        Sets the broadcast port of the main cluster server to connect to (this is the Cluster Broadcast Port on the main
+        cluster server). Only used for child cluster servers - requires Cluster Mode to be set to 'Child cluster server'
+      keywords: cluster,main,server,port
+      input_type: number
+      param_field_name: MainServerPort
+      default: '20000'
+      placeholder: '20000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 65535
+      enum_values: {}
+      raw:
+        DisplayName: Main Cluster Server Connection Port
+        Category: Soulmask:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: >-
+          Sets the broadcast port of the main cluster server to connect to (this is the Cluster Broadcast Port on the
+          main cluster server). Only used for child cluster servers - requires Cluster Mode to be set to 'Child cluster
+          server'
+        Keywords: cluster,main,server,port
+        FieldName: MainServerPort
+        InputType: number
+        MinValue: '1'
+        MaxValue: '65535'
+        ParamFieldName: MainServerPort
+        DefaultValue: '20000'
+        Placeholder: '20000'
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered Soulmask Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PSW
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: adminpsw
+    label: Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: RconPSW
+    label: RCON Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Map
+    label: Initial Game Scene/Map
+    default: Level01_Main
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomGameMode
+    label: Custom Game Mode
+    default: '?CustomGameMode=0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PvEPvPMode
+    label: PvE / PvP Mode
+    default: '-pve '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mod
+    label: Mod List
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: backup
+    label: Database Write Interval
+    default: '900'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: saving
+    label: Game Objects Write Interval
+    default: '600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: initbackup
+    label: Backup World Save On Start
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: backupinterval
+    label: World Save Backup Interval
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomParameters
+    label: Additional Command Line Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ClusterMode
+    label: Cluster Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverid
+    label: Cluster Server ID
+    default: '{{randomdigits(1)}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MainServerIP
+    label: Main Cluster Server Connection IP
+    default: 127.0.0.1
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MainServerPort
+    label: Main Cluster Server Connection Port
+    default: '20000'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '2646460'
+  collection_support: true
 backup:
   include:
     - /data

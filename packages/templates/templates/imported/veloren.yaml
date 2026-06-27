@@ -4,14 +4,17 @@ name: Veloren
 category: Imported
 summary: Veloren Dedicated Server
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://download.veloren.net/latest/windows/x86_64/%7B%7BReleaseVersion%7D%7D
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: veloren-server-cli
+  startup: veloren-server-cli {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +22,198 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 14004
+    protocol: tcp
     required: true
-config_files: []
+  - key: metricsport
+    name: Metrics Port
+    default: 14005
+    protocol: tcp
+    required: true
+config_files:
+  - path: userdata/server/server_config/settings.ron
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Server Port
+      category: Veloren
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: server_port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: Veloren:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: server_port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: $MetricsPort
+      label: Metrics Port
+      category: Veloren
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: metrics_port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Metrics Port
+        Category: Veloren:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $MetricsPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: metrics_port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Veloren
+      subcategory: Server
+      description: Server name visible in the server list
+      keywords: server,name
+      input_type: text
+      param_field_name: server_name
+      default: Veloren Server - Powered by AMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Veloren:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Server name visible in the server list
+        Keywords: server,name
+        FieldName: ServerName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: server_name
+        IncludeInCommandLine: false
+        DefaultValue: Veloren Server - Powered by AMP
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Veloren
+      subcategory: Server
+      description: Maximum number of players that may connect to the server
+      keywords: players,limit
+      input_type: number
+      param_field_name: max_players
+      default: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Veloren:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Maximum number of players that may connect to the server
+        Keywords: players,limit
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: max_players
+        IncludeInCommandLine: false
+        DefaultValue: '100'
+        Suffix: players
+        EnumValues: {}
+        MinValue: '1'
+    - key: ReleaseVersion
+      label: Server Release Version
+      category: Updates
+      subcategory: Server Updates
+      description: 'Sets the server release version to install. NOTE: Update the server after changing this setting!'
+      keywords: server,release,version,nightly,weekly
+      input_type: enum
+      param_field_name: ReleaseVersion
+      default: weekly
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        weekly: Weekly (default)
+        nightly: Nightly
+      raw:
+        DisplayName: Server Release Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: 'Sets the server release version to install. NOTE: Update the server after changing this setting!'
+        Keywords: server,release,version,nightly,weekly
+        FieldName: ReleaseVersion
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ReleaseVersion
+        IncludeInCommandLine: false
+        DefaultValue: weekly
+        EnumValues:
+          weekly: Weekly (default)
+          nightly: Nightly
+  files:
+    - path: userdata/server/server_config/settings.ron
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: userdata/server/server_config/settings.ron
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: veloren/userdata/server/server_config/AMP_settings.ron
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: Veloren Server - Powered by AMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ReleaseVersion
+    label: Server Release Version
+    default: weekly
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

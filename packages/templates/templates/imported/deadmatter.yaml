@@ -5,13 +5,18 @@ category: Imported
 summary: Dead Matter Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2584780'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: >-
+    /usr/bin/wine {PlatformArgs} DeadMatter -stdout -FullStdOutLogOutput -Port={GamePort} -QueryPort={QueryPort}
+    {FormattedArgs} {hardcore}{heartbeat}{EnableVehiclesOnDedicated}-Wait
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,404 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
-    protocol: udp
+    default: 7777
+    protocol: both
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 7778
+    protocol: both
+    required: true
+config_files:
+  - path: ./DeadMatter/Saved/Config/WindowsServer/Game.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: SteamServerName
+      label: Server Name
+      category: Dead Matter
+      subcategory: Server
+      description: Sets the server name shown in the server browser and lobby
+      keywords: server,name,lobby,servername,steamservername
+      input_type: text
+      param_field_name: SteamServerName
+      default: AMP Powered Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Dead Matter:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server name shown in the server browser and lobby
+        Keywords: server,name,lobby,servername,steamservername
+        FieldName: SteamServerName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: SteamServerName
+        IncludeInCommandLine: true
+        DefaultValue: AMP Powered Server
+        EnumValues: {}
+    - key: SteamServerName
+      label: Lobby Header
+      category: Dead Matter
+      subcategory: Server
+      description: Sets the server title displayed in the lobby
+      keywords: ''
+      input_type: text
+      param_field_name: /Script/DeadMatter.DMGameSession.ServerName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Lobby Header
+        Category: Dead Matter:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server title displayed in the lobby
+        Keywords: ''
+        FieldName: SteamServerName
+        Hidden: true
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /Script/DeadMatter.DMGameSession.ServerName
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: MOTD
+      label: MOTD
+      category: Dead Matter
+      subcategory: Server
+      description: Sets the server Message of the Day (MOTD)
+      keywords: server,motd,welcome,message,day
+      input_type: text
+      param_field_name: /Script/DeadMatter.DMGameSession.MOTD
+      default: This server is powered by AMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: MOTD
+        Category: Dead Matter:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server Message of the Day (MOTD)
+        Keywords: server,motd,welcome,message,day
+        FieldName: MOTD
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /Script/DeadMatter.DMGameSession.MOTD
+        IncludeInCommandLine: false
+        DefaultValue: This server is powered by AMP
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Dead Matter
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server
+      keywords: max,players,limit,maxplayers
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Dead Matter:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server
+        Keywords: max,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: MaxPlayers
+        IncludeInCommandLine: true
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: players
+        EnumValues: {}
+    - key: PVP
+      label: Enable PvP
+      category: Dead Matter
+      subcategory: Server
+      description: If set, PvP will be enabled
+      keywords: pve,pvp
+      input_type: checkbox
+      param_field_name: /Script/DeadMatter.DMGameSession.PVP
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable PvP
+        Category: Dead Matter:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, PvP will be enabled
+        Keywords: pve,pvp
+        FieldName: PVP
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/DeadMatter.DMGameSession.PVP
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: hardcore
+      label: Enable Hardcore Mode
+      category: Dead Matter
+      subcategory: Server
+      description: If set, hardcore mode will be enabled
+      keywords: hardcore
+      input_type: checkbox
+      param_field_name: hardcore
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-hardcore '
+      raw:
+        DisplayName: Enable Hardcore Mode
+        Category: Dead Matter:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, hardcore mode will be enabled
+        Keywords: hardcore
+        FieldName: hardcore
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: hardcore
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-hardcore '
+    - key: heartbeat
+      label: Show Server Heartbeat
+      category: Dead Matter
+      subcategory: Server
+      description: If set, the server heartbeat will be shown in the console
+      keywords: heartbeat,console
+      input_type: checkbox
+      param_field_name: heartbeat
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-heartbeat '
+      raw:
+        DisplayName: Show Server Heartbeat
+        Category: Dead Matter:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server heartbeat will be shown in the console
+        Keywords: heartbeat,console
+        FieldName: heartbeat
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: heartbeat
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-heartbeat '
+    - key: EnableVehiclesOnDedicated
+      label: Enable Vehicles
+      category: Dead Matter
+      subcategory: Server
+      description: If set, enables vehicles on the server
+      keywords: vehicles
+      input_type: checkbox
+      param_field_name: EnableVehiclesOnDedicated
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-EnableVehiclesOnDedicated '
+      raw:
+        DisplayName: Enable Vehicles
+        Category: Dead Matter:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, enables vehicles on the server
+        Keywords: vehicles
+        FieldName: EnableVehiclesOnDedicated
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: EnableVehiclesOnDedicated
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-EnableVehiclesOnDedicated '
+    - key: ServerAdmins
+      label: Server Admins
+      category: Dead Matter
+      subcategory: Server
+      description: >-
+        Server admins can be specified in DeadMater/Saved/Config/WindowsServer/Game.ini. Each admin/superadmin on a new
+        line, in the format: Admins=Steam64ID or SuperAdmins=Steam64ID. [Find Steam64 IDs](https://steamid.io/)
+      keywords: server,admins,serveradmins
+      input_type: hidden
+      param_field_name: ServerAdmins
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Admins
+        Category: Dead Matter:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Server admins can be specified in DeadMater/Saved/Config/WindowsServer/Game.ini. Each admin/superadmin on a
+          new line, in the format: Admins=Steam64ID or SuperAdmins=Steam64ID. [Find Steam64 IDs](https://steamid.io/)
+        Keywords: server,admins,serveradmins
+        FieldName: ServerAdmins
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ServerAdmins
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: releasestream
+      label: Server Release Stream
+      category: Updates
+      subcategory: Steam Downloads
+      description: 'Sets the server release stream to install. Note: Update the server after changing this setting'
+      keywords: release,stream,beta,version
+      input_type: enum
+      param_field_name: releasestream
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public/Early Access (default)
+        automatic-nightly: Nightly - Development build that is uploaded every night
+      raw:
+        DisplayName: Server Release Stream
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: 'Sets the server release stream to install. Note: Update the server after changing this setting'
+        Keywords: release,stream,beta,version
+        FieldName: releasestream
+        InputType: enum
+        ParamFieldName: releasestream
+        IncludeInCommandLine: false
+        DefaultValue: public
+        EnumValues:
+          public: Public/Early Access (default)
+          automatic-nightly: Nightly - Development build that is uploaded every night
+  files:
+    - path: ./DeadMatter/Saved/Config/WindowsServer/Game.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: ./DeadMatter/Saved/Config/WindowsServer/Game.ini
+        AutoMap: true
+        ConfigType: ini
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: SteamServerName
+    label: Server Name
+    default: AMP Powered Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SteamServerName
+    label: Lobby Header
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MOTD
+    label: MOTD
+    default: This server is powered by AMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PVP
+    label: Enable PvP
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hardcore
+    label: Enable Hardcore Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: heartbeat
+    label: Show Server Heartbeat
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableVehiclesOnDedicated
+    label: Enable Vehicles
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: releasestream
+    label: Server Release Stream
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '2184150'
+  collection_support: true
 backup:
   include:
     - /data

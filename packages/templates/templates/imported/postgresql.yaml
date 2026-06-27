@@ -4,14 +4,16 @@ name: PostgreSQL
 category: Imported
 summary: PostgreSQL Service Instance
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: custom
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: pgsql/bin/psql
+  startup: pgsql/bin/psql {CustomClientOptions} {PlatformArgs} --username=amp --pset=pager=off {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +21,255 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 5432
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: postgresqlconfig.json
+    type: json
+    editable: true
+  - path: postgresqlmetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: AMPPassword
+      label: AMP User Password
+      category: PostgreSQL
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: AMPPassword
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: AMP User Password
+        Category: PostgreSQL:database
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: AMPPassword
+        InputType: text
+        Hidden: true
+        ParamFieldName: AMPPassword
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: dbname
+      label: Database Name
+      category: PostgreSQL
+      subcategory: Server
+      description: >-
+        Sets the database to connect to when the client run in AMP is started. The database must exist on the server.
+        Default is 'postgres' - do not delete this database! Use the command '\connect <database name>' in the AMP
+        console to switch to another database once connected
+      keywords: database,name,dbname
+      input_type: text
+      param_field_name: dbname
+      default: postgres
+      placeholder: postgres
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Database Name
+        Category: PostgreSQL:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the database to connect to when the client run in AMP is started. The database must exist on the server.
+          Default is 'postgres' - do not delete this database! Use the command '\connect <database name>' in the AMP
+          console to switch to another database once connected
+        Keywords: database,name,dbname
+        FieldName: dbname
+        InputType: text
+        ParamFieldName: dbname
+        IncludeInCommandLine: true
+        Required: true
+        DefaultValue: postgres
+        Placeholder: postgres
+        EnumValues: {}
+    - key: ConfigFileSettings
+      label: Server Config File Settings
+      category: PostgreSQL
+      subcategory: Server
+      description: Config file settings for the PostgreSQL server can be set in 'data/postgresql.conf'. Use with care
+      keywords: config,file,settings
+      input_type: hidden
+      param_field_name: ConfigFileSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Config File Settings
+        Category: PostgreSQL:database
+        Subcategory: Server:dns:1
+        Description: Config file settings for the PostgreSQL server can be set in 'data/postgresql.conf'. Use with care
+        Keywords: config,file,settings
+        FieldName: ConfigFileSettings
+        InputType: hidden
+        ParamFieldName: ConfigFileSettings
+        EnumValues: {}
+    - key: CustomClientOptions
+      label: Additional Client Command Line Options
+      category: PostgreSQL
+      subcategory: Server
+      description: >-
+        Specifies [additional command line options](https://www.postgresql.org/docs/17/app-psql.html) for the PostgreSQL
+        client run by AMP (a super user called 'amp') that are not otherwise set by AMP. Use with care
+      keywords: custom,client,options,arguments
+      input_type: Textarea
+      param_field_name: CustomClientOptions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Client Command Line Options
+        Category: PostgreSQL:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies [additional command line options](https://www.postgresql.org/docs/17/app-psql.html) for the
+          PostgreSQL client run by AMP (a super user called 'amp') that are not otherwise set by AMP. Use with care
+        Keywords: custom,client,options,arguments
+        FieldName: CustomClientOptions
+        InputType: Textarea
+        ParamFieldName: CustomClientOptions
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerVersion
+      label: PostgreSQL Release Stream
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the PostgreSQL release stream from which to install the latest version, unless a specific version is
+        specified under PostgreSQL Version. WARNING: SWITCHING BETWEEN RELEASE STREAMS MAY CORRUPT DATA! Update the
+        server after changing this setting
+      keywords: postgresql,release,stream,PostgreSQLRelease
+      input_type: enum
+      param_field_name: PostgreSQLRelease
+      default: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '13': '13'
+        '14': '14'
+        '15': '15'
+        '16': 16 (default)
+        '17': '17'
+        '18': '18'
+      raw:
+        DisplayName: PostgreSQL Release Stream
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the PostgreSQL release stream from which to install the latest version, unless a specific version is
+          specified under PostgreSQL Version. WARNING: SWITCHING BETWEEN RELEASE STREAMS MAY CORRUPT DATA! Update the
+          server after changing this setting
+        Keywords: postgresql,release,stream,PostgreSQLRelease
+        FieldName: ServerVersion
+        InputType: enum
+        ParamFieldName: PostgreSQLRelease
+        DefaultValue: '16'
+        EnumValues:
+          '13': '13'
+          '14': '14'
+          '15': '15'
+          '16': 16 (default)
+          '17': '17'
+          '18': '18'
+    - key: CustomServerVersion
+      label: PostgreSQL Version
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [PostgreSQL version](https://www.postgresql.org/ftp/source/) to install. Empty = latest version for the
+        release stream specified under PostgreSQL Release Stream. WARNING: SWITCHING BETWEEN RELEASE STREAMS MAY CORRUPT
+        DATA! Update the server after changing this setting
+      keywords: postgresql,version,PostgreSQLVersion
+      input_type: text
+      param_field_name: PostgreSQLVersion
+      default: ''
+      placeholder: '16.4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: PostgreSQL Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [PostgreSQL version](https://www.postgresql.org/ftp/source/) to install. Empty = latest version for
+          the release stream specified under PostgreSQL Release Stream. WARNING: SWITCHING BETWEEN RELEASE STREAMS MAY
+          CORRUPT DATA! Update the server after changing this setting
+        Keywords: postgresql,version,PostgreSQLVersion
+        FieldName: CustomServerVersion
+        InputType: text
+        ParamFieldName: PostgreSQLVersion
+        DefaultValue: ''
+        Placeholder: '16.4'
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: AMPPassword
+    label: AMP User Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: dbname
+    label: Database Name
+    default: postgres
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: CustomClientOptions
+    label: Additional Client Command Line Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerVersion
+    label: PostgreSQL Release Stream
+    default: '16'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerVersion
+    label: PostgreSQL Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

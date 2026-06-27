@@ -5,13 +5,18 @@ category: Imported
 summary: Hurtworld Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '405100'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 405100/Hurtworld.x86_64
+  startup: >-
+    405100/Hurtworld.x86_64 {PlatformArgs} -batchmode -nographics -exec "host {GamePort} {map};queryport
+    {QueryPort};{FormattedArgs};{CustomConVars}" -logfile -
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,1120 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
-    protocol: udp
+    default: 12871
+    protocol: both
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 12881
+    protocol: both
+    required: true
+config_files:
+  - path: autoexec.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Hurtworld
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: host
+      default: '12871'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: host
+        IncludeInCommandLine: false
+        DefaultValue: '12871'
+        EnumValues: {}
+    - key: $QueryPort
+      label: Query Port
+      category: Hurtworld
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: queryport
+      default: '12881'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Port
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: queryport
+        IncludeInCommandLine: false
+        DefaultValue: '12881'
+        EnumValues: {}
+    - key: servername
+      label: Server Name
+      category: Hurtworld
+      subcategory: Server
+      description: Server name as shown in the server browser
+      keywords: name
+      input_type: text
+      param_field_name: servername
+      default: My Hurtworld Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Server name as shown in the server browser
+        Keywords: name
+        FieldName: servername
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: servername
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: My Hurtworld Server
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Hurtworld
+      subcategory: Server
+      description: Maximum number of players that may connect to the server
+      keywords: maximum,players
+      input_type: number
+      param_field_name: maxplayers
+      default: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Maximum number of players that may connect to the server
+        Keywords: maximum,players
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: maxplayers
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '20'
+        Suffix: players
+        EnumValues: {}
+        MinValue: '1'
+    - key: map
+      label: Map
+      category: Hurtworld
+      subcategory: Server
+      description: Sets the map to load on the server
+      keywords: map
+      input_type: text
+      param_field_name: map
+      default: nullius
+      placeholder: nullius
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Map
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map to load on the server
+        Keywords: map
+        FieldName: map
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: map
+        IncludeInCommandLine: false
+        DefaultValue: nullius
+        Placeholder: nullius
+        EnumValues: {}
+    - key: creativemode
+      label: Enable Creative Mode
+      category: Hurtworld
+      subcategory: Server
+      description: If enabled, creative mode will apply (free build)
+      keywords: creative,mode
+      input_type: checkbox
+      param_field_name: creativemode
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Creative Mode
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, creative mode will apply (free build)
+        Keywords: creative,mode
+        FieldName: creativemode
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: creativemode
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: addadmin
+      label: Add Admin
+      category: Hurtworld
+      subcategory: Server
+      description: Steam64 ID of server admin. [Find Steam64 IDs](https://steamid.io/)
+      keywords: admin
+      input_type: number
+      param_field_name: addadmin
+      default: ''
+      placeholder: '58673958674589375'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Add Admin
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Steam64 ID of server admin. [Find Steam64 IDs](https://steamid.io/)
+        Keywords: admin
+        FieldName: addadmin
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: addadmin
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: '58673958674589375'
+        EnumValues: {}
+    - key: enforceeac
+      label: Enable Easy Anti-Cheat
+      category: Hurtworld
+      subcategory: Server
+      description: If set, Easy Anti-Cheat will be enabled on the server
+      keywords: eac,anti,cheat,anticheat,enforceeac
+      input_type: checkbox
+      param_field_name: enforceeac
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Easy Anti-Cheat
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, Easy Anti-Cheat will be enabled on the server
+        Keywords: eac,anti,cheat,anticheat,enforceeac
+        FieldName: enforceeac
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: enforceeac
+        IncludeInCommandLine: true
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: uMod
+      label: Install uMod
+      category: Hurtworld
+      subcategory: Server
+      description: If enabled, auto-installs uMod when the server is updated
+      keywords: install,umod
+      input_type: checkbox
+      param_field_name: uMod
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Install uMod
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, auto-installs uMod when the server is updated
+        Keywords: install,umod
+        FieldName: uMod
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: uMod
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: loadmod
+      label: Load Steam Workshop Mods
+      category: Hurtworld
+      subcategory: Server
+      description: Space-separated list of Steam Workshop mod IDs to load on the server
+      keywords: mods
+      input_type: text
+      param_field_name: loadmod
+      default: ''
+      placeholder: 714026119 704019543
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Load Steam Workshop Mods
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Space-separated list of Steam Workshop mod IDs to load on the server
+        Keywords: mods
+        FieldName: loadmod
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: loadmod
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: 714026119 704019543
+        EnumValues: {}
+    - key: autowipe
+      label: Enable Autowipe
+      category: Hurtworld
+      subcategory: Server
+      description: If enabled, server wipe will be enabled
+      keywords: autowipe,wipe
+      input_type: checkbox
+      param_field_name: autowipe
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Autowipe
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, server wipe will be enabled
+        Keywords: autowipe,wipe
+        FieldName: autowipe
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: autowipe
+        IncludeInCommandLine: true
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: wipeinterval
+      label: Wipe Interval
+      category: Hurtworld
+      subcategory: Server
+      description: >-
+        Sets the server wipe schedule, as shown in the server browser. A negative number will show no wipe. Needs wipe
+        enabled to work
+      keywords: wipe,interval,schedule
+      input_type: number
+      param_field_name: wipeinterval
+      default: '1209600'
+      placeholder: '1209600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Wipe Interval
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the server wipe schedule, as shown in the server browser. A negative number will show no wipe. Needs wipe
+          enabled to work
+        Keywords: wipe,interval,schedule
+        FieldName: wipeinterval
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: wipeinterval
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '1209600'
+        Suffix: seconds
+        Placeholder: '1209600'
+        EnumValues: {}
+    - key: playerlootmode
+      label: Player Loot Mode
+      category: Hurtworld
+      subcategory: Server
+      description: 'Sets the player loot mode. Note: Alternate loot modes are experimental and may not work properly'
+      keywords: player,loot
+      input_type: enum
+      param_field_name: playerlootmode
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values:
+        '1': Drop backpack contents only
+        '2': Drop backpack and one random item
+        '3': Drop backpack and two random items
+        '4': Drop backpack and three random items
+        '5': Drop nothing
+        '6': Destroy everything
+        '': Drop everything (default)
+      raw:
+        DisplayName: Player Loot Mode
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Sets the player loot mode. Note: Alternate loot modes are experimental and may not work properly'
+        Keywords: player,loot
+        FieldName: playerlootmode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: playerlootmode
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues:
+          '1': Drop backpack contents only
+          '2': Drop backpack and one random item
+          '3': Drop backpack and two random items
+          '4': Drop backpack and three random items
+          '5': Drop nothing
+          '6': Destroy everything
+          '': Drop everything (default)
+    - key: autosaveenabled
+      label: Enable Autosave
+      category: Hurtworld
+      subcategory: Server
+      description: If enabled, server will be autosaved
+      keywords: autosave
+      input_type: checkbox
+      param_field_name: autosaveenabled
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Autosave
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, server will be autosaved
+        Keywords: autosave
+        FieldName: autosaveenabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: autosaveenabled
+        IncludeInCommandLine: true
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: autobackupinterval
+      label: Auto Backup Interval
+      category: Hurtworld
+      subcategory: Server
+      description: Sets how often the autosave should be backed up. Specify -1 to disable backup
+      keywords: backup,interval
+      input_type: number
+      param_field_name: autobackupinterval
+      default: '7200'
+      placeholder: '7200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Auto Backup Interval
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how often the autosave should be backed up. Specify -1 to disable backup
+        Keywords: backup,interval
+        FieldName: autobackupinterval
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: autobackupinterval
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '7200'
+        Suffix: seconds
+        Placeholder: '7200'
+        EnumValues: {}
+    - key: structuredecayenabled
+      label: Enable Structure Decay
+      category: Hurtworld
+      subcategory: Server
+      description: If enabled, structures will decay
+      keywords: structure,decay
+      input_type: checkbox
+      param_field_name: structuredecayenabled
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Structure Decay
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, structures will decay
+        Keywords: structure,decay
+        FieldName: structuredecayenabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: structuredecayenabled
+        IncludeInCommandLine: true
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: structuredecayfrequency
+      label: Structure Decay Frequency
+      category: Hurtworld
+      subcategory: Server
+      description: Sets how often a structure will be damaged by decay. Low values may have a performance impact
+      keywords: structure,decay,frequency
+      input_type: number
+      param_field_name: structuredecayfrequency
+      default: '600'
+      placeholder: '600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Structure Decay Frequency
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how often a structure will be damaged by decay. Low values may have a performance impact
+        Keywords: structure,decay,frequency
+        FieldName: structuredecayfrequency
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: structuredecayfrequency
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '600'
+        Placeholder: '600'
+        EnumValues: {}
+    - key: structuredecaydamage
+      label: Structure Decay Damage
+      category: Hurtworld
+      subcategory: Server
+      description: >-
+        Sets how much damage occurs when a structure decays. Specify one value for a set damage amount, or specify two
+        values for a range
+      keywords: structure,decay,damage
+      input_type: text
+      param_field_name: structuredecaydamage
+      default: 5 10
+      placeholder: 5 10
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Structure Decay Damage
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets how much damage occurs when a structure decays. Specify one value for a set damage amount, or specify two
+          values for a range
+        Keywords: structure,decay,damage
+        FieldName: structuredecaydamage
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: structuredecaydamage
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: 5 10
+        Placeholder: 5 10
+        EnumValues: {}
+    - key: structuredecaymodifytime
+      label: Structure Decay Start Time
+      category: Hurtworld
+      subcategory: Server
+      description: Sets how long a structure must be both unclaimed and unmodified, before it begins to decay
+      keywords: structure,decay,modify,time
+      input_type: number
+      param_field_name: structuredecaymodifytime
+      default: '86400'
+      placeholder: '86400'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Structure Decay Start Time
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how long a structure must be both unclaimed and unmodified, before it begins to decay
+        Keywords: structure,decay,modify,time
+        FieldName: structuredecaymodifytime
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: structuredecaymodifytime
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '86400'
+        Placeholder: '86400'
+        EnumValues: {}
+    - key: chatconnectionmessagesenabled
+      label: Display Connection/Disconnection Messages
+      category: Hurtworld
+      subcategory: Server
+      description: If enabled, connection and disconnection messages will be displayed
+      keywords: connection,disconnection,message
+      input_type: checkbox
+      param_field_name: chatconnectionmessagesenabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Display Connection/Disconnection Messages
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, connection and disconnection messages will be displayed
+        Keywords: connection,disconnection,message
+        FieldName: chatconnectionmessagesenabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: chatconnectionmessagesenabled
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: chatdeathmessagesenabled
+      label: Display Death Messages
+      category: Hurtworld
+      subcategory: Server
+      description: If enabled, death messages will be displayed
+      keywords: death,message
+      input_type: checkbox
+      param_field_name: chatdeathmessagesenabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Display Death Messages
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, death messages will be displayed
+        Keywords: death,message
+        FieldName: chatdeathmessagesenabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: chatdeathmessagesenabled
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: chatspambudget
+      label: Chat Spam Filter Threshold
+      category: Hurtworld
+      subcategory: Server
+      description: Sets the chat spam filter threshold. Lower values mean players will be muted sooner
+      keywords: chat,spam,filter
+      input_type: number
+      param_field_name: chatspambudget
+      default: '200'
+      placeholder: '200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Chat Spam Filter Threshold
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the chat spam filter threshold. Lower values mean players will be muted sooner
+        Keywords: chat,spam,filter
+        FieldName: chatspambudget
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: chatspambudget
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '200'
+        Placeholder: '200'
+        EnumValues: {}
+    - key: spawnercellupdatesperframe
+      label: Spawner Time
+      category: Hurtworld
+      subcategory: Server
+      description: Sets how much time spawners can take
+      keywords: spawner,time
+      input_type: number
+      param_field_name: spawnercellupdatesperframe
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Spawner Time
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how much time spawners can take
+        Keywords: spawner,time
+        FieldName: spawnercellupdatesperframe
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: spawnercellupdatesperframe
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '20'
+        Placeholder: '20'
+        EnumValues: {}
+    - key: stakedeauthtime
+      label: Stake Deauthorise Time
+      category: Hurtworld
+      subcategory: Server
+      description: Sets the time a full ownership stake will take to deauthorise
+      keywords: stake,deauthorise
+      input_type: number
+      param_field_name: stakedeauthtime
+      default: '7200'
+      placeholder: '7200'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Stake Deauthorise Time
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time a full ownership stake will take to deauthorise
+        Keywords: stake,deauthorise
+        FieldName: stakedeauthtime
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: stakedeauthtime
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '7200'
+        Suffix: seconds
+        Placeholder: '7200'
+        EnumValues: {}
+    - key: targetfps
+      label: Target FPS
+      category: Hurtworld
+      subcategory: Server
+      description: Sets the target FPS for the server. Specify -1 for unlimited (not recommended)
+      keywords: target,fps
+      input_type: number
+      param_field_name: targetfps
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Target FPS
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the target FPS for the server. Specify -1 for unlimited (not recommended)
+        Keywords: target,fps
+        FieldName: targetfps
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: targetfps
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: loadbalancerframebudget
+      label: Load Balancer Resources
+      category: Hurtworld
+      subcategory: Server
+      description: Sets how many resources the Load Balancer can use per frame
+      keywords: load,balancer,resources
+      input_type: number
+      param_field_name: loadbalancerframebudget
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Load Balancer Resources
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how many resources the Load Balancer can use per frame
+        Keywords: load,balancer,resources
+        FieldName: loadbalancerframebudget
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: loadbalancerframebudget
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: monitorloadbalancer
+      label: Enable Load Balancer Monitoring
+      category: Hurtworld
+      subcategory: Server
+      description: >-
+        If enabled, allows monitoring of the Load Balancer (view using "dumploadbalancer" command). Do not leave this
+        enabled, as it has significant overhead
+      keywords: monitor,load,balancer
+      input_type: checkbox
+      param_field_name: monitorloadbalancer
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Load Balancer Monitoring
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, allows monitoring of the Load Balancer (view using "dumploadbalancer" command). Do not leave this
+          enabled, as it has significant overhead
+        Keywords: monitor,load,balancer
+        FieldName: monitorloadbalancer
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: monitorloadbalancer
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: CustomConVars
+      label: Additional Launch Console Variables
+      category: Hurtworld
+      subcategory: Server
+      description: >-
+        Specifies a semi-colon separated list of additional console variables to launch the server with that are not
+        otherwise set by AMP. Use with care
+      keywords: custom,server,arguments,variables,cvars,convars,parameters
+      input_type: text
+      param_field_name: CustomConVars
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Launch Console Variables
+        Category: Hurtworld:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies a semi-colon separated list of additional console variables to launch the server with that are not
+          otherwise set by AMP. Use with care
+        Keywords: custom,server,arguments,variables,cvars,convars,parameters
+        FieldName: CustomConVars
+        InputType: text
+        ParamFieldName: CustomConVars
+        DefaultValue: ''
+        EnumValues: {}
+  files:
+    - path: autoexec.cfg
+      type: kvp
+      format: '{0} {1}'
+      subsections: []
+      raw:
+        ConfigFile: autoexec.cfg
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormat: '{0} {1}'
+        ConfigFormatRegex: ^(?<key>.+?) (?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: servername
+    label: Server Name
+    default: My Hurtworld Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map
+    label: Map
+    default: nullius
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: creativemode
+    label: Enable Creative Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: addadmin
+    label: Add Admin
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enforceeac
+    label: Enable Easy Anti-Cheat
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: uMod
+    label: Install uMod
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: loadmod
+    label: Load Steam Workshop Mods
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autowipe
+    label: Enable Autowipe
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: wipeinterval
+    label: Wipe Interval
+    default: '1209600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: playerlootmode
+    label: Player Loot Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autosaveenabled
+    label: Enable Autosave
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autobackupinterval
+    label: Auto Backup Interval
+    default: '7200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: structuredecayenabled
+    label: Enable Structure Decay
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: structuredecayfrequency
+    label: Structure Decay Frequency
+    default: '600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: structuredecaydamage
+    label: Structure Decay Damage
+    default: 5 10
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: structuredecaymodifytime
+    label: Structure Decay Start Time
+    default: '86400'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: chatconnectionmessagesenabled
+    label: Display Connection/Disconnection Messages
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: chatdeathmessagesenabled
+    label: Display Death Messages
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: chatspambudget
+    label: Chat Spam Filter Threshold
+    default: '200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: spawnercellupdatesperframe
+    label: Spawner Time
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: stakedeauthtime
+    label: Stake Deauthorise Time
+    default: '7200'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: targetfps
+    label: Target FPS
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: loadbalancerframebudget
+    label: Load Balancer Resources
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: monitorloadbalancer
+    label: Enable Load Balancer Monitoring
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomConVars
+    label: Additional Launch Console Variables
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '393420'
+  collection_support: true
 backup:
   include:
     - /data

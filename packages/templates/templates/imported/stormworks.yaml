@@ -5,13 +5,16 @@ category: Imported
 summary: Stormworks Dedicated Server
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '573090'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: /usr/bin/xvfb-run {PlatformArgs} +server_dir "./" {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,2287 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 25564
     protocol: udp
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 25565
+    protocol: udp
+    required: true
+config_files:
+  - path: server_config.xml
+    type: xml
+    editable: true
+config_schema:
+  fields:
+    - key: GeneralSettings
+      label: General Settings
+      category: Stormworks
+      subcategory: General
+      description: These settings are for setting up the Stormworks server. They can be changed after world creation.
+      keywords: ''
+      input_type: hidden
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: General Settings
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: These settings are for setting up the Stormworks server. They can be changed after world creation.
+        Keywords: ''
+        FieldName: GeneralSettings
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ''
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: admins
+      label: Primary Admin
+      category: Stormworks
+      subcategory: General
+      description: >-
+        Sets the [Steam64 ID](https://steamid.io/) of the primary (first) admin on the server. Other admins (as well as
+        authorized users and banned users) can be added in-game. See the [Stormworks
+        Guide](https://discourse.cubecoders.com/docs?topic=5782?utm_source=ampcreate&utm_content=stormworks) for further
+        information.
+      keywords: admin,whitelist,blacklist,white,black,list,auth,authorized
+      input_type: text
+      param_field_name: /server_data/admins/id[1]/@value
+      default: ''
+      placeholder: '9087654321234567'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Primary Admin
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: >-
+          Sets the [Steam64 ID](https://steamid.io/) of the primary (first) admin on the server. Other admins (as well
+          as authorized users and banned users) can be added in-game. See the [Stormworks
+          Guide](https://discourse.cubecoders.com/docs?topic=5782?utm_source=ampcreate&utm_content=stormworks) for
+          further information.
+        Keywords: admin,whitelist,blacklist,white,black,list,auth,authorized
+        FieldName: admins
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /server_data/admins/id[1]/@value
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: '9087654321234567'
+        EnumValues: {}
+    - key: Commands
+      label: Player Permissions
+      category: Stormworks
+      subcategory: General
+      description: >-
+        Player permissions (and whitelisted players) can be set using in-game commands. See the [Stormworks
+        Guide](https://discourse.cubecoders.com/docs?topic=5782?utm_source=ampcreate&utm_content=stormworks) for further
+        information.
+      keywords: whitelist,blacklist,white,black,list,auth,authorized,commands
+      input_type: hidden
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Player Permissions
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: >-
+          Player permissions (and whitelisted players) can be set using in-game commands. See the [Stormworks
+          Guide](https://discourse.cubecoders.com/docs?topic=5782?utm_source=ampcreate&utm_content=stormworks) for
+          further information.
+        Keywords: whitelist,blacklist,white,black,list,auth,authorized,commands
+        FieldName: Commands
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ''
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $GamePort
+      label: Game Port
+      category: Stormworks
+      subcategory: General
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /server_data/@port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: name
+      label: Server Name
+      category: Stormworks
+      subcategory: General
+      description: Sets the name of the server as it appears in the server browser.
+      keywords: server,name,servername
+      input_type: text
+      param_field_name: /server_data/@name
+      default: AMP Powered Stormworks Server
+      placeholder: AMP Powered Stormworks Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: Sets the name of the server as it appears in the server browser.
+        Keywords: server,name,servername
+        FieldName: name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@name
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Stormworks Server
+        Placeholder: AMP Powered Stormworks Server
+        EnumValues: {}
+    - key: save_name
+      label: Save Name
+      category: Stormworks
+      subcategory: General
+      description: Sets the name of the world save, as shown in the file directory.
+      keywords: save,name,savename,save_name
+      input_type: text
+      param_field_name: /server_data/@save_name
+      default: autosave_server
+      placeholder: autosave_server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Save Name
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: Sets the name of the world save, as shown in the file directory.
+        Keywords: save,name,savename,save_name
+        FieldName: save_name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@save_name
+        IncludeInCommandLine: false
+        DefaultValue: autosave_server
+        Placeholder: autosave_server
+        EnumValues: {}
+    - key: password
+      label: Server Password
+      category: Stormworks
+      subcategory: General
+      description: Sets the password required for players to join the server. Default is no password.
+      keywords: password
+      input_type: password
+      param_field_name: /server_data/@password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: Sets the password required for players to join the server. Default is no password.
+        Keywords: password
+        FieldName: password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Stormworks
+      subcategory: General
+      description: Sets the number of players allowed to join the server at one time.
+      keywords: player,limit,maxplayers,max_players
+      input_type: number
+      param_field_name: /server_data/@max_players
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 32
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: Sets the number of players allowed to join the server at one time.
+        Keywords: player,limit,maxplayers,max_players
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '32'
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@max_players
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: players
+        EnumValues: {}
+    - key: despawn_on_leave
+      label: Enable Player Despawn
+      category: Stormworks
+      subcategory: General
+      description: If enabled, players will despawn when they leave. This is recommended for public servers.
+      keywords: despawn,player,character,leave,despawn_on_leave
+      input_type: checkbox
+      param_field_name: /server_data/@despawn_on_leave
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Player Despawn
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: If enabled, players will despawn when they leave. This is recommended for public servers.
+        Keywords: despawn,player,character,leave,despawn_on_leave
+        FieldName: despawn_on_leave
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@despawn_on_leave
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: physics_timestep
+      label: Physics Timestep
+      category: Stormworks
+      subcategory: General
+      description: Sets the physics resolution.
+      keywords: physics,timestep,resolution,physicstimestep,physics_timestep
+      input_type: enum
+      param_field_name: /server_data/@physics_timestep
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Auto (default)
+        '60': Low (60)
+        '120': Medium (120)
+        '180': High (180)
+      raw:
+        DisplayName: Physics Timestep
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: Sets the physics resolution.
+        Keywords: physics,timestep,resolution,physicstimestep,physics_timestep
+        FieldName: physics_timestep
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@physics_timestep
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Auto (default)
+          '60': Low (60)
+          '120': Medium (120)
+          '180': High (180)
+    - key: wildlife_enabled
+      label: Enable Wildlife
+      category: Stormworks
+      subcategory: General
+      description: If enabled, birds and fish spawn are simulated.
+      keywords: wildlife,wildlifeenabled,wildlife_enabled
+      input_type: checkbox
+      param_field_name: /server_data/@wildlife_enabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Wildlife
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: If enabled, birds and fish spawn are simulated.
+        Keywords: wildlife,wildlifeenabled,wildlife_enabled
+        FieldName: wildlife_enabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@wildlife_enabled
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: fish_spawn_rate
+      label: Fish Spawn Rate
+      category: Stormworks
+      subcategory: General
+      description: Sets the rate of fish spawn around players. Requires Enable Wildlife to be set.
+      keywords: fish,spawn,rate,fishspawn,spawnrate,fishspawnrate,fishrate,fish_spawn_rate
+      input_type: enum
+      param_field_name: /server_data/@fish_spawn_rate
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None
+        '1': Low (default)
+        '2': Medium
+        '3': High
+      raw:
+        DisplayName: Fish Spawn Rate
+        Category: Stormworks:stadia_controller
+        Subcategory: General:settings:1
+        Description: Sets the rate of fish spawn around players. Requires Enable Wildlife to be set.
+        Keywords: fish,spawn,rate,fishspawn,spawnrate,fishspawnrate,fishrate,fish_spawn_rate
+        FieldName: fish_spawn_rate
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@fish_spawn_rate
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': None
+          '1': Low (default)
+          '2': Medium
+          '3': High
+    - key: WorldCreationSettings
+      label: World Creation Settings
+      category: Stormworks
+      subcategory: World Creation
+      description: >-
+        These settings are for world creation. They may not be changed after the world is created. If needed, delete 
+        the "working_server" and "saves" directories to generate a new world.
+      keywords: ''
+      input_type: hidden
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Creation Settings
+        Category: Stormworks:stadia_controller
+        Subcategory: World Creation:build:2
+        Description: >-
+          These settings are for world creation. They may not be changed after the world is created. If needed, delete 
+          the "working_server" and "saves" directories to generate a new world.
+        Keywords: ''
+        FieldName: WorldCreationSettings
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ''
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: seed
+      label: World Seed
+      category: Stormworks
+      subcategory: World Creation
+      description: Sets the seed that will be used for the world generation. Empty = random.
+      keywords: world,seed,worldseed
+      input_type: text
+      param_field_name: /server_data/@seed
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Seed
+        Category: Stormworks:stadia_controller
+        Subcategory: World Creation:build:2
+        Description: Sets the seed that will be used for the world generation. Empty = random.
+        Keywords: world,seed,worldseed
+        FieldName: seed
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@seed
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: base_island
+      label: Start Island
+      category: Stormworks
+      subcategory: World Creation
+      description: Sets the player base that will be owned on start.
+      keywords: start,island,startisland,base,island,baseisland,base_island
+      input_type: enum
+      param_field_name: /server_data/@base_island
+      default: data/tiles/island12.xml
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        data/tiles/island_24.xml: Airstrip Base
+        data/tiles/arctic_island_playerbase.xml: 'Arctic: Island Base'
+        data/tiles/arctic_tile_22.xml: 'Arctic: Mainland Outpost'
+        data/tiles/arctic_tile_12_oilrig.xml: 'Arctic: Oil Platform'
+        data/tiles/island_15.xml: Creative Island
+        data/tiles/mega_island_15_2.xml: Fishing Village Dock
+        data/tiles/island_25.xml: Harbour Base
+        data/tiles/mega_island_2_6.xml: Harrison Airbase
+        data/tiles/test_tile.xml: Helicopter Base
+        data/tiles/island_33_tile_33.xml: Mainland Airstrip
+        data/tiles/island_34_military.xml: Military Base
+        data/tiles/island_43_multiplayer_base.xml: Multiplayer Base
+        data/tiles/mega_island_9_8.xml: North Harbor Dock
+        data/tiles/mega_island_12_6.xml: O'Neill Airbase
+        data/tiles/island12.xml: Starter Base (default)
+        data/tiles/island_33_tile_end.xml: Terminal Camodo
+        data/tiles/island_33_tile_32.xml: Terminal Spycakes
+        data/tiles/arid_island_11_14.xml: 'Arid DLC: Brainz Train Yard'
+        data/tiles/arid_island_19_11.xml: 'Arid DLC: Clarke Airfield'
+        data/tiles/arid_island_7_5.xml: 'Arid DLC: Ender Airfield'
+        data/tiles/arid_island_26_14.xml: 'Arid DLC: FJ Warner Docks'
+        data/tiles/arid_island_24_3.xml: 'Arid DLC: JSI Dock'
+        data/tiles/arid_island_12_10.xml: 'Arid DLC: Mauve Train Yard'
+        data/tiles/arid_island_19_12.xml: 'Arid DLC: Monkey Brain Launch Site'
+        data/tiles/arid_island_5_14.xml: 'Arid DLC: North Meier Outpost'
+        data/tiles/arid_island_6_7.xml: 'Arid DLC: Serpentine Trainyard'
+        data/tiles/arid_island_8_15.xml: 'Arid DLC: Uran Wind Power Plant Docks'
+        data/tiles/island_31_playerbase_combo.xml: 'Custom: Boat Base Small'
+        data/tiles/island_30_playerbase_boat.xml: 'Custom: Boat Base Large'
+        data/tiles/island_32_playerbase_heli.xml: 'Custom: Heli Base (structure workbench only)'
+        data/tiles/oil_rig_playerbase.xml: 'Custom: Oil Rig Base (structure workbench only)'
+        data/tiles/island_29_playerbase_submarine.xml: 'Custom: Submarine Base'
+      raw:
+        DisplayName: Start Island
+        Category: Stormworks:stadia_controller
+        Subcategory: World Creation:build:2
+        Description: Sets the player base that will be owned on start.
+        Keywords: start,island,startisland,base,island,baseisland,base_island
+        FieldName: base_island
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@base_island
+        IncludeInCommandLine: false
+        DefaultValue: data/tiles/island12.xml
+        EnumValues:
+          data/tiles/island_24.xml: Airstrip Base
+          data/tiles/arctic_island_playerbase.xml: 'Arctic: Island Base'
+          data/tiles/arctic_tile_22.xml: 'Arctic: Mainland Outpost'
+          data/tiles/arctic_tile_12_oilrig.xml: 'Arctic: Oil Platform'
+          data/tiles/island_15.xml: Creative Island
+          data/tiles/mega_island_15_2.xml: Fishing Village Dock
+          data/tiles/island_25.xml: Harbour Base
+          data/tiles/mega_island_2_6.xml: Harrison Airbase
+          data/tiles/test_tile.xml: Helicopter Base
+          data/tiles/island_33_tile_33.xml: Mainland Airstrip
+          data/tiles/island_34_military.xml: Military Base
+          data/tiles/island_43_multiplayer_base.xml: Multiplayer Base
+          data/tiles/mega_island_9_8.xml: North Harbor Dock
+          data/tiles/mega_island_12_6.xml: O'Neill Airbase
+          data/tiles/island12.xml: Starter Base (default)
+          data/tiles/island_33_tile_end.xml: Terminal Camodo
+          data/tiles/island_33_tile_32.xml: Terminal Spycakes
+          data/tiles/arid_island_11_14.xml: 'Arid DLC: Brainz Train Yard'
+          data/tiles/arid_island_19_11.xml: 'Arid DLC: Clarke Airfield'
+          data/tiles/arid_island_7_5.xml: 'Arid DLC: Ender Airfield'
+          data/tiles/arid_island_26_14.xml: 'Arid DLC: FJ Warner Docks'
+          data/tiles/arid_island_24_3.xml: 'Arid DLC: JSI Dock'
+          data/tiles/arid_island_12_10.xml: 'Arid DLC: Mauve Train Yard'
+          data/tiles/arid_island_19_12.xml: 'Arid DLC: Monkey Brain Launch Site'
+          data/tiles/arid_island_5_14.xml: 'Arid DLC: North Meier Outpost'
+          data/tiles/arid_island_6_7.xml: 'Arid DLC: Serpentine Trainyard'
+          data/tiles/arid_island_8_15.xml: 'Arid DLC: Uran Wind Power Plant Docks'
+          data/tiles/island_31_playerbase_combo.xml: 'Custom: Boat Base Small'
+          data/tiles/island_30_playerbase_boat.xml: 'Custom: Boat Base Large'
+          data/tiles/island_32_playerbase_heli.xml: 'Custom: Heli Base (structure workbench only)'
+          data/tiles/oil_rig_playerbase.xml: 'Custom: Oil Rig Base (structure workbench only)'
+          data/tiles/island_29_playerbase_submarine.xml: 'Custom: Submarine Base'
+    - key: starting_currency
+      label: Starting Currency
+      category: Stormworks
+      subcategory: World Creation
+      description: Sets the amount of money the players start with at world creation.
+      keywords: money,starting,startingmoney,currency,startingcurrency,starting_currency
+      input_type: number
+      param_field_name: /server_data/@starting_currency
+      default: '20000'
+      placeholder: '20000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Starting Currency
+        Category: Stormworks:stadia_controller
+        Subcategory: World Creation:build:2
+        Description: Sets the amount of money the players start with at world creation.
+        Keywords: money,starting,startingmoney,currency,startingcurrency,starting_currency
+        FieldName: starting_currency
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@starting_currency
+        DefaultValue: '20000'
+        Placeholder: '20000'
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: settings_menu
+      label: Enable Settings Menu
+      category: Stormworks
+      subcategory: World Creation
+      description: >-
+        If set, enables the custom settings menu in-game (available only for admins if Lock Settings Menu is enabled).
+        Otherwise, make sure to set all of the settings under the "Stormworks - Gameplay" menu since you won't be able
+        to change them in-game.
+      keywords: settings,menu,settingsmenu,lock,menulock,settings_menu
+      input_type: checkbox
+      param_field_name: /server_data/@settings_menu
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Settings Menu
+        Category: Stormworks:stadia_controller
+        Subcategory: World Creation:build:2
+        Description: >-
+          If set, enables the custom settings menu in-game (available only for admins if Lock Settings Menu is enabled).
+          Otherwise, make sure to set all of the settings under the "Stormworks - Gameplay" menu since you won't be able
+          to change them in-game.
+        Keywords: settings,menu,settingsmenu,lock,menulock,settings_menu
+        FieldName: settings_menu
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@settings_menu
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: settings_menu_lock
+      label: Lock Settings Menu
+      category: Stormworks
+      subcategory: World Creation
+      description: >-
+        If set, only admins can access the custom settings menu in-game (assuming it is enabled). Otherwise, all players
+        will be able to access the menu if it is enabled.
+      keywords: settings,menu,settingsmenu,lock,menulock,settings_menu_lock
+      input_type: checkbox
+      param_field_name: /server_data/@settings_menu_lock
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Lock Settings Menu
+        Category: Stormworks:stadia_controller
+        Subcategory: World Creation:build:2
+        Description: >-
+          If set, only admins can access the custom settings menu in-game (assuming it is enabled). Otherwise, all
+          players will be able to access the menu if it is enabled.
+        Keywords: settings,menu,settingsmenu,lock,menulock,settings_menu_lock
+        FieldName: settings_menu_lock
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@settings_menu_lock
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: dlc_weapons
+      label: Enable Search & Destroy DLC
+      category: Stormworks
+      subcategory: World Creation
+      description: If set, enables Search & Destroy DLC content for a new world.
+      keywords: dlc,search,destroy,arid,enabledlc,searchdestroy,dlc_weapons
+      input_type: checkbox
+      param_field_name: /server_data/@dlc_weapons
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Search & Destroy DLC
+        Category: Stormworks:stadia_controller
+        Subcategory: World Creation:build:2
+        Description: If set, enables Search & Destroy DLC content for a new world.
+        Keywords: dlc,search,destroy,arid,enabledlc,searchdestroy,dlc_weapons
+        FieldName: dlc_weapons
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@dlc_weapons
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: dlc_arid
+      label: Enable Industrial Frontier DLC
+      category: Stormworks
+      subcategory: World Creation
+      description: If set, enables Industrial Frontier DLC content for a new world.
+      keywords: dlc,industrial,frontier,industrial,industrialfrontier,enabledlc,dlc_arid
+      input_type: checkbox
+      param_field_name: /server_data/@dlc_arid
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Industrial Frontier DLC
+        Category: Stormworks:stadia_controller
+        Subcategory: World Creation:build:2
+        Description: If set, enables Industrial Frontier DLC content for a new world.
+        Keywords: dlc,industrial,frontier,industrial,industrialfrontier,enabledlc,dlc_arid
+        FieldName: dlc_arid
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@dlc_arid
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: GameplaySettings
+      label: Gameplay Settings
+      category: Stormworks
+      subcategory: Gameplay
+      description: >-
+        These settings are for configuring gameplay options for a world. Note that changing them may not update a save
+        game. These settings can also be changed in-game if "Enable Settings Menu" under "Stormworks - World Creation"
+        is set. If needed, delete the "working_server" and "saves" directories to generate a new world, or try to edit
+        "scene.xml" under each of these folders (untested).
+      keywords: ''
+      input_type: hidden
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Gameplay Settings
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: >-
+          These settings are for configuring gameplay options for a world. Note that changing them may not update a save
+          game. These settings can also be changed in-game if "Enable Settings Menu" under "Stormworks - World Creation"
+          is set. If needed, delete the "working_server" and "saves" directories to generate a new world, or try to edit
+          "scene.xml" under each of these folders (untested).
+        Keywords: ''
+        FieldName: GameplaySettings
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ''
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: day_night_length
+      label: Day & Night Length
+      category: Stormworks
+      subcategory: Gameplay
+      description: Sets the length of the day (in real-time minutes).
+      keywords: day,night,daynight,length,day_night_length
+      input_type: enum
+      param_field_name: /server_data/@day_night_length
+      default: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': '1'
+        '10': '10'
+        '20': '20'
+        '30': '30'
+        '40': '40'
+        '50': '50'
+        '60': 60 (default)
+        '70': '70'
+        '80': '80'
+        '90': '90'
+        '100': '100'
+        '110': '110'
+        '120': '120'
+      raw:
+        DisplayName: Day & Night Length
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: Sets the length of the day (in real-time minutes).
+        Keywords: day,night,daynight,length,day_night_length
+        FieldName: day_night_length
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@day_night_length
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        EnumValues:
+          '1': '1'
+          '10': '10'
+          '20': '20'
+          '30': '30'
+          '40': '40'
+          '50': '50'
+          '60': 60 (default)
+          '70': '70'
+          '80': '80'
+          '90': '90'
+          '100': '100'
+          '110': '110'
+          '120': '120'
+    - key: sunrise
+      label: Sunrise Time
+      category: Stormworks
+      subcategory: Gameplay
+      description: Sets the sunrise time (as fraction of day & night length)
+      keywords: sunrise,time,day,night,daynight
+      input_type: number
+      param_field_name: /server_data/@sunrise
+      default: '0.25'
+      placeholder: '0.25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Sunrise Time
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: Sets the sunrise time (as fraction of day & night length)
+        Keywords: sunrise,time,day,night,daynight
+        FieldName: sunrise
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@sunrise
+        IncludeInCommandLine: false
+        DefaultValue: '0.25'
+        Placeholder: '0.25'
+        EnumValues: {}
+    - key: sunset
+      label: Sunset Time
+      category: Stormworks
+      subcategory: Gameplay
+      description: Sets the sunset time (as fraction of day & night length)
+      keywords: sunset,time,day,night,daynight
+      input_type: number
+      param_field_name: /server_data/@sunset
+      default: '0.791'
+      placeholder: '0.791'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Sunset Time
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: Sets the sunset time (as fraction of day & night length)
+        Keywords: sunset,time,day,night,daynight
+        FieldName: sunset
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@sunset
+        IncludeInCommandLine: false
+        DefaultValue: '0.791'
+        Placeholder: '0.791'
+        Suffix: ''
+        EnumValues: {}
+    - key: override_time
+      label: Override Time
+      category: Stormworks
+      subcategory: Gameplay
+      description: If set, the option to override time will be enabled.
+      keywords: time,override,timeoverride,override_time,overridetime
+      input_type: checkbox
+      param_field_name: /server_data/@override_time
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Override Time
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If set, the option to override time will be enabled.
+        Keywords: time,override,timeoverride,override_time,overridetime
+        FieldName: override_time
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@override_time
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: override_weather
+      label: Override Weather
+      category: Stormworks
+      subcategory: Gameplay
+      description: If set, the option to override weather (fog, wind, rain and snow) will be enabled.
+      keywords: weather,rain,snow,wind,fog,override,overrideweather,override_weather
+      input_type: checkbox
+      param_field_name: /server_data/@override_weather
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Override Weather
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If set, the option to override weather (fog, wind, rain and snow) will be enabled.
+        Keywords: weather,rain,snow,wind,fog,override,overrideweather,override_weather
+        FieldName: override_weather
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@override_weather
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: override_wind
+      label: Override Wind Direction
+      category: Stormworks
+      subcategory: Gameplay
+      description: If set, the option to override the wind direction will be enabled.
+      keywords: wind,direction,winddirrection,override,overridewind,override_wind
+      input_type: checkbox
+      param_field_name: /server_data/@override_wind
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Override Wind Direction
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If set, the option to override the wind direction will be enabled.
+        Keywords: wind,direction,winddirrection,override,overridewind,override_wind
+        FieldName: override_wind
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@override_wind
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: vehicle_damage
+      label: Enable Vehicle Damage
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, vehicles can take damaged. Otherwise, they will be indestructible.
+      keywords: vehicle,damage,vehicledamage,vehicle_damage
+      input_type: checkbox
+      param_field_name: /server_data/@vehicle_damage
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Vehicle Damage
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, vehicles can take damaged. Otherwise, they will be indestructible.
+        Keywords: vehicle,damage,vehicledamage,vehicle_damage
+        FieldName: vehicle_damage
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@vehicle_damage
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: engine_overheating
+      label: Enable Engine Overheating
+      category: Stormworks
+      subcategory: Gameplay
+      description: If set, engine overheating simulation will be enabled, thereby allowing engine fires.
+      keywords: engine,over,heat,overheat,overheating,engine_overheating
+      input_type: checkbox
+      param_field_name: /server_data/@engine_overheating
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Engine Overheating
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If set, engine overheating simulation will be enabled, thereby allowing engine fires.
+        Keywords: engine,over,heat,overheat,overheating,engine_overheating
+        FieldName: engine_overheating
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@engine_overheating
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: player_damage
+      label: Enable Player Damage
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, players can take damaged. Otherwise, they will be indestructible.
+      keywords: player,damage,playerdamage,player_damage
+      input_type: checkbox
+      param_field_name: /server_data/@player_damage
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Player Damage
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, players can take damaged. Otherwise, they will be indestructible.
+        Keywords: player,damage,playerdamage,player_damage
+        FieldName: player_damage
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@player_damage
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: npc_damage
+      label: Enable NPC Damage
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, NPCs can take damaged. Otherwise, they will be indestructible.
+      keywords: npc,damage,npcdamage,npc_damage
+      input_type: checkbox
+      param_field_name: /server_data/@npc_damage
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable NPC Damage
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, NPCs can take damaged. Otherwise, they will be indestructible.
+        Keywords: npc,damage,npcdamage,npc_damage
+        FieldName: npc_damage
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@npc_damage
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: aggressive_animals
+      label: Enable Aggressive Animals
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, aggressive animals can spawn.
+      keywords: aggressive,agro,animals,aggressiveanimals,aggressive_animals
+      input_type: checkbox
+      param_field_name: /server_data/@aggressive_animals
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Aggressive Animals
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, aggressive animals can spawn.
+        Keywords: aggressive,agro,animals,aggressiveanimals,aggressive_animals
+        FieldName: aggressive_animals
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@aggressive_animals
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: sea_monsters
+      label: Enable Sea Monsters
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, sea monsters (aggressive monsters) can spawn.
+      keywords: aggressive,agro,animals,monsters,sea,seamonsters,sea_monsters
+      input_type: checkbox
+      param_field_name: /server_data/@sea_monsters
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Sea Monsters
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, sea monsters (aggressive monsters) can spawn.
+        Keywords: aggressive,agro,animals,monsters,sea,seamonsters,sea_monsters
+        FieldName: sea_monsters
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@sea_monsters
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: lightning
+      label: Enable Lightning
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, allows lightning that can hit vehicles at some altitude.
+      keywords: lightning
+      input_type: checkbox
+      param_field_name: /server_data/@lightning
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Lightning
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, allows lightning that can hit vehicles at some altitude.
+        Keywords: lightning
+        FieldName: lightning
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@lightning
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: infinite_resources
+      label: Enable Infinite Resources
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, removes money, fuel and minerals requirements for vehicle workbenches.
+      keywords: infinite,resources,money,fuel,minerals,infinite_resources
+      input_type: checkbox
+      param_field_name: /server_data/@infinite_resources
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Infinite Resources
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, removes money, fuel and minerals requirements for vehicle workbenches.
+        Keywords: infinite,resources,money,fuel,minerals,infinite_resources
+        FieldName: infinite_resources
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@infinite_resources
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: infinite_batteries
+      label: Enable Infinite Batteries
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, removes electric power requirments for vehicle components.
+      keywords: infinite,battery,batteries,infinite_batteries
+      input_type: checkbox
+      param_field_name: /server_data/@infinite_batteries
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Infinite Batteries
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, removes electric power requirments for vehicle components.
+        Keywords: infinite,battery,batteries,infinite_batteries
+        FieldName: infinite_batteries
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@infinite_batteries
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: infinite_fuel
+      label: Enable Infinite Fuel
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, removes fuel and air requirements for vehicle components.
+      keywords: infinite,fuel,air,infinite_fuel
+      input_type: checkbox
+      param_field_name: /server_data/@infinite_fuel
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Infinite Fuel
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, removes fuel and air requirements for vehicle components.
+        Keywords: infinite,fuel,air,infinite_fuel
+        FieldName: infinite_fuel
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@infinite_fuel
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: infinite_ammo
+      label: Enable Infinite Ammo
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, removes ammo requirements for weapons (requires DLC).
+      keywords: dlc,search,destroy,arid,enabledlc,searchdestroy,ammo,ammunition,weapons,infinite,dlc_weapons,infinite_ammo
+      input_type: checkbox
+      param_field_name: /server_data/@infinite_ammo
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Infinite Ammo
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, removes ammo requirements for weapons (requires DLC).
+        Keywords: dlc,search,destroy,arid,enabledlc,searchdestroy,ammo,ammunition,weapons,infinite,dlc_weapons,infinite_ammo
+        FieldName: infinite_ammo
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@infinite_ammo
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ceasefire
+      label: Enable Ceasefire
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, prevents weapon usage (requires DLC).
+      keywords: dlc,search,destroy,arid,enabledlc,searchdestroy,weapons,dlc_weapons,ceasefire
+      input_type: checkbox
+      param_field_name: /server_data/@ceasefire
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Ceasefire
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, prevents weapon usage (requires DLC).
+        Keywords: dlc,search,destroy,arid,enabledlc,searchdestroy,weapons,dlc_weapons,ceasefire
+        FieldName: ceasefire
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@ceasefire
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: unlock_components
+      label: Unlock Components
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, the server starts with all vehicle components researched (that is, disables research).
+      keywords: research,unlock,components,vehicle,unlock_components
+      input_type: checkbox
+      param_field_name: /server_data/@unlock_components
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Unlock Components
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, the server starts with all vehicle components researched (that is, disables research).
+        Keywords: research,unlock,components,vehicle,unlock_components
+        FieldName: unlock_components
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@unlock_components
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: map_show_players
+      label: Show Players On Map
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, the server displays player icons on the map.
+      keywords: map,show,player,icons,map_show_players
+      input_type: checkbox
+      param_field_name: /server_data/@map_show_players
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Show Players On Map
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, the server displays player icons on the map.
+        Keywords: map,show,player,icons,map_show_players
+        FieldName: map_show_players
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@map_show_players
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: map_show_vehicles
+      label: Show Vehicles On Map
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, the server displays player vehicle icons on the map.
+      keywords: map,show,vehicle,icons,map_show_vehicles
+      input_type: checkbox
+      param_field_name: /server_data/@map_show_vehicles
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Show Vehicles On Map
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, the server displays player vehicle icons on the map.
+        Keywords: map,show,vehicle,icons,map_show_vehicles
+        FieldName: map_show_vehicles
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@map_show_vehicles
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: show_3d_waypoints
+      label: Show 3D Waypoints
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, the server displays the player waypoint on the HUD.
+      keywords: hud,show,player,waypoint,show_3d_waypoints
+      input_type: checkbox
+      param_field_name: /server_data/@show_3d_waypoints
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Show 3D Waypoints
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, the server displays the player waypoint on the HUD.
+        Keywords: hud,show,player,waypoint,show_3d_waypoints
+        FieldName: show_3d_waypoints
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@show_3d_waypoints
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: third_person
+      label: Enable Third Person Player Camera
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, allows the third person camera for player characters.
+      keywords: third,person,player,camera,character,third_person
+      input_type: checkbox
+      param_field_name: /server_data/@third_person
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Third Person Player Camera
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, allows the third person camera for player characters.
+        Keywords: third,person,player,camera,character,third_person
+        FieldName: third_person
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@third_person
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: third_person_vehicle
+      label: Third Person Vehicle Camera
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, allows the third person camera for player vehicles.
+      keywords: third,person,camera,vehicle,third_person_vehicle
+      input_type: checkbox
+      param_field_name: /server_data/@third_person_vehicle
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Third Person Vehicle Camera
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, allows the third person camera for player vehicles.
+        Keywords: third,person,camera,vehicle,third_person_vehicle
+        FieldName: third_person_vehicle
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@third_person_vehicle
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: show_name_plates
+      label: Show Name Plates
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, the server displays player name plates above their characters.
+      keywords: show,player,name,plates,character,show_name_plates
+      input_type: checkbox
+      param_field_name: /server_data/@show_name_plates
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Show Name Plates
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, the server displays player name plates above their characters.
+        Keywords: show,player,name,plates,character,show_name_plates
+        FieldName: show_name_plates
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@show_name_plates
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: no_clip
+      label: Enable No Clip Camera
+      category: Stormworks
+      subcategory: Gameplay
+      description: >-
+        If enabled, prevents the camera from clipping through blocks, thereby preventing the third person view through
+        creation.
+      keywords: no,clip,camera,clipping,no_clip
+      input_type: checkbox
+      param_field_name: /server_data/@no_clip
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable No Clip Camera
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: >-
+          If enabled, prevents the camera from clipping through blocks, thereby preventing the third person view through
+          creation.
+        Keywords: no,clip,camera,clipping,no_clip
+        FieldName: no_clip
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@no_clip
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: photo_mode
+      label: Enable Photo Mode
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, allows players to enter photo mode.
+      keywords: camera,player,photo,mode,photo_mode
+      input_type: checkbox
+      param_field_name: /server_data/@photo_mode
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Photo Mode
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, allows players to enter photo mode.
+        Keywords: camera,player,photo,mode,photo_mode
+        FieldName: photo_mode
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@photo_mode
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: map_teleport
+      label: Enable Map Teleport
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, allows players to teleport using the map.
+      keywords: map,teleport,fast,travel,vehicle,map_teleport
+      input_type: checkbox
+      param_field_name: /server_data/@map_teleport
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Map Teleport
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, allows players to teleport using the map.
+        Keywords: map,teleport,fast,travel,vehicle,map_teleport
+        FieldName: map_teleport
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@map_teleport
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: fast_travel
+      label: Enable Fast Travel
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, allows players to fast travel to bases.
+      keywords: map,teleport,fast,travel,vehicle,fast_travel
+      input_type: checkbox
+      param_field_name: /server_data/@fast_travel
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Fast Travel
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, allows players to fast travel to bases.
+        Keywords: map,teleport,fast,travel,vehicle,fast_travel
+        FieldName: fast_travel
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@fast_travel
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: teleport_vehicle
+      label: Enable Teleport Vehicles
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, allows workbench-spawned vehicles to be teleported back to bases.
+      keywords: map,teleport,fast,travel,vehicle,teleport_vehicle
+      input_type: checkbox
+      param_field_name: /server_data/@teleport_vehicle
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Teleport Vehicles
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, allows workbench-spawned vehicles to be teleported back to bases.
+        Keywords: map,teleport,fast,travel,vehicle,teleport_vehicle
+        FieldName: teleport_vehicle
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@teleport_vehicle
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: vehicle_spawn
+      label: Enable Vehicle Spawning
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, allows authorized players to spawn vehicles and use the workbench.
+      keywords: vehicle,workbench,spawning,spawn,authorized,vehicle_spawn
+      input_type: checkbox
+      param_field_name: /server_data/@vehicle_spawn
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Vehicle Spawning
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, allows authorized players to spawn vehicles and use the workbench.
+        Keywords: vehicle,workbench,spawning,spawn,authorized,vehicle_spawn
+        FieldName: vehicle_spawn
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@vehicle_spawn
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: respawning
+      label: Enable Respawning
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, allows players to respawn. Disable this setting for hardcore or MMO PvP servers.
+      keywords: respawning,player,spawn
+      input_type: checkbox
+      param_field_name: /server_data/@respawning
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Respawning
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, allows players to respawn. Disable this setting for hardcore or MMO PvP servers.
+        Keywords: respawning,player,spawn
+        FieldName: respawning
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@respawning
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: cleanup_vehicle
+      label: Enable Vehicle Cleanup On Map
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, allows player vehicle cleanup using the map.
+      keywords: cleanup,vehicles,map,cleanup_vehicle
+      input_type: checkbox
+      param_field_name: /server_data/@cleanup_vehicle
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Vehicle Cleanup On Map
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, allows player vehicle cleanup using the map.
+        Keywords: cleanup,vehicles,map,cleanup_vehicle
+        FieldName: cleanup_vehicle
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@cleanup_vehicle
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: clear_fow
+      label: Clear Fog Of War
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, removes fog of war on the map (cannot be undone using the settings menu).
+      keywords: fow,clear,map,fog,war,view,reveal,clear_fow
+      input_type: checkbox
+      param_field_name: /server_data/@clear_fow
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Clear Fog Of War
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, removes fog of war on the map (cannot be undone using the settings menu).
+        Keywords: fow,clear,map,fog,war,view,reveal,clear_fow
+        FieldName: clear_fow
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@clear_fow
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: unlock_all_islands
+      label: Unlock All Islands
+      category: Stormworks
+      subcategory: Gameplay
+      description: If enabled, sets all bases to a purchased state (cannot be undone using the settings menu).
+      keywords: map,base,purchase,unlock,island,islands,unlock_all_islands
+      input_type: checkbox
+      param_field_name: /server_data/@unlock_all_islands
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Unlock All Islands
+        Category: Stormworks:stadia_controller
+        Subcategory: Gameplay:joystick:3
+        Description: If enabled, sets all bases to a purchased state (cannot be undone using the settings menu).
+        Keywords: map,base,purchase,unlock,island,islands,unlock_all_islands
+        FieldName: unlock_all_islands
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /server_data/@unlock_all_islands
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: server_config.xml
+      type: xml
+      subsections: []
+      raw:
+        ConfigFile: server_config.xml
+        ConfigType: xml
+        AutoMap: true
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: admins
+    label: Primary Admin
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: name
+    label: Server Name
+    default: AMP Powered Stormworks Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: save_name
+    label: Save Name
+    default: autosave_server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: despawn_on_leave
+    label: Enable Player Despawn
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: physics_timestep
+    label: Physics Timestep
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: wildlife_enabled
+    label: Enable Wildlife
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fish_spawn_rate
+    label: Fish Spawn Rate
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: seed
+    label: World Seed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: base_island
+    label: Start Island
+    default: data/tiles/island12.xml
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: starting_currency
+    label: Starting Currency
+    default: '20000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: settings_menu
+    label: Enable Settings Menu
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: settings_menu_lock
+    label: Lock Settings Menu
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dlc_weapons
+    label: Enable Search & Destroy DLC
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dlc_arid
+    label: Enable Industrial Frontier DLC
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: day_night_length
+    label: Day & Night Length
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sunrise
+    label: Sunrise Time
+    default: '0.25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sunset
+    label: Sunset Time
+    default: '0.791'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: override_time
+    label: Override Time
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: override_weather
+    label: Override Weather
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: override_wind
+    label: Override Wind Direction
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: vehicle_damage
+    label: Enable Vehicle Damage
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: engine_overheating
+    label: Enable Engine Overheating
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: player_damage
+    label: Enable Player Damage
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: npc_damage
+    label: Enable NPC Damage
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: aggressive_animals
+    label: Enable Aggressive Animals
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sea_monsters
+    label: Enable Sea Monsters
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lightning
+    label: Enable Lightning
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: infinite_resources
+    label: Enable Infinite Resources
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: infinite_batteries
+    label: Enable Infinite Batteries
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: infinite_fuel
+    label: Enable Infinite Fuel
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: infinite_ammo
+    label: Enable Infinite Ammo
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ceasefire
+    label: Enable Ceasefire
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: unlock_components
+    label: Unlock Components
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map_show_players
+    label: Show Players On Map
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map_show_vehicles
+    label: Show Vehicles On Map
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: show_3d_waypoints
+    label: Show 3D Waypoints
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: third_person
+    label: Enable Third Person Player Camera
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: third_person_vehicle
+    label: Third Person Vehicle Camera
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: show_name_plates
+    label: Show Name Plates
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: no_clip
+    label: Enable No Clip Camera
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: photo_mode
+    label: Enable Photo Mode
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map_teleport
+    label: Enable Map Teleport
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fast_travel
+    label: Enable Fast Travel
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: teleport_vehicle
+    label: Enable Teleport Vehicles
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: vehicle_spawn
+    label: Enable Vehicle Spawning
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: respawning
+    label: Enable Respawning
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: cleanup_vehicle
+    label: Enable Vehicle Cleanup On Map
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: clear_fow
+    label: Clear Fog Of War
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: unlock_all_islands
+    label: Unlock All Islands
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '573090'
+  collection_support: true
 backup:
   include:
     - /data

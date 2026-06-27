@@ -5,13 +5,19 @@ category: Imported
 summary: Team Fortress Classic Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '90'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 90/hlds_linux
+  startup: >-
+    90/hlds_linux {PlatformArgs} -console -game {mod} -port {GameRCONPort} -sys_ticrate={sys_ticrate} -nobreakpad
+    {insecure}{pingboost}{CustomParameters} {CustomConVars} +ip {ApplicationIPBinding} +rcon_password
+    "{RemoteAdminPassword}" {FormattedArgs} +log on
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +25,1684 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: gamerconport
+    name: Game and RCON Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: tfc/server.cfg
+    type: text
+    editable: true
+  - path: tfc/motd.txt
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: hostname
+      label: Server Name
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets the name of the server that appears in the server list
+      keywords: server,name,hostname
+      input_type: text
+      param_field_name: hostname
+      default: AMP Powered Team Fortress Classic Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that appears in the server list
+        Keywords: server,name,hostname
+        FieldName: hostname
+        InputType: text
+        ParamFieldName: hostname
+        DefaultValue: AMP Powered Team Fortress Classic Server
+        EnumValues: {}
+    - key: motd
+      label: Server MOTD
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets the message of the day (MOTD) that is shown to joining players
+      keywords: message,welcome,motd
+      input_type: Textarea
+      param_field_name: motd
+      default: Welcome to Team Fortress Classic!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server MOTD
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the message of the day (MOTD) that is shown to joining players
+        Keywords: message,welcome,motd
+        FieldName: motd
+        InputType: Textarea
+        ParamFieldName: motd
+        DefaultValue: Welcome to Team Fortress Classic!
+        EnumValues: {}
+    - key: mod
+      label: Server Mod Name
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        Sets the name of the mod directory to load, allowing the use of third-party Team Fortress Classic mods. Don't
+        change this from the default 'tfc' unless you know what you are doing!
+      keywords: server,mod,directory,game
+      input_type: text
+      param_field_name: mod
+      default: tfc
+      placeholder: tfc
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Mod Name
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the mod directory to load, allowing the use of third-party Team Fortress Classic mods. Don't
+          change this from the default 'tfc' unless you know what you are doing!
+        Keywords: server,mod,directory,game
+        FieldName: mod
+        InputType: text
+        ParamFieldName: mod
+        DefaultValue: tfc
+        Placeholder: tfc
+        EnumValues: {}
+    - key: sv_lan
+      label: LAN Server
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        If enabled, the server will operate as a LAN server: no heartbeat, no authentication, no non-class C addresses,
+        9999.0 rate, etc
+      keywords: lan,local,sv_lan
+      input_type: checkbox
+      param_field_name: sv_lan
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: LAN Server
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will operate as a LAN server: no heartbeat, no authentication, no non-class C
+          addresses, 9999.0 rate, etc
+        Keywords: lan,local,sv_lan
+        FieldName: sv_lan
+        InputType: checkbox
+        ParamFieldName: sv_lan
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_password
+      label: Server Password
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets the password required to connect to the server. Default is no password
+      keywords: server,password,sv_password
+      input_type: password
+      param_field_name: sv_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server. Default is no password
+        Keywords: server,password,sv_password
+        FieldName: sv_password
+        InputType: password
+        ParamFieldName: sv_password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Team Fortress Classic
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's RCON
+      keywords: rcon,password,rcon_password
+      input_type: hidden
+      param_field_name: rcon_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's RCON
+        Keywords: rcon,password,rcon_password
+        FieldName: $RemoteAdminPassword
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: rcon_password
+        EnumValues: {}
+    - key: map
+      label: Initial Map
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets the map to start the server with. If "Custom" is selected, Custom Initial Map must also be specified
+      keywords: map
+      input_type: enum
+      param_field_name: map
+      default: 2fort
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        2fort: 2 Fortresses
+        avanti: Avanti
+        badlands: Badlands
+        casbah: Casbah
+        crossover2: Crossover
+        cz2: Canalzone 2
+        dustbowl: Dustbowl
+        epicenter: Epicenter
+        flagrun: Flagrun
+        hunted: Hunted
+        push: Push
+        ravelin: Ravelin
+        rock2: The Rock
+        warpath: Warpath
+        well: The Well
+        '{{CustomMap}}': '--Custom--'
+      raw:
+        DisplayName: Initial Map
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map to start the server with. If "Custom" is selected, Custom Initial Map must also be specified
+        Keywords: map
+        FieldName: map
+        InputType: enum
+        ParamFieldName: map
+        IncludeInCommandLine: true
+        DefaultValue: 2fort
+        EnumValues:
+          2fort: 2 Fortresses
+          avanti: Avanti
+          badlands: Badlands
+          casbah: Casbah
+          crossover2: Crossover
+          cz2: Canalzone 2
+          dustbowl: Dustbowl
+          epicenter: Epicenter
+          flagrun: Flagrun
+          hunted: Hunted
+          push: Push
+          ravelin: Ravelin
+          rock2: The Rock
+          warpath: Warpath
+          well: The Well
+          '{{CustomMap}}': '--Custom--'
+    - key: CustomMap
+      label: Custom Initial Map
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets a custom map to use for the Initial Map, if "Custom" is selected
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Initial Map
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom map to use for the Initial Map, if "Custom" is selected
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        ParamFieldName: CustomMap
+        DefaultValue: ''
+        EnumValues: {}
+    - key: mapcycle
+      label: Map Rotation Cycle
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets the map rotation list
+      keywords: map,rotation,cycle,mapcycle
+      input_type: list
+      param_field_name: mapcycle
+      default: >-
+        ["ravelin","casbah","flagrun","avanti","dustbowl","warpath","epicenter","badlands","crossover2","2fort","hunted","cz2","well","rock2"]
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./tfc/90/tfc/mapcycle.txt
+      raw:
+        DisplayName: Map Rotation Cycle
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map rotation list
+        Keywords: map,rotation,cycle,mapcycle
+        FieldName: mapcycle
+        InputType: list
+        ParamFieldName: mapcycle
+        DefaultValue: >-
+          ["ravelin","casbah","flagrun","avanti","dustbowl","warpath","epicenter","badlands","crossover2","2fort","hunted","cz2","well","rock2"]
+        Special: listfile:./tfc/90/tfc/mapcycle.txt
+        EnumValues: {}
+    - key: mp_timelimit
+      label: Map Rotation Time Limit
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets the time period between map rotations. 0 = disabled
+      keywords: time,limit,rotation,mp_timelimit
+      input_type: number
+      param_field_name: mp_timelimit
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Map Rotation Time Limit
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time period between map rotations. 0 = disabled
+        Keywords: time,limit,rotation,mp_timelimit
+        FieldName: mp_timelimit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: mp_timelimit
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: minutes
+        EnumValues: {}
+    - key: sv_region
+      label: Server Region
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets the server region shown in the server browser
+      keywords: server,region,sv_region
+      input_type: enum
+      param_field_name: sv_region
+      default: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': East Coast US
+        '1': West Coast US
+        '2': South America
+        '3': Europe
+        '4': Asia
+        '5': Australia
+        '6': Middle East
+        '7': Africa
+        '255': World
+        '-1': No region
+      raw:
+        DisplayName: Server Region
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server region shown in the server browser
+        Keywords: server,region,sv_region
+        FieldName: sv_region
+        InputType: enum
+        ParamFieldName: sv_region
+        DefaultValue: '-1'
+        EnumValues:
+          '0': East Coast US
+          '1': West Coast US
+          '2': South America
+          '3': Europe
+          '4': Asia
+          '5': Australia
+          '6': Middle East
+          '7': Africa
+          '255': World
+          '-1': No region
+    - key: $MaxUsers
+      label: Player Limit
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,limit,maxplayers
+      input_type: number
+      param_field_name: maxplayers
+      default: '24'
+      placeholder: '24'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 2
+      max: 32
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '2'
+        MaxValue: '32'
+        ParamFieldName: maxplayers
+        IncludeInCommandLine: true
+        DefaultValue: '24'
+        Placeholder: '24'
+        Suffix: players
+        EnumValues: {}
+    - key: allow_spectators
+      label: Allow Spectators
+      category: Team Fortress Classic
+      subcategory: Server
+      description: If set, players will be allowed to join the server as spectators
+      keywords: allow,spectators,allow_spectators
+      input_type: checkbox
+      param_field_name: allow_spectators
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Spectators
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, players will be allowed to join the server as spectators
+        Keywords: allow,spectators,allow_spectators
+        FieldName: allow_spectators
+        InputType: checkbox
+        ParamFieldName: allow_spectators
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: InstallMetamod
+      label: Install Metamod
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        Sets whether to install and activate [Metamod-AMX](https://www.amxmodx.org/) or
+        [Metamod-r](https://metamod-r.org/) when the server is updated. Metamod-r only works with reHLDS
+      keywords: install,metamod
+      input_type: enum
+      param_field_name: InstallMetamod
+      default: none
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        none: None
+        metamod-amx: Metamod-AMX
+        metamod-r: Metamod-r
+      raw:
+        DisplayName: Install Metamod
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether to install and activate [Metamod-AMX](https://www.amxmodx.org/) or
+          [Metamod-r](https://metamod-r.org/) when the server is updated. Metamod-r only works with reHLDS
+        Keywords: install,metamod
+        FieldName: InstallMetamod
+        InputType: enum
+        ParamFieldName: InstallMetamod
+        DefaultValue: none
+        EnumValues:
+          none: None
+          metamod-amx: Metamod-AMX
+          metamod-r: Metamod-r
+    - key: InstallAMXModX
+      label: Install AMX Mod X Plugin
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        If set, the AMX Mod X plugin will be installed when the server is updated. Requires Metamod to be installed.
+        Activate the plugin by including it in Load Plugins: win32 addons/amxmodx/dlls/amxmodx_mm.dll | linux
+        addons/amxmodx/dlls/amxmodx_mm_i386.so
+      keywords: install,amxmodx
+      input_type: checkbox
+      param_field_name: InstallAMXModX
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Install AMX Mod X Plugin
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the AMX Mod X plugin will be installed when the server is updated. Requires Metamod to be installed.
+          Activate the plugin by including it in Load Plugins: win32 addons/amxmodx/dlls/amxmodx_mm.dll | linux
+          addons/amxmodx/dlls/amxmodx_mm_i386.so
+        Keywords: install,amxmodx
+        FieldName: InstallAMXModX
+        InputType: checkbox
+        ParamFieldName: InstallAMXModX
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: Plugins
+      label: Load Plugins
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        Sets a list of Metamod plugins to load when the server is started. Requires Metamod to be installed. Format:
+        win32|linux <path to .dll/.so>
+      keywords: plugins
+      input_type: list
+      param_field_name: Plugins
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./tfc/90/tfc/addons/metamod/plugins.ini
+      raw:
+        DisplayName: Load Plugins
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a list of Metamod plugins to load when the server is started. Requires Metamod to be installed. Format:
+          win32|linux <path to .dll/.so>
+        Keywords: plugins
+        FieldName: Plugins
+        InputType: list
+        ParamFieldName: Plugins
+        DefaultValue: ''
+        Special: listfile:./tfc/90/tfc/addons/metamod/plugins.ini
+        EnumValues: {}
+    - key: sv_cheats
+      label: Enable Cheats
+      category: Team Fortress Classic
+      subcategory: Server
+      description: If set, cheat convars will be allowed to be used on the server
+      keywords: allow,cheat,hack,integrity,sv_cheats
+      input_type: checkbox
+      param_field_name: sv_cheats
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Cheats
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, cheat convars will be allowed to be used on the server
+        Keywords: allow,cheat,hack,integrity,sv_cheats
+        FieldName: sv_cheats
+        InputType: checkbox
+        ParamFieldName: sv_cheats
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_filterban
+      label: Enable IP Packet Filter
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        If set, enables packet filtering by IP mode. If disabled, everyone will treated as IP-banned, but their IP won't
+        be added to the banlist
+      keywords: ip,ban,banning,sv_filterban
+      input_type: checkbox
+      param_field_name: sv_filterban
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable IP Packet Filter
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, enables packet filtering by IP mode. If disabled, everyone will treated as IP-banned, but their IP
+          won't be added to the banlist
+        Keywords: ip,ban,banning,sv_filterban
+        FieldName: sv_filterban
+        InputType: checkbox
+        ParamFieldName: sv_filterban
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_allowdownload
+      label: Allow Download From Server
+      category: Team Fortress Classic
+      subcategory: Server
+      description: If set, clients will be allowed to download content from the server (maps, sprays and related)
+      keywords: allow,download,content,maps,svallow_download
+      input_type: checkbox
+      param_field_name: sv_allowdownload
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Download From Server
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be allowed to download content from the server (maps, sprays and related)
+        Keywords: allow,download,content,maps,svallow_download
+        FieldName: sv_allowdownload
+        InputType: checkbox
+        ParamFieldName: sv_allowdownload
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_downloadurl
+      label: Fast Download URLs
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        Sets the URL(s) for clients to download custom content from, instead of sourcing the content from the server.
+        This allows for faster downloads
+      keywords: fastdl,download,url,sv_downloadurl
+      input_type: text
+      param_field_name: sv_downloadurl
+      default: ''
+      placeholder: http://example.com
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Fast Download URLs
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the URL(s) for clients to download custom content from, instead of sourcing the content from the server.
+          This allows for faster downloads
+        Keywords: fastdl,download,url,sv_downloadurl
+        FieldName: sv_downloadurl
+        InputType: text
+        ParamFieldName: sv_downloadurl
+        DefaultValue: ''
+        Placeholder: http://example.com
+        EnumValues: {}
+    - key: sv_allowupload
+      label: Allow Upload To Server
+      category: Team Fortress Classic
+      subcategory: Server
+      description: If set, clients will be allowed to upload customisation files to the server
+      keywords: allow,upload,customisation,files,sv_allowupload
+      input_type: checkbox
+      param_field_name: sv_allowupload
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Upload To Server
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be allowed to upload customisation files to the server
+        Keywords: allow,upload,customisation,files,sv_allowupload
+        FieldName: sv_allowupload
+        InputType: checkbox
+        ParamFieldName: sv_allowupload
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_minrate
+      label: Minimum Client Rate
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets the minimum allowable bandwidth rate a client may have set when connected to the server. 0 = no minimum
+      keywords: minimum,bandwidth,rate,sv_minrate
+      input_type: number
+      param_field_name: sv_minrate
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: bytes/second
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Client Rate
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum allowable bandwidth rate a client may have set when connected to the server. 0 = no minimum
+        Keywords: minimum,bandwidth,rate,sv_minrate
+        FieldName: sv_minrate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_minrate
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: bytes/second
+        EnumValues: {}
+    - key: sv_maxrate
+      label: Maximum Client Rate
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets the maximum allowable bandwidth rate a client may have set when connected to the server. 0 = no limit
+      keywords: maximum,bandwidth,rate,sv_maxrate
+      input_type: number
+      param_field_name: sv_maxrate
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: bytes/second
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Client Rate
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum allowable bandwidth rate a client may have set when connected to the server. 0 = no limit
+        Keywords: maximum,bandwidth,rate,sv_maxrate
+        FieldName: sv_maxrate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_maxrate
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: bytes/second
+        EnumValues: {}
+    - key: sv_minupdaterate
+      label: Minimum Server Update Rate
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        Sets the minimum number of updates per second of the positions of the server's models (players, guns, etc) that
+        server sends to clients
+      keywords: minimum,update,rate,sv_minupdaterate
+      input_type: number
+      param_field_name: sv_minupdaterate
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 10
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Server Update Rate
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the minimum number of updates per second of the positions of the server's models (players, guns, etc)
+          that server sends to clients
+        Keywords: minimum,update,rate,sv_minupdaterate
+        FieldName: sv_minupdaterate
+        InputType: number
+        MinValue: '10'
+        ParamFieldName: sv_minupdaterate
+        DefaultValue: '50'
+        Placeholder: '50'
+        EnumValues: {}
+    - key: sv_maxupdaterate
+      label: Maximum Server Update Rate
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        Sets the maximum number of updates per second of the positions of the server's models (players, guns, etc) that
+        server sends to clients
+      keywords: maximum,update,rate,sv_maxupdaterate
+      input_type: number
+      param_field_name: sv_maxupdaterate
+      default: '101'
+      placeholder: '101'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 10
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Server Update Rate
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of updates per second of the positions of the server's models (players, guns, etc)
+          that server sends to clients
+        Keywords: maximum,update,rate,sv_maxupdaterate
+        FieldName: sv_maxupdaterate
+        InputType: number
+        MinValue: '10'
+        ParamFieldName: sv_maxupdaterate
+        DefaultValue: '101'
+        Placeholder: '101'
+        EnumValues: {}
+    - key: sys_ticrate
+      label: Tick Rate
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Sets the maximum number of frames per second (FPS) that the server can calculate
+      keywords: maximum,fps,frames,tick,rate,sys_ticrate
+      input_type: number
+      param_field_name: sys_ticrate
+      default: '1000'
+      placeholder: '1000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10000
+      suffix: fps
+      enum_values: {}
+      raw:
+        DisplayName: Tick Rate
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of frames per second (FPS) that the server can calculate
+        Keywords: maximum,fps,frames,tick,rate,sys_ticrate
+        FieldName: sys_ticrate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10000'
+        ParamFieldName: sys_ticrate
+        DefaultValue: '1000'
+        Placeholder: '1000'
+        Suffix: fps
+        EnumValues: {}
+    - key: insecure
+      label: Disable Valve Anti-Cheat
+      category: Team Fortress Classic
+      subcategory: Server
+      description: If set, Valve Anti-Cheat (VAC) will be disabled
+      keywords: valve,anti,cheat,vac,insecure
+      input_type: checkbox
+      param_field_name: insecure
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-insecure '
+      raw:
+        DisplayName: Disable Valve Anti-Cheat
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, Valve Anti-Cheat (VAC) will be disabled
+        Keywords: valve,anti,cheat,vac,insecure
+        FieldName: insecure
+        InputType: checkbox
+        ParamFieldName: insecure
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-insecure '
+    - key: pingboost
+      label: Ping Boost
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        Selects between optimised network code stack. Setting at 2 usually reduces latency toward 1ms without loss of
+        activity input packets
+      keywords: ping,boost,latency,network,pingboost
+      input_type: enum
+      param_field_name: pingboost
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': None
+        '-pingboost 1 ': '1'
+        '-pingboost 2 ': '2'
+        '-pingboost 3 ': '3'
+      raw:
+        DisplayName: Ping Boost
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Selects between optimised network code stack. Setting at 2 usually reduces latency toward 1ms without loss of
+          activity input packets
+        Keywords: ping,boost,latency,network,pingboost
+        FieldName: pingboost
+        InputType: enum
+        ParamFieldName: pingboost
+        DefaultValue: ''
+        EnumValues:
+          '': None
+          '-pingboost 1 ': '1'
+          '-pingboost 2 ': '2'
+          '-pingboost 3 ': '3'
+    - key: mp_logmessages
+      label: Log Chat Messages
+      category: Team Fortress Classic
+      subcategory: Server
+      description: If set, logging of chat messages will be enabled
+      keywords: log,logging,chat,messages,mp_logmessages
+      input_type: checkbox
+      param_field_name: mp_logmessages
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Log Chat Messages
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, logging of chat messages will be enabled
+        Keywords: log,logging,chat,messages,mp_logmessages
+        FieldName: mp_logmessages
+        InputType: checkbox
+        ParamFieldName: mp_logmessages
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: CustomParameters
+      label: Additional Command Line Parameters
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by AMP.
+        Use with care
+      keywords: custom,server,arguments,variables,cvars,convars,parameters
+      input_type: text
+      param_field_name: CustomParameters
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Parameters
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by
+          AMP. Use with care
+        Keywords: custom,server,arguments,variables,cvars,convars,parameters
+        FieldName: CustomParameters
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomParameters
+        DefaultValue: ''
+        Placeholder: ''
+        EnumValues: {}
+    - key: CustomConVars
+      label: Additional Console Variables
+      category: Team Fortress Classic
+      subcategory: Server
+      description: >-
+        Specifies additional console variables (anything that begins with a +) that are not otherwise set by AMP. Use
+        with care. Preferably, specify the equivalent under "Additional Server Settings"
+      keywords: custom,server,arguments,variables,cvars,convars,parameters
+      input_type: text
+      param_field_name: CustomConVars
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Console Variables
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional console variables (anything that begins with a +) that are not otherwise set by AMP. Use
+          with care. Preferably, specify the equivalent under "Additional Server Settings"
+        Keywords: custom,server,arguments,variables,cvars,convars,parameters
+        FieldName: CustomConVars
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomConVars
+        DefaultValue: ''
+        Placeholder: ''
+        EnumValues: {}
+    - key: UserSettings
+      label: Additional Server Settings
+      category: Team Fortress Classic
+      subcategory: Server
+      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per line
+      keywords: additional,settings,custom
+      input_type: Textarea
+      param_field_name: UserSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Settings
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per
+          line
+        Keywords: additional,settings,custom
+        FieldName: UserSettings
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: UserSettings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_maxspeed
+      label: Maximum Player Movement Speed
+      category: Team Fortress Classic
+      subcategory: Gameplay
+      description: Sets the maximum speed that a player can move at when on the ground
+      keywords: maximum,movement,speed,sv_maxspeed
+      input_type: number
+      param_field_name: sv_maxspeed
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 10
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Player Movement Speed
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum speed that a player can move at when on the ground
+        Keywords: maximum,movement,speed,sv_maxspeed
+        FieldName: sv_maxspeed
+        InputType: number
+        MinValue: '10'
+        ParamFieldName: sv_maxspeed
+        DefaultValue: '500'
+        Placeholder: '500'
+        EnumValues: {}
+    - key: mp_friendlyfire
+      label: Enable Friendly Fire
+      category: Team Fortress Classic
+      subcategory: Gameplay
+      description: If set, friendly fire will be enabled (teammates can cause damage to other teammates)
+      keywords: friendly,fire,mp_friendlyfire
+      input_type: checkbox
+      param_field_name: mp_friendlyfire
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Friendly Fire
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, friendly fire will be enabled (teammates can cause damage to other teammates)
+        Keywords: friendly,fire,mp_friendlyfire
+        FieldName: mp_friendlyfire
+        InputType: checkbox
+        ParamFieldName: mp_friendlyfire
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_flashlight
+      label: Enable Flashlight
+      category: Team Fortress Classic
+      subcategory: Gameplay
+      description: If sets, allows the use of the flashlight by pressing the F button
+      keywords: flashlight,mp_flashlight
+      input_type: checkbox
+      param_field_name: mp_flashlight
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Flashlight
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If sets, allows the use of the flashlight by pressing the F button
+        Keywords: flashlight,mp_flashlight
+        FieldName: mp_flashlight
+        InputType: checkbox
+        ParamFieldName: mp_flashlight
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_footsteps
+      label: Enable Footsteps
+      category: Team Fortress Classic
+      subcategory: Gameplay
+      description: If set, footstep sounds will be enabled
+      keywords: footstep,sounds,mp_footsteps
+      input_type: checkbox
+      param_field_name: mp_footsteps
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Footsteps
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, footstep sounds will be enabled
+        Keywords: footstep,sounds,mp_footsteps
+        FieldName: mp_footsteps
+        InputType: checkbox
+        ParamFieldName: mp_footsteps
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_aim
+      label: Enable Auto Aim
+      category: Team Fortress Classic
+      subcategory: Gameplay
+      description: If set, enables auto aim when a player's crosshair is near an enemy
+      keywords: auto,aim,crosshair,sv_aim
+      input_type: checkbox
+      param_field_name: sv_aim
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Auto Aim
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enables auto aim when a player's crosshair is near an enemy
+        Keywords: auto,aim,crosshair,sv_aim
+        FieldName: sv_aim
+        InputType: checkbox
+        ParamFieldName: sv_aim
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_autocrosshair
+      label: Enable Auto Crosshair
+      category: Team Fortress Classic
+      subcategory: Gameplay
+      description: If set, the red crosshair will be enabled. Requires Auto Aim to be enabled
+      keywords: auto,crosshair,mp_autocrosshair
+      input_type: checkbox
+      param_field_name: mp_autocrosshair
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Auto Crosshair
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the red crosshair will be enabled. Requires Auto Aim to be enabled
+        Keywords: auto,crosshair,mp_autocrosshair
+        FieldName: mp_autocrosshair
+        InputType: checkbox
+        ParamFieldName: mp_autocrosshair
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: pausable
+      label: Allow Players To Pause Server
+      category: Team Fortress Classic
+      subcategory: Gameplay
+      description: If set, players will be able to pause the server. Not recommended
+      keywords: pause,pausable
+      input_type: checkbox
+      param_field_name: pausable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Players To Pause Server
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will be able to pause the server. Not recommended
+        Keywords: pause,pausable
+        FieldName: pausable
+        InputType: checkbox
+        ParamFieldName: pausable
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_alltalk
+      label: Allow All Talk
+      category: Team Fortress Classic
+      subcategory: Gameplay
+      description: If enabled, players can communicate with all other players, with no team restrictions
+      keywords: all,talk,sv_alltalk
+      input_type: checkbox
+      param_field_name: sv_alltalk
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow All Talk
+        Category: Team Fortress Classic:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, players can communicate with all other players, with no team restrictions
+        Keywords: all,talk,sv_alltalk
+        FieldName: sv_alltalk
+        InputType: checkbox
+        ParamFieldName: sv_alltalk
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: 'Sets the server branch to install. NOTE: Update the server after switching branches!'
+      keywords: server,branch,public,legacy
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        steam_legacy: Steam Legacy (pre-25th anniversary build)
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: 'Sets the server branch to install. NOTE: Update the server after switching branches!'
+        Keywords: server,branch,public,legacy
+        FieldName: ServerBranch
+        InputType: enum
+        ParamFieldName: ServerBranch
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          steam_legacy: Steam Legacy (pre-25th anniversary build)
+    - key: InstallreHLDS
+      label: Install reHLDS
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        If enabled, the [reHLDS engine](https://github.com/dreamstalker/rehlds) will be installed to run the server.
+        Only works with the Steam Legacy server. Note: update the server after changing this setting
+      keywords: install,rehlds
+      input_type: checkbox
+      param_field_name: InstallreHLDS
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Install reHLDS
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          If enabled, the [reHLDS engine](https://github.com/dreamstalker/rehlds) will be installed to run the server.
+          Only works with the Steam Legacy server. Note: update the server after changing this setting
+        Keywords: install,rehlds
+        FieldName: InstallreHLDS
+        InputType: checkbox
+        ParamFieldName: InstallreHLDS
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: tfc/server.cfg
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: tfc/server.cfg
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: tfc/AMP_server.cfg
+    - path: tfc/motd.txt
+      type: kvp
+      format: '{0}{1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            '': motd
+      raw:
+        ConfigFile: tfc/motd.txt
+        ConfigType: kvp
+        ConfigFormat: '{0}{1}'
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              '': motd
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: hostname
+    label: Server Name
+    default: AMP Powered Team Fortress Classic Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: motd
+    label: Server MOTD
+    default: Welcome to Team Fortress Classic!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mod
+    label: Server Mod Name
+    default: tfc
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_lan
+    label: LAN Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: map
+    label: Initial Map
+    default: 2fort
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Initial Map
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mapcycle
+    label: Map Rotation Cycle
+    default: >-
+      ["ravelin","casbah","flagrun","avanti","dustbowl","warpath","epicenter","badlands","crossover2","2fort","hunted","cz2","well","rock2"]
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_timelimit
+    label: Map Rotation Time Limit
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_region
+    label: Server Region
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow_spectators
+    label: Allow Spectators
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InstallMetamod
+    label: Install Metamod
+    default: none
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InstallAMXModX
+    label: Install AMX Mod X Plugin
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Plugins
+    label: Load Plugins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_cheats
+    label: Enable Cheats
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_filterban
+    label: Enable IP Packet Filter
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowdownload
+    label: Allow Download From Server
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_downloadurl
+    label: Fast Download URLs
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowupload
+    label: Allow Upload To Server
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_minrate
+    label: Minimum Client Rate
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maxrate
+    label: Maximum Client Rate
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_minupdaterate
+    label: Minimum Server Update Rate
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maxupdaterate
+    label: Maximum Server Update Rate
+    default: '101'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sys_ticrate
+    label: Tick Rate
+    default: '1000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: insecure
+    label: Disable Valve Anti-Cheat
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pingboost
+    label: Ping Boost
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_logmessages
+    label: Log Chat Messages
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomParameters
+    label: Additional Command Line Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomConVars
+    label: Additional Console Variables
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UserSettings
+    label: Additional Server Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maxspeed
+    label: Maximum Player Movement Speed
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_friendlyfire
+    label: Enable Friendly Fire
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_flashlight
+    label: Enable Flashlight
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_footsteps
+    label: Enable Footsteps
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_aim
+    label: Enable Auto Aim
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_autocrosshair
+    label: Enable Auto Crosshair
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pausable
+    label: Allow Players To Pause Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_alltalk
+    label: Allow All Talk
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InstallreHLDS
+    label: Install reHLDS
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '20'
+  collection_support: true
 backup:
   include:
     - /data

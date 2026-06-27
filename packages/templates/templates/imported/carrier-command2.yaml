@@ -5,13 +5,16 @@ category: Imported
 summary: Carrier Command 2 Dedicated Server
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '1489630'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: /usr/bin/wine {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,638 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 25565
     protocol: udp
     required: true
-config_files: []
+  - key: steamport
+    name: Steam Port
+    default: 25566
+    protocol: udp
+    required: true
+  - key: reservedport
+    name: Reserved Port
+    default: 25567
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
+    default: 25568
+    protocol: udp
+    required: true
+config_files:
+  - path: server_config.xml
+    type: xml
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Port
+      category: Carrier Command 2
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /data/@port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Port
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: /data/@port
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: game_data_path
+      label: Game Data Path
+      category: Carrier Command 2
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: /data/@game_data_path
+      default: rom_0
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Data Path
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: game_data_path
+        InputType: text
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: /data/@game_data_path
+        IncludeInCommandLine: false
+        DefaultValue: rom_0
+        EnumValues: {}
+    - key: server_name
+      label: Server Name
+      category: Carrier Command 2
+      subcategory: Server
+      description: Sets the name of the server
+      keywords: name,server_name
+      input_type: text
+      param_field_name: /data/@server_name
+      default: AMP Powered Carrier Command 2 Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server
+        Keywords: name,server_name
+        FieldName: server_name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /data/@server_name
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Carrier Command 2 Server
+        EnumValues: {}
+    - key: password
+      label: Server Password
+      category: Carrier Command 2
+      subcategory: Server
+      description: Sets the password to connect to the server. Default is no password
+      keywords: password
+      input_type: password
+      param_field_name: /data/@password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to connect to the server. Default is no password
+        Keywords: password
+        FieldName: password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: /data/@password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: save_name
+      label: Save Name
+      category: Carrier Command 2
+      subcategory: Server
+      description: Sets the name of a save in the 'saved_games' directory to load when the server is started
+      keywords: save,game,save_name
+      input_type: text
+      param_field_name: /data/@save_name
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Save Name
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of a save in the 'saved_games' directory to load when the server is started
+        Keywords: save,game,save_name
+        FieldName: save_name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /data/@save_name
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Carrier Command 2
+      subcategory: Server
+      description: Sets the maximum number of players that can connect to the server at one time
+      keywords: player,limit,maximum,max_players
+      input_type: number
+      param_field_name: /data/@max_players
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that can connect to the server at one time
+        Keywords: player,limit,maximum,max_players
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /data/@max_players
+        IncludeInCommandLine: false
+        DefaultValue: '4'
+        Placeholder: '4'
+        Suffix: players
+        EnumValues: {}
+    - key: island_count
+      label: Island Count
+      category: Carrier Command 2
+      subcategory: Server
+      description: >-
+        Sets the number of islands to spawn on the server. Warning: more than 64 will cause the client to crash when
+        zooming in on the map
+      keywords: island,count,island_count
+      input_type: number
+      param_field_name: /data/@island_count
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: islands
+      enum_values: {}
+      raw:
+        DisplayName: Island Count
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the number of islands to spawn on the server. Warning: more than 64 will cause the client to crash when
+          zooming in on the map
+        Keywords: island,count,island_count
+        FieldName: island_count
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /data/@island_count
+        IncludeInCommandLine: false
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: islands
+        EnumValues: {}
+    - key: team_count_human
+      label: Human Team Count
+      category: Carrier Command 2
+      subcategory: Server
+      description: Sets the number of human teams
+      keywords: human,team,count,team_count_human
+      input_type: number
+      param_field_name: /data/@team_count_human
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Human Team Count
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of human teams
+        Keywords: human,team,count,team_count_human
+        FieldName: team_count_human
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /data/@team_count_human
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: team_count_ai
+      label: AI Team Count
+      category: Carrier Command 2
+      subcategory: Server
+      description: Sets the number of AI teams to spawn
+      keywords: ai,team,count,team_count_ai
+      input_type: number
+      param_field_name: /data/@team_count_ai
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: AI Team Count
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of AI teams to spawn
+        Keywords: ai,team,count,team_count_ai
+        FieldName: team_count_ai
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /data/@team_count_ai
+        IncludeInCommandLine: false
+        SkipIfEmpty: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: island_count_per_team
+      label: Island Count Per Team
+      category: Carrier Command 2
+      subcategory: Server
+      description: Sets the number of starting islands per team
+      keywords: island,count,team,island_count_per_team
+      input_type: number
+      param_field_name: /data/@island_count_per_team
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: islands
+      enum_values: {}
+      raw:
+        DisplayName: Island Count Per Team
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of starting islands per team
+        Keywords: island,count,team,island_count_per_team
+        FieldName: island_count_per_team
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /data/@island_count_per_team
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: islands
+        EnumValues: {}
+    - key: carrier_count_per_team
+      label: Carrier Count Per Team
+      category: Carrier Command 2
+      subcategory: Server
+      description: Sets the number of carriers per team
+      keywords: carrier,count,team,carrier_count_per_team
+      input_type: number
+      param_field_name: /data/@carrier_count_per_team
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Carrier Count Per Team
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of carriers per team
+        Keywords: carrier,count,team,carrier_count_per_team
+        FieldName: carrier_count_per_team
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /data/@carrier_count_per_team
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: base_difficulty
+      label: Base Difficulty
+      category: Carrier Command 2
+      subcategory: Server
+      description: Sets the minimum shield difficulty an island can have
+      keywords: base,difficulty,base_difficulty
+      input_type: number
+      param_field_name: /data/@base_difficulty
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 4
+      enum_values: {}
+      raw:
+        DisplayName: Base Difficulty
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum shield difficulty an island can have
+        Keywords: base,difficulty,base_difficulty
+        FieldName: base_difficulty
+        InputType: number
+        MinValue: '1'
+        MaxValue: '4'
+        IsFlagArgument: false
+        ParamFieldName: /data/@base_difficulty
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: loadout_type
+      label: Loadout Type
+      category: Carrier Command 2
+      subcategory: Server
+      description: Sets the loadout type
+      keywords: loudout,type,loadout_type
+      input_type: enum
+      param_field_name: /data/@loadout_type
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Default
+        '1': Minimal
+        '2': Complete
+      raw:
+        DisplayName: Loadout Type
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the loadout type
+        Keywords: loudout,type,loadout_type
+        FieldName: loadout_type
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /data/@loadout_type
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Default
+          '1': Minimal
+          '2': Complete
+    - key: blueprints
+      label: Blueprints
+      category: Carrier Command 2
+      subcategory: Server
+      description: Sets the number of blueprints
+      keywords: blueprints
+      input_type: enum
+      param_field_name: /data/@blueprints
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Default
+        '1': None
+        '2': All
+      raw:
+        DisplayName: Blueprints
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of blueprints
+        Keywords: blueprints
+        FieldName: blueprints
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /data/@blueprints
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          '0': Default
+          '1': None
+          '2': All
+    - key: permissions
+      label: Player Permissions
+      category: Carrier Command 2
+      subcategory: Server
+      description: >-
+        The ['permissions' section](https://geometa.co.uk/wiki/carrier_command_2/view/dedicated_servers) of
+        'server_config.xml' can be used to control which players have admin powers on the server, and which players are
+        banned
+      keywords: permissions,admins,ban
+      input_type: hidden
+      param_field_name: permissions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Player Permissions
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          The ['permissions' section](https://geometa.co.uk/wiki/carrier_command_2/view/dedicated_servers) of
+          'server_config.xml' can be used to control which players have admin powers on the server, and which players
+          are banned
+        Keywords: permissions,admins,ban
+        FieldName: permissions
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: permissions
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: active_mod_folders
+      label: Active Mods
+      category: Carrier Command 2
+      subcategory: Server
+      description: >-
+        The ['active_mod_folders' section](https://geometa.co.uk/wiki/carrier_command_2/view/dedicated_servers) of
+        'server_config.xml' can be used to enable mods on the server. Example path: mods/2824746567. Mods can be
+        downloaded via "Steam workshop items" under the Updates menu
+      keywords: mods,active_mod_folders
+      input_type: hidden
+      param_field_name: active_mod_folders
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Active Mods
+        Category: Carrier Command 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          The ['active_mod_folders' section](https://geometa.co.uk/wiki/carrier_command_2/view/dedicated_servers) of
+          'server_config.xml' can be used to enable mods on the server. Example path: mods/2824746567. Mods can be
+          downloaded via "Steam workshop items" under the Updates menu
+        Keywords: mods,active_mod_folders
+        FieldName: active_mod_folders
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: active_mod_folders
+        IncludeInCommandLine: false
+        EnumValues: {}
+  files:
+    - path: server_config.xml
+      type: xml
+      subsections: []
+      raw:
+        ConfigFile: server_config.xml
+        AutoMap: true
+        ConfigType: xml
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: game_data_path
+    label: Game Data Path
+    default: rom_0
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_name
+    label: Server Name
+    default: AMP Powered Carrier Command 2 Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: save_name
+    label: Save Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: island_count
+    label: Island Count
+    default: '16'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: team_count_human
+    label: Human Team Count
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: team_count_ai
+    label: AI Team Count
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: island_count_per_team
+    label: Island Count Per Team
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: carrier_count_per_team
+    label: Carrier Count Per Team
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: base_difficulty
+    label: Base Difficulty
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: loadout_type
+    label: Loadout Type
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: blueprints
+    label: Blueprints
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1489630'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,18 @@ category: Imported
 summary: Turbo Sliders Unlimited Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1815810'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1815810/TSUs.x86_64
+  startup: >-
+    1815810/TSUs.x86_64 {PlatformArgs} {CustomServerArgs} -port {ServerPort} -queryPort {QueryPort} -ip
+    {ApplicationIPBinding} {visibility} {relay}{FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,470 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 7755
     protocol: udp
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 7756
+    protocol: udp
+    required: true
+config_files:
+  - path: config/game.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: name
+      label: Server Name
+      category: Turbo Sliders Unlimited
+      subcategory: Server
+      description: Sets the server name visible in the server browser. Maximum 16 characters
+      keywords: server,name
+      input_type: text
+      param_field_name: name
+      default: AMP TSU Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Turbo Sliders Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server name visible in the server browser. Maximum 16 characters
+        Keywords: server,name
+        FieldName: name
+        InputType: text
+        ParamFieldName: name
+        IncludeInCommandLine: true
+        DefaultValue: AMP TSU Server
+        EnumValues: {}
+    - key: info
+      label: Server Info
+      category: Turbo Sliders Unlimited
+      subcategory: Server
+      description: Sets the server info text. Together with Server Name, maximum 63 characters
+      keywords: server,info,text,information
+      input_type: text
+      param_field_name: info
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Info
+        Category: Turbo Sliders Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server info text. Together with Server Name, maximum 63 characters
+        Keywords: server,info,text,information
+        FieldName: info
+        InputType: text
+        ParamFieldName: info
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: host.welcomeMessage
+      label: Server Welcome Message
+      category: Turbo Sliders Unlimited
+      subcategory: Server
+      description: Sets the player welcome message (MOTD)
+      keywords: motd,welcome,message,server.motd
+      input_type: text
+      param_field_name: $.host.welcomeMessage
+      default: Welcome to TSU!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Welcome Message
+        Category: Turbo Sliders Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the player welcome message (MOTD)
+        Keywords: motd,welcome,message,server.motd
+        FieldName: host.welcomeMessage
+        InputType: text
+        ParamFieldName: $.host.welcomeMessage
+        DefaultValue: Welcome to TSU!
+        EnumValues: {}
+    - key: visibility
+      label: Make Server Public
+      category: Turbo Sliders Unlimited
+      subcategory: Server
+      description: If set, the server will be visible in the server browser. Otherwise it will be hidden
+      keywords: server,browser,public,visibility,hidden
+      input_type: checkbox
+      param_field_name: visibility
+      default: '-public'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '-hidden'
+        'True': '-public'
+      raw:
+        DisplayName: Make Server Public
+        Category: Turbo Sliders Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be visible in the server browser. Otherwise it will be hidden
+        Keywords: server,browser,public,visibility,hidden
+        FieldName: visibility
+        InputType: checkbox
+        ParamFieldName: visibility
+        DefaultValue: '-public'
+        EnumValues:
+          'False': '-hidden'
+          'True': '-public'
+    - key: host.passwordRequired
+      label: Require Server Password
+      category: Turbo Sliders Unlimited
+      subcategory: Server
+      description: >-
+        If enabled, the server will notify clients that it requires a password to connect. The password must be set
+        under Server Password
+      keywords: server,password,passwordRequired
+      input_type: checkbox
+      param_field_name: $.host.passwordRequired
+      default: 'false'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Require Server Password
+        Category: Turbo Sliders Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will notify clients that it requires a password to connect. The password must be set
+          under Server Password
+        Keywords: server,password,passwordRequired
+        FieldName: host.passwordRequired
+        InputType: checkbox
+        ParamFieldName: $.host.passwordRequired
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: host.password
+      label: Server Password
+      category: Turbo Sliders Unlimited
+      subcategory: Server
+      description: >-
+        Sets the password required to connect to the server. Default is no password. Require Server Password must also
+        be enabled
+      keywords: server,password
+      input_type: password
+      param_field_name: $.host.password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Turbo Sliders Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password required to connect to the server. Default is no password. Require Server Password must also
+          be enabled
+        Keywords: server,password
+        FieldName: host.password
+        InputType: password
+        ParamFieldName: $.host.password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: host.remoteAdmins
+      label: Server Admins
+      category: Turbo Sliders Unlimited
+      subcategory: Server
+      description: Sets the list of [Steam64 IDs](https://steamid.io/) for server admins
+      keywords: admin,admins,remoteAdmins
+      input_type: list
+      param_field_name: $.host.remoteAdmins
+      default: '[]'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: array:text
+      raw:
+        DisplayName: Server Admins
+        Category: Turbo Sliders Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the list of [Steam64 IDs](https://steamid.io/) for server admins
+        Keywords: admin,admins,remoteAdmins
+        FieldName: host.remoteAdmins
+        InputType: list
+        ParamFieldName: $.host.remoteAdmins
+        DefaultValue: '[]'
+        Special: array:text
+        EnumValues: {}
+    - key: relay
+      label: Use Steam Relay
+      category: Turbo Sliders Unlimited
+      subcategory: Server
+      description: If set, the server will use the Steam relay network for players to connect
+      keywords: steam,network,relay
+      input_type: checkbox
+      param_field_name: relay
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-relay '
+      raw:
+        DisplayName: Use Steam Relay
+        Category: Turbo Sliders Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will use the Steam relay network for players to connect
+        Keywords: steam,network,relay
+        FieldName: relay
+        InputType: checkbox
+        ParamFieldName: relay
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-relay '
+    - key: $MaxUsers
+      label: Player Limit
+      category: Turbo Sliders Unlimited
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,clients,limit,maxplayers
+      input_type: number
+      param_field_name: $.host.maxPlayers
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Turbo Sliders Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,clients,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: $.host.maxPlayers
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: players
+        EnumValues: {}
+    - key: host.spectatorsAllowed
+      label: Spectator Limit
+      category: Turbo Sliders Unlimited
+      subcategory: Server
+      description: Sets the maximum number of spectators at one time
+      keywords: maximum,spectators,allowed,spectatorsAllowed
+      input_type: number
+      param_field_name: $.host.spectatorsAllowed
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: spectators
+      enum_values: {}
+      raw:
+        DisplayName: Spectator Limit
+        Category: Turbo Sliders Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of spectators at one time
+        Keywords: maximum,spectators,allowed,spectatorsAllowed
+        FieldName: host.spectatorsAllowed
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: $.host.spectatorsAllowed
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: spectators
+        EnumValues: {}
+    - key: CustomServerArgs
+      label: Additional Command Line Parameters
+      category: Turbo Sliders Unlimited
+      subcategory: Server
+      description: Specifies additional command line parameters that are not otherwise set by AMP. Use with care
+      keywords: custom,server,arguments,parameters
+      input_type: text
+      param_field_name: CustomServerArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Parameters
+        Category: Turbo Sliders Unlimited:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Specifies additional command line parameters that are not otherwise set by AMP. Use with care
+        Keywords: custom,server,arguments,parameters
+        FieldName: CustomServerArgs
+        InputType: text
+        ParamFieldName: CustomServerArgs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: Sets the server branch to install. Update the server after switching branches
+      keywords: server,branch,depot,beta,public
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        beta: Beta
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: Sets the server branch to install. Update the server after switching branches
+        Keywords: server,branch,depot,beta,public
+        FieldName: ServerBranch
+        InputType: enum
+        ParamFieldName: ServerBranch
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          beta: Beta
+  files:
+    - path: config/game.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: config/game.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: name
+    label: Server Name
+    default: AMP TSU Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: info
+    label: Server Info
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: host.welcomeMessage
+    label: Server Welcome Message
+    default: Welcome to TSU!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: visibility
+    label: Make Server Public
+    default: '-public'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: host.passwordRequired
+    label: Require Server Password
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: host.password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: host.remoteAdmins
+    label: Server Admins
+    default: '[]'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: relay
+    label: Use Steam Relay
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: host.spectatorsAllowed
+    label: Spectator Limit
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerArgs
+    label: Additional Command Line Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1478340'
+  collection_support: true
 backup:
   include:
     - /data

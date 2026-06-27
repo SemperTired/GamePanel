@@ -5,13 +5,18 @@ category: Imported
 summary: Astro Colony Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2662210'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 2662210/AstroColony/Binaries/Linux/AstroColonyServer
+  startup: >-
+    2662210/AstroColony/Binaries/Linux/AstroColonyServer AstroColony -QueryPort={SteamQueryPort} {FormattedArgs}
+    {PlatformArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,611 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: steamqueryport
+    name: Steam Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: AstroColony/Saved/Config/WindowsServer/ServerSettings.ini
+    type: ini
+    editable: true
+  - path: AstroColony/Saved/Config/LinuxServer/ServerSettings.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: ServerName
+      label: Server Name
+      category: Astro Colony
+      subcategory: Server
+      description: >-
+        Sets the name of the server to be displayed in the server list. Maximum 45 characters, no more than 30
+        recommended. If the maximum is exceeded, the server password will be disabled
+      keywords: server,name,ServerName
+      input_type: text
+      param_field_name: ServerName
+      default: AMP Powered Astro Colony Server
+      placeholder: AMP Powered Astro Colony Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the server to be displayed in the server list. Maximum 45 characters, no more than 30
+          recommended. If the maximum is exceeded, the server password will be disabled
+        Keywords: server,name,ServerName
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: ServerName
+        DefaultValue: AMP Powered Astro Colony Server
+        Placeholder: AMP Powered Astro Colony Server
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Astro Colony
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: SteamServerName
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: ServerName
+        InputType: text
+        Hidden: true
+        ParamFieldName: SteamServerName
+        IncludeInCommandLine: true
+        EnumValues: {}
+    - key: ServerPassword
+      label: Server Password
+      category: Astro Colony
+      subcategory: Server
+      description: Sets the password required to connect to the server. Default is no password
+      keywords: server,password,ServerPassword
+      input_type: password
+      param_field_name: ServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server. Default is no password
+        Keywords: server,password,ServerPassword
+        FieldName: ServerPassword
+        InputType: password
+        ParamFieldName: ServerPassword
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: MapName
+      label: Map Name
+      category: Astro Colony
+      subcategory: Server
+      description: Sets the map name to be displayed in the server list
+      keywords: map,name,MapName
+      input_type: text
+      param_field_name: MapName
+      default: MyAstroColony
+      placeholder: MyAstroColony
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Map Name
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map name to be displayed in the server list
+        Keywords: map,name,MapName
+        FieldName: MapName
+        InputType: text
+        ParamFieldName: MapName
+        DefaultValue: MyAstroColony
+        Placeholder: MyAstroColony
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Astro Colony
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,clients,limit,MaxPlayers
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,clients,limit,MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: MaxPlayers
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: players
+        EnumValues: {}
+    - key: AdminList
+      label: Server Admins
+      category: Astro Colony
+      subcategory: Server
+      description: Comma separated list of [Steam64 IDs](https://steamid.io/) of server admins
+      keywords: server,admins,ServerAdminAccounts
+      input_type: text
+      param_field_name: AdminList
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Admins
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Comma separated list of [Steam64 IDs](https://steamid.io/) of server admins
+        Keywords: server,admins,ServerAdminAccounts
+        FieldName: AdminList
+        InputType: text
+        ParamFieldName: AdminList
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Seed
+      label: Seed
+      category: Astro Colony
+      subcategory: Server
+      description: Sets a seed to create a new savegame with. Default is a random seed
+      keywords: seed
+      input_type: number
+      param_field_name: Seed
+      default: '{{randomdigits(8)}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 2147483647
+      enum_values: {}
+      raw:
+        DisplayName: Seed
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a seed to create a new savegame with. Default is a random seed
+        Keywords: seed
+        FieldName: Seed
+        InputType: number
+        MinValue: '1'
+        MaxValue: '2147483647'
+        ParamFieldName: Seed
+        DefaultValue: '{{randomdigits(8)}}'
+        EnumValues: {}
+    - key: ShouldLoadLatestSavegame
+      label: Load Latest Savegame
+      category: Astro Colony
+      subcategory: Server
+      description: If enabled, the latest savegame will be loaded on server start
+      keywords: load,latest,savegame,ShouldLoadLatestSavegame
+      input_type: checkbox
+      param_field_name: ShouldLoadLatestSavegame
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Load Latest Savegame
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the latest savegame will be loaded on server start
+        Keywords: load,latest,savegame,ShouldLoadLatestSavegame
+        FieldName: ShouldLoadLatestSavegame
+        InputType: checkbox
+        ParamFieldName: ShouldLoadLatestSavegame
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: SharedTechnologies
+      label: Enable Shared Technologies
+      category: Astro Colony
+      subcategory: Server
+      description: If enabled, technologies will be shared between players, so that research is not duplicated
+      keywords: shared,technologies,research,SharedTechnologies
+      input_type: checkbox
+      param_field_name: SharedTechnologies
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Shared Technologies
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, technologies will be shared between players, so that research is not duplicated
+        Keywords: shared,technologies,research,SharedTechnologies
+        FieldName: SharedTechnologies
+        InputType: checkbox
+        ParamFieldName: SharedTechnologies
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: OxygenConsumption
+      label: Enable Oxygen Consumption
+      category: Astro Colony
+      subcategory: Server
+      description: If enabled, players will consume oxygen. If disabled, oxygen will not be required by players
+      keywords: oxygen,consumption,OxygenConsumption
+      input_type: checkbox
+      param_field_name: OxygenConsumption
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Oxygen Consumption
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, players will consume oxygen. If disabled, oxygen will not be required by players
+        Keywords: oxygen,consumption,OxygenConsumption
+        FieldName: OxygenConsumption
+        InputType: checkbox
+        ParamFieldName: OxygenConsumption
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: FreeConstruction
+      label: Enable Free Construction
+      category: Astro Colony
+      subcategory: Server
+      description: If enabled, construction will be allowed without cost or spending of resources
+      keywords: free,construction,cost,resources,FreeConstruction
+      input_type: checkbox
+      param_field_name: FreeConstruction
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Free Construction
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, construction will be allowed without cost or spending of resources
+        Keywords: free,construction,cost,resources,FreeConstruction
+        FieldName: FreeConstruction
+        InputType: checkbox
+        ParamFieldName: FreeConstruction
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: Sandbox
+      label: Enable Sandbox Mode
+      category: Astro Colony
+      subcategory: Server
+      description: If set, sanbox mode will be enabled, allowing all technologies
+      keywords: sandbox,mode
+      input_type: checkbox
+      param_field_name: Sandbox
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Sandbox Mode
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, sanbox mode will be enabled, allowing all technologies
+        Keywords: sandbox,mode
+        FieldName: Sandbox
+        InputType: checkbox
+        ParamFieldName: Sandbox
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AutosaveInterval
+      label: Autosave Interval
+      category: Astro Colony
+      subcategory: Server
+      description: Sets the server autosave interval. 0 = disabled
+      keywords: server,autosave,interval,AutosaveInterval
+      input_type: number
+      param_field_name: AutosaveInterval
+      default: '5.0'
+      placeholder: '5.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Autosave Interval
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server autosave interval. 0 = disabled
+        Keywords: server,autosave,interval,AutosaveInterval
+        FieldName: AutosaveInterval
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: AutosaveInterval
+        DefaultValue: '5.0'
+        Placeholder: '5.0'
+        Suffix: minutes
+        EnumValues: {}
+    - key: AutosavesCount
+      label: Autosave Count
+      category: Astro Colony
+      subcategory: Server
+      description: Sets the limit on the number of autosaves that are retained
+      keywords: server,save,autosave,limit,count,AutosavesCount
+      input_type: number
+      param_field_name: AutosavesCount
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: autosaves
+      enum_values: {}
+      raw:
+        DisplayName: Autosave Count
+        Category: Astro Colony:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the limit on the number of autosaves that are retained
+        Keywords: server,save,autosave,limit,count,AutosavesCount
+        FieldName: AutosavesCount
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: AutosavesCount
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: autosaves
+        EnumValues: {}
+  files:
+    - path: AstroColony/Saved/Config/WindowsServer/ServerSettings.ini
+      type: ini
+      format: '{0}={1}'
+      subsections:
+        - heading: /Script/ACFeature.EHServerSubsystem
+          setting_mappings:
+            ServerPassword: ServerPassword
+            Seed: Seed
+            MapName: MapName
+            MaxPlayers: $MaxUsers
+            ShouldLoadLatestSavegame: ShouldLoadLatestSavegame
+            AdminList: AdminList
+            SharedTechnologies: SharedTechnologies
+            OxygenConsumption: OxygenConsumption
+            FreeConstruction: FreeConstruction
+            Sandbox: Sandbox
+            AutosaveInterval: AutosaveInterval
+            AutosavesCount: AutosavesCount
+      raw:
+        ConfigFile: AstroColony/Saved/Config/WindowsServer/ServerSettings.ini
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        Subsections:
+          - Heading: /Script/ACFeature.EHServerSubsystem
+            SettingMappings:
+              ServerPassword: ServerPassword
+              Seed: Seed
+              MapName: MapName
+              MaxPlayers: $MaxUsers
+              ShouldLoadLatestSavegame: ShouldLoadLatestSavegame
+              AdminList: AdminList
+              SharedTechnologies: SharedTechnologies
+              OxygenConsumption: OxygenConsumption
+              FreeConstruction: FreeConstruction
+              Sandbox: Sandbox
+              AutosaveInterval: AutosaveInterval
+              AutosavesCount: AutosavesCount
+    - path: AstroColony/Saved/Config/LinuxServer/ServerSettings.ini
+      type: ini
+      format: '{0}={1}'
+      subsections:
+        - heading: /Script/ACFeature.EHServerSubsystem
+          setting_mappings:
+            ServerPassword: ServerPassword
+            Seed: Seed
+            MapName: MapName
+            MaxPlayers: $MaxUsers
+            ShouldLoadLatestSavegame: ShouldLoadLatestSavegame
+            AdminList: AdminList
+            SharedTechnologies: SharedTechnologies
+            OxygenConsumption: OxygenConsumption
+            FreeConstruction: FreeConstruction
+            Sandbox: Sandbox
+            AutosaveInterval: AutosaveInterval
+            AutosavesCount: AutosavesCount
+      raw:
+        ConfigFile: AstroColony/Saved/Config/LinuxServer/ServerSettings.ini
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        Subsections:
+          - Heading: /Script/ACFeature.EHServerSubsystem
+            SettingMappings:
+              ServerPassword: ServerPassword
+              Seed: Seed
+              MapName: MapName
+              MaxPlayers: $MaxUsers
+              ShouldLoadLatestSavegame: ShouldLoadLatestSavegame
+              AdminList: AdminList
+              SharedTechnologies: SharedTechnologies
+              OxygenConsumption: OxygenConsumption
+              FreeConstruction: FreeConstruction
+              Sandbox: Sandbox
+              AutosaveInterval: AutosaveInterval
+              AutosavesCount: AutosavesCount
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered Astro Colony Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: MapName
+    label: Map Name
+    default: MyAstroColony
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AdminList
+    label: Server Admins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Seed
+    label: Seed
+    default: '{{randomdigits(8)}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ShouldLoadLatestSavegame
+    label: Load Latest Savegame
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SharedTechnologies
+    label: Enable Shared Technologies
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OxygenConsumption
+    label: Enable Oxygen Consumption
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FreeConstruction
+    label: Enable Free Construction
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Sandbox
+    label: Enable Sandbox Mode
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutosaveInterval
+    label: Autosave Interval
+    default: '5.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutosavesCount
+    label: Autosave Count
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1614550'
+  collection_support: true
 backup:
   include:
     - /data

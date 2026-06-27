@@ -4,14 +4,16 @@ name: Skyrim Together Reborn
 category: Imported
 summary: Skyrim Together Reborn Server
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: /usr/bin/wine {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +21,878 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 10578
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: SkyrimTogetherReborn/config/STServer.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Server Port
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: GameServer.uPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        Hidden: true
+        FieldName: $GamePort
+        InputType: number
+        ParamFieldName: GameServer.uPort
+    - key: bConsole
+      label: Enable Console
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: general.bConsole
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable Console
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        Hidden: true
+        FieldName: bConsole
+        InputType: text
+        ParamFieldName: general.bConsole
+        DefaultValue: 'true'
+        EnumValues: {}
+    - key: DownloadURL
+      label: Server Download URL
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: >-
+        Sets the full URL to download the server from.
+        [Login](https://www.nexusmods.com/skyrimspecialedition/mods/69993?tab=files) to Nexus Mods, select Manual
+        Download for the required server version, and continue until the download begins. Then cancel the download and
+        copy the "click here" download URL to AMP. Update the server before the URL expires
+      keywords: download,url
+      input_type: url
+      param_field_name: DownloadURL
+      default: ''
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Download URL
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the full URL to download the server from.
+          [Login](https://www.nexusmods.com/skyrimspecialedition/mods/69993?tab=files) to Nexus Mods, select Manual
+          Download for the required server version, and continue until the download begins. Then cancel the download and
+          copy the "click here" download URL to AMP. Update the server before the URL expires
+        Keywords: download,url
+        FieldName: DownloadURL
+        InputType: url
+        ParamFieldName: DownloadURL
+        DefaultValue: ''
+        Required: true
+        EnumValues: {}
+    - key: sServerName
+      label: Server Name
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: Sets the name of the server as shown on the server list
+      keywords: name,server,sservername
+      input_type: text
+      param_field_name: GameServer.sServerName
+      default: AMP Powered Skyrim Together Reborn Server
+      placeholder: AMP Powered Skyrim Together Reborn Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as shown on the server list
+        Keywords: name,server,sservername
+        FieldName: sServerName
+        InputType: text
+        ParamFieldName: GameServer.sServerName
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Skyrim Together Reborn Server
+        Placeholder: AMP Powered Skyrim Together Reborn Server
+    - key: bAnnounceServer
+      label: Announce Server
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: If enabled, the server will show on the server list, assuming no password is set
+      keywords: announce,public,serverlist,bannounceserver
+      input_type: checkbox
+      param_field_name: LiveServices.bAnnounceServer
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Announce Server
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will show on the server list, assuming no password is set
+        Keywords: announce,public,serverlist,bannounceserver
+        FieldName: bAnnounceServer
+        InputType: checkbox
+        ParamFieldName: LiveServices.bAnnounceServer
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: sPassword
+      label: Server Password
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: >-
+        Sets the password required for players to connect to the server. Empty = disabled. If a password is set, the
+        server will not show on the server list, and players must connect manually
+      keywords: password,server,spassword
+      input_type: password
+      param_field_name: GameServer.sPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password required for players to connect to the server. Empty = disabled. If a password is set, the
+          server will not show on the server list, and players must connect manually
+        Keywords: password,server,spassword
+        FieldName: sPassword
+        InputType: password
+        ParamFieldName: GameServer.sPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sAdminPassword
+      label: Admin Password
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: >-
+        Sets the admin password, for potential future admin panels. Default is a strong, random password. Currently
+        unused
+      keywords: admin,password,sadminpassword
+      input_type: password
+      param_field_name: GameServer.sAdminPassword
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the admin password, for potential future admin panels. Default is a strong, random password. Currently
+          unused
+        Keywords: admin,password,sadminpassword
+        FieldName: sAdminPassword
+        InputType: password
+        ParamFieldName: GameServer.sAdminPassword
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: Sets the maximum number of players that can connect to the server at one time
+      keywords: player,count,limit,maximum,umaxplayercount
+      input_type: number
+      param_field_name: GameServer.uMaxPlayerCount
+      default: '8'
+      placeholder: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that can connect to the server at one time
+        Keywords: player,count,limit,maximum,umaxplayercount
+        FieldName: $MaxUsers
+        InputType: number
+        ParamFieldName: GameServer.uMaxPlayerCount
+        DefaultValue: '8'
+        Placeholder: '8'
+        Suffix: players
+        EnumValues: {}
+    - key: uDifficulty
+      label: Difficulty Level
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: Sets the server difficulty level, which is enforced on all clients
+      keywords: difficulty,level,udifficulty
+      input_type: enum
+      param_field_name: Gameplay.uDifficulty
+      default: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Novice
+        '1': Apprentice
+        '2': Adept
+        '3': Expert
+        '4': Master (default)
+        '5': Legendary
+      raw:
+        DisplayName: Difficulty Level
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server difficulty level, which is enforced on all clients
+        Keywords: difficulty,level,udifficulty
+        FieldName: uDifficulty
+        InputType: enum
+        ParamFieldName: Gameplay.uDifficulty
+        DefaultValue: '4'
+        EnumValues:
+          '0': Novice
+          '1': Apprentice
+          '2': Adept
+          '3': Expert
+          '4': Master (default)
+          '5': Legendary
+    - key: bEnablePvp
+      label: Enable PvP
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: >-
+        If enabled, players can damage each other. Shouts on other players, like fus ro dah, also only work when this
+        option is enabled
+      keywords: pvp,damage,benablepvp
+      input_type: checkbox
+      param_field_name: Gameplay.bEnablePvp
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable PvP
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, players can damage each other. Shouts on other players, like fus ro dah, also only work when this
+          option is enabled
+        Keywords: pvp,damage,benablepvp
+        FieldName: bEnablePvp
+        InputType: checkbox
+        ParamFieldName: Gameplay.bEnablePvp
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: uTimeScale
+      label: Time Scale
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: Sets how fast in-game time progresses
+      keywords: time,scale,utimescale
+      input_type: number
+      param_field_name: Gameplay.uTimeScale
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Time Scale
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how fast in-game time progresses
+        Keywords: time,scale,utimescale
+        FieldName: uTimeScale
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1000'
+        ParamFieldName: Gameplay.uTimeScale
+        DefaultValue: '20'
+        Placeholder: '20'
+        EnumValues: {}
+    - key: fGoldLossFactor
+      label: Gold Loss Factor
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: Sets how much gold a player loses when they die. 0 = no gold loss
+      keywords: gold,loss,die,death,fgoldlossfactor
+      input_type: number
+      param_field_name: Gameplay.fGoldLossFactor
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Gold Loss Factor
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how much gold a player loses when they die. 0 = no gold loss
+        Keywords: gold,loss,die,death,fgoldlossfactor
+        FieldName: fGoldLossFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: Gameplay.fGoldLossFactor
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: bEnableItemDrops
+      label: Enable Item Drops
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: >-
+        If set, dropping items in the world will be synced. Recommended to be disabled, as otherwise server crashes can
+        occur
+      keywords: item,drops,benableitemdrops
+      input_type: checkbox
+      param_field_name: Gameplay.bEnableItemDrops
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Item Drops
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, dropping items in the world will be synced. Recommended to be disabled, as otherwise server crashes
+          can occur
+        Keywords: item,drops,benableitemdrops
+        FieldName: bEnableItemDrops
+        InputType: checkbox
+        ParamFieldName: Gameplay.bEnableItemDrops
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bEnableXpSync
+      label: Enable XP Sync
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: If set, the XP sync system will be enabled
+      keywords: xp,sync,benablexpsync
+      input_type: checkbox
+      param_field_name: Gameplay.bEnableXpSync
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable XP Sync
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the XP sync system will be enabled
+        Keywords: xp,sync,benablexpsync
+        FieldName: bEnableXpSync
+        InputType: checkbox
+        ParamFieldName: Gameplay.bEnableXpSync
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bEnableDeathSystem
+      label: Enable Death System
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: >-
+        If set, the custom death system will be enabled. Only disable this if you know what you're doing, and if you
+        have a suitable death mod that replaces the mechanics. Reloading old saves every time you die will cause issues
+      keywords: death,benabledeathsystem
+      input_type: checkbox
+      param_field_name: Gameplay.bEnableDeathSystem
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Death System
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the custom death system will be enabled. Only disable this if you know what you're doing, and if you
+          have a suitable death mod that replaces the mechanics. Reloading old saves every time you die will cause
+          issues
+        Keywords: death,benabledeathsystem
+        FieldName: bEnableDeathSystem
+        InputType: checkbox
+        ParamFieldName: Gameplay.bEnableDeathSystem
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bSyncPlayerHomes
+      label: Sync Player Homes
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: >-
+        If enabled, chests in player homes will be synced. This option is disabled by default to allow players to use
+        their home chests for long term storage. Beware however that long term storage is not consistent in STR
+      keywords: home,bsyncplayerhomes
+      input_type: checkbox
+      param_field_name: Gameplay.bSyncPlayerHomes
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Sync Player Homes
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, chests in player homes will be synced. This option is disabled by default to allow players to use
+          their home chests for long term storage. Beware however that long term storage is not consistent in STR
+        Keywords: home,bsyncplayerhomes
+        FieldName: bSyncPlayerHomes
+        InputType: checkbox
+        ParamFieldName: Gameplay.bSyncPlayerHomes
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bEnableGreetings
+      label: Enable Greetings
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: >-
+        If enabled, when a player walks close to an NPC, the NPC will start talking to the player with random dialogue.
+        Enabling this setting can be annoying with dialogue sync implemented
+      keywords: greetings,npc,dialogue,benablegreetings
+      input_type: checkbox
+      param_field_name: Gameplay.bEnableGreetings
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Greetings
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, when a player walks close to an NPC, the NPC will start talking to the player with random
+          dialogue. Enabling this setting can be annoying with dialogue sync implemented
+        Keywords: greetings,npc,dialogue,benablegreetings
+        FieldName: bEnableGreetings
+        InputType: checkbox
+        ParamFieldName: Gameplay.bEnableGreetings
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bAllowMO2
+      label: Allow MO2
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: If enabled, clients will be allowed to use Mod Organizer 2
+      keywords: mod,policy,organizer,mo2,ballowmo2
+      input_type: checkbox
+      param_field_name: ModPolicy.bAllowMO2
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow MO2
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, clients will be allowed to use Mod Organizer 2
+        Keywords: mod,policy,organizer,mo2,ballowmo2
+        FieldName: bAllowMO2
+        InputType: checkbox
+        ParamFieldName: ModPolicy.bAllowMO2
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bAllowSKSE
+      label: Allow SKSE
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: If enabled, clients will be allowed to use SKSE
+      keywords: mod,policy,skse,ballowskse
+      input_type: checkbox
+      param_field_name: ModPolicy.bAllowSKSE
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow SKSE
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, clients will be allowed to use SKSE
+        Keywords: mod,policy,skse,ballowskse
+        FieldName: bAllowSKSE
+        InputType: checkbox
+        ParamFieldName: ModPolicy.bAllowSKSE
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bEnableModCheck
+      label: Enable Mod Check
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: >-
+        If set, enables the [mod policy
+        feature](https://wiki.tiltedphoques.com/tilted-online/guides/server-guide/linux-setup/explaining-benablemodcheck),
+        requiring all clients to have the same mods loaded in the same order. To use this, set the mod load order in
+        SkyrimTogetherReborn/Data/loadorder.txt
+      keywords: mod,policy,benablemodcheck
+      input_type: checkbox
+      param_field_name: ModPolicy.bEnableModCheck
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Mod Check
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, enables the [mod policy
+          feature](https://wiki.tiltedphoques.com/tilted-online/guides/server-guide/linux-setup/explaining-benablemodcheck),
+          requiring all clients to have the same mods loaded in the same order. To use this, set the mod load order in
+          SkyrimTogetherReborn/Data/loadorder.txt
+        Keywords: mod,policy,benablemodcheck
+        FieldName: bEnableModCheck
+        InputType: checkbox
+        ParamFieldName: ModPolicy.bEnableModCheck
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: bPremiumMode
+      label: Enable Premium Mode
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: >-
+        If enabled, the server will run at a higher tickrate (60 instead of 30). Most networks should be able to run a
+        server with this option enabled
+      keywords: premium,tick,rate,bpremiummode
+      input_type: checkbox
+      param_field_name: GameServer.bPremiumMode
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Premium Mode
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will run at a higher tickrate (60 instead of 30). Most networks should be able to run a
+          server with this option enabled
+        Keywords: premium,tick,rate,bpremiummode
+        FieldName: bPremiumMode
+        InputType: checkbox
+        ParamFieldName: GameServer.bPremiumMode
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: sLogLevel
+      label: Log Level
+      category: Skyrim Together Reborn
+      subcategory: Server
+      description: Sets the log level for the server console. Currently unused
+      keywords: log,level,sloglevel
+      input_type: enum
+      param_field_name: general.sLogLevel
+      default: info
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        info: Display all logged information (default)
+        warn: Display warnings and critical information only
+        error: Display critical information only
+      raw:
+        DisplayName: Log Level
+        Category: Skyrim Together Reborn:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the log level for the server console. Currently unused
+        Keywords: log,level,sloglevel
+        FieldName: sLogLevel
+        InputType: enum
+        ParamFieldName: general.sLogLevel
+        DefaultValue: info
+        EnumValues:
+          info: Display all logged information (default)
+          warn: Display warnings and critical information only
+          error: Display critical information only
+  files:
+    - path: SkyrimTogetherReborn/config/STServer.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: SkyrimTogetherReborn/config/STServer.ini
+        AutoMap: true
+        ConfigType: ini
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: bConsole
+    label: Enable Console
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DownloadURL
+    label: Server Download URL
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: sServerName
+    label: Server Name
+    default: AMP Powered Skyrim Together Reborn Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAnnounceServer
+    label: Announce Server
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: sAdminPassword
+    label: Admin Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: uDifficulty
+    label: Difficulty Level
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnablePvp
+    label: Enable PvP
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: uTimeScale
+    label: Time Scale
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fGoldLossFactor
+    label: Gold Loss Factor
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableItemDrops
+    label: Enable Item Drops
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableXpSync
+    label: Enable XP Sync
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableDeathSystem
+    label: Enable Death System
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bSyncPlayerHomes
+    label: Sync Player Homes
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableGreetings
+    label: Enable Greetings
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowMO2
+    label: Allow MO2
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowSKSE
+    label: Allow SKSE
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bEnableModCheck
+    label: Enable Mod Check
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bPremiumMode
+    label: Enable Premium Mode
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sLogLevel
+    label: Log Level
+    default: info
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '489830'
+  collection_support: true
 backup:
   include:
     - /data

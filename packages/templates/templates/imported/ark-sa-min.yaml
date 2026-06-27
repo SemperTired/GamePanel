@@ -5,13 +5,22 @@ category: Imported
 summary: 'ARK: Survival Ascended Dedicated Server with Server API option and minimal settings (for Beacon use)'
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2430930'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: .proton/proton
+  startup: >-
+    .proton/proton {PlatformArgs}
+    {Map}?listen?Port={GamePort}?RCONEnabled=True?RCONServerGameLogBuffer=600?RCONPort={RCONPort}{CustomOptions}?ServerAdminPassword={RemoteAdminPassword}
+    -WinLiveMaxPlayers={MaxUsers}
+    {passivemods}{mods}{pconlymods}{Colors}{exclusivejoin}{BattlEye}{usestore}-ServerPlatform={ServerPlatform}
+    {UseDynamicConfig}{EnableIdlePlayerKick}{NoHangDetection}{DisableCustomCosmetics}{NoTransferFromFiltering}{NoGameAnalytics}{ForceAllowCaveFlyers}{nodinos}{ForceRespawnDinos}{DisableRailgunPVP}{UseStructureStasisGrid}-culture={culture}
+    {EnableCluster}{ServerIP}{CustomFlags} -servergamelog
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +28,1643 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 7777
     protocol: udp
     required: true
-config_files: []
+  - key: rconport
+    name: RCON Port
+    default: 27020
+    protocol: tcp
+    required: true
+config_files:
+  - path: ark-sa-minconfig.json
+    type: json
+    editable: true
+  - path: ark-sa-minmetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: Map
+      label: Map
+      category: ARK SA
+      subcategory: Server
+      description: Sets the map for the server. If Custom is selected, Custom Map Name must also be set
+      keywords: map
+      input_type: enum
+      param_field_name: Map
+      default: TheIsland_WP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        TheIsland_WP: The Island (default)
+        ScorchedEarth_WP: Scorched Earth
+        TheCenter_WP: The Center
+        Aberration_WP: Aberration
+        Extinction_WP: Extinction
+        Astraeos_WP: Astraeos
+        Ragnarok_WP: Ragnarok
+        Valguero_WP: Valguero
+        LostColony_WP: Lost Colony
+        '{{CustomMap}}': '--Custom--'
+      raw:
+        DisplayName: Map
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map for the server. If Custom is selected, Custom Map Name must also be set
+        Keywords: map
+        FieldName: Map
+        InputType: enum
+        ParamFieldName: Map
+        DefaultValue: TheIsland_WP
+        EnumValues:
+          TheIsland_WP: The Island (default)
+          ScorchedEarth_WP: Scorched Earth
+          TheCenter_WP: The Center
+          Aberration_WP: Aberration
+          Extinction_WP: Extinction
+          Astraeos_WP: Astraeos
+          Ragnarok_WP: Ragnarok
+          Valguero_WP: Valguero
+          LostColony_WP: Lost Colony
+          '{{CustomMap}}': '--Custom--'
+    - key: CustomMap
+      label: Custom Map Name
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        Sets a custom map for the server. "Custom" type must be selected under Map, and the CurseForge Project ID for
+        the map included under Mods List
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      placeholder: Svartalfheim_WP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Map Name
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a custom map for the server. "Custom" type must be selected under Map, and the CurseForge Project ID for
+          the map included under Mods List
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        ParamFieldName: CustomMap
+        DefaultValue: ''
+        Placeholder: Svartalfheim_WP
+        EnumValues: {}
+    - key: mods
+      label: Use Mods
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        If set, enables automatic mod downloading, updating and loading (on server start). Specify the relevant mods
+        under Mods List. Don't enable this setting if no mods are specified under Mods List or the server will not start
+      keywords: auto,managed,mods
+      input_type: checkbox
+      param_field_name: mods
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-mods={{modslist}} '
+      raw:
+        DisplayName: Use Mods
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, enables automatic mod downloading, updating and loading (on server start). Specify the relevant mods
+          under Mods List. Don't enable this setting if no mods are specified under Mods List or the server will not
+          start
+        Keywords: auto,managed,mods
+        FieldName: mods
+        InputType: checkbox
+        ParamFieldName: mods
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-mods={{modslist}} '
+    - key: modslist
+      label: Mods List
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        Comma-separated and ordered list of [CurseForge Project IDs](https://www.curseforge.com/ark-survival-ascended)
+        for mods (including events) to install and load on server start (map mods will not load unless also named as a
+        "Custom" map under Custom Map Name). Requires Use Mods to be enabled
+      keywords: mods,list
+      input_type: text
+      param_field_name: modslist
+      default: ''
+      placeholder: 900062,893657
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Mods List
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma-separated and ordered list of [CurseForge Project IDs](https://www.curseforge.com/ark-survival-ascended)
+          for mods (including events) to install and load on server start (map mods will not load unless also named as a
+          "Custom" map under Custom Map Name). Requires Use Mods to be enabled
+        Keywords: mods,list
+        FieldName: modslist
+        InputType: text
+        ParamFieldName: modslist
+        DefaultValue: ''
+        Placeholder: 900062,893657
+        EnumValues: {}
+    - key: passivemods
+      label: Use Passive Mods
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        If enabled, this option activates the -passivemods function, allowing specified mods to load their data while
+        disabling their functionality (even if the mods are listed under Mods List). Don't enable this setting if no
+        mods are specified under Passive Mods List or the server will not start
+      keywords: passive,passivemods,mods
+      input_type: checkbox
+      param_field_name: passivemods
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-passivemods={{passivemodslist}} '
+      raw:
+        DisplayName: Use Passive Mods
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, this option activates the -passivemods function, allowing specified mods to load their data while
+          disabling their functionality (even if the mods are listed under Mods List). Don't enable this setting if no
+          mods are specified under Passive Mods List or the server will not start
+        Keywords: passive,passivemods,mods
+        FieldName: passivemods
+        InputType: checkbox
+        ParamFieldName: passivemods
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-passivemods={{passivemodslist}} '
+    - key: passivemodslist
+      label: Passive Mods List
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        Comma-separated and ordered list of [CurseForge Project IDs](https://www.curseforge.com/ark-survival-ascended)
+        for mods to be loaded in passive mode, disabling their functionality while retaining their data. Requires Use
+        Passive Mods to be enabled. When enabled, at least one mod ID must be specified, or the server will not start
+      keywords: passive,passivemods,mods,list
+      input_type: text
+      param_field_name: passivemodslist
+      default: ''
+      placeholder: '927090'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Passive Mods List
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Comma-separated and ordered list of [CurseForge Project IDs](https://www.curseforge.com/ark-survival-ascended)
+          for mods to be loaded in passive mode, disabling their functionality while retaining their data. Requires Use
+          Passive Mods to be enabled. When enabled, at least one mod ID must be specified, or the server will not start
+        Keywords: passive,passivemods,mods,list
+        FieldName: passivemodslist
+        InputType: text
+        ParamFieldName: passivemodslist
+        DefaultValue: ''
+        Placeholder: '927090'
+        EnumValues: {}
+    - key: pconlymods
+      label: Enable Steam/PC Mods Only
+      category: ARK SA
+      subcategory: Server
+      description: If set, crossplay mods will be disabled on the server
+      keywords: crossplay,pc,steam,mods,pconlymods
+      input_type: checkbox
+      param_field_name: pconlymods
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-pconlymods '
+      raw:
+        DisplayName: Enable Steam/PC Mods Only
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, crossplay mods will be disabled on the server
+        Keywords: crossplay,pc,steam,mods,pconlymods
+        FieldName: pconlymods
+        InputType: checkbox
+        ParamFieldName: pconlymods
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-pconlymods '
+    - key: Colors
+      label: Dino Event Colors
+      category: ARK SA
+      subcategory: Server
+      description: If particular event colors are selected, then dinos may spawn with those colors
+      keywords: colors,event
+      input_type: enum
+      param_field_name: Colors
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': None
+        '-EasterColors ': Easter Colors
+        '-HalloweenColors ': Halloween Colors
+        '-OlympicColors ': Olympic Colors
+        '-PrideColors ': Pride Colors
+        '-ServerUseEventColors ': Current Event Colors
+      raw:
+        DisplayName: Dino Event Colors
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If particular event colors are selected, then dinos may spawn with those colors
+        Keywords: colors,event
+        FieldName: Colors
+        InputType: enum
+        ParamFieldName: Colors
+        DefaultValue: ''
+        EnumValues:
+          '': None
+          '-EasterColors ': Easter Colors
+          '-HalloweenColors ': Halloween Colors
+          '-OlympicColors ': Olympic Colors
+          '-PrideColors ': Pride Colors
+          '-ServerUseEventColors ': Current Event Colors
+    - key: RCONPassword
+      label: RCON/Server Admin Password
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        See the Security and Privacy menu for configurable options for the server's RCON password. The RCON password is
+        also used in the in-game console for players to access administrator commands (unless they are whitelisted)
+      keywords: rcon,password,serveradminpassword
+      input_type: hidden
+      param_field_name: RCONPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON/Server Admin Password
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          See the Security and Privacy menu for configurable options for the server's RCON password. The RCON password
+          is also used in the in-game console for players to access administrator commands (unless they are whitelisted)
+        Keywords: rcon,password,serveradminpassword
+        FieldName: RCONPassword
+        InputType: hidden
+        ParamFieldName: RCONPassword
+        EnumValues: {}
+    - key: exclusivejoin
+      label: Enable Player Whitelist
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        If set, only players with EOS IDs listed under Whitelisted Players or Whitelisted Players Above Limit can join
+        the server
+      keywords: player,whitelist,exclusivejoin
+      input_type: checkbox
+      param_field_name: exclusivejoin
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-exclusivejoin '
+      raw:
+        DisplayName: Enable Player Whitelist
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, only players with EOS IDs listed under Whitelisted Players or Whitelisted Players Above Limit can join
+          the server
+        Keywords: player,whitelist,exclusivejoin
+        FieldName: exclusivejoin
+        InputType: checkbox
+        ParamFieldName: exclusivejoin
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-exclusivejoin '
+    - key: PlayerWhitelist
+      label: Whitelisted Players
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        List of EOS IDs for normal whitelisted players. EOS IDs can be found by using the 'whoami' command, by viewing
+        another player's character in spectator mode, or by inspecting the server's log files
+      keywords: player,whitelist,playersexclusivejoinlist
+      input_type: list
+      param_field_name: PlayerWhitelist
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./arksa/2430930/ShooterGame/Binaries/Win64/PlayersExclusiveJoinList.txt
+      raw:
+        DisplayName: Whitelisted Players
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          List of EOS IDs for normal whitelisted players. EOS IDs can be found by using the 'whoami' command, by viewing
+          another player's character in spectator mode, or by inspecting the server's log files
+        Keywords: player,whitelist,playersexclusivejoinlist
+        FieldName: PlayerWhitelist
+        InputType: list
+        ParamFieldName: PlayerWhitelist
+        DefaultValue: ''
+        Special: listfile:./arksa/2430930/ShooterGame/Binaries/Win64/PlayersExclusiveJoinList.txt
+        EnumValues: {}
+    - key: PlayerWhitelistAboveLimit
+      label: Whitelisted Players Above Limit
+      category: ARK SA
+      subcategory: Server
+      description: List of EOS IDs for whitelisted players who can join the server even if the number of player slots is exhausted
+      keywords: player,whitelist,above,limit,PlayersJoinNoCheckList
+      input_type: list
+      param_field_name: PlayerWhitelistAboveLimit
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./arksa/2430930/ShooterGame/Binaries/Win64/PlayersJoinNoCheckList.txt
+      raw:
+        DisplayName: Whitelisted Players Above Limit
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          List of EOS IDs for whitelisted players who can join the server even if the number of player slots is
+          exhausted
+        Keywords: player,whitelist,above,limit,PlayersJoinNoCheckList
+        FieldName: PlayerWhitelistAboveLimit
+        InputType: list
+        ParamFieldName: PlayerWhitelistAboveLimit
+        DefaultValue: ''
+        Special: listfile:./arksa/2430930/ShooterGame/Binaries/Win64/PlayersJoinNoCheckList.txt
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        Sets the maximum number of players allowed on the server. May be exceeded as a result of players listed under
+        Whitelisted Players Above Limit
+      keywords: max,players,limit,maxplayers
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '70'
+      placeholder: '70'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of players allowed on the server. May be exceeded as a result of players listed under
+          Whitelisted Players Above Limit
+        Keywords: max,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: MaxPlayers
+        DefaultValue: '70'
+        Placeholder: '70'
+        Suffix: players
+        EnumValues: {}
+    - key: BattlEye
+      label: Disable BattlEye
+      category: ARK SA
+      subcategory: Server
+      description: If set, BattlEye will be disabled on the server
+      keywords: battleye,disable,nobattleye
+      input_type: checkbox
+      param_field_name: BattlEye
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-NoBattlEye '
+      raw:
+        DisplayName: Disable BattlEye
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, BattlEye will be disabled on the server
+        Keywords: battleye,disable,nobattleye
+        FieldName: BattlEye
+        InputType: checkbox
+        ParamFieldName: BattlEye
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-NoBattlEye '
+    - key: ServerPlatform
+      label: Client Platform/Crossplay Support
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        List (separated by +, such as: XSX+PS5) of the game client platforms supported by the server. 'PC' = Steam/PC,
+        'XSX' = Xbox, 'WINGDK' = Microsoft Store/PC, 'PS5' = PlayStation 5, 'ALL' = all platforms. Crossplay will be
+        enabled if more than one platform is specified
+      keywords: crossplay,platform,pc,xbox,ps5,windows,serverplatform
+      input_type: text
+      param_field_name: ServerPlatform
+      default: ALL
+      placeholder: ALL
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Client Platform/Crossplay Support
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          List (separated by +, such as: XSX+PS5) of the game client platforms supported by the server. 'PC' = Steam/PC,
+          'XSX' = Xbox, 'WINGDK' = Microsoft Store/PC, 'PS5' = PlayStation 5, 'ALL' = all platforms. Crossplay will be
+          enabled if more than one platform is specified
+        Keywords: crossplay,platform,pc,xbox,ps5,windows,serverplatform
+        FieldName: ServerPlatform
+        InputType: text
+        ParamFieldName: ServerPlatform
+        DefaultValue: ALL
+        Placeholder: ALL
+        Required: true
+        EnumValues: {}
+    - key: UseDynamicConfig
+      label: Use Dynamic Config
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        If set, the server will use a dynamic config. The default dynamic config for the platform will be used if
+        'CustomDynamicConfigUrl' is not set in GameUserSettings.ini
+      keywords: use,dynamic,config,UseDynamicConfig
+      input_type: checkbox
+      param_field_name: UseDynamicConfig
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-UseDynamicConfig '
+      raw:
+        DisplayName: Use Dynamic Config
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server will use a dynamic config. The default dynamic config for the platform will be used if
+          'CustomDynamicConfigUrl' is not set in GameUserSettings.ini
+        Keywords: use,dynamic,config,UseDynamicConfig
+        FieldName: UseDynamicConfig
+        InputType: checkbox
+        ParamFieldName: UseDynamicConfig
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-UseDynamicConfig '
+    - key: EnableIdlePlayerKick
+      label: Kick Idle Players
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        If set, characters that have not moved or interacted within the Kick Idle Players Period will be kicked from the
+        server
+      keywords: kick,idle,players,enableidleplayerkick
+      input_type: checkbox
+      param_field_name: EnableIdlePlayerKick
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-EnableIdlePlayerKick '
+      raw:
+        DisplayName: Kick Idle Players
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, characters that have not moved or interacted within the Kick Idle Players Period will be kicked from
+          the server
+        Keywords: kick,idle,players,enableidleplayerkick
+        FieldName: EnableIdlePlayerKick
+        InputType: checkbox
+        ParamFieldName: EnableIdlePlayerKick
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-EnableIdlePlayerKick '
+    - key: NoHangDetection
+      label: Disable Hang Detection
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        If set, prevents the server from shutdown if its start-time takes more than 2700 seconds (45 minutes). Useful
+        for servers with big saves or very slow machines
+      keywords: hang,detection,disabled,NoHangDetection
+      input_type: checkbox
+      param_field_name: NoHangDetection
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-NoHangDetection '
+      raw:
+        DisplayName: Disable Hang Detection
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, prevents the server from shutdown if its start-time takes more than 2700 seconds (45 minutes). Useful
+          for servers with big saves or very slow machines
+        Keywords: hang,detection,disabled,NoHangDetection
+        FieldName: NoHangDetection
+        InputType: checkbox
+        ParamFieldName: NoHangDetection
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-NoHangDetection '
+    - key: DisableCustomCosmetics
+      label: Disable Custom Cosmetics
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        If set, the Custom Cosmetic system will be disabled (allowing players to use and display special mods that
+        should only be skins and will be downloaded automatically by the connected clients)
+      keywords: disable,custom,cosmetics,mods,skins,DisableCustomCosmetics
+      input_type: checkbox
+      param_field_name: DisableCustomCosmetics
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-DisableCustomCosmetics '
+      raw:
+        DisplayName: Disable Custom Cosmetics
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the Custom Cosmetic system will be disabled (allowing players to use and display special mods that
+          should only be skins and will be downloaded automatically by the connected clients)
+        Keywords: disable,custom,cosmetics,mods,skins,DisableCustomCosmetics
+        FieldName: DisableCustomCosmetics
+        InputType: checkbox
+        ParamFieldName: DisableCustomCosmetics
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-DisableCustomCosmetics '
+    - key: NoTransferFromFiltering
+      label: Filter Transfers
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        If set, prevents ARK data usage between single player and servers that do not have a Cluster ID set. Even with a
+        Cluster ID set, it is suggested to enable this option
+      keywords: filter,data,transfer,notransferfromfiltering
+      input_type: checkbox
+      param_field_name: NoTransferFromFiltering
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-NoTransferFromFiltering '
+      raw:
+        DisplayName: Filter Transfers
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, prevents ARK data usage between single player and servers that do not have a Cluster ID set. Even with
+          a Cluster ID set, it is suggested to enable this option
+        Keywords: filter,data,transfer,notransferfromfiltering
+        FieldName: NoTransferFromFiltering
+        InputType: checkbox
+        ParamFieldName: NoTransferFromFiltering
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-NoTransferFromFiltering '
+    - key: culture
+      label: Language
+      category: ARK SA
+      subcategory: Server
+      description: Sets the language of the server
+      keywords: language,culture
+      input_type: enum
+      param_field_name: culture
+      default: en
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        ca: Català
+        cs: čeština
+        da: dansk
+        de: Deutsch
+        en: English (default)
+        es: Español
+        eu: euskara
+        fi: suomi
+        fr: Français
+        hu: magyar
+        it: Italiano
+        ja: 日本語
+        ka: ქართული
+        ko: 한국어
+        nl: Nederlands
+        pl: Polski
+        pt_BR: Português brasileiro
+        ru: Русский
+        sv: Svenska
+        th: ไทย
+        tr: Türkçe
+        zh: 中文
+        zh-Hans-CN: 使用者
+        zh-TW: 国语
+      raw:
+        DisplayName: Language
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the language of the server
+        Keywords: language,culture
+        FieldName: culture
+        InputType: enum
+        ParamFieldName: culture
+        DefaultValue: en
+        EnumValues:
+          ca: Català
+          cs: čeština
+          da: dansk
+          de: Deutsch
+          en: English (default)
+          es: Español
+          eu: euskara
+          fi: suomi
+          fr: Français
+          hu: magyar
+          it: Italiano
+          ja: 日本語
+          ka: ქართული
+          ko: 한국어
+          nl: Nederlands
+          pl: Polski
+          pt_BR: Português brasileiro
+          ru: Русский
+          sv: Svenska
+          th: ไทย
+          tr: Türkçe
+          zh: 中文
+          zh-Hans-CN: 使用者
+          zh-TW: 国语
+    - key: ServerIP
+      label: Public IP Selection Mode
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        Sets whether ARK should automatically select the public IP advertised for the server, or whether it should use
+        the IP set under Server Public IP
+      keywords: public,ip,ServerIP
+      input_type: enum
+      param_field_name: ServerIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Automatic (default)
+        '-ServerIP={{ManualServerIP}} ': Manual
+      raw:
+        DisplayName: Public IP Selection Mode
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether ARK should automatically select the public IP advertised for the server, or whether it should use
+          the IP set under Server Public IP
+        Keywords: public,ip,ServerIP
+        FieldName: ServerIP
+        InputType: enum
+        ParamFieldName: ServerIP
+        DefaultValue: ''
+        EnumValues:
+          '': Automatic (default)
+          '-ServerIP={{ManualServerIP}} ': Manual
+    - key: ManualServerIP
+      label: Server Public IP
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        Sets the public IP advertised for the server, if "Manual" is selected as the Public IP Selection Mode. Useful if
+        the host network has multiple public IPs, or the server is behind a public proxy
+      keywords: manual,public,ip,serverip
+      input_type: text
+      param_field_name: ManualServerIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Public IP
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public IP advertised for the server, if "Manual" is selected as the Public IP Selection Mode. Useful
+          if the host network has multiple public IPs, or the server is behind a public proxy
+        Keywords: manual,public,ip,serverip
+        FieldName: ManualServerIP
+        InputType: text
+        ParamFieldName: ManualServerIP
+        DefaultValue: ''
+        EnumValues: {}
+    - key: NoGameAnalytics
+      label: Disable Game Analytics
+      category: ARK SA
+      subcategory: Server
+      description: If set, the server's game analytics reporting will be disabled
+      keywords: game,analytics,nogameanalytics
+      input_type: checkbox
+      param_field_name: NoGameAnalytics
+      default: '-NoGameAnalytics '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-NoGameAnalytics '
+      raw:
+        DisplayName: Disable Game Analytics
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server's game analytics reporting will be disabled
+        Keywords: game,analytics,nogameanalytics
+        FieldName: NoGameAnalytics
+        InputType: checkbox
+        ParamFieldName: NoGameAnalytics
+        DefaultValue: '-NoGameAnalytics '
+        EnumValues:
+          'False': ''
+          'True': '-NoGameAnalytics '
+    - key: CustomFlags
+      label: Custom Command Line Flags
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        Sets custom [command line flags](https://ark.wiki.gg/wiki/Server_configuration_(Survival_Ascended%29) for the
+        server (those that start with a - (dash)). Include the dash and separate with a space. Don't use flags already
+        in AMP's settings!
+      keywords: custom,command,line,flags
+      input_type: text
+      param_field_name: CustomFlags
+      default: ''
+      placeholder: '-UseItemDupeCheck -UseSecureSpawnRules'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Command Line Flags
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets custom [command line flags](https://ark.wiki.gg/wiki/Server_configuration_(Survival_Ascended%29) for the
+          server (those that start with a - (dash)). Include the dash and separate with a space. Don't use flags already
+          in AMP's settings!
+        Keywords: custom,command,line,flags
+        FieldName: CustomFlags
+        InputType: text
+        ParamFieldName: CustomFlags
+        DefaultValue: ''
+        Placeholder: '-UseItemDupeCheck -UseSecureSpawnRules'
+        EnumValues: {}
+    - key: CustomOptions
+      label: Custom Command Line Options
+      category: ARK SA
+      subcategory: Server
+      description: >-
+        Sets custom [command line options](https://ark.wiki.gg/wiki/Server_configuration_(Survival_Ascended%29) for the
+        server (those that start with a ? (question mark)). Include the question mark but do not separate with a space.
+        Don't use options already in AMP's settings!
+      keywords: custom,command,line,options
+      input_type: text
+      param_field_name: CustomOptions
+      default: ''
+      placeholder: '?ClampItemStats=True?NewYear1UTC=1672592400'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Command Line Options
+        Category: ARK SA:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets custom [command line options](https://ark.wiki.gg/wiki/Server_configuration_(Survival_Ascended%29) for
+          the server (those that start with a ? (question mark)). Include the question mark but do not separate with a
+          space. Don't use options already in AMP's settings!
+        Keywords: custom,command,line,options
+        FieldName: CustomOptions
+        InputType: text
+        ParamFieldName: CustomOptions
+        DefaultValue: ''
+        Placeholder: '?ClampItemStats=True?NewYear1UTC=1672592400'
+        EnumValues: {}
+    - key: ForceAllowCaveFlyers
+      label: Allow Cave Flyers
+      category: ARK SA
+      subcategory: Gameplay
+      description: If set, flyers will always be allowed into caves (flyers are able to go into caves by default on custom maps)
+      keywords: allow,cave,flyers,forceallowcaveflyers
+      input_type: checkbox
+      param_field_name: ForceAllowCaveFlyers
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-ForceAllowCaveFlyers '
+      raw:
+        DisplayName: Allow Cave Flyers
+        Category: ARK SA:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, flyers will always be allowed into caves (flyers are able to go into caves by default on custom maps)
+        Keywords: allow,cave,flyers,forceallowcaveflyers
+        FieldName: ForceAllowCaveFlyers
+        InputType: checkbox
+        ParamFieldName: ForceAllowCaveFlyers
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-ForceAllowCaveFlyers '
+    - key: nodinos
+      label: Disable Wild Creature Spawn
+      category: ARK SA
+      subcategory: Gameplay
+      description: >-
+        If set, wild creatures will not be spawned in the server. For an existing server, existing creatures need to be
+        wiped with the admin command "destroywilddinos"
+      keywords: no,creatures,spawn,nodinos
+      input_type: checkbox
+      param_field_name: nodinos
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-nodinos '
+      raw:
+        DisplayName: Disable Wild Creature Spawn
+        Category: ARK SA:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, wild creatures will not be spawned in the server. For an existing server, existing creatures need to
+          be wiped with the admin command "destroywilddinos"
+        Keywords: no,creatures,spawn,nodinos
+        FieldName: nodinos
+        InputType: checkbox
+        ParamFieldName: nodinos
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-nodinos '
+    - key: ForceRespawnDinos
+      label: Force Wild Creature Respawn On Start
+      category: ARK SA
+      subcategory: Gameplay
+      description: If set, all wild creatures that are not currently tamed will be destroyed on server start
+      keywords: force,creature,respawn,forcerespawndinos
+      input_type: checkbox
+      param_field_name: ForceRespawnDinos
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-ForceRespawnDinos '
+      raw:
+        DisplayName: Force Wild Creature Respawn On Start
+        Category: ARK SA:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, all wild creatures that are not currently tamed will be destroyed on server start
+        Keywords: force,creature,respawn,forcerespawndinos
+        FieldName: ForceRespawnDinos
+        InputType: checkbox
+        ParamFieldName: ForceRespawnDinos
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-ForceRespawnDinos '
+    - key: DisableRailgunPVP
+      label: Disable Tek Railgun
+      category: ARK SA
+      subcategory: Gameplay
+      description: If set, the Tek Railgun will be disabled in PvP mode
+      keywords: disable,tek,railgun,disablerailgunpvp
+      input_type: checkbox
+      param_field_name: DisableRailgunPVP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-DisableRailgunPVP '
+      raw:
+        DisplayName: Disable Tek Railgun
+        Category: ARK SA:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the Tek Railgun will be disabled in PvP mode
+        Keywords: disable,tek,railgun,disablerailgunpvp
+        FieldName: DisableRailgunPVP
+        InputType: checkbox
+        ParamFieldName: DisableRailgunPVP
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-DisableRailgunPVP '
+    - key: UseStructureStasisGrid
+      label: Enable Structure Stasis Grid
+      category: ARK SA
+      subcategory: Gameplay
+      description: >-
+        If set, enables the structure stasis grid to improve server performance on large bases with lots of players.
+        Structures are loaded based on grids with players. Not recommended for modded servers
+      keywords: structure,stasis,grid,usestructurestasisgrid
+      input_type: checkbox
+      param_field_name: UseStructureStasisGrid
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-UseStructureStasisGrid '
+      raw:
+        DisplayName: Enable Structure Stasis Grid
+        Category: ARK SA:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, enables the structure stasis grid to improve server performance on large bases with lots of players.
+          Structures are loaded based on grids with players. Not recommended for modded servers
+        Keywords: structure,stasis,grid,usestructurestasisgrid
+        FieldName: UseStructureStasisGrid
+        InputType: checkbox
+        ParamFieldName: UseStructureStasisGrid
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-UseStructureStasisGrid '
+    - key: EnableCluster
+      label: Enable Cluster
+      category: ARK SA
+      subcategory: Clusters
+      description: >-
+        If set, the use of a server cluster will be enabled. Requires Cluster Directory Override and Cluster ID to be
+        set
+      keywords: cluster,enable
+      input_type: checkbox
+      param_field_name: EnableCluster
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-ClusterDirOverride="{{ClusterDirOverride}}" -clusterID={{clusterID}} '
+      raw:
+        DisplayName: Enable Cluster
+        Category: ARK SA:stadia_controller
+        Subcategory: Clusters:share:3
+        Description: >-
+          If set, the use of a server cluster will be enabled. Requires Cluster Directory Override and Cluster ID to be
+          set
+        Keywords: cluster,enable
+        FieldName: EnableCluster
+        InputType: checkbox
+        ParamFieldName: EnableCluster
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-ClusterDirOverride="{{ClusterDirOverride}}" -clusterID={{clusterID}} '
+    - key: ClusterDirOverride
+      label: Cluster Directory Override
+      category: ARK SA
+      subcategory: Clusters
+      description: >-
+        Sets the path to a shared cluster directory for a server cluster. The cluster directory must be accessible to
+        all cluster servers. If the server is in Docker, the directory must be mounted in the container. Requires Enable
+        Cluster to be set
+      keywords: cluster,directory,override,clusterdiroverride
+      input_type: text
+      param_field_name: ClusterDirOverride
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Cluster Directory Override
+        Category: ARK SA:stadia_controller
+        Subcategory: Clusters:share:3
+        Description: >-
+          Sets the path to a shared cluster directory for a server cluster. The cluster directory must be accessible to
+          all cluster servers. If the server is in Docker, the directory must be mounted in the container. Requires
+          Enable Cluster to be set
+        Keywords: cluster,directory,override,clusterdiroverride
+        FieldName: ClusterDirOverride
+        InputType: text
+        ParamFieldName: ClusterDirOverride
+        DefaultValue: ''
+        EnumValues: {}
+    - key: clusterID
+      label: Cluster ID
+      category: ARK SA
+      subcategory: Clusters
+      description: >-
+        Sets the cluster ID for a server cluster. The cluster ID must be the same on all servers in the cluster.
+        Requires Enable Cluster to be set
+      keywords: cluster,id,clusterid
+      input_type: text
+      param_field_name: clusterID
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Cluster ID
+        Category: ARK SA:stadia_controller
+        Subcategory: Clusters:share:3
+        Description: >-
+          Sets the cluster ID for a server cluster. The cluster ID must be the same on all servers in the cluster.
+          Requires Enable Cluster to be set
+        Keywords: cluster,id,clusterid
+        FieldName: clusterID
+        InputType: text
+        ParamFieldName: clusterID
+        DefaultValue: ''
+        EnumValues: {}
+    - key: usestore
+      label: Use Unified Save Data
+      category: ARK SA
+      subcategory: Clusters
+      description: >-
+        If set, a player's character profile file (.arkprofile) will not be saved separately from the map save (.ark),
+        nor its backup. When necessary (such as a character just transferred or a new character has been created), a
+        temporary character profile file is created and kept until next world-save. Tribe profiles are stored in a
+        different format (.arktributetribe)
+      keywords: unified,save,usestore
+      input_type: checkbox
+      param_field_name: usestore
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '{{converttostore}}-usestore {{BackupTransferPlayerDatas}}'
+      raw:
+        DisplayName: Use Unified Save Data
+        Category: ARK SA:stadia_controller
+        Subcategory: Clusters:share:3
+        Description: >-
+          If set, a player's character profile file (.arkprofile) will not be saved separately from the map save (.ark),
+          nor its backup. When necessary (such as a character just transferred or a new character has been created), a
+          temporary character profile file is created and kept until next world-save. Tribe profiles are stored in a
+          different format (.arktributetribe)
+        Keywords: unified,save,usestore
+        FieldName: usestore
+        InputType: checkbox
+        ParamFieldName: usestore
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '{{converttostore}}-usestore {{BackupTransferPlayerDatas}}'
+    - key: converttostore
+      label: Convert To Unified Save Data
+      category: ARK SA
+      subcategory: Clusters
+      description: >-
+        If set, non-stored data (default save behaviour of unofficial and legacy) will be converted to stored data
+        (default save behaviour of official non-legacy) at next world-save. It will not delete older character profile
+        saves. Requires Use Unified Save Data to be enabled
+      keywords: unified,save,usestore,convert,converttostore
+      input_type: checkbox
+      param_field_name: converttostore
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-converttostore '
+      raw:
+        DisplayName: Convert To Unified Save Data
+        Category: ARK SA:stadia_controller
+        Subcategory: Clusters:share:3
+        Description: >-
+          If set, non-stored data (default save behaviour of unofficial and legacy) will be converted to stored data
+          (default save behaviour of official non-legacy) at next world-save. It will not delete older character profile
+          saves. Requires Use Unified Save Data to be enabled
+        Keywords: unified,save,usestore,convert,converttostore
+        FieldName: converttostore
+        InputType: checkbox
+        ParamFieldName: converttostore
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-converttostore '
+    - key: BackupTransferPlayerDatas
+      label: Backup Transfer Player Data
+      category: ARK SA
+      subcategory: Clusters
+      description: >-
+        If set, the server will fully mimic official (non-legacy) servers on handling player characters data, adding
+        permanent character profile backup files separately from the world-save. Requires Use Unified Save Data to be
+        enabled
+      keywords: unified,save,usestore,backup,transfer,backuptransferplayerdata
+      input_type: checkbox
+      param_field_name: BackupTransferPlayerDatas
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-BackupTransferPlayerDatas '
+      raw:
+        DisplayName: Backup Transfer Player Data
+        Category: ARK SA:stadia_controller
+        Subcategory: Clusters:share:3
+        Description: >-
+          If set, the server will fully mimic official (non-legacy) servers on handling player characters data, adding
+          permanent character profile backup files separately from the world-save. Requires Use Unified Save Data to be
+          enabled
+        Keywords: unified,save,usestore,backup,transfer,backuptransferplayerdata
+        FieldName: BackupTransferPlayerDatas
+        InputType: checkbox
+        ParamFieldName: BackupTransferPlayerDatas
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-BackupTransferPlayerDatas '
+    - key: SpecificReleaseVersion
+      label: Proton GE Release Version (Linux)
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+        Empty = latest. Example: GE-Proton9-1
+      keywords: proton,release,version
+      input_type: text
+      param_field_name: SpecificReleaseVersion
+      default: ''
+      placeholder: GE-Proton9-1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Proton GE Release Version (Linux)
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+          Empty = latest. Example: GE-Proton9-1
+        Keywords: proton,release,version
+        FieldName: SpecificReleaseVersion
+        InputType: text
+        ParamFieldName: SpecificReleaseVersion
+        DefaultValue: ''
+        Placeholder: GE-Proton9-1
+        EnumValues: {}
+    - key: ServerExecutable
+      label: Server Executable
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets whether to run the vanilla server or the [ServerAPI launcher](https://github.com/ArkServerApi/AsaApi).
+        NOTE: Update the server after selecting the ServerAPI launcher
+      keywords: serverapi,api,launcher,vanilla
+      input_type: enum
+      param_field_name: ServerExecutable
+      default: ArkAscendedServer
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        ArkAscendedServer: Vanilla server (default)
+        AsaApiLoader: ServerAPI launcher
+      raw:
+        DisplayName: Server Executable
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets whether to run the vanilla server or the [ServerAPI launcher](https://github.com/ArkServerApi/AsaApi).
+          NOTE: Update the server after selecting the ServerAPI launcher
+        Keywords: serverapi,api,launcher,vanilla
+        FieldName: ServerExecutable
+        InputType: enum
+        ParamFieldName: ServerExecutable
+        IncludeInCommandLine: false
+        DefaultValue: ArkAscendedServer
+        EnumValues:
+          ArkAscendedServer: Vanilla server (default)
+          AsaApiLoader: ServerAPI launcher
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: Map
+    label: Map
+    default: TheIsland_WP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Map Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mods
+    label: Use Mods
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: modslist
+    label: Mods List
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: passivemods
+    label: Use Passive Mods
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: passivemodslist
+    label: Passive Mods List
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pconlymods
+    label: Enable Steam/PC Mods Only
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Colors
+    label: Dino Event Colors
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: exclusivejoin
+    label: Enable Player Whitelist
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerWhitelist
+    label: Whitelisted Players
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerWhitelistAboveLimit
+    label: Whitelisted Players Above Limit
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BattlEye
+    label: Disable BattlEye
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerPlatform
+    label: Client Platform/Crossplay Support
+    default: ALL
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: UseDynamicConfig
+    label: Use Dynamic Config
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableIdlePlayerKick
+    label: Kick Idle Players
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoHangDetection
+    label: Disable Hang Detection
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisableCustomCosmetics
+    label: Disable Custom Cosmetics
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoTransferFromFiltering
+    label: Filter Transfers
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: culture
+    label: Language
+    default: en
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerIP
+    label: Public IP Selection Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualServerIP
+    label: Server Public IP
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoGameAnalytics
+    label: Disable Game Analytics
+    default: '-NoGameAnalytics '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomFlags
+    label: Custom Command Line Flags
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomOptions
+    label: Custom Command Line Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ForceAllowCaveFlyers
+    label: Allow Cave Flyers
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: nodinos
+    label: Disable Wild Creature Spawn
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ForceRespawnDinos
+    label: Force Wild Creature Respawn On Start
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisableRailgunPVP
+    label: Disable Tek Railgun
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseStructureStasisGrid
+    label: Enable Structure Stasis Grid
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableCluster
+    label: Enable Cluster
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ClusterDirOverride
+    label: Cluster Directory Override
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: clusterID
+    label: Cluster ID
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: usestore
+    label: Use Unified Save Data
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: converttostore
+    label: Convert To Unified Save Data
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BackupTransferPlayerDatas
+    label: Backup Transfer Player Data
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificReleaseVersion
+    label: Proton GE Release Version (Linux)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerExecutable
+    label: Server Executable
+    default: ArkAscendedServer
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '2399830'
+  collection_support: true
 backup:
   include:
     - /data

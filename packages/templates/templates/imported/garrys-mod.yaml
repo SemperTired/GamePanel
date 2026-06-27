@@ -5,13 +5,19 @@ category: Imported
 summary: Garry's Mod Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '4020'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 4020/srcds_linux
+  startup: >-
+    4020/srcds_linux {PlatformArgs} -game garrysmod -console -usercon -nobreakpad -port {ServerPort} -ip
+    {ApplicationIPBinding} {insecure}{nohltv}{CustomParameters} {CustomConVars} +tv_port {SourceTVPort} +clientport
+    {ClientPort} +sv_logfile 1 {FormattedArgs} +log on
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +25,2862 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: serverport
+    name: Game and RCON Port
     default: 27015
+    protocol: both
+    required: true
+  - key: sourcetvport
+    name: SourceTV Port
+    default: 27020
     protocol: udp
     required: true
-config_files: []
+  - key: clientport
+    name: Client Port
+    default: 27005
+    protocol: udp
+    required: true
+config_files:
+  - path: garrysmod/cfg/server.cfg
+    type: text
+    editable: true
+  - path: garrysmod/lua/autorun/server/resource.lua
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: hostname
+      label: Server Name
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets the name of the server that appears in the server list
+      keywords: server,name,hostname
+      input_type: text
+      param_field_name: hostname
+      default: AMP Powered Garry's Mod Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that appears in the server list
+        Keywords: server,name,hostname
+        FieldName: hostname
+        InputType: text
+        ParamFieldName: hostname
+        DefaultValue: AMP Powered Garry's Mod Server
+        EnumValues: {}
+    - key: sv_lan
+      label: LAN Server
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        If enabled, the server will operate as a LAN server: no heartbeat, no authentication, and no non-class C
+        addresses
+      keywords: lan,local,sv_lan
+      input_type: checkbox
+      param_field_name: sv_lan
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: LAN Server
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will operate as a LAN server: no heartbeat, no authentication, and no non-class C
+          addresses
+        Keywords: lan,local,sv_lan
+        FieldName: sv_lan
+        InputType: checkbox
+        ParamFieldName: sv_lan
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_setsteamaccount
+      label: Game Server Login Token (GSLT)
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Sets the [Steam Game Server Login Token](https://steamcommunity.com/dev/managegameservers) for the server,
+        otherwise the server's ranking will be impacted in the server browser. Use app ID 4000 when generating the token
+      keywords: steam,server,login,token,gslt,sv_setsteamaccount
+      input_type: password
+      param_field_name: sv_setsteamaccount
+      default: ''
+      placeholder: 6544F7E034119F113526E96474F559AH
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Game Server Login Token (GSLT)
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [Steam Game Server Login Token](https://steamcommunity.com/dev/managegameservers) for the server,
+          otherwise the server's ranking will be impacted in the server browser. Use app ID 4000 when generating the
+          token
+        Keywords: steam,server,login,token,gslt,sv_setsteamaccount
+        FieldName: sv_setsteamaccount
+        InputType: password
+        ParamFieldName: sv_setsteamaccount
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: 6544F7E034119F113526E96474F559AH
+        EnumValues: {}
+    - key: sv_password
+      label: Server Password
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets the password required to connect to the server. Default is no password
+      keywords: server,password,sv_password
+      input_type: password
+      param_field_name: sv_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server. Default is no password
+        Keywords: server,password,sv_password
+        FieldName: sv_password
+        InputType: password
+        ParamFieldName: sv_password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Garry's Mod
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's RCON
+      keywords: rcon,password,rcon_password
+      input_type: hidden
+      param_field_name: rcon_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's RCON
+        Keywords: rcon,password,rcon_password
+        FieldName: $RemoteAdminPassword
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: rcon_password
+        EnumValues: {}
+    - key: gamemode
+      label: Initial Gamemode
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Sets the
+        [gamemode](https://steamcommunity.com/workshop/browse/?appid=4000&searchtext=&childpublishedfileid=0&browsesort=trend&section=readytouseitems&requiredtags%5B%5D=Gamemode&created_date_range_filter_start=0&created_date_range_filter_end=0&updated_date_range_filter_start=0&updated_date_range_filter_end=0)
+        to start the server with. You can use another gamemode by selecting "Custom" and specifying the gamemode in
+        Custom Gamemode. The gamemode must be in 'garrysmod/gamemodes' or 'garrysmod/addons'
+      keywords: game,mode,gamemode
+      input_type: enum
+      param_field_name: gamemode
+      default: sandbox
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        sandbox: Sandbox (default)
+        terrortown: Trouble in Terrorist Town
+        '{{CustomGamemode}}': '--Custom--'
+      raw:
+        DisplayName: Initial Gamemode
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the
+          [gamemode](https://steamcommunity.com/workshop/browse/?appid=4000&searchtext=&childpublishedfileid=0&browsesort=trend&section=readytouseitems&requiredtags%5B%5D=Gamemode&created_date_range_filter_start=0&created_date_range_filter_end=0&updated_date_range_filter_start=0&updated_date_range_filter_end=0)
+          to start the server with. You can use another gamemode by selecting "Custom" and specifying the gamemode in
+          Custom Gamemode. The gamemode must be in 'garrysmod/gamemodes' or 'garrysmod/addons'
+        Keywords: game,mode,gamemode
+        FieldName: gamemode
+        InputType: enum
+        ParamFieldName: gamemode
+        IncludeInCommandLine: true
+        DefaultValue: sandbox
+        EnumValues:
+          sandbox: Sandbox (default)
+          terrortown: Trouble in Terrorist Town
+          '{{CustomGamemode}}': '--Custom--'
+    - key: CustomGamemode
+      label: Custom Gamemode
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets a custom gamemode to use for the Initial Gamemode, if "Custom" is selected
+      keywords: custom,gamemode
+      input_type: text
+      param_field_name: CustomGamemode
+      default: ''
+      placeholder: awesomestrike
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Gamemode
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom gamemode to use for the Initial Gamemode, if "Custom" is selected
+        Keywords: custom,gamemode
+        FieldName: CustomGamemode
+        InputType: text
+        ParamFieldName: CustomGamemode
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: awesomestrike
+        EnumValues: {}
+    - key: map
+      label: Initial Map
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Sets the
+        [map](https://steamcommunity.com/workshop/browse/?appid=4000&searchtext=&childpublishedfileid=0&browsesort=trend&section=readytouseitems&requiredtags%5B%5D=Map&created_date_range_filter_start=0&created_date_range_filter_end=0&updated_date_range_filter_start=0&updated_date_range_filter_end=0)
+        to start the server with. You can use another map by selecting "Custom" and specifying the map in Custom Map.
+        The map must be in 'garrysmod/maps' or in a workshop collection downloaded under Workshop Collection ID
+      keywords: map
+      input_type: enum
+      param_field_name: map
+      default: gm_construct
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values:
+        gm_construct: Construct (default)
+        gm_flatgrass: Flatgrass
+        '{{CustomMap}}': '--Custom--'
+      raw:
+        DisplayName: Initial Map
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the
+          [map](https://steamcommunity.com/workshop/browse/?appid=4000&searchtext=&childpublishedfileid=0&browsesort=trend&section=readytouseitems&requiredtags%5B%5D=Map&created_date_range_filter_start=0&created_date_range_filter_end=0&updated_date_range_filter_start=0&updated_date_range_filter_end=0)
+          to start the server with. You can use another map by selecting "Custom" and specifying the map in Custom Map.
+          The map must be in 'garrysmod/maps' or in a workshop collection downloaded under Workshop Collection ID
+        Keywords: map
+        FieldName: map
+        InputType: enum
+        ParamFieldName: map
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: gm_construct
+        EnumValues:
+          gm_construct: Construct (default)
+          gm_flatgrass: Flatgrass
+          '{{CustomMap}}': '--Custom--'
+    - key: CustomMap
+      label: Custom Map
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Sets a custom map to use for the Initial Map, if "Custom" is selected. Must be a map appropriate for the
+        specified Initial Gamemode
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      placeholder: gm_overgrown_v1b
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Map
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a custom map to use for the Initial Map, if "Custom" is selected. Must be a map appropriate for the
+          specified Initial Gamemode
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        ParamFieldName: CustomMap
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: gm_overgrown_v1b
+        EnumValues: {}
+    - key: mp_timelimit
+      label: Map Game Time Limit
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets the game time per map. 0 = disabled
+      keywords: time,limit,rotation,mp_timelimit
+      input_type: number
+      param_field_name: mp_timelimit
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Map Game Time Limit
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the game time per map. 0 = disabled
+        Keywords: time,limit,rotation,mp_timelimit
+        FieldName: mp_timelimit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: mp_timelimit
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: minutes
+        EnumValues: {}
+    - key: host_workshop_collection
+      label: Workshop Collection ID
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Sets the ID of a [Steam workshop
+        collection](https://steamcommunity.com/workshop/browse/?appid=4000&browsesort=trend&section=collections) to
+        download and load on the server
+      keywords: workshop,collection,host_workshop_collection
+      input_type: number
+      param_field_name: host_workshop_collection
+      default: ''
+      placeholder: '3093015229'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Workshop Collection ID
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the ID of a [Steam workshop
+          collection](https://steamcommunity.com/workshop/browse/?appid=4000&browsesort=trend&section=collections) to
+          download and load on the server
+        Keywords: workshop,collection,host_workshop_collection
+        FieldName: host_workshop_collection
+        InputType: number
+        ParamFieldName: host_workshop_collection
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: '3093015229'
+        EnumValues: {}
+    - key: ResourceLuaCode
+      label: Resource Lua Code
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Sets the [code](https://www.yourdevtools.com/gmod/workshop) to force players to automatically download the
+        corresponding workshop collection addons when connecting
+      keywords: workshop,collection,resource,lua,code
+      input_type: Textarea
+      param_field_name: ResourceLuaCode
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Resource Lua Code
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [code](https://www.yourdevtools.com/gmod/workshop) to force players to automatically download the
+          corresponding workshop collection addons when connecting
+        Keywords: workshop,collection,resource,lua,code
+        FieldName: ResourceLuaCode
+        InputType: Textarea
+        ParamFieldName: ResourceLuaCode
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CSSContent
+      label: CSS Content Mode
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Sets how to handle Counter Strike: Source content for the server. Update the server after changing this setting
+        (unless "Do nothing" is selected)
+      keywords: cstrike,counter-strike
+      input_type: enum
+      param_field_name: CSSContent
+      default: none
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        none: Do nothing
+        install: Install and mount content
+        remove: Unmount and remove content
+      raw:
+        DisplayName: CSS Content Mode
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets how to handle Counter Strike: Source content for the server. Update the server after changing this
+          setting (unless "Do nothing" is selected)
+        Keywords: cstrike,counter-strike
+        FieldName: CSSContent
+        InputType: enum
+        ParamFieldName: CSSContent
+        DefaultValue: none
+        EnumValues:
+          none: Do nothing
+          install: Install and mount content
+          remove: Unmount and remove content
+    - key: TF2Content
+      label: TF2 Content Mode
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Sets how to handle Team Fortress 2 content for the server. Update the server after changing this setting (unless
+        "Do nothing" is selected)
+      keywords: team,fortress,tf2
+      input_type: enum
+      param_field_name: TF2Content
+      default: none
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        none: Do nothing
+        install: Install and mount content
+        remove: Unmount and remove content
+      raw:
+        DisplayName: TF2 Content Mode
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets how to handle Team Fortress 2 content for the server. Update the server after changing this setting
+          (unless "Do nothing" is selected)
+        Keywords: team,fortress,tf2
+        FieldName: TF2Content
+        InputType: enum
+        ParamFieldName: TF2Content
+        DefaultValue: none
+        EnumValues:
+          none: Do nothing
+          install: Install and mount content
+          remove: Unmount and remove content
+    - key: sv_region
+      label: Server Region
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets the server region shown in the server browser
+      keywords: server,region,sv_region
+      input_type: enum
+      param_field_name: sv_region
+      default: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': East Coast US
+        '1': West Coast US
+        '2': South America
+        '3': Europe
+        '4': Asia
+        '5': Australia
+        '6': Middle East
+        '7': Africa
+        '255': World
+        '-1': No region
+      raw:
+        DisplayName: Server Region
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server region shown in the server browser
+        Keywords: server,region,sv_region
+        FieldName: sv_region
+        InputType: enum
+        ParamFieldName: sv_region
+        DefaultValue: '-1'
+        EnumValues:
+          '0': East Coast US
+          '1': West Coast US
+          '2': South America
+          '3': Europe
+          '4': Asia
+          '5': Australia
+          '6': Middle East
+          '7': Africa
+          '255': World
+          '-1': No region
+    - key: $MaxUsers
+      label: Player Limit
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,limit,maxplayers
+      input_type: number
+      param_field_name: maxplayers
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      max: 128
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '128'
+        ParamFieldName: maxplayers
+        IncludeInCommandLine: true
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: players
+        EnumValues: {}
+    - key: mp_allowspectators
+      label: Allow Spectators
+      category: Garry's Mod
+      subcategory: Server
+      description: If set, spectator mode will be enabled
+      keywords: allow,spectators,mp_allowspectators
+      input_type: checkbox
+      param_field_name: mp_allowspectators
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Spectators
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, spectator mode will be enabled
+        Keywords: allow,spectators,mp_allowspectators
+        FieldName: mp_allowspectators
+        InputType: checkbox
+        ParamFieldName: mp_allowspectators
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_pure
+      label: Pure Server Mode
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets whether clients are only allowed to use certain files
+      keywords: pure,server,cheat,hack,integrity,sv_pure
+      input_type: enum
+      param_field_name: sv_pure
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '0': Apply rules in 'pure_server_minimal.txt' only
+        '1': Apply rules in 'pure_server_full.txt' and then 'pure_server_whitelist.txt'
+        '2': Apply rules in 'pure_server_full.txt'
+        '-1': Do not restrict client files
+      raw:
+        DisplayName: Pure Server Mode
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether clients are only allowed to use certain files
+        Keywords: pure,server,cheat,hack,integrity,sv_pure
+        FieldName: sv_pure
+        InputType: enum
+        ParamFieldName: sv_pure
+        IncludeInCommandLine: true
+        DefaultValue: '1'
+        EnumValues:
+          '0': Apply rules in 'pure_server_minimal.txt' only
+          '1': Apply rules in 'pure_server_full.txt' and then 'pure_server_whitelist.txt'
+          '2': Apply rules in 'pure_server_full.txt'
+          '-1': Do not restrict client files
+    - key: sv_cheats
+      label: Enable Cheats
+      category: Garry's Mod
+      subcategory: Server
+      description: If set, cheat convars will be allowed to be used on the server
+      keywords: allow,cheat,hack,integrity,sv_cheats
+      input_type: checkbox
+      param_field_name: sv_cheats
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Cheats
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, cheat convars will be allowed to be used on the server
+        Keywords: allow,cheat,hack,integrity,sv_cheats
+        FieldName: sv_cheats
+        InputType: checkbox
+        ParamFieldName: sv_cheats
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_filterban
+      label: Enable IP Packet Filter
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        If set, enables packet filtering by IP mode. If disabled, everyone will treated as IP-banned, but their IP won't
+        be added to the banlist
+      keywords: ip,ban,banning,sv_filterban
+      input_type: checkbox
+      param_field_name: sv_filterban
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable IP Packet Filter
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, enables packet filtering by IP mode. If disabled, everyone will treated as IP-banned, but their IP
+          won't be added to the banlist
+        Keywords: ip,ban,banning,sv_filterban
+        FieldName: sv_filterban
+        InputType: checkbox
+        ParamFieldName: sv_filterban
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_loadingurl
+      label: Loading URL
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets the URL to show to clients while joining the server. Must start with http:// or https://
+      keywords: loading,url,sv_loadingurl
+      input_type: url
+      param_field_name: sv_loadingurl
+      default: ''
+      placeholder: https://example.com
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Loading URL
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the URL to show to clients while joining the server. Must start with http:// or https://
+        Keywords: loading,url,sv_loadingurl
+        FieldName: sv_loadingurl
+        InputType: url
+        ParamFieldName: sv_loadingurl
+        DefaultValue: ''
+        Placeholder: https://example.com
+        EnumValues: {}
+    - key: sv_allowdownload
+      label: Allow Download From Server
+      category: Garry's Mod
+      subcategory: Server
+      description: If set, clients will be allowed to download content from the server (maps, sprays and related)
+      keywords: allow,download,content,maps,sv_allowdownload
+      input_type: checkbox
+      param_field_name: sv_allowdownload
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Download From Server
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be allowed to download content from the server (maps, sprays and related)
+        Keywords: allow,download,content,maps,sv_allowdownload
+        FieldName: sv_allowdownload
+        InputType: checkbox
+        ParamFieldName: sv_allowdownload
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_downloadurl
+      label: Fast Download URL
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Sets the URL for clients to download custom content from, instead of sourcing the content from the server. This
+        allows for faster downloads
+      keywords: fastdl,download,url,sv_downloadurl
+      input_type: text
+      param_field_name: sv_downloadurl
+      default: ''
+      placeholder: http://example.com
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Fast Download URL
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the URL for clients to download custom content from, instead of sourcing the content from the server.
+          This allows for faster downloads
+        Keywords: fastdl,download,url,sv_downloadurl
+        FieldName: sv_downloadurl
+        InputType: text
+        ParamFieldName: sv_downloadurl
+        DefaultValue: ''
+        Placeholder: http://example.com
+        EnumValues: {}
+    - key: sv_allowupload
+      label: Allow Upload To Server
+      category: Garry's Mod
+      subcategory: Server
+      description: If set, clients will be allowed to upload customisation files to the server
+      keywords: allow,upload,customisation,files,sv_allowupload
+      input_type: checkbox
+      param_field_name: sv_allowupload
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Upload To Server
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be allowed to upload customisation files to the server
+        Keywords: allow,upload,customisation,files,sv_allowupload
+        FieldName: sv_allowupload
+        InputType: checkbox
+        ParamFieldName: sv_allowupload
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: net_maxfilesize
+      label: Maximum Upload File Size
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets the maximum allowed file size for uploading to the server
+      keywords: maximum,upload,file,size,net_maxfilesize
+      input_type: number
+      param_field_name: net_maxfilesize
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 64
+      suffix: MB
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Upload File Size
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum allowed file size for uploading to the server
+        Keywords: maximum,upload,file,size,net_maxfilesize
+        FieldName: net_maxfilesize
+        InputType: number
+        MinValue: '0'
+        MaxValue: '64'
+        ParamFieldName: net_maxfilesize
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: MB
+        EnumValues: {}
+    - key: sv_minrate
+      label: Minimum Client Rate
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets the minimum allowable bandwidth rate a client may have set when connected to the server. 0 = no minimum
+      keywords: minimum,bandwidth,rate,sv_minrate
+      input_type: number
+      param_field_name: sv_minrate
+      default: '3500'
+      placeholder: '3500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: bytes/second
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Client Rate
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum allowable bandwidth rate a client may have set when connected to the server. 0 = no minimum
+        Keywords: minimum,bandwidth,rate,sv_minrate
+        FieldName: sv_minrate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_minrate
+        DefaultValue: '3500'
+        Placeholder: '3500'
+        Suffix: bytes/second
+        EnumValues: {}
+    - key: sv_maxrate
+      label: Maximum Client Rate
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets the maximum allowable bandwidth rate a client may have set when connected to the server. 0 = no limit
+      keywords: maximum,bandwidth,rate,sv_maxrate
+      input_type: number
+      param_field_name: sv_maxrate
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: bytes/second
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Client Rate
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum allowable bandwidth rate a client may have set when connected to the server. 0 = no limit
+        Keywords: maximum,bandwidth,rate,sv_maxrate
+        FieldName: sv_maxrate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_maxrate
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: bytes/second
+        EnumValues: {}
+    - key: sv_minupdaterate
+      label: Minimum Server Update Rate
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Sets the minimum number of updates per second of the positions of the server's models (players, guns, etc) that
+        server sends to clients
+      keywords: minimum,update,rate,sv_minupdaterate
+      input_type: number
+      param_field_name: sv_minupdaterate
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 10
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Server Update Rate
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the minimum number of updates per second of the positions of the server's models (players, guns, etc)
+          that server sends to clients
+        Keywords: minimum,update,rate,sv_minupdaterate
+        FieldName: sv_minupdaterate
+        InputType: number
+        MinValue: '10'
+        ParamFieldName: sv_minupdaterate
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+    - key: sv_maxupdaterate
+      label: Maximum Server Update Rate
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Sets the maximum number of updates per second of the positions of the server's models (players, guns, etc) that
+        server sends to clients
+      keywords: maximum,update,rate,sv_maxupdaterate
+      input_type: number
+      param_field_name: sv_maxupdaterate
+      default: '66'
+      placeholder: '66'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 10
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Server Update Rate
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of updates per second of the positions of the server's models (players, guns, etc)
+          that server sends to clients
+        Keywords: maximum,update,rate,sv_maxupdaterate
+        FieldName: sv_maxupdaterate
+        InputType: number
+        MinValue: '10'
+        ParamFieldName: sv_maxupdaterate
+        DefaultValue: '66'
+        Placeholder: '66'
+        EnumValues: {}
+    - key: decalfrequency
+      label: Decal Frequency
+      category: Garry's Mod
+      subcategory: Server
+      description: Sets the time between decal sprays
+      keywords: decalfrequency
+      input_type: number
+      param_field_name: decalfrequency
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Decal Frequency
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time between decal sprays
+        Keywords: decalfrequency
+        FieldName: decalfrequency
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: decalfrequency
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+    - key: pingboost
+      label: Ping Boost
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Selects between optimised network code stack. Setting at 2 usually reduces latency toward 1ms without loss of
+        activity input packets
+      keywords: ping,boost,latency,network,pingboost
+      input_type: enum
+      param_field_name: pingboost
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': None
+        '-pingboost 1 ': '1'
+        '-pingboost 2 ': '2'
+        '-pingboost 3 ': '3'
+      raw:
+        DisplayName: Ping Boost
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Selects between optimised network code stack. Setting at 2 usually reduces latency toward 1ms without loss of
+          activity input packets
+        Keywords: ping,boost,latency,network,pingboost
+        FieldName: pingboost
+        InputType: enum
+        ParamFieldName: pingboost
+        DefaultValue: ''
+        EnumValues:
+          '': None
+          '-pingboost 1 ': '1'
+          '-pingboost 2 ': '2'
+          '-pingboost 3 ': '3'
+    - key: mp_logmessages
+      label: Log Chat Messages
+      category: Garry's Mod
+      subcategory: Server
+      description: If set, logging of chat messages will be enabled
+      keywords: log,logging,chat,messages,mp_logmessages
+      input_type: checkbox
+      param_field_name: mp_logmessages
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Log Chat Messages
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, logging of chat messages will be enabled
+        Keywords: log,logging,chat,messages,mp_logmessages
+        FieldName: mp_logmessages
+        InputType: checkbox
+        ParamFieldName: mp_logmessages
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: insecure
+      label: Disable Valve Anti-Cheat
+      category: Garry's Mod
+      subcategory: Server
+      description: If set, Valve Anti-Cheat (VAC) will be disabled
+      keywords: valve,anti,cheat,vac,insecure
+      input_type: checkbox
+      param_field_name: insecure
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-insecure '
+      raw:
+        DisplayName: Disable Valve Anti-Cheat
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, Valve Anti-Cheat (VAC) will be disabled
+        Keywords: valve,anti,cheat,vac,insecure
+        FieldName: insecure
+        InputType: checkbox
+        ParamFieldName: insecure
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-insecure '
+    - key: ip
+      label: Server/RCON IPv4 IP Binding
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        If required, you can change the IPv4 IP binding of the server and RCON by changing the Application IP Binding
+        for this instance. NOTE: AMP requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
+        server to log to AMP's console. The IP must also be reachable by AMP
+      keywords: ip,binding
+      input_type: hidden
+      param_field_name: ip
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server/RCON IPv4 IP Binding
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If required, you can change the IPv4 IP binding of the server and RCON by changing the Application IP Binding
+          for this instance. NOTE: AMP requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
+          server to log to AMP's console. The IP must also be reachable by AMP
+        Keywords: ip,binding
+        FieldName: ip
+        InputType: hidden
+        ParamFieldName: ip
+        EnumValues: {}
+    - key: CustomParameters
+      label: Additional Command Line Parameters
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by AMP.
+        Use with care
+      keywords: custom,server,arguments,variables,cvars,convars,parameters
+      input_type: text
+      param_field_name: CustomParameters
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Parameters
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by
+          AMP. Use with care
+        Keywords: custom,server,arguments,variables,cvars,convars,parameters
+        FieldName: CustomParameters
+        InputType: text
+        ParamFieldName: CustomParameters
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomConVars
+      label: Additional Console Variables
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        Specifies additional [console
+        variables](https://developer.valvesoftware.com/wiki/List_of_Garry%27s_Mod_console_commands_and_variables)
+        (anything that begins with a +) that are not otherwise set by AMP. Use with care. Preferably, specify the
+        equivalent under "Additional Server Settings"
+      keywords: custom,server,arguments,variables,cvars,convars,parameters
+      input_type: text
+      param_field_name: CustomConVars
+      default: ''
+      placeholder: +sv_gravity "500"
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Console Variables
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional [console
+          variables](https://developer.valvesoftware.com/wiki/List_of_Garry%27s_Mod_console_commands_and_variables)
+          (anything that begins with a +) that are not otherwise set by AMP. Use with care. Preferably, specify the
+          equivalent under "Additional Server Settings"
+        Keywords: custom,server,arguments,variables,cvars,convars,parameters
+        FieldName: CustomConVars
+        InputType: text
+        ParamFieldName: CustomConVars
+        DefaultValue: ''
+        Placeholder: +sv_gravity "500"
+        EnumValues: {}
+    - key: UserSettings
+      label: Additional Server Settings
+      category: Garry's Mod
+      subcategory: Server
+      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per line
+      keywords: additional,settings,custom
+      input_type: Textarea
+      param_field_name: UserSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Settings
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per
+          line
+        Keywords: additional,settings,custom
+        FieldName: UserSettings
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: UserSettings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: PowerUserSettings
+      label: Advanced/Power User Server Settings
+      category: Garry's Mod
+      subcategory: Server
+      description: >-
+        For advanced/power users, specifies additional settings to include in "server.cfg" that override any settings
+        set by AMP in that file. One setting per line. USE AT YOUR OWN RISK
+      keywords: additional,advanced,power,settings,custom
+      input_type: Textarea
+      param_field_name: PowerUserSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Advanced/Power User Server Settings
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          For advanced/power users, specifies additional settings to include in "server.cfg" that override any settings
+          set by AMP in that file. One setting per line. USE AT YOUR OWN RISK
+        Keywords: additional,advanced,power,settings,custom
+        FieldName: PowerUserSettings
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: PowerUserSettings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: mp_friendlyfire
+      label: Enable Friendly Fire
+      category: Garry's Mod
+      subcategory: Gameplay
+      description: If set, friendly fire will be enabled (teammates can cause damage to other teammates)
+      keywords: friendly,fire,mp_friendlyfire
+      input_type: checkbox
+      param_field_name: mp_friendlyfire
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Friendly Fire
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, friendly fire will be enabled (teammates can cause damage to other teammates)
+        Keywords: friendly,fire,mp_friendlyfire
+        FieldName: mp_friendlyfire
+        InputType: checkbox
+        ParamFieldName: mp_friendlyfire
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_flashlight
+      label: Enable Flashlight
+      category: Garry's Mod
+      subcategory: Gameplay
+      description: If sets, allows the use of the flashlight by pressing the F button
+      keywords: flashlight,mp_flashlight
+      input_type: checkbox
+      param_field_name: mp_flashlight
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Flashlight
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If sets, allows the use of the flashlight by pressing the F button
+        Keywords: flashlight,mp_flashlight
+        FieldName: mp_flashlight
+        InputType: checkbox
+        ParamFieldName: mp_flashlight
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_footsteps
+      label: Enable Footsteps
+      category: Garry's Mod
+      subcategory: Gameplay
+      description: If set, footstep sounds will be enabled
+      keywords: footstep,sounds,mp_footsteps
+      input_type: checkbox
+      param_field_name: mp_footsteps
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Footsteps
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, footstep sounds will be enabled
+        Keywords: footstep,sounds,mp_footsteps
+        FieldName: mp_footsteps
+        InputType: checkbox
+        ParamFieldName: mp_footsteps
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_autocrosshair
+      label: Enable Auto Crosshair
+      category: Garry's Mod
+      subcategory: Gameplay
+      description: If set, the auto crosshair will be enabled
+      keywords: auto,crosshair,mp_autocrosshair
+      input_type: checkbox
+      param_field_name: mp_autocrosshair
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Auto Crosshair
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the auto crosshair will be enabled
+        Keywords: auto,crosshair,mp_autocrosshair
+        FieldName: mp_autocrosshair
+        InputType: checkbox
+        ParamFieldName: mp_autocrosshair
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_pausable
+      label: Allow Players To Pause Server
+      category: Garry's Mod
+      subcategory: Gameplay
+      description: If set, players will be able to pause the server. Not recommended
+      keywords: pause,pausable,sv_pausable
+      input_type: checkbox
+      param_field_name: sv_pausable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Players To Pause Server
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will be able to pause the server. Not recommended
+        Keywords: pause,pausable,sv_pausable
+        FieldName: sv_pausable
+        InputType: checkbox
+        ParamFieldName: sv_pausable
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_alltalk
+      label: Allow All Talk
+      category: Garry's Mod
+      subcategory: Gameplay
+      description: If enabled, players can communicate with all other players, with no team restrictions
+      keywords: all,talk,sv_alltalk
+      input_type: checkbox
+      param_field_name: sv_alltalk
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow All Talk
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, players can communicate with all other players, with no team restrictions
+        Keywords: all,talk,sv_alltalk
+        FieldName: sv_alltalk
+        InputType: checkbox
+        ParamFieldName: sv_alltalk
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_fadetoblack
+      label: Enable Fade To Black
+      category: Garry's Mod
+      subcategory: Gameplay
+      description: >-
+        If enabled, a player's screen fades to black for the remainder of the round after death (HUD and chat still
+        works)
+      keywords: fade,black,spectator,death,mp_fadetoblack
+      input_type: checkbox
+      param_field_name: mp_fadetoblack
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Fade To Black
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, a player's screen fades to black for the remainder of the round after death (HUD and chat still
+          works)
+        Keywords: fade,black,spectator,death,mp_fadetoblack
+        FieldName: mp_fadetoblack
+        InputType: checkbox
+        ParamFieldName: mp_fadetoblack
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_autokick
+      label: Enable Auto Kick
+      category: Garry's Mod
+      subcategory: Gameplay
+      description: If set, automatic team-killer banning and idle client kicking will be enabled
+      keywords: auto,kick,team,killer,idle,mp_autokick
+      input_type: checkbox
+      param_field_name: mp_autokick
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Auto Kick
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, automatic team-killer banning and idle client kicking will be enabled
+        Keywords: auto,kick,team,killer,idle,mp_autokick
+        FieldName: mp_autokick
+        InputType: checkbox
+        ParamFieldName: mp_autokick
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sbox_godmode
+      label: Enable God Mode
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: If set, god mode will be enabled for all players, making them invincible
+      keywords: god,mode,godmode,invincible,sbox_godmode
+      input_type: checkbox
+      param_field_name: sbox_godmode
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable God Mode
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: If set, god mode will be enabled for all players, making them invincible
+        Keywords: god,mode,godmode,invincible,sbox_godmode
+        FieldName: sbox_godmode
+        InputType: checkbox
+        ParamFieldName: sbox_godmode
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sbox_playershurtplayers
+      label: Allow Player-to-Player Damage
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: If set, players will be able to hurt each other
+      keywords: players,hurt,damage,sbox_playershurtplayers
+      input_type: checkbox
+      param_field_name: sbox_playershurtplayers
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Player-to-Player Damage
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: If set, players will be able to hurt each other
+        Keywords: players,hurt,damage,sbox_playershurtplayers
+        FieldName: sbox_playershurtplayers
+        InputType: checkbox
+        ParamFieldName: sbox_playershurtplayers
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sbox_noclip
+      label: Enable Noclip
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: If set, players will be able to use noclip
+      keywords: noclip,sbox_noclip
+      input_type: checkbox
+      param_field_name: sbox_noclip
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Noclip
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: If set, players will be able to use noclip
+        Keywords: noclip,sbox_noclip
+        FieldName: sbox_noclip
+        InputType: checkbox
+        ParamFieldName: sbox_noclip
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_noclipspeed
+      label: Maximum Noclip Speed
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum speed a player can move during noclip
+      keywords: maximum,speed,noclip,sv_noclipspeed
+      input_type: number
+      param_field_name: sv_noclipspeed
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Noclip Speed
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum speed a player can move during noclip
+        Keywords: maximum,speed,noclip,sv_noclipspeed
+        FieldName: sv_noclipspeed
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_noclipspeed
+        DefaultValue: '5'
+        Placeholder: '5'
+        EnumValues: {}
+    - key: sv_noclipaccelerate
+      label: Noclip Acceleration Rate
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the speed at which a player accelerates during noclip
+      keywords: accelerate,speed,noclip,sv_noclipaccelerate
+      input_type: number
+      param_field_name: sv_noclipaccelerate
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Noclip Acceleration Rate
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the speed at which a player accelerates during noclip
+        Keywords: accelerate,speed,noclip,sv_noclipaccelerate
+        FieldName: sv_noclipaccelerate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_noclipaccelerate
+        DefaultValue: '5'
+        Placeholder: '5'
+        EnumValues: {}
+    - key: sbox_weapons
+      label: Enable Weapons
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: If set, players will receive default Half-Life 2 weapons on each spawn
+      keywords: weapons,sbox_weapons
+      input_type: checkbox
+      param_field_name: sbox_weapons
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Weapons
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: If set, players will receive default Half-Life 2 weapons on each spawn
+        Keywords: weapons,sbox_weapons
+        FieldName: sbox_weapons
+        InputType: checkbox
+        ParamFieldName: sbox_weapons
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sbox_maxprops
+      label: Maximum Props
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum props a single player can create
+      keywords: maximum,props,sbox_maxprops
+      input_type: number
+      param_field_name: sbox_maxprops
+      default: '200'
+      placeholder: '200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Props
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum props a single player can create
+        Keywords: maximum,props,sbox_maxprops
+        FieldName: sbox_maxprops
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxprops
+        DefaultValue: '200'
+        Placeholder: '200'
+        EnumValues: {}
+    - key: sbox_maxragdolls
+      label: Maximum Ragdolls
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum ragdolls a single player can create
+      keywords: maximum,ragdolls,sbox_maxragdolls
+      input_type: number
+      param_field_name: sbox_maxragdolls
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Ragdolls
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum ragdolls a single player can create
+        Keywords: maximum,ragdolls,sbox_maxragdolls
+        FieldName: sbox_maxragdolls
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxragdolls
+        DefaultValue: '5'
+        Placeholder: '5'
+        EnumValues: {}
+    - key: sbox_maxnpcs
+      label: Maximum NPCs
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum NPCs a single player can create
+      keywords: maximum,npcs,sbox_maxnpcs
+      input_type: number
+      param_field_name: sbox_maxnpcs
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum NPCs
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum NPCs a single player can create
+        Keywords: maximum,npcs,sbox_maxnpcs
+        FieldName: sbox_maxnpcs
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxnpcs
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+    - key: sbox_maxballoons
+      label: Maximum Balloons
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum balloons a single player can create
+      keywords: maximum,balloons,sbox_maxballoons
+      input_type: number
+      param_field_name: sbox_maxballoons
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Balloons
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum balloons a single player can create
+        Keywords: maximum,balloons,sbox_maxballoons
+        FieldName: sbox_maxballoons
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxballoons
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: sbox_maxcameras
+      label: Maximum Cameras
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum cameras a single player can create
+      keywords: maximum,cameras,sbox_maxcameras
+      input_type: number
+      param_field_name: sbox_maxcameras
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Cameras
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum cameras a single player can create
+        Keywords: maximum,cameras,sbox_maxcameras
+        FieldName: sbox_maxcameras
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxcameras
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+    - key: sbox_maxeffects
+      label: Maximum Effects
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum effect props a single player can create
+      keywords: maximum,effect,props,sbox_maxeffects
+      input_type: number
+      param_field_name: sbox_maxeffects
+      default: '200'
+      placeholder: '200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Effects
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum effect props a single player can create
+        Keywords: maximum,effect,props,sbox_maxeffects
+        FieldName: sbox_maxeffects
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxeffects
+        DefaultValue: '200'
+        Placeholder: '200'
+        EnumValues: {}
+    - key: sbox_maxdynamite
+      label: Maximum Dynamite
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum dynamites a single player can create
+      keywords: maximum,dynamites,sbox_maxdynamite
+      input_type: number
+      param_field_name: sbox_maxdynamite
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Dynamite
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum dynamites a single player can create
+        Keywords: maximum,dynamites,sbox_maxdynamite
+        FieldName: sbox_maxdynamite
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxdynamite
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+    - key: sbox_maxlamps
+      label: Maximum Lamps
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum lamps a single player can create
+      keywords: maximum,lamps,sbox_maxlamps
+      input_type: number
+      param_field_name: sbox_maxlamps
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Lamps
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum lamps a single player can create
+        Keywords: maximum,lamps,sbox_maxlamps
+        FieldName: sbox_maxlamps
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxlamps
+        DefaultValue: '3'
+        Placeholder: '3'
+        EnumValues: {}
+    - key: sbox_maxlights
+      label: Maximum Lights
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum lights a single player can create
+      keywords: maximum,lights,sbox_maxlights
+      input_type: number
+      param_field_name: sbox_maxlights
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Lights
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum lights a single player can create
+        Keywords: maximum,lights,sbox_maxlights
+        FieldName: sbox_maxlights
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxlights
+        DefaultValue: '5'
+        Placeholder: '5'
+        EnumValues: {}
+    - key: sbox_maxthrusters
+      label: Maximum Thrusters
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum thrusters a single player can create
+      keywords: maximum,thrusters,sbox_maxthrusters
+      input_type: number
+      param_field_name: sbox_maxthrusters
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Thrusters
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum thrusters a single player can create
+        Keywords: maximum,thrusters,sbox_maxthrusters
+        FieldName: sbox_maxthrusters
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxthrusters
+        DefaultValue: '50'
+        Placeholder: '50'
+        EnumValues: {}
+    - key: sbox_maxwheels
+      label: Maximum Wheels
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum wheels a single player can create
+      keywords: maximum,wheels,sbox_maxwheels
+      input_type: number
+      param_field_name: sbox_maxwheels
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Wheels
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum wheels a single player can create
+        Keywords: maximum,wheels,sbox_maxwheels
+        FieldName: sbox_maxwheels
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxwheels
+        DefaultValue: '50'
+        Placeholder: '50'
+        EnumValues: {}
+    - key: sbox_maxhoverballs
+      label: Maximum Hoverballs
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum hoverballs a single player can create
+      keywords: maximum,hoverballs,sbox_maxhoverballs
+      input_type: number
+      param_field_name: sbox_maxhoverballs
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Hoverballs
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum hoverballs a single player can create
+        Keywords: maximum,hoverballs,sbox_maxhoverballs
+        FieldName: sbox_maxhoverballs
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxhoverballs
+        DefaultValue: '50'
+        Placeholder: '50'
+        EnumValues: {}
+    - key: sbox_maxvehicles
+      label: Maximum Vehicles
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum vehicles a single player can create
+      keywords: maximum,vehicles,sbox_maxvehicles
+      input_type: number
+      param_field_name: sbox_maxvehicles
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Vehicles
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum vehicles a single player can create
+        Keywords: maximum,vehicles,sbox_maxvehicles
+        FieldName: sbox_maxvehicles
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxvehicles
+        DefaultValue: '4'
+        Placeholder: '4'
+        EnumValues: {}
+    - key: sbox_maxbuttons
+      label: Maximum Buttons
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum buttons a single player can create
+      keywords: maximum,buttons,sbox_maxbuttons
+      input_type: number
+      param_field_name: sbox_maxbuttons
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Buttons
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum buttons a single player can create
+        Keywords: maximum,buttons,sbox_maxbuttons
+        FieldName: sbox_maxbuttons
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxbuttons
+        DefaultValue: '50'
+        Placeholder: '50'
+        EnumValues: {}
+    - key: sbox_maxsents
+      label: Maximum Entities
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum entities a single player can create
+      keywords: maximum,entities,sbox_maxsents
+      input_type: number
+      param_field_name: sbox_maxsents
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Entities
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum entities a single player can create
+        Keywords: maximum,entities,sbox_maxsents
+        FieldName: sbox_maxsents
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxsents
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: sbox_maxemitters
+      label: Maximum Emitters
+      category: Garry's Mod
+      subcategory: Sandbox
+      description: Sets the maximum emitters a single player can create
+      keywords: maximum,emitters,sbox_maxemitters
+      input_type: number
+      param_field_name: sbox_maxemitters
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Emitters
+        Category: Garry's Mod:stadia_controller
+        Subcategory: Sandbox:construction:3
+        Description: Sets the maximum emitters a single player can create
+        Keywords: maximum,emitters,sbox_maxemitters
+        FieldName: sbox_maxemitters
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sbox_maxemitters
+        DefaultValue: '20'
+        Placeholder: '20'
+        EnumValues: {}
+    - key: nohltv
+      label: Disable SourceTV
+      category: Garry's Mod
+      subcategory: SourceTV
+      description: If set, SourceTV will be disabled on the server
+      keywords: sourcetv,source,nohltv
+      input_type: checkbox
+      param_field_name: nohltv
+      default: '-nohltv '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-nohltv '
+      raw:
+        DisplayName: Disable SourceTV
+        Category: Garry's Mod:stadia_controller
+        Subcategory: SourceTV:tv:4
+        Description: If set, SourceTV will be disabled on the server
+        Keywords: sourcetv,source,nohltv
+        FieldName: nohltv
+        InputType: checkbox
+        ParamFieldName: nohltv
+        DefaultValue: '-nohltv '
+        EnumValues:
+          'False': ''
+          'True': '-nohltv '
+    - key: tv_autorecord
+      label: Enable Automatic Demo Recording
+      category: Garry's Mod
+      subcategory: SourceTV
+      description: If set, all games will be recorded as SourceTV demos
+      keywords: sourcetv,tv,tv_autorecord
+      input_type: checkbox
+      param_field_name: tv_autorecord
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Automatic Demo Recording
+        Category: Garry's Mod:stadia_controller
+        Subcategory: SourceTV:tv:4
+        Description: If set, all games will be recorded as SourceTV demos
+        Keywords: sourcetv,tv,tv_autorecord
+        FieldName: tv_autorecord
+        InputType: checkbox
+        ParamFieldName: tv_autorecord
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: tv_maxclients
+      label: SourceTV Viewer Limit
+      category: Garry's Mod
+      subcategory: SourceTV
+      description: >-
+        Sets the maximum number of clients allowed to connect to the server's SourceTV. 0 = no SourceTV viewers are
+        allowed, the game will only be recorded locally
+      keywords: max,spectators,clients,viewers,sourcetv,tv,tv_maxclients
+      input_type: number
+      param_field_name: tv_maxclients
+      default: '64'
+      placeholder: '64'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 255
+      suffix: viewers
+      enum_values: {}
+      raw:
+        DisplayName: SourceTV Viewer Limit
+        Category: Garry's Mod:stadia_controller
+        Subcategory: SourceTV:tv:4
+        Description: >-
+          Sets the maximum number of clients allowed to connect to the server's SourceTV. 0 = no SourceTV viewers are
+          allowed, the game will only be recorded locally
+        Keywords: max,spectators,clients,viewers,sourcetv,tv,tv_maxclients
+        FieldName: tv_maxclients
+        InputType: number
+        MinValue: '0'
+        MaxValue: '255'
+        ParamFieldName: tv_maxclients
+        DefaultValue: '64'
+        Placeholder: '64'
+        Suffix: viewers
+        EnumValues: {}
+    - key: tv_maxrate
+      label: Maximum SourceTV Bandwidth
+      category: Garry's Mod
+      subcategory: SourceTV
+      description: Sets the maximum SourceTV spectator bandwidth rate allowed. 0 = unlimited
+      keywords: maximum,bandwidth,rate,sourcetv,tv,tv_maxrate
+      input_type: number
+      param_field_name: tv_maxrate
+      default: '8000'
+      placeholder: '8000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum SourceTV Bandwidth
+        Category: Garry's Mod:stadia_controller
+        Subcategory: SourceTV:tv:4
+        Description: Sets the maximum SourceTV spectator bandwidth rate allowed. 0 = unlimited
+        Keywords: maximum,bandwidth,rate,sourcetv,tv,tv_maxrate
+        FieldName: tv_maxrate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: tv_maxrate
+        DefaultValue: '8000'
+        Placeholder: '8000'
+        EnumValues: {}
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: 'Sets the server branch to install. NOTE: Update the server after switching branches!'
+      keywords: server,branch,public,prerelease,dev
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        prerelease: Pre-release builds
+        dev: Development builds
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: 'Sets the server branch to install. NOTE: Update the server after switching branches!'
+        Keywords: server,branch,public,prerelease,dev
+        FieldName: ServerBranch
+        InputType: enum
+        ParamFieldName: ServerBranch
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          prerelease: Pre-release builds
+          dev: Development builds
+  files:
+    - path: garrysmod/cfg/server.cfg
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: garrysmod/cfg/server.cfg
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: garrysmod/AMP_server.cfg
+    - path: garrysmod/lua/autorun/server/resource.lua
+      type: kvp
+      format: '{0}{1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            '': ResourceLuaCode
+      raw:
+        ConfigFile: garrysmod/lua/autorun/server/resource.lua
+        ConfigType: kvp
+        ConfigFormat: '{0}{1}'
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              '': ResourceLuaCode
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: hostname
+    label: Server Name
+    default: AMP Powered Garry's Mod Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_lan
+    label: LAN Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_setsteamaccount
+    label: Game Server Login Token (GSLT)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: sv_password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: gamemode
+    label: Initial Gamemode
+    default: sandbox
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomGamemode
+    label: Custom Gamemode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map
+    label: Initial Map
+    default: gm_construct
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Map
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_timelimit
+    label: Map Game Time Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: host_workshop_collection
+    label: Workshop Collection ID
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ResourceLuaCode
+    label: Resource Lua Code
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CSSContent
+    label: CSS Content Mode
+    default: none
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TF2Content
+    label: TF2 Content Mode
+    default: none
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_region
+    label: Server Region
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_allowspectators
+    label: Allow Spectators
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_pure
+    label: Pure Server Mode
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_cheats
+    label: Enable Cheats
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_filterban
+    label: Enable IP Packet Filter
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_loadingurl
+    label: Loading URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowdownload
+    label: Allow Download From Server
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_downloadurl
+    label: Fast Download URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowupload
+    label: Allow Upload To Server
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: net_maxfilesize
+    label: Maximum Upload File Size
+    default: '16'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_minrate
+    label: Minimum Client Rate
+    default: '3500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maxrate
+    label: Maximum Client Rate
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_minupdaterate
+    label: Minimum Server Update Rate
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maxupdaterate
+    label: Maximum Server Update Rate
+    default: '66'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: decalfrequency
+    label: Decal Frequency
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pingboost
+    label: Ping Boost
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_logmessages
+    label: Log Chat Messages
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: insecure
+    label: Disable Valve Anti-Cheat
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomParameters
+    label: Additional Command Line Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomConVars
+    label: Additional Console Variables
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UserSettings
+    label: Additional Server Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PowerUserSettings
+    label: Advanced/Power User Server Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_friendlyfire
+    label: Enable Friendly Fire
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_flashlight
+    label: Enable Flashlight
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_footsteps
+    label: Enable Footsteps
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_autocrosshair
+    label: Enable Auto Crosshair
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_pausable
+    label: Allow Players To Pause Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_alltalk
+    label: Allow All Talk
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_fadetoblack
+    label: Enable Fade To Black
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_autokick
+    label: Enable Auto Kick
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_godmode
+    label: Enable God Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_playershurtplayers
+    label: Allow Player-to-Player Damage
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_noclip
+    label: Enable Noclip
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_noclipspeed
+    label: Maximum Noclip Speed
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_noclipaccelerate
+    label: Noclip Acceleration Rate
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_weapons
+    label: Enable Weapons
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxprops
+    label: Maximum Props
+    default: '200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxragdolls
+    label: Maximum Ragdolls
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxnpcs
+    label: Maximum NPCs
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxballoons
+    label: Maximum Balloons
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxcameras
+    label: Maximum Cameras
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxeffects
+    label: Maximum Effects
+    default: '200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxdynamite
+    label: Maximum Dynamite
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxlamps
+    label: Maximum Lamps
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxlights
+    label: Maximum Lights
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxthrusters
+    label: Maximum Thrusters
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxwheels
+    label: Maximum Wheels
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxhoverballs
+    label: Maximum Hoverballs
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxvehicles
+    label: Maximum Vehicles
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxbuttons
+    label: Maximum Buttons
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxsents
+    label: Maximum Entities
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sbox_maxemitters
+    label: Maximum Emitters
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: nohltv
+    label: Disable SourceTV
+    default: '-nohltv '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tv_autorecord
+    label: Enable Automatic Demo Recording
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tv_maxclients
+    label: SourceTV Viewer Limit
+    default: '64'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tv_maxrate
+    label: Maximum SourceTV Bandwidth
+    default: '8000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '4000'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,16 @@ category: Imported
 summary: Enshrouded Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2278520'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: .proton/proton
+  startup: .proton/proton {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1998 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: queryport
+    name: Query Port
+    default: 15637
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: enshrouded_server.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $QueryPort
+      label: Query Port
+      category: Enshrouded
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.queryPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Port
+        Category: Enshrouded:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.queryPort
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Server IPv4 IP Binding
+      category: Enshrouded
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.ip
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server IPv4 IP Binding
+        Category: Enshrouded:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.ip
+        EnumValues: {}
+    - key: saveDirectory
+      label: Save Directory
+      category: Enshrouded
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.saveDirectory
+      default: ./savegame
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Save Directory
+        Category: Enshrouded:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: saveDirectory
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.saveDirectory
+        DefaultValue: ./savegame
+        EnumValues: {}
+    - key: logDirectory
+      label: Log Directory
+      category: Enshrouded
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.logDirectory
+      default: ./logs
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Log Directory
+        Category: Enshrouded:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: logDirectory
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.logDirectory
+        DefaultValue: ./logs
+        EnumValues: {}
+    - key: name
+      label: Server Name
+      category: Enshrouded
+      subcategory: Server
+      description: Sets the name of the server as shown in the server browser
+      keywords: server,name
+      input_type: text
+      param_field_name: $.name
+      default: AMP Powered Enshrouded Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Enshrouded:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as shown in the server browser
+        Keywords: server,name
+        FieldName: name
+        InputType: text
+        ParamFieldName: $.name
+        DefaultValue: AMP Powered Enshrouded Server
+        EnumValues: {}
+    - key: tags
+      label: Server Tags
+      category: Enshrouded
+      subcategory: Server
+      description: >-
+        Sets optional filter tags for the server that assist searching in the server browser. Available tags are listed
+        in enshrouded_server_readme.txt
+      keywords: server,filter,tags
+      input_type: list
+      param_field_name: $.tags
+      default: '[]'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: array:text
+      raw:
+        DisplayName: Server Tags
+        Category: Enshrouded:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets optional filter tags for the server that assist searching in the server browser. Available tags are
+          listed in enshrouded_server_readme.txt
+        Keywords: server,filter,tags
+        FieldName: tags
+        InputType: list
+        ParamFieldName: $.tags
+        DefaultValue: '[]'
+        Special: array:text
+        EnumValues: {}
+    - key: ServerRoles
+      label: Server Roles
+      category: Enshrouded
+      subcategory: Server
+      description: >-
+        Permissions for groups of players, including passwords to join the server, can be defined via [server
+        roles](https://enshrouded.zendesk.com/hc/en-us/articles/19191581489309-Server-Roles-Configuration) in
+        enshrouded_server.json. See enshrouded_server_readme.txt for further details
+      keywords: server,roles,password,permissions
+      input_type: hidden
+      param_field_name: ServerRoles
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Roles
+        Category: Enshrouded:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Permissions for groups of players, including passwords to join the server, can be defined via [server
+          roles](https://enshrouded.zendesk.com/hc/en-us/articles/19191581489309-Server-Roles-Configuration) in
+          enshrouded_server.json. See enshrouded_server_readme.txt for further details
+        Keywords: server,roles,password,permissions
+        FieldName: ServerRoles
+        InputType: hidden
+        ParamFieldName: ServerRoles
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Enshrouded
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,limit,slotcount
+      input_type: number
+      param_field_name: $.slotCount
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 16
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Enshrouded:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,limit,slotcount
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '16'
+        ParamFieldName: $.slotCount
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: players
+        EnumValues: {}
+    - key: banlist
+      label: Banned Players
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Players can be permanently banned from the server by accessing the banlist in-game via the Social-tab and adding
+        them there. The banlist can also be edited directly by configuring 'bannedAccounts' in enshrouded_server.json -
+        see enshrouded_server_readme.txt for format details
+      keywords: banned,players,banlist,bannedAccounts
+      input_type: hidden
+      param_field_name: banlist
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Banned Players
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Players can be permanently banned from the server by accessing the banlist in-game via the Social-tab and
+          adding them there. The banlist can also be edited directly by configuring 'bannedAccounts' in
+          enshrouded_server.json - see enshrouded_server_readme.txt for format details
+        Keywords: banned,players,banlist,bannedAccounts
+        FieldName: banlist
+        InputType: hidden
+        ParamFieldName: banlist
+        EnumValues: {}
+    - key: enableVoiceChat
+      label: Enable Voice Chat
+      category: Enshrouded
+      subcategory: Server
+      description: If set, voice chat will be enabled
+      keywords: voice,chat,enable,enableVoiceChat
+      input_type: checkbox
+      param_field_name: $.enableVoiceChat
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Voice Chat
+        Category: Enshrouded:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, voice chat will be enabled
+        Keywords: voice,chat,enable,enableVoiceChat
+        FieldName: enableVoiceChat
+        InputType: checkbox
+        ParamFieldName: $.enableVoiceChat
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: voiceChatMode
+      label: Voice Chat Mode
+      category: Enshrouded
+      subcategory: Server
+      description: Sets the mode for voice chat. Requires Voice Chat to be enabled
+      keywords: voice,chat,mode,voiceChatMode
+      input_type: enum
+      param_field_name: $.voiceChatMode
+      default: Proximity
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Proximity: Proximity (default)
+        Global: Global
+      raw:
+        DisplayName: Voice Chat Mode
+        Category: Enshrouded:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the mode for voice chat. Requires Voice Chat to be enabled
+        Keywords: voice,chat,mode,voiceChatMode
+        FieldName: voiceChatMode
+        InputType: enum
+        ParamFieldName: $.voiceChatMode
+        DefaultValue: Proximity
+        EnumValues:
+          Proximity: Proximity (default)
+          Global: Global
+    - key: enableTextChat
+      label: Enable Text Chat
+      category: Enshrouded
+      subcategory: Server
+      description: If set, text chat will be enabled
+      keywords: text,chat,enable,enableTextChat
+      input_type: checkbox
+      param_field_name: $.enableTextChat
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Text Chat
+        Category: Enshrouded:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, text chat will be enabled
+        Keywords: text,chat,enable,enableTextChat
+        FieldName: enableTextChat
+        InputType: checkbox
+        ParamFieldName: $.enableTextChat
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: gameSettingsPreset
+      label: Game Settings Preset
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Sets the difficulty setting for the game. If "Custom" is selected, the following individual gameplay settings
+        can be configured. Otherwise the preset determines the gameplay settings
+      keywords: settings,preset,gameSettingsPreset
+      input_type: enum
+      param_field_name: $.gameSettingsPreset
+      default: Default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Default: Default (for first-time players)
+        Relaxed: Relaxed (for base-building and light-hearted adventuring)
+        Hard: Hard (for a tougher combat experience)
+        Survival: Survival (for some punishment)
+        Custom: Custom
+      raw:
+        DisplayName: Game Settings Preset
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the difficulty setting for the game. If "Custom" is selected, the following individual gameplay settings
+          can be configured. Otherwise the preset determines the gameplay settings
+        Keywords: settings,preset,gameSettingsPreset
+        FieldName: gameSettingsPreset
+        InputType: enum
+        ParamFieldName: $.gameSettingsPreset
+        DefaultValue: Default
+        EnumValues:
+          Default: Default (for first-time players)
+          Relaxed: Relaxed (for base-building and light-hearted adventuring)
+          Hard: Hard (for a tougher combat experience)
+          Survival: Survival (for some punishment)
+          Custom: Custom
+    - key: playerHealthFactor
+      label: Player Health Factor
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the maximum health for players by the set factor. Minimum = 0.25
+      keywords: playerHealthFactor
+      input_type: number
+      param_field_name: $.gameSettings.playerHealthFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 4
+      enum_values: {}
+      raw:
+        DisplayName: Player Health Factor
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the maximum health for players by the set factor. Minimum = 0.25
+        Keywords: playerHealthFactor
+        FieldName: playerHealthFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '4'
+        ParamFieldName: $.gameSettings.playerHealthFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: playerManaFactor
+      label: Player Mana Factor
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the maximum mana for players by the set factor. Minimum = 0.25
+      keywords: player,mana,factor,playerManaFactor
+      input_type: number
+      param_field_name: $.gameSettings.playerManaFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 4
+      enum_values: {}
+      raw:
+        DisplayName: Player Mana Factor
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the maximum mana for players by the set factor. Minimum = 0.25
+        Keywords: player,mana,factor,playerManaFactor
+        FieldName: playerManaFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '4'
+        ParamFieldName: $.gameSettings.playerManaFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: playerStaminaFactor
+      label: Player Stamina Factor
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the maximum stamina for players by the set factor. Minimum = 0.25
+      keywords: player,stamina,factor,playerStaminaFactor
+      input_type: number
+      param_field_name: $.gameSettings.playerStaminaFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 4
+      enum_values: {}
+      raw:
+        DisplayName: Player Stamina Factor
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the maximum stamina for players by the set factor. Minimum = 0.25
+        Keywords: player,stamina,factor,playerStaminaFactor
+        FieldName: playerStaminaFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '4'
+        ParamFieldName: $.gameSettings.playerStaminaFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: playerBodyHeatFactor
+      label: Player Body Heat Factor
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Scales the maximum body heat for players by the set factor. The higher the factor the longer the player can stay
+        in very cold areas before hypothermia sets in
+      keywords: player,body,heat,factor,playerBodyHeatFactor
+      input_type: enum
+      param_field_name: $.gameSettings.playerBodyHeatFactor
+      default: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0.5': Low
+        '1.0': Default
+        '1.5': High
+        '2.0': Maximum
+      raw:
+        DisplayName: Player Body Heat Factor
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Scales the maximum body heat for players by the set factor. The higher the factor the longer the player can
+          stay in very cold areas before hypothermia sets in
+        Keywords: player,body,heat,factor,playerBodyHeatFactor
+        FieldName: playerBodyHeatFactor
+        InputType: enum
+        ParamFieldName: $.gameSettings.playerBodyHeatFactor
+        DefaultValue: '1.0'
+        MultipleOf: '0.1'
+        EnumValues:
+          '0.5': Low
+          '1.0': Default
+          '1.5': High
+          '2.0': Maximum
+    - key: playerDivingTimeFactor
+      label: Diving Time Factor
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Modifies the initial amount of oxygen for players and therefore the time available underwater. Minimum = 0.25
+      keywords: diving,time,factor,playerDivingTimeFactor
+      input_type: number
+      param_field_name: $.gameSettings.playerDivingTimeFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Diving Time Factor
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Modifies the initial amount of oxygen for players and therefore the time available underwater. Minimum = 0.25
+        Keywords: diving,time,factor,playerDivingTimeFactor
+        FieldName: playerDivingTimeFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.playerDivingTimeFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: enableDurability
+      label: Enable Weapon Durability
+      category: Enshrouded
+      subcategory: Gameplay
+      description: If set, weapons can be broken
+      keywords: durability,weapons,break,enableDurability
+      input_type: checkbox
+      param_field_name: $.gameSettings.enableDurability
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Weapon Durability
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, weapons can be broken
+        Keywords: durability,weapons,break,enableDurability
+        FieldName: enableDurability
+        InputType: checkbox
+        ParamFieldName: $.gameSettings.enableDurability
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: enableStarvingDebuff
+      label: Enable Hunger And Starvation
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        If set, hunger and starvation will be enabled. During starvation, a player will lose health periodically until
+        death if no food or drink is consumed
+      keywords: starving,starvation,hunger,enableStarvingDebuff
+      input_type: checkbox
+      param_field_name: $.gameSettings.enableStarvingDebuff
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Hunger And Starvation
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If set, hunger and starvation will be enabled. During starvation, a player will lose health periodically until
+          death if no food or drink is consumed
+        Keywords: starving,starvation,hunger,enableStarvingDebuff
+        FieldName: enableStarvingDebuff
+        InputType: checkbox
+        ParamFieldName: $.gameSettings.enableStarvingDebuff
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: foodBuffDurationFactor
+      label: Food Buff Duration Factor
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales food buff durations by the set factor. Minimum = 0.5
+      keywords: food,buff,duration,factor,foodBuffDurationFactor
+      input_type: number
+      param_field_name: $.gameSettings.foodBuffDurationFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.5
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Food Buff Duration Factor
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales food buff durations by the set factor. Minimum = 0.5
+        Keywords: food,buff,duration,factor,foodBuffDurationFactor
+        FieldName: foodBuffDurationFactor
+        InputType: number
+        MinValue: '0.5'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.foodBuffDurationFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: fromHungerToStarving
+      label: Hungry State Duration
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Set the length of the hungry state before starving sets in by configuring 'fromHungerToStarving' in
+        enshrouded_server.json. Unit is nanoseconds (yes, really). Lowest = 300000000000, highest = 1200000000000
+      keywords: hunger,hungry,state,duration,fromHungerToStarving
+      input_type: hidden
+      param_field_name: fromHungerToStarving
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Hungry State Duration
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Set the length of the hungry state before starving sets in by configuring 'fromHungerToStarving' in
+          enshrouded_server.json. Unit is nanoseconds (yes, really). Lowest = 300000000000, highest = 1200000000000
+        Keywords: hunger,hungry,state,duration,fromHungerToStarving
+        FieldName: fromHungerToStarving
+        InputType: hidden
+        ParamFieldName: fromHungerToStarving
+        EnumValues: {}
+    - key: shroudTimeFactor
+      label: Shroud Time Duration Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales how long player characters can remain within the Shroud. Minimum = 0.5
+      keywords: shroud,time,factor,shroudTimeFactor
+      input_type: number
+      param_field_name: $.gameSettings.shroudTimeFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.5
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Shroud Time Duration Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales how long player characters can remain within the Shroud. Minimum = 0.5
+        Keywords: shroud,time,factor,shroudTimeFactor
+        FieldName: shroudTimeFactor
+        InputType: number
+        MinValue: '0.5'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.shroudTimeFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: tombstoneMode
+      label: Tombstone Mode
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Sets what happens to backpack items when players die. Lost items are stored in a tombstone and can be recovered
+        there
+      keywords: keep,lose,items,tombstone,tombstoneMode
+      input_type: enum
+      param_field_name: $.gameSettings.tombstoneMode
+      default: AddBackpackMaterials
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        AddBackpackMaterials: Lose backpack materials (default)
+        Everything: Lose everything
+        NoTombstone: Keep everything (no tombstone)
+      raw:
+        DisplayName: Tombstone Mode
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets what happens to backpack items when players die. Lost items are stored in a tombstone and can be
+          recovered there
+        Keywords: keep,lose,items,tombstone,tombstoneMode
+        FieldName: tombstoneMode
+        InputType: enum
+        ParamFieldName: $.gameSettings.tombstoneMode
+        DefaultValue: AddBackpackMaterials
+        EnumValues:
+          AddBackpackMaterials: Lose backpack materials (default)
+          Everything: Lose everything
+          NoTombstone: Keep everything (no tombstone)
+    - key: enableGliderTurbulences
+      label: Air Turbulences Affect Glider
+      category: Enshrouded
+      subcategory: Gameplay
+      description: If set, the glider will be affected by air turbulences
+      keywords: glider,turbulences,enable,enableGliderTurbulences
+      input_type: checkbox
+      param_field_name: $.gameSettings.enableGliderTurbulences
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Air Turbulences Affect Glider
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the glider will be affected by air turbulences
+        Keywords: glider,turbulences,enable,enableGliderTurbulences
+        FieldName: enableGliderTurbulences
+        InputType: checkbox
+        ParamFieldName: $.gameSettings.enableGliderTurbulences
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: weatherFrequency
+      label: Weather Frequency
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Sets how often new weather phenomena appear in the game world
+      keywords: weather,frequency,weatherFrequency
+      input_type: enum
+      param_field_name: $.gameSettings.weatherFrequency
+      default: Normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Disabled: Disabled
+        Rare: Rare
+        Normal: Normal
+        Often: Often
+      raw:
+        DisplayName: Weather Frequency
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how often new weather phenomena appear in the game world
+        Keywords: weather,frequency,weatherFrequency
+        FieldName: weatherFrequency
+        InputType: enum
+        ParamFieldName: $.gameSettings.weatherFrequency
+        DefaultValue: Normal
+        EnumValues:
+          Disabled: Disabled
+          Rare: Rare
+          Normal: Normal
+          Often: Often
+    - key: fishingDifficulty
+      label: Fishing Difficulty
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Sets the strength of the fish during the fishing minigame. The stronger a fish is, the longer the minigame will
+        proceed
+      keywords: fish,fishing,difficulty,fishingDifficulty
+      input_type: enum
+      param_field_name: $.gameSettings.fishingDifficulty
+      default: Normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        VeryEasy: Very easy
+        Easy: Easy
+        Normal: Normal
+        Hard: Hard
+        VeryHard: Very hard
+      raw:
+        DisplayName: Fishing Difficulty
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the strength of the fish during the fishing minigame. The stronger a fish is, the longer the minigame
+          will proceed
+        Keywords: fish,fishing,difficulty,fishingDifficulty
+        FieldName: fishingDifficulty
+        InputType: enum
+        ParamFieldName: $.gameSettings.fishingDifficulty
+        DefaultValue: Normal
+        EnumValues:
+          VeryEasy: Very easy
+          Easy: Easy
+          Normal: Normal
+          Hard: Hard
+          VeryHard: Very hard
+    - key: miningDamageFactor
+      label: Mining Effectiveness
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Scales mining damage. A higher mining damage leads to increased terraforming and more yield of resources per
+        hit. Minimum = 0.5
+      keywords: mining,damage,factor,yield,resources,terraforming,miningDamageFactor
+      input_type: number
+      param_field_name: $.gameSettings.miningDamageFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.5
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Mining Effectiveness
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Scales mining damage. A higher mining damage leads to increased terraforming and more yield of resources per
+          hit. Minimum = 0.5
+        Keywords: mining,damage,factor,yield,resources,terraforming,miningDamageFactor
+        FieldName: miningDamageFactor
+        InputType: number
+        MinValue: '0.5'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.miningDamageFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: plantGrowthSpeedFactor
+      label: Plant Growth Speed Factor
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the plant growth speed. Minimum = 0.25
+      keywords: plant,growth,speed,factor,plantGrowthSpeedFactor
+      input_type: number
+      param_field_name: $.gameSettings.plantGrowthSpeedFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Plant Growth Speed Factor
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the plant growth speed. Minimum = 0.25
+        Keywords: plant,growth,speed,factor,plantGrowthSpeedFactor
+        FieldName: plantGrowthSpeedFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.plantGrowthSpeedFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: resourceDropStackAmountFactor
+      label: Resources Gain Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the amount of materials per loot stack in chests, defeated enemies etc. Minimum = 0.25
+      keywords: resources,drop,stack,gain,modifier,factor,materials,loot,resourceDropStackAmountFactor
+      input_type: number
+      param_field_name: $.gameSettings.resourceDropStackAmountFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Resources Gain Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the amount of materials per loot stack in chests, defeated enemies etc. Minimum = 0.25
+        Keywords: resources,drop,stack,gain,modifier,factor,materials,loot,resourceDropStackAmountFactor
+        FieldName: resourceDropStackAmountFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.resourceDropStackAmountFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: factoryProductionSpeedFactor
+      label: Workstation Effectiveness
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the length of production times for workshop items. Minimum = 0.25
+      keywords: factory,production,speed,factor,workshop,items,factoryProductionSpeedFactor
+      input_type: number
+      param_field_name: $.gameSettings.factoryProductionSpeedFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Workstation Effectiveness
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the length of production times for workshop items. Minimum = 0.25
+        Keywords: factory,production,speed,factor,workshop,items,factoryProductionSpeedFactor
+        FieldName: factoryProductionSpeedFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.factoryProductionSpeedFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: perkUpgradeRecyclingFactor
+      label: Weapon Recycling Yield Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the amount of Runes that are returned when salvaging upgraded weapons
+      keywords: runes,weapon,recycling,yield,factor,perk,upgrade,perkUpgradeRecyclingFactor
+      input_type: number
+      param_field_name: $.gameSettings.perkUpgradeRecyclingFactor
+      default: '0.500000'
+      placeholder: '0.500000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Weapon Recycling Yield Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the amount of Runes that are returned when salvaging upgraded weapons
+        Keywords: runes,weapon,recycling,yield,factor,perk,upgrade,perkUpgradeRecyclingFactor
+        FieldName: perkUpgradeRecyclingFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: $.gameSettings.perkUpgradeRecyclingFactor
+        DefaultValue: '0.500000'
+        Placeholder: '0.500000'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: perkCostFactor
+      label: Weapon Upgrading Costs
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the amount of Runes required for upgrading weapons. Minimum = 0.25
+      keywords: runes,upgrade,weapons,perk,cost,factor,perkCostFactor
+      input_type: number
+      param_field_name: $.gameSettings.perkCostFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Weapon Upgrading Costs
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the amount of Runes required for upgrading weapons. Minimum = 0.25
+        Keywords: runes,upgrade,weapons,perk,cost,factor,perkCostFactor
+        FieldName: perkCostFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.perkCostFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: experienceCombatFactor
+      label: Combat Experience Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the amount of XP received through combat. Minimum = 0.25
+      keywords: experience,combat,factor,experienceCombatFactor
+      input_type: number
+      param_field_name: $.gameSettings.experienceCombatFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Combat Experience Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the amount of XP received through combat. Minimum = 0.25
+        Keywords: experience,combat,factor,experienceCombatFactor
+        FieldName: experienceCombatFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.experienceCombatFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: experienceMiningFactor
+      label: Mining Experience Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the amount of XP received by mining resources
+      keywords: experience,mining,resources,factor,experienceMiningFactor
+      input_type: number
+      param_field_name: $.gameSettings.experienceMiningFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Mining Experience Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the amount of XP received by mining resources
+        Keywords: experience,mining,resources,factor,experienceMiningFactor
+        FieldName: experienceMiningFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.experienceMiningFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: experienceExplorationQuestsFactor
+      label: Exploration Experience Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the amount of XP received by exploring and completing quests. Minimum = 0.25
+      keywords: experience,exploration,quests,factor,experienceExplorationQuestsFactor
+      input_type: number
+      param_field_name: $.gameSettings.experienceExplorationQuestsFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Exploration Experience Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the amount of XP received by exploring and completing quests. Minimum = 0.25
+        Keywords: experience,exploration,quests,factor,experienceExplorationQuestsFactor
+        FieldName: experienceExplorationQuestsFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.experienceExplorationQuestsFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: randomSpawnerAmount
+      label: Enemy Amount
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Sets the amount of enemies in the world
+      keywords: enemy,enemies,amount,random,spawner,randomSpawnerAmount
+      input_type: enum
+      param_field_name: $.gameSettings.randomSpawnerAmount
+      default: Normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Few: Few
+        Normal: Normal
+        Many: Many
+        Extreme: Extreme
+      raw:
+        DisplayName: Enemy Amount
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the amount of enemies in the world
+        Keywords: enemy,enemies,amount,random,spawner,randomSpawnerAmount
+        FieldName: randomSpawnerAmount
+        InputType: enum
+        ParamFieldName: $.gameSettings.randomSpawnerAmount
+        DefaultValue: Normal
+        EnumValues:
+          Few: Few
+          Normal: Normal
+          Many: Many
+          Extreme: Extreme
+    - key: aggroPoolAmount
+      label: Simultaneous Enemy Attacks Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Sets how many enemies are allowed to attack at the same time
+      keywords: enemy,enemies,attack,time,aggroPoolAmount
+      input_type: enum
+      param_field_name: $.gameSettings.aggroPoolAmount
+      default: Normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Few: Few
+        Normal: Normal
+        Many: Many
+        Extreme: Extreme
+      raw:
+        DisplayName: Simultaneous Enemy Attacks Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how many enemies are allowed to attack at the same time
+        Keywords: enemy,enemies,attack,time,aggroPoolAmount
+        FieldName: aggroPoolAmount
+        InputType: enum
+        ParamFieldName: $.gameSettings.aggroPoolAmount
+        DefaultValue: Normal
+        EnumValues:
+          Few: Few
+          Normal: Normal
+          Many: Many
+          Extreme: Extreme
+    - key: enemyDamageFactor
+      label: Enemy Damage Factor
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales all enemy damage by the set factor, except for bosses. Minimum = 0.25
+      keywords: enemy,damage,factor,enemyDamageFactor
+      input_type: number
+      param_field_name: $.gameSettings.enemyDamageFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Damage Factor
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales all enemy damage by the set factor, except for bosses. Minimum = 0.25
+        Keywords: enemy,damage,factor,enemyDamageFactor
+        FieldName: enemyDamageFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '5'
+        ParamFieldName: $.gameSettings.enemyDamageFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: enemyHealthFactor
+      label: Enemy Health Factor
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales all enemy health by the set factor, except for bosses. Minimum = 0.25
+      keywords: enemy,health,factor,enemyHealthFactor
+      input_type: number
+      param_field_name: $.gameSettings.enemyHealthFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 4
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Health Factor
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales all enemy health by the set factor, except for bosses. Minimum = 0.25
+        Keywords: enemy,health,factor,enemyHealthFactor
+        FieldName: enemyHealthFactor
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '4'
+        ParamFieldName: $.gameSettings.enemyHealthFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: enemyStaminaFactor
+      label: Enemy Stun Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Scales all enemy stamina by the set factor. It will take longer to stun enemies with a higher enemy stamina.
+        This excludes bosses. Minimum = 0.5
+      keywords: enemy,stun,factor,stamina,enemyStaminaFactor
+      input_type: number
+      param_field_name: $.gameSettings.enemyStaminaFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.5
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Stun Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Scales all enemy stamina by the set factor. It will take longer to stun enemies with a higher enemy stamina.
+          This excludes bosses. Minimum = 0.5
+        Keywords: enemy,stun,factor,stamina,enemyStaminaFactor
+        FieldName: enemyStaminaFactor
+        InputType: number
+        MinValue: '0.5'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.enemyStaminaFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: enemyPerceptionRangeFactor
+      label: Enemy Perception Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales how far enemies can see and hear a player. This excludes bosses. Minimum = 0.5
+      keywords: enemy,perception,factor,enemyPerceptionRangeFactor
+      input_type: number
+      param_field_name: $.gameSettings.enemyPerceptionRangeFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.5
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Perception Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales how far enemies can see and hear a player. This excludes bosses. Minimum = 0.5
+        Keywords: enemy,perception,factor,enemyPerceptionRangeFactor
+        FieldName: enemyPerceptionRangeFactor
+        InputType: number
+        MinValue: '0.5'
+        MaxValue: '2'
+        ParamFieldName: $.gameSettings.enemyPerceptionRangeFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: bossDamageFactor
+      label: Boss Damage Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the damage of boss attacks. Minimum = 0.2
+      keywords: boss,attacks,damage,factor,bossDamageFactor
+      input_type: number
+      param_field_name: $.gameSettings.bossDamageFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.2
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Boss Damage Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the damage of boss attacks. Minimum = 0.2
+        Keywords: boss,attacks,damage,factor,bossDamageFactor
+        FieldName: bossDamageFactor
+        InputType: number
+        MinValue: '0.2'
+        MaxValue: '5'
+        ParamFieldName: $.gameSettings.bossDamageFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: bossHealthFactor
+      label: Boss Health Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales all health of bosses by the set factor. Minimum = 0.2
+      keywords: boss,health,factor,bossHealthFactor
+      input_type: number
+      param_field_name: $.gameSettings.bossHealthFactor
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.2
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Boss Health Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales all health of bosses by the set factor. Minimum = 0.2
+        Keywords: boss,health,factor,bossHealthFactor
+        FieldName: bossHealthFactor
+        InputType: number
+        MinValue: '0.2'
+        MaxValue: '5'
+        ParamFieldName: $.gameSettings.bossHealthFactor
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: threatBonus
+      label: Enemy Attacks Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: Scales the frequency of enemy attacks. This excludes bosses. Minimum = 0.25
+      keywords: enemy,attacks,frequency,threat,bonus,threatBonus
+      input_type: number
+      param_field_name: $.gameSettings.threatBonus
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0.25
+      max: 4
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Attacks Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Scales the frequency of enemy attacks. This excludes bosses. Minimum = 0.25
+        Keywords: enemy,attacks,frequency,threat,bonus,threatBonus
+        FieldName: threatBonus
+        InputType: number
+        MinValue: '0.25'
+        MaxValue: '4'
+        ParamFieldName: $.gameSettings.threatBonus
+        DefaultValue: '1'
+        Placeholder: '1'
+        MultipleOf: '0.000001'
+        EnumValues: {}
+    - key: pacifyAllEnemies
+      label: Pacify All Enemies
+      category: Enshrouded
+      subcategory: Gameplay
+      description: If set, enemies won't attack players until they are attacked. This excludes bosses
+      keywords: pacify,enemies,attack,pacifyAllEnemies
+      input_type: checkbox
+      param_field_name: $.gameSettings.pacifyAllEnemies
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Pacify All Enemies
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, enemies won't attack players until they are attacked. This excludes bosses
+        Keywords: pacify,enemies,attack,pacifyAllEnemies
+        FieldName: pacifyAllEnemies
+        InputType: checkbox
+        ParamFieldName: $.gameSettings.pacifyAllEnemies
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: tamingStartleRepercussion
+      label: Taming Failure Repercussions
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Sets how the game reacts when a player startles wildlife during taming. Progress is visualized by hearts in the
+        game
+      keywords: taming,startle,repercussion,tamingStartleRepercussion
+      input_type: enum
+      param_field_name: $.gameSettings.tamingStartleRepercussion
+      default: LoseSomeProgress
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        KeepProgress: Keep all progress
+        LoseSomeProgress: Lose some progress (default)
+        LoseAllProgress: Lose all progress
+      raw:
+        DisplayName: Taming Failure Repercussions
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets how the game reacts when a player startles wildlife during taming. Progress is visualized by hearts in
+          the game
+        Keywords: taming,startle,repercussion,tamingStartleRepercussion
+        FieldName: tamingStartleRepercussion
+        InputType: enum
+        ParamFieldName: $.gameSettings.tamingStartleRepercussion
+        DefaultValue: LoseSomeProgress
+        EnumValues:
+          KeepProgress: Keep all progress
+          LoseSomeProgress: Lose some progress (default)
+          LoseAllProgress: Lose all progress
+    - key: dayTimeDuration
+      label: Daytime Length
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Set the length of daytime by configuring 'dayTimeDuration' in enshrouded_server.json. A smaller value equals
+        shorter daytime. Unit is nanoseconds (yes, really). Lowest = 120000000000, highest = 3600000000000
+      keywords: day,time,length,duration,dayTimeDuration
+      input_type: hidden
+      param_field_name: dayTimeDuration
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Daytime Length
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Set the length of daytime by configuring 'dayTimeDuration' in enshrouded_server.json. A smaller value equals
+          shorter daytime. Unit is nanoseconds (yes, really). Lowest = 120000000000, highest = 3600000000000
+        Keywords: day,time,length,duration,dayTimeDuration
+        FieldName: dayTimeDuration
+        InputType: hidden
+        ParamFieldName: dayTimeDuration
+        EnumValues: {}
+    - key: nightTimeDuration
+      label: Nighttime Length
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Set the length of nighttime by configuring 'nightTimeDuration' in enshrouded_server.json. A smaller value equals
+        shorter nighttime. Unit is nanoseconds (yes, really). Lowest = 120000000000, highest = 3600000000000
+      keywords: night,time,length,duration,nightTimeDuration
+      input_type: hidden
+      param_field_name: nightTimeDuration
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Nighttime Length
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Set the length of nighttime by configuring 'nightTimeDuration' in enshrouded_server.json. A smaller value
+          equals shorter nighttime. Unit is nanoseconds (yes, really). Lowest = 120000000000, highest = 3600000000000
+        Keywords: night,time,length,duration,nightTimeDuration
+        FieldName: nightTimeDuration
+        InputType: hidden
+        ParamFieldName: nightTimeDuration
+        EnumValues: {}
+    - key: curseModifier
+      label: Curse Modifier
+      category: Enshrouded
+      subcategory: Gameplay
+      description: >-
+        Sets whether the Shroud curse is off or the chance of receiving the curse when being attacked by the
+        corresponding enemies is increased
+      keywords: curse,modifier,curseModifier
+      input_type: enum
+      param_field_name: $.gameSettings.curseModifier
+      default: Normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Easy: Easy (off)
+        Normal: Normal
+        Hard: Hard (double chance)
+      raw:
+        DisplayName: Curse Modifier
+        Category: Enshrouded:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets whether the Shroud curse is off or the chance of receiving the curse when being attacked by the
+          corresponding enemies is increased
+        Keywords: curse,modifier,curseModifier
+        FieldName: curseModifier
+        InputType: enum
+        ParamFieldName: $.gameSettings.curseModifier
+        DefaultValue: Normal
+        EnumValues:
+          Easy: Easy (off)
+          Normal: Normal
+          Hard: Hard (double chance)
+    - key: SpecificReleaseVersion
+      label: Proton GE Release Version (Linux)
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+        Empty = latest. Example: GE-Proton9-1
+      keywords: proton,release,version
+      input_type: text
+      param_field_name: SpecificReleaseVersion
+      default: ''
+      placeholder: GE-Proton9-1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Proton GE Release Version (Linux)
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+          Empty = latest. Example: GE-Proton9-1
+        Keywords: proton,release,version
+        FieldName: SpecificReleaseVersion
+        InputType: text
+        ParamFieldName: SpecificReleaseVersion
+        DefaultValue: ''
+        Placeholder: GE-Proton9-1
+        EnumValues: {}
+  files:
+    - path: enshrouded_server.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: enshrouded_server.json
+        AutoMap: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: saveDirectory
+    label: Save Directory
+    default: ./savegame
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logDirectory
+    label: Log Directory
+    default: ./logs
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: name
+    label: Server Name
+    default: AMP Powered Enshrouded Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tags
+    label: Server Tags
+    default: '[]'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableVoiceChat
+    label: Enable Voice Chat
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: voiceChatMode
+    label: Voice Chat Mode
+    default: Proximity
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableTextChat
+    label: Enable Text Chat
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gameSettingsPreset
+    label: Game Settings Preset
+    default: Default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: playerHealthFactor
+    label: Player Health Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: playerManaFactor
+    label: Player Mana Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: playerStaminaFactor
+    label: Player Stamina Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: playerBodyHeatFactor
+    label: Player Body Heat Factor
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: playerDivingTimeFactor
+    label: Diving Time Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableDurability
+    label: Enable Weapon Durability
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableStarvingDebuff
+    label: Enable Hunger And Starvation
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: foodBuffDurationFactor
+    label: Food Buff Duration Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: shroudTimeFactor
+    label: Shroud Time Duration Modifier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tombstoneMode
+    label: Tombstone Mode
+    default: AddBackpackMaterials
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableGliderTurbulences
+    label: Air Turbulences Affect Glider
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: weatherFrequency
+    label: Weather Frequency
+    default: Normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: fishingDifficulty
+    label: Fishing Difficulty
+    default: Normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: miningDamageFactor
+    label: Mining Effectiveness
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: plantGrowthSpeedFactor
+    label: Plant Growth Speed Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resourceDropStackAmountFactor
+    label: Resources Gain Modifier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: factoryProductionSpeedFactor
+    label: Workstation Effectiveness
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: perkUpgradeRecyclingFactor
+    label: Weapon Recycling Yield Modifier
+    default: '0.500000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: perkCostFactor
+    label: Weapon Upgrading Costs
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: experienceCombatFactor
+    label: Combat Experience Modifier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: experienceMiningFactor
+    label: Mining Experience Modifier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: experienceExplorationQuestsFactor
+    label: Exploration Experience Modifier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: randomSpawnerAmount
+    label: Enemy Amount
+    default: Normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: aggroPoolAmount
+    label: Simultaneous Enemy Attacks Modifier
+    default: Normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enemyDamageFactor
+    label: Enemy Damage Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enemyHealthFactor
+    label: Enemy Health Factor
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enemyStaminaFactor
+    label: Enemy Stun Modifier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enemyPerceptionRangeFactor
+    label: Enemy Perception Modifier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bossDamageFactor
+    label: Boss Damage Modifier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bossHealthFactor
+    label: Boss Health Modifier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: threatBonus
+    label: Enemy Attacks Modifier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pacifyAllEnemies
+    label: Pacify All Enemies
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tamingStartleRepercussion
+    label: Taming Failure Repercussions
+    default: LoseSomeProgress
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: curseModifier
+    label: Curse Modifier
+    default: Normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificReleaseVersion
+    label: Proton GE Release Version (Linux)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1203620'
+  collection_support: true
 backup:
   include:
     - /data

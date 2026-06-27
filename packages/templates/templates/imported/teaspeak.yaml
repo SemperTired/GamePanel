@@ -4,14 +4,21 @@ name: TeaSpeak
 category: Imported
 summary: TeaSpeak Server
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://repo.teaspeak.de/server/linux/amd64_stable/TeaSpeak-1.5.6.tar.gz
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: TeaSpeakServer
+  startup: >-
+    TeaSpeakServer {PlatformArgs} --property:binding.query.port={QueryPort} --property:binding.file.port={FilePort}
+    --property:voice.default_port={ServerPort} --property:binding.query.host={ApplicationIPBinding}
+    --property:binding.file.host={ApplicationIPBinding} --property:binding.voice.default_host="{ApplicationIPBinding}"
+    --property:binding.web.default_host={ApplicationIPBinding} --property:query.motd="{motd}" {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +26,108 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Voice and Web Port
+    default: 9987
+    protocol: both
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 10101
+    protocol: tcp
+    required: true
+  - key: fileport
+    name: File Port
+    default: 30303
+    protocol: tcp
+    required: true
+config_files:
+  - path: teaspeakconfig.json
+    type: json
+    editable: true
+  - path: teaspeakmetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: motd
+      label: Server MOTD
+      category: Teaspeak
+      subcategory: Server
+      description: Sets the query welcome message
+      keywords: welcome,message,query,motd
+      input_type: text
+      param_field_name: motd
+      default: TeaSpeak\n\rWelcome to the TeaSpeak ServerQuery interface.\n\r
+      placeholder: TeaSpeak\n\rWelcome to the TeaSpeak ServerQuery interface.\n\r
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server MOTD
+        Category: Teaspeak:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the query welcome message
+        Keywords: welcome,message,query,motd
+        FieldName: motd
+        InputType: text
+        ParamFieldName: motd
+        DefaultValue: TeaSpeak\n\rWelcome to the TeaSpeak ServerQuery interface.\n\r
+        Placeholder: TeaSpeak\n\rWelcome to the TeaSpeak ServerQuery interface.\n\r
+        EnumValues: {}
+    - key: enableSSL
+      label: Query SSL Mode
+      category: Teaspeak
+      subcategory: Server
+      description: Sets the server query SSL mode
+      keywords: query,ssl,mode
+      input_type: enum
+      param_field_name: query.enableSSL
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '0': SSL disabled
+        '1': SSL enabled (enforced encryption)
+        '2': Prefer encryption but fallback when not available (default)
+      raw:
+        DisplayName: Query SSL Mode
+        Category: Teaspeak:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server query SSL mode
+        Keywords: query,ssl,mode
+        FieldName: enableSSL
+        InputType: enum
+        ParamFieldName: query.enableSSL
+        IncludeInCommandLine: true
+        DefaultValue: '2'
+        EnumValues:
+          '0': SSL disabled
+          '1': SSL enabled (enforced encryption)
+          '2': Prefer encryption but fallback when not available (default)
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: motd
+    label: Server MOTD
+    default: TeaSpeak\n\rWelcome to the TeaSpeak ServerQuery interface.\n\r
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableSSL
+    label: Query SSL Mode
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

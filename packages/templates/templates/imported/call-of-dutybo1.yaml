@@ -5,13 +5,18 @@ category: Imported
 summary: 'Call of Duty: Black Ops Dedicated Server using the Plutonium mod launcher'
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '42700'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: >-
+    /usr/bin/wine {PlatformArgs} {GameMode} +set net_port {ServerPort} +set net_ip {ApplicationIPBinding} +set
+    rcon_password "{RemoteAdminPassword}" {FormattedArgs} {MapMode}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,2133 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 28960
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: Plutonium/storage/t5/dedicated.cfg
+    type: text
+    editable: true
+  - path: Plutonium/storage/t5/dedicated_sp.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: rcon_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RemoteAdminPassword
+        InputType: text
+        Hidden: true
+        ParamFieldName: rcon_password
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: rcon_localhost_bypass
+      label: Localhost RCON Rate Limit Bypass
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: rcon_localhost_bypass
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Localhost RCON Rate Limit Bypass
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: rcon_localhost_bypass
+        InputType: number
+        Hidden: true
+        ParamFieldName: rcon_localhost_bypass
+        DefaultValue: '1'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: rcon_prints
+      label: RCON Console Activity
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: rcon_prints
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Console Activity
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: rcon_prints
+        InputType: number
+        Hidden: true
+        ParamFieldName: rcon_prints
+        DefaultValue: '1'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: con_displayRconOutput
+      label: RCON Command Output
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: con_displayRconOutput
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Command Output
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: con_displayRconOutput
+        InputType: number
+        Hidden: true
+        ParamFieldName: con_displayRconOutput
+        DefaultValue: '1'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: g_logSync
+      label: Buffer Full Log
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: g_logSync
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Buffer Full Log
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: g_logSync
+        InputType: number
+        Hidden: true
+        ParamFieldName: g_logSync
+        DefaultValue: '1'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: g_log
+      label: Log File Name
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: g_log
+      default: logs\games.log
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Log File Name
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: g_log
+        InputType: text
+        Hidden: true
+        ParamFieldName: g_log
+        DefaultValue: logs\games.log
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: GameMode
+      label: Game Mode
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: >-
+        Sets the game mode. Configure the relevant config file accordingly - 'Plutonium/storage/t5/dedicated.cfg' for
+        Multiplayer, 'Plutonium/storage/t5/dedicated_sp.cfg' for Zombies
+      keywords: game,mode,gamemode
+      input_type: enum
+      param_field_name: GameMode
+      default: t5mp "{{$FullBaseDir}}T5" -dedicated +set key {{ServerKey}} +set fs_game "{{Mod}}" +exec dedicated.cfg
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        t5mp "{{$FullBaseDir}}T5" -dedicated +set key {{ServerKey}} +set fs_game "{{Mod}}" +exec dedicated.cfg: Multiplayer (default)
+        t5sp "{{$FullBaseDir}}T5" -dedicated +set key {{ServerKey}} +set fs_game "{{Mod}}" +exec dedicated_sp.cfg: Zombies
+      raw:
+        DisplayName: Game Mode
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the game mode. Configure the relevant config file accordingly - 'Plutonium/storage/t5/dedicated.cfg' for
+          Multiplayer, 'Plutonium/storage/t5/dedicated_sp.cfg' for Zombies
+        Keywords: game,mode,gamemode
+        FieldName: GameMode
+        InputType: enum
+        ParamFieldName: GameMode
+        DefaultValue: t5mp "{{$FullBaseDir}}T5" -dedicated +set key {{ServerKey}} +set fs_game "{{Mod}}" +exec dedicated.cfg
+        EnumValues:
+          t5mp "{{$FullBaseDir}}T5" -dedicated +set key {{ServerKey}} +set fs_game "{{Mod}}" +exec dedicated.cfg: Multiplayer (default)
+          t5sp "{{$FullBaseDir}}T5" -dedicated +set key {{ServerKey}} +set fs_game "{{Mod}}" +exec dedicated_sp.cfg: Zombies
+    - key: ServerKey
+      label: Server Key
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: >-
+        Sets the [server key](https://platform.plutonium.pw/serverkeys) required to run the server. This also sets the
+        server name. A Plutonium account must be at least one week old to create a key, and game ownership must be
+        [verified](https://forum.plutonium.pw/topic/32250/an-update-on-game-ownership-verification)
+      keywords: server,key,serverkey
+      input_type: password
+      param_field_name: ServerKey
+      default: ''
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Key
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [server key](https://platform.plutonium.pw/serverkeys) required to run the server. This also sets the
+          server name. A Plutonium account must be at least one week old to create a key, and game ownership must be
+          [verified](https://forum.plutonium.pw/topic/32250/an-update-on-game-ownership-verification)
+        Keywords: server,key,serverkey
+        FieldName: ServerKey
+        InputType: password
+        ParamFieldName: ServerKey
+        DefaultValue: ''
+        Required: true
+        EnumValues: {}
+    - key: g_password
+      label: Server Password
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: Sets the password to join the server. Default is no password
+      keywords: password,g_password
+      input_type: password
+      param_field_name: g_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server. Default is no password
+        Keywords: password,g_password
+        FieldName: g_password
+        InputType: password
+        ParamFieldName: g_password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: MapMode
+      label: Map Mode
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: >-
+        Sets whether to enable map rotation (the Map Rotation List must then also be set) or to load a specific initial
+        map (the Initial Game Type and Initial Map must then also be set, as applicable)
+      keywords: map,mode,map_rotate
+      input_type: enum
+      param_field_name: MapMode
+      default: +map_rotate
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        +map_rotate: Map rotation (default)
+        +set gametype {{gametype}} +map "{{map_name}}": Specific initial map (Multiplayer)
+        +map "{{map_name}}": Specific initial map (Zombies)
+      raw:
+        DisplayName: Map Mode
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether to enable map rotation (the Map Rotation List must then also be set) or to load a specific
+          initial map (the Initial Game Type and Initial Map must then also be set, as applicable)
+        Keywords: map,mode,map_rotate
+        FieldName: MapMode
+        InputType: enum
+        ParamFieldName: MapMode
+        DefaultValue: +map_rotate
+        EnumValues:
+          +map_rotate: Map rotation (default)
+          +set gametype {{gametype}} +map "{{map_name}}": Specific initial map (Multiplayer)
+          +map "{{map_name}}": Specific initial map (Zombies)
+    - key: MapRotation
+      label: Map Rotation List
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: >-
+        Configure the map rotation in 'dedicated.cfg' or 'dedicated_sp.cfg' (as applicable). Alternatively enable a
+        playlist for Multiplayer
+      keywords: map,rotation,list,sv_maprotation
+      input_type: hidden
+      param_field_name: MapRotation
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Map Rotation List
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Configure the map rotation in 'dedicated.cfg' or 'dedicated_sp.cfg' (as applicable). Alternatively enable a
+          playlist for Multiplayer
+        Keywords: map,rotation,list,sv_maprotation
+        FieldName: MapRotation
+        InputType: hidden
+        ParamFieldName: MapRotation
+        DefaultValue: ''
+        EnumValues: {}
+    - key: gametype
+      label: Initial Game Type (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: >-
+        Sets the game type to start the server with in Multiplayer mode. This setting will be overridden if map rotation
+        is configured. Settings for each game type can be set in 'dedicated.cfg'
+      keywords: game,type,gametype
+      input_type: enum
+      param_field_name: gametype
+      default: dm
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        ctf: Capture the Flag
+        dm: Deathmatch / Free-for-all (default)
+        dem: Demolition
+        dom: Domination
+        koth: Headquarters
+        sab: Sabotage
+        sd: Search & Destroy
+        tdm: Team Deathmatch
+      raw:
+        DisplayName: Initial Game Type (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the game type to start the server with in Multiplayer mode. This setting will be overridden if map
+          rotation is configured. Settings for each game type can be set in 'dedicated.cfg'
+        Keywords: game,type,gametype
+        FieldName: gametype
+        InputType: enum
+        ParamFieldName: gametype
+        DefaultValue: dm
+        EnumValues:
+          ctf: Capture the Flag
+          dm: Deathmatch / Free-for-all (default)
+          dem: Demolition
+          dom: Domination
+          koth: Headquarters
+          sab: Sabotage
+          sd: Search & Destroy
+          tdm: Team Deathmatch
+    - key: gametype
+      label: Initial Game Type (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: g_gametype
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Initial Game Type (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: gametype
+        InputType: text
+        Hidden: true
+        ParamFieldName: g_gametype
+        EnumValues: {}
+    - key: map_name
+      label: Initial Map
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: >-
+        Sets the map to start the server with. See 'dedicated.cfg' or 'dedicated_sp.cfg' (as applicable) for map names.
+        This setting will be overridden if map rotation is configured
+      keywords: map
+      input_type: text
+      param_field_name: map_name
+      default: mp_nuked
+      placeholder: mp_nuked
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Initial Map
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the map to start the server with. See 'dedicated.cfg' or 'dedicated_sp.cfg' (as applicable) for map
+          names. This setting will be overridden if map rotation is configured
+        Keywords: map
+        FieldName: map_name
+        InputType: text
+        ParamFieldName: map_name
+        DefaultValue: mp_nuked
+        Placeholder: mp_nuked
+        EnumValues: {}
+    - key: Mod
+      label: Load Mod
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: >-
+        Sets the mod to load when starting the server, based on the path to the mod in the 'Plutonium/storage/t5'
+        directory
+      keywords: mods,mod,fs_game
+      input_type: text
+      param_field_name: Mod
+      default: ''
+      placeholder: mods/modname
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Load Mod
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the mod to load when starting the server, based on the path to the mod in the 'Plutonium/storage/t5'
+          directory
+        Keywords: mods,mod,fs_game
+        FieldName: Mod
+        InputType: text
+        ParamFieldName: Mod
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: mods/modname
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time. Maximum 18 for Multiplayer, 4 for Zombies
+      keywords: max,players,limit,sv_maxclients
+      input_type: number
+      param_field_name: sv_maxclients
+      default: '8'
+      placeholder: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      max: 18
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of players allowed on the server at one time. Maximum 18 for Multiplayer, 4 for
+          Zombies
+        Keywords: max,players,limit,sv_maxclients
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '18'
+        ParamFieldName: sv_maxclients
+        IncludeInCommandLine: true
+        DefaultValue: '8'
+        Placeholder: '8'
+        Suffix: players
+        EnumValues: {}
+    - key: sv_wwwBaseURL
+      label: Fast Download URL
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: Sets the URL for [fast download](https://plutonium.pw/docs/server/t5/fastdl/) of mods
+      keywords: base,url,download,redirection,sv_wwwBaseURL
+      input_type: url
+      param_field_name: sv_wwwBaseURL
+      default: ''
+      placeholder: http://domain.tld/t5
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Fast Download URL
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the URL for [fast download](https://plutonium.pw/docs/server/t5/fastdl/) of mods
+        Keywords: base,url,download,redirection,sv_wwwBaseURL
+        FieldName: sv_wwwBaseURL
+        InputType: url
+        ParamFieldName: sv_wwwBaseURL
+        DefaultValue: ''
+        Placeholder: http://domain.tld/t5
+        EnumValues: {}
+    - key: rcon_rate_limit
+      label: RCON Rate Limit
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: Sets the RCON rate limit (per IP). Localhost RCON commands are not rate limited
+      keywords: rcon,rate,limit,rcon_rate_limit
+      input_type: number
+      param_field_name: rcon_rate_limit
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: RCON Rate Limit
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the RCON rate limit (per IP). Localhost RCON commands are not rate limited
+        Keywords: rcon,rate,limit,rcon_rate_limit
+        FieldName: rcon_rate_limit
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10000'
+        ParamFieldName: rcon_rate_limit
+        DefaultValue: '500'
+        Placeholder: '500'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: sv_floodProtect
+      label: Chat Spam Protection
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: Sets the chat spam protection level
+      keywords: chat,spam,protection,sv_floodProtect
+      input_type: number
+      param_field_name: sv_floodProtect
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Chat Spam Protection
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the chat spam protection level
+        Keywords: chat,spam,protection,sv_floodProtect
+        FieldName: sv_floodProtect
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_floodProtect
+        DefaultValue: '4'
+        Placeholder: '4'
+        EnumValues: {}
+    - key: sv_kickBanTime
+      label: Kick Ban Duration
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: Sets the duration before a kicked player can rejoin the server
+      keywords: kick,ban,duration,sv_kickBanTime
+      input_type: number
+      param_field_name: sv_kickBanTime
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Kick Ban Duration
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the duration before a kicked player can rejoin the server
+        Keywords: kick,ban,duration,sv_kickBanTime
+        FieldName: sv_kickBanTime
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_kickBanTime
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: sv_privateClients
+      label: Private Reserved Slots (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: Sets the number of private reserved slots on the server
+      keywords: private,slots,sv_privateClients
+      input_type: number
+      param_field_name: sv_privateClients
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: slots
+      enum_values: {}
+      raw:
+        DisplayName: Private Reserved Slots (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of private reserved slots on the server
+        Keywords: private,slots,sv_privateClients
+        FieldName: sv_privateClients
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_privateClients
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: slots
+        EnumValues: {}
+    - key: sv_privatePassword
+      label: Private Slot Password (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: Sets the password needed to use a private reserved slot
+      keywords: private,password,sv_privatePassword
+      input_type: password
+      param_field_name: sv_privatePassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Private Slot Password (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password needed to use a private reserved slot
+        Keywords: private,password,sv_privatePassword
+        FieldName: sv_privatePassword
+        InputType: password
+        ParamFieldName: sv_privatePassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_pure
+      label: Match Data Verification (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: If set, match data verification between client and server will be enabled
+      keywords: match,data,verification,sv_pure
+      input_type: checkbox
+      param_field_name: sv_pure
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Match Data Verification (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, match data verification between client and server will be enabled
+        Keywords: match,data,verification,sv_pure
+        FieldName: sv_pure
+        InputType: checkbox
+        ParamFieldName: sv_pure
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_reconnectlimit
+      label: Reconnect Limit (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: Sets the number of times a player can attempt to reconnect
+      keywords: reconnect,limit,sv_reconnectlimit
+      input_type: number
+      param_field_name: sv_reconnectlimit
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Reconnect Limit (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the number of times a player can attempt to reconnect
+        Keywords: reconnect,limit,sv_reconnectlimit
+        FieldName: sv_reconnectlimit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_reconnectlimit
+        DefaultValue: '3'
+        Placeholder: '3'
+        EnumValues: {}
+    - key: sv_zombietime
+      label: Idle Timeout (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: Sets the idle time period before a player is kicked
+      keywords: idle,timeout,sv_zombietime
+      input_type: number
+      param_field_name: sv_zombietime
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Idle Timeout (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the idle time period before a player is kicked
+        Keywords: idle,timeout,sv_zombietime
+        FieldName: sv_zombietime
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_zombietime
+        DefaultValue: '2'
+        Placeholder: '2'
+        Suffix: seconds
+        EnumValues: {}
+    - key: sv_timeout
+      label: Connection Timeout (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: Sets the timeout period for connection attempts or interruptions
+      keywords: connection,timeout,sv_timeout
+      input_type: number
+      param_field_name: sv_timeout
+      default: '15'
+      placeholder: '15'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Connection Timeout (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the timeout period for connection attempts or interruptions
+        Keywords: connection,timeout,sv_timeout
+        FieldName: sv_timeout
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_timeout
+        DefaultValue: '15'
+        Placeholder: '15'
+        Suffix: seconds
+        EnumValues: {}
+    - key: scr_allowFileIo
+      label: Allow File IO
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: If set, GSC scripts will be allowed to interact with files on the OS filesystem in a special scriptdata folder
+      keywords: file,io,scripts,scr_allowFileIo
+      input_type: checkbox
+      param_field_name: scr_allowFileIo
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow File IO
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, GSC scripts will be allowed to interact with files on the OS filesystem in a special scriptdata folder
+        Keywords: file,io,scripts,scr_allowFileIo
+        FieldName: scr_allowFileIo
+        InputType: checkbox
+        ParamFieldName: scr_allowFileIo
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: scr_kill_infinite_loops
+      label: Kill Infinite Loops
+      category: Call of Duty Black Ops
+      subcategory: Server
+      description: If set, the game will be allowed to kill threads in the GSC engine it thinks are malfunctioning
+      keywords: kill,infinite,loops,scr_kill_infinite_loops
+      input_type: checkbox
+      param_field_name: scr_kill_infinite_loops
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Kill Infinite Loops
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the game will be allowed to kill threads in the GSC engine it thinks are malfunctioning
+        Keywords: kill,infinite,loops,scr_kill_infinite_loops
+        FieldName: scr_kill_infinite_loops
+        InputType: checkbox
+        ParamFieldName: scr_kill_infinite_loops
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_voice
+      label: Enable Voice Chat
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If set, voice chat will be enabled
+      keywords: voice,chat,sv_voice
+      input_type: checkbox
+      param_field_name: sv_voice
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Voice Chat
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, voice chat will be enabled
+        Keywords: voice,chat,sv_voice
+        FieldName: sv_voice
+        InputType: checkbox
+        ParamFieldName: sv_voice
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_voicequality
+      label: Server Voice Chat Quality
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Sets the server voice quality level
+      keywords: voice,chat,quality,sv_voicequality
+      input_type: number
+      param_field_name: sv_voicequality
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 9
+      enum_values: {}
+      raw:
+        DisplayName: Server Voice Chat Quality
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the server voice quality level
+        Keywords: voice,chat,quality,sv_voicequality
+        FieldName: sv_voicequality
+        InputType: number
+        MinValue: '0'
+        MaxValue: '9'
+        ParamFieldName: sv_voicequality
+        DefaultValue: '3'
+        Placeholder: '3'
+        EnumValues: {}
+    - key: g_inactivity
+      label: Kick Idle Players
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If set, idle/AFK players will be auto-kicked from the server after the specified time
+      keywords: kick,idle,players,g_inactivity
+      input_type: number
+      param_field_name: g_inactivity
+      default: '190'
+      placeholder: '190'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Kick Idle Players
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, idle/AFK players will be auto-kicked from the server after the specified time
+        Keywords: kick,idle,players,g_inactivity
+        FieldName: g_inactivity
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: g_inactivity
+        DefaultValue: '190'
+        Placeholder: '190'
+        EnumValues: {}
+    - key: g_playerCollision
+      label: Player Collision Mode
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Sets who players collide with
+      keywords: collision,players,g_playerCollision
+      input_type: enum
+      param_field_name: g_playerCollision
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Everybody (default)
+        '1': Enemies
+        '2': Nobody
+      raw:
+        DisplayName: Player Collision Mode
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets who players collide with
+        Keywords: collision,players,g_playerCollision
+        FieldName: g_playerCollision
+        InputType: enum
+        ParamFieldName: g_playerCollision
+        DefaultValue: '0'
+        EnumValues:
+          '0': Everybody (default)
+          '1': Enemies
+          '2': Nobody
+    - key: g_playerEjection
+      label: Player Ejection Mode
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Sets from whom players are ejected
+      keywords: collision,players,g_playerEjection
+      input_type: enum
+      param_field_name: g_playerEjection
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Everybody (default)
+        '1': Enemies
+        '2': Nobody
+      raw:
+        DisplayName: Player Ejection Mode
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets from whom players are ejected
+        Keywords: collision,players,g_playerEjection
+        FieldName: g_playerEjection
+        InputType: enum
+        ParamFieldName: g_playerEjection
+        DefaultValue: '0'
+        EnumValues:
+          '0': Everybody (default)
+          '1': Enemies
+          '2': Nobody
+    - key: sv_disableClientConsole
+      label: Disable Client Console
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Enables or disables players' ability to access server commands
+      keywords: disable,client,console,sv_disableClientConsole
+      input_type: checkbox
+      param_field_name: sv_disableClientConsole
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Client Console
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Enables or disables players' ability to access server commands
+        Keywords: disable,client,console,sv_disableClientConsole
+        FieldName: sv_disableClientConsole
+        InputType: checkbox
+        ParamFieldName: sv_disableClientConsole
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: bullet_penetration_affected_by_team
+      label: Enable Team To Affect Bullet Penetration
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If enabled, team members will affect bullet penetration
+      keywords: team,bullet,penetration,bullet_penetration_affected_by_team
+      input_type: checkbox
+      param_field_name: bullet_penetration_affected_by_team
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Team To Affect Bullet Penetration
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, team members will affect bullet penetration
+        Keywords: team,bullet,penetration,bullet_penetration_affected_by_team
+        FieldName: bullet_penetration_affected_by_team
+        InputType: checkbox
+        ParamFieldName: bullet_penetration_affected_by_team
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_fixBulletDamageDupe
+      label: Fix Bullet Damage Duplication
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: >-
+        If enabled, the issue where players that are clipped inside each other receive duplicate bullet damage will be
+        fixed
+      keywords: bullet,damage,duplication,g_fixBulletDamageDupe
+      input_type: checkbox
+      param_field_name: g_fixBulletDamageDupe
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Fix Bullet Damage Duplication
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, the issue where players that are clipped inside each other receive duplicate bullet damage will be
+          fixed
+        Keywords: bullet,damage,duplication,g_fixBulletDamageDupe
+        FieldName: g_fixBulletDamageDupe
+        InputType: checkbox
+        ParamFieldName: g_fixBulletDamageDupe
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_patchRocketJumps
+      label: Allow Rocket Jumps
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If enabled, upward knockback from rocket shots will be enabled
+      keywords: rocket,jumps,g_patchRocketJumps
+      input_type: checkbox
+      param_field_name: g_patchRocketJumps
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Rocket Jumps
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, upward knockback from rocket shots will be enabled
+        Keywords: rocket,jumps,g_patchRocketJumps
+        FieldName: g_patchRocketJumps
+        InputType: checkbox
+        ParamFieldName: g_patchRocketJumps
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_fix_viewkick_dupe
+      label: Fix Viewkick Duplication
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If set, an issue where viewkick is doubled will be fixed
+      keywords: fix,viewkick,duplication,g_fix_viewkick_dupe
+      input_type: checkbox
+      param_field_name: g_fix_viewkick_dupe
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Fix Viewkick Duplication
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, an issue where viewkick is doubled will be fixed
+        Keywords: fix,viewkick,duplication,g_fix_viewkick_dupe
+        FieldName: g_fix_viewkick_dupe
+        InputType: checkbox
+        ParamFieldName: g_fix_viewkick_dupe
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_playerCollisionEjectSpeed
+      label: Player Collision Ejection Speed
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Sets the speed at which players are ejected from each other
+      keywords: collision,ejection,speed,g_playerCollisionEjectSpeed
+      input_type: number
+      param_field_name: g_playerCollisionEjectSpeed
+      default: '25'
+      placeholder: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 32000
+      enum_values: {}
+      raw:
+        DisplayName: Player Collision Ejection Speed
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the speed at which players are ejected from each other
+        Keywords: collision,ejection,speed,g_playerCollisionEjectSpeed
+        FieldName: g_playerCollisionEjectSpeed
+        InputType: number
+        MinValue: '0'
+        MaxValue: '32000'
+        ParamFieldName: g_playerCollisionEjectSpeed
+        DefaultValue: '25'
+        Placeholder: '25'
+        EnumValues: {}
+    - key: sv_allowFriendlyThrowback
+      label: Allow Friendly Grenade Throwback
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If set, throwing back friendly grenades will be allowed
+      keywords: friendly,grenade,throwback,sv_allowFriendlyThrowback
+      input_type: checkbox
+      param_field_name: sv_allowFriendlyThrowback
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Friendly Grenade Throwback
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, throwing back friendly grenades will be allowed
+        Keywords: friendly,grenade,throwback,sv_allowFriendlyThrowback
+        FieldName: sv_allowFriendlyThrowback
+        InputType: checkbox
+        ParamFieldName: sv_allowFriendlyThrowback
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: cg_hudGrenadeIconShowFriendly
+      label: Show Friendly Grenades On HUD
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If set, friendly grenades will be shown on the HUD
+      keywords: friendly,grenades,hud,cg_hudGrenadeIconShowFriendly
+      input_type: checkbox
+      param_field_name: cg_hudGrenadeIconShowFriendly
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Show Friendly Grenades On HUD
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, friendly grenades will be shown on the HUD
+        Keywords: friendly,grenades,hud,cg_hudGrenadeIconShowFriendly
+        FieldName: cg_hudGrenadeIconShowFriendly
+        InputType: checkbox
+        ParamFieldName: cg_hudGrenadeIconShowFriendly
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_fix_entity_leaks
+      label: Fix Entity Leaks
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If set, various engine-related issues where entities leak will be fixed
+      keywords: fix,entity,leaks,g_fix_entity_leaks
+      input_type: checkbox
+      param_field_name: g_fix_entity_leaks
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Fix Entity Leaks
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, various engine-related issues where entities leak will be fixed
+        Keywords: fix,entity,leaks,g_fix_entity_leaks
+        FieldName: g_fix_entity_leaks
+        InputType: checkbox
+        ParamFieldName: g_fix_entity_leaks
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_allowVote
+      label: Allow Voting (Multiplayer)
+      category: Call of Duty Black Op
+      subcategory: Gameplay
+      description: If set, voting will be allowed
+      keywords: allow,vote,voting,g_allowVote
+      input_type: checkbox
+      param_field_name: g_allowVote
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Voting (Multiplayer)
+        Category: Call of Duty Black Op:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, voting will be allowed
+        Keywords: allow,vote,voting,g_allowVote
+        FieldName: g_allowVote
+        InputType: checkbox
+        ParamFieldName: g_allowVote
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_doubleCoDPoints
+      label: Double CoD Points (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Enables earning double CoD Points for finished matches
+      keywords: double,cod,points,sv_doubleCoDPoints
+      input_type: checkbox
+      param_field_name: sv_doubleCoDPoints
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Double CoD Points (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Enables earning double CoD Points for finished matches
+        Keywords: double,cod,points,sv_doubleCoDPoints
+        FieldName: sv_doubleCoDPoints
+        InputType: checkbox
+        ParamFieldName: sv_doubleCoDPoints
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: party_minplayers
+      label: Minimum Players In Pre-Match Lobby (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Sets the minimum number of players required in the pre-match lobby
+      keywords: party,minplayers,lobby
+      input_type: number
+      param_field_name: party_minplayers
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Players In Pre-Match Lobby (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the minimum number of players required in the pre-match lobby
+        Keywords: party,minplayers,lobby
+        FieldName: party_minplayers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: party_minplayers
+        DefaultValue: '2'
+        Placeholder: '2'
+        Suffix: players
+        EnumValues: {}
+    - key: scr_xpscale
+      label: XP Scale (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Sets the XP multiplier for round-end scores
+      keywords: xp,scale,scr_xpscale
+      input_type: number
+      param_field_name: scr_xpscale
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: XP Scale (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the XP multiplier for round-end scores
+        Keywords: xp,scale,scr_xpscale
+        FieldName: scr_xpscale
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: scr_xpscale
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: scr_wagerbet
+      label: Wager Bet Amount (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Sets the cost to connect to a wager gamemode
+      keywords: wager,bet,scr_wagerbet
+      input_type: number
+      param_field_name: scr_wagerbet
+      default: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Wager Bet Amount (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost to connect to a wager gamemode
+        Keywords: wager,bet,scr_wagerbet
+        FieldName: scr_wagerbet
+        InputType: number
+        ParamFieldName: scr_wagerbet
+        DefaultValue: '100'
+        MinValue: '0'
+        EnumValues: {}
+    - key: sv_sayname
+      label: Server Say Name (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Sets the name that server-side 'say' commands show up as
+      keywords: server,say,name,sv_sayname
+      input_type: text
+      param_field_name: sv_sayname
+      default: Console
+      placeholder: Console
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Say Name (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the name that server-side 'say' commands show up as
+        Keywords: server,say,name,sv_sayname
+        FieldName: sv_sayname
+        InputType: text
+        ParamFieldName: sv_sayname
+        DefaultValue: Console
+        Placeholder: Console
+        EnumValues: {}
+    - key: g_voiceChatTalkingDuration
+      label: Voice Chat Duration (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Sets the duration a player can use voice chat
+      keywords: voice,chat,duration,g_voiceChatTalkingDuration
+      input_type: number
+      param_field_name: g_voiceChatTalkingDuration
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Voice Chat Duration (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the duration a player can use voice chat
+        Keywords: voice,chat,duration,g_voiceChatTalkingDuration
+        FieldName: g_voiceChatTalkingDuration
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: g_voiceChatTalkingDuration
+        DefaultValue: '500'
+        Placeholder: '500'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: voice_deadChat
+      label: Allow Dead Player Voice Chat (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If set, voice chat for dead players will be allowed
+      keywords: voice,chat,dead,voice_deadChat
+      input_type: checkbox
+      param_field_name: voice_deadChat
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Dead Player Voice Chat (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, voice chat for dead players will be allowed
+        Keywords: voice,chat,dead,voice_deadChat
+        FieldName: voice_deadChat
+        InputType: checkbox
+        ParamFieldName: voice_deadChat
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: voice_global
+      label: Enable Global Voice Chat (Multiplayer)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If set, global voice chat will be enabled
+      keywords: voice,chat,global,voice_global
+      input_type: checkbox
+      param_field_name: voice_global
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Global Voice Chat (Multiplayer)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, global voice chat will be enabled
+        Keywords: voice,chat,global,voice_global
+        FieldName: voice_global
+        InputType: checkbox
+        ParamFieldName: voice_global
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sp_minplayers
+      label: Minimum Starting Players (Zombies)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: Sets the minimum players needed to start the game. Do NOT set this higher than the Player Limit!
+      keywords: zombies,minimum,starting,players,sp_minplayers
+      input_type: number
+      param_field_name: sp_minplayers
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 4
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Starting Players (Zombies)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the minimum players needed to start the game. Do NOT set this higher than the Player Limit!
+        Keywords: zombies,minimum,starting,players,sp_minplayers
+        FieldName: sp_minplayers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '4'
+        ParamFieldName: sp_minplayers
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: players
+        EnumValues: {}
+    - key: g_sp_fix_damage_overflow
+      label: Fix Unkillable Zombies Bug (Zombies)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If set, fixes the unkillable zombies in traps bug
+      keywords: fix,zombies,damage,unkillable,traps,g_sp_fix_damage_overflow
+      input_type: checkbox
+      param_field_name: g_sp_fix_damage_overflow
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Fix Unkillable Zombies Bug (Zombies)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, fixes the unkillable zombies in traps bug
+        Keywords: fix,zombies,damage,unkillable,traps,g_sp_fix_damage_overflow
+        FieldName: g_sp_fix_damage_overflow
+        InputType: checkbox
+        ParamFieldName: g_sp_fix_damage_overflow
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: perk_weapRateEnhanced
+      label: Use Enhanced Weapon Rate (Zombies)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If set, Doubletap 2.0 will be used instead of the old (vanilla) Doubletap
+      keywords: perk,doubletap,enhanced,perk_weapRateEnhanced
+      input_type: checkbox
+      param_field_name: perk_weapRateEnhanced
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Use Enhanced Weapon Rate (Zombies)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, Doubletap 2.0 will be used instead of the old (vanilla) Doubletap
+        Keywords: perk,doubletap,enhanced,perk_weapRateEnhanced
+        FieldName: perk_weapRateEnhanced
+        InputType: checkbox
+        ParamFieldName: perk_weapRateEnhanced
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: g_fix_tesla_bug
+      label: Fix Tesla Bug (Zombies)
+      category: Call of Duty Black Ops
+      subcategory: Gameplay
+      description: If setm a GSC issue where health is set but not max health will be fixed
+      keywords: fix,tesla,bug,g_fix_tesla_bug
+      input_type: checkbox
+      param_field_name: g_fix_tesla_bug
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Fix Tesla Bug (Zombies)
+        Category: Call of Duty Black Ops:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If setm a GSC issue where health is set but not max health will be fixed
+        Keywords: fix,tesla,bug,g_fix_tesla_bug
+        FieldName: g_fix_tesla_bug
+        InputType: checkbox
+        ParamFieldName: g_fix_tesla_bug
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+  files:
+    - path: Plutonium/storage/t5/dedicated.cfg
+      type: kvp
+      format: set {0} "{1}"
+      subsections: []
+      raw:
+        ConfigFile: Plutonium/storage/t5/dedicated.cfg
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
+        ConfigFormat: set {0} "{1}"
+        ConfigFormatRegex: ^(?:\/\/)?set (?<key>.+?) "(?<value>.*?)".*$
+    - path: Plutonium/storage/t5/dedicated.cfg
+      type: kvp
+      format: set {0} {1}
+      subsections: []
+      raw:
+        ConfigFile: Plutonium/storage/t5/dedicated.cfg
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
+        ConfigFormat: set {0} {1}
+        ConfigFormatRegex: '^(?:\/\/)?set (?<key>[^"]+?) (?<value>[^"]*?)(?: .*)?$'
+    - path: Plutonium/storage/t5/dedicated_sp.cfg
+      type: kvp
+      format: set {0} "{1}"
+      subsections: []
+      raw:
+        ConfigFile: Plutonium/storage/t5/dedicated_sp.cfg
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
+        ConfigFormat: set {0} "{1}"
+        ConfigFormatRegex: ^(?:\/\/)?set (?<key>.+?) "(?<value>.*?)".*$
+    - path: Plutonium/storage/t5/dedicated_sp.cfg
+      type: kvp
+      format: set {0} {1}
+      subsections: []
+      raw:
+        ConfigFile: Plutonium/storage/t5/dedicated_sp.cfg
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
+        ConfigFormat: set {0} {1}
+        ConfigFormatRegex: '^(?:\/\/)?set (?<key>[^"]+?) (?<value>[^"]*?)(?: .*)?$'
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: rcon_localhost_bypass
+    label: Localhost RCON Rate Limit Bypass
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rcon_prints
+    label: RCON Console Activity
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: con_displayRconOutput
+    label: RCON Command Output
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_logSync
+    label: Buffer Full Log
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_log
+    label: Log File Name
+    default: logs\games.log
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GameMode
+    label: Game Mode
+    default: t5mp "{{$FullBaseDir}}T5" -dedicated +set key {{ServerKey}} +set fs_game "{{Mod}}" +exec dedicated.cfg
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerKey
+    label: Server Key
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: g_password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: MapMode
+    label: Map Mode
+    default: +map_rotate
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gametype
+    label: Initial Game Type (Multiplayer)
+    default: dm
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gametype
+    label: Initial Game Type (Multiplayer)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map_name
+    label: Initial Map
+    default: mp_nuked
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Mod
+    label: Load Mod
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_wwwBaseURL
+    label: Fast Download URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rcon_rate_limit
+    label: RCON Rate Limit
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_floodProtect
+    label: Chat Spam Protection
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_kickBanTime
+    label: Kick Ban Duration
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_privateClients
+    label: Private Reserved Slots (Multiplayer)
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_privatePassword
+    label: Private Slot Password (Multiplayer)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: sv_pure
+    label: Match Data Verification (Multiplayer)
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_reconnectlimit
+    label: Reconnect Limit (Multiplayer)
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_zombietime
+    label: Idle Timeout (Multiplayer)
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_timeout
+    label: Connection Timeout (Multiplayer)
+    default: '15'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scr_allowFileIo
+    label: Allow File IO
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scr_kill_infinite_loops
+    label: Kill Infinite Loops
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_voice
+    label: Enable Voice Chat
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_voicequality
+    label: Server Voice Chat Quality
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_inactivity
+    label: Kick Idle Players
+    default: '190'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_playerCollision
+    label: Player Collision Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_playerEjection
+    label: Player Ejection Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_disableClientConsole
+    label: Disable Client Console
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bullet_penetration_affected_by_team
+    label: Enable Team To Affect Bullet Penetration
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_fixBulletDamageDupe
+    label: Fix Bullet Damage Duplication
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_patchRocketJumps
+    label: Allow Rocket Jumps
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_fix_viewkick_dupe
+    label: Fix Viewkick Duplication
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_playerCollisionEjectSpeed
+    label: Player Collision Ejection Speed
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowFriendlyThrowback
+    label: Allow Friendly Grenade Throwback
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: cg_hudGrenadeIconShowFriendly
+    label: Show Friendly Grenades On HUD
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_fix_entity_leaks
+    label: Fix Entity Leaks
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_allowVote
+    label: Allow Voting (Multiplayer)
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_doubleCoDPoints
+    label: Double CoD Points (Multiplayer)
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: party_minplayers
+    label: Minimum Players In Pre-Match Lobby (Multiplayer)
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scr_xpscale
+    label: XP Scale (Multiplayer)
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scr_wagerbet
+    label: Wager Bet Amount (Multiplayer)
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_sayname
+    label: Server Say Name (Multiplayer)
+    default: Console
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_voiceChatTalkingDuration
+    label: Voice Chat Duration (Multiplayer)
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: voice_deadChat
+    label: Allow Dead Player Voice Chat (Multiplayer)
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: voice_global
+    label: Enable Global Voice Chat (Multiplayer)
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sp_minplayers
+    label: Minimum Starting Players (Zombies)
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_sp_fix_damage_overflow
+    label: Fix Unkillable Zombies Bug (Zombies)
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: perk_weapRateEnhanced
+    label: Use Enhanced Weapon Rate (Zombies)
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: g_fix_tesla_bug
+    label: Fix Tesla Bug (Zombies)
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '42700'
+  collection_support: true
 backup:
   include:
     - /data

@@ -4,14 +4,17 @@ name: Stay In Tarkov
 category: Imported
 summary: Stay In Tarkov Dedicated Server (NON COMMERCIAL USE ONLY)
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://www.7-zip.org/a/7zr.exe
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/Aki.Server.exe
+  startup: server/Aki.Server.exe {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +22,396 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: sitport1
     name: Game Port
-    default: 27015
-    protocol: udp
+    default: 6969
+    protocol: tcp
     required: true
-config_files: []
+  - key: sitport2
+    name: TCP Relay Port
+    default: 6970
+    protocol: tcp
+    required: true
+  - key: sitport3
+    name: TCP NAT Helper Port
+    default: 6971
+    protocol: tcp
+    required: true
+config_files:
+  - path: Aki_Data/Server/configs/http.json
+    type: json
+    editable: true
+  - path: user/mods/SITCoop/config/coopConfig.json
+    type: json
+    editable: true
+  - path: user/mods/SITCoop/config/SITConfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $SITPort1
+      label: Game Port
+      category: Stay In Tarkov
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Stay In Tarkov:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $SITPort1
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.port
+        EnumValues: {}
+    - key: $SITPort2
+      label: TCP Relay Port
+      category: Stay In Tarkov
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.webSocketPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: TCP Relay Port
+        Category: Stay In Tarkov:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $SITPort2
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.webSocketPort
+        EnumValues: {}
+    - key: $SITPort3
+      label: TCP NAT Helper Port
+      category: Stay In Tarkov
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.natHelperPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: TCP NAT Helper Port
+        Category: Stay In Tarkov:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $SITPort3
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.natHelperPort
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Binding IP
+      category: Stay In Tarkov
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.ip
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Binding IP
+        Category: Stay In Tarkov:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.ip
+        EnumValues: {}
+    - key: SPTVersion
+      label: SPT AKI Version
+      category: Stay In Tarkov
+      subcategory: Server
+      description: >-
+        Sets the SPT AKI version to install. The SIT Version must be set accordingly. Example: When 3.8.0 is selected,
+        you can use '1.6.4 with AKI 3.8.0' as the SIT Version
+      keywords: spt,version
+      input_type: enum
+      param_field_name: SPTVersion
+      default: 3.8.3-29197-01783e2
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        3.8.0-29197-2dd4d91: 3.8.0
+        3.8.3-29197-01783e2: 3.8.3
+      raw:
+        DisplayName: SPT AKI Version
+        Category: Stay In Tarkov:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the SPT AKI version to install. The SIT Version must be set accordingly. Example: When 3.8.0 is selected,
+          you can use '1.6.4 with AKI 3.8.0' as the SIT Version
+        Keywords: spt,version
+        FieldName: SPTVersion
+        InputType: enum
+        ParamFieldName: SPTVersion
+        DefaultValue: 3.8.3-29197-01783e2
+        EnumValues:
+          3.8.0-29197-2dd4d91: 3.8.0
+          3.8.3-29197-01783e2: 3.8.3
+    - key: SITVersion
+      label: SIT Version
+      category: Stay In Tarkov
+      subcategory: Server
+      description: >-
+        Sets the SIT version to install. The AKI version must match the SPT AKI Version. Example: When '1.6.4 with AKI
+        3.8.0' is selected, you must set 3.8.0 as the SPT AKI Version
+      keywords: sit,version
+      input_type: enum
+      param_field_name: SITVersion
+      default: 1.6.5/SITCoop-1.6.5-WithAki3.8.3-449288
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        1.6.4/SITCoop-1.6.4-WithAki3.8.0-2dd4d9: 1.6.4 with AKI 3.8.0
+        1.6.5/SITCoop-1.6.5-WithAki3.8.3-449288: 1.6.5 with AKI 3.8.3
+      raw:
+        DisplayName: SIT Version
+        Category: Stay In Tarkov:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the SIT version to install. The AKI version must match the SPT AKI Version. Example: When '1.6.4 with AKI
+          3.8.0' is selected, you must set 3.8.0 as the SPT AKI Version
+        Keywords: sit,version
+        FieldName: SITVersion
+        InputType: enum
+        ParamFieldName: SITVersion
+        DefaultValue: 1.6.5/SITCoop-1.6.5-WithAki3.8.3-449288
+        EnumValues:
+          1.6.4/SITCoop-1.6.4-WithAki3.8.0-2dd4d9: 1.6.4 with AKI 3.8.0
+          1.6.5/SITCoop-1.6.5-WithAki3.8.3-449288: 1.6.5 with AKI 3.8.3
+    - key: openAllExfils
+      label: Open All Exfils
+      category: Stay In Tarkov
+      subcategory: Server
+      description: If set, all exfils will be available during the raid
+      keywords: exfils,open,available,raid,openAllExfils
+      input_type: checkbox
+      param_field_name: $.openAllExfils
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Open All Exfils
+        Category: Stay In Tarkov:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, all exfils will be available during the raid
+        Keywords: exfils,open,available,raid,openAllExfils
+        FieldName: openAllExfils
+        InputType: checkbox
+        ParamFieldName: $.openAllExfils
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: showPlayerNameTags
+      label: Show Player Tags
+      category: Stay In Tarkov
+      subcategory: Server
+      description: If set, player nameplates will show above their head
+      keywords: player,name,tags,nameplates,showPlayerNameTags
+      input_type: checkbox
+      param_field_name: $.showPlayerNameTags
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Show Player Tags
+        Category: Stay In Tarkov:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, player nameplates will show above their head
+        Keywords: player,name,tags,nameplates,showPlayerNameTags
+        FieldName: showPlayerNameTags
+        InputType: checkbox
+        ParamFieldName: $.showPlayerNameTags
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: showPlayerNameTagsOnlyWhenVisible
+      label: Show Player Tags When Visible
+      category: Stay In Tarkov
+      subcategory: Server
+      description: If set, player nameplates will only show when they are in view
+      keywords: player,name,tags,nameplates,visible,showPlayerNameTagsOnlyWhenVisible
+      input_type: checkbox
+      param_field_name: $.showPlayerNameTagsOnlyWhenVisible
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Show Player Tags When Visible
+        Category: Stay In Tarkov:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, player nameplates will only show when they are in view
+        Keywords: player,name,tags,nameplates,visible,showPlayerNameTagsOnlyWhenVisible
+        FieldName: showPlayerNameTagsOnlyWhenVisible
+        InputType: checkbox
+        IncludeInCommandLine: false
+        ParamFieldName: $.showPlayerNameTagsOnlyWhenVisible
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: useUPNP
+      label: Use UPnP
+      category: Stay In Tarkov
+      subcategory: Server
+      description: If set, enables the use of UPnP for port forwarding with compatible routers
+      keywords: port,forwarding,upnp,useUPNP
+      input_type: checkbox
+      param_field_name: $.useUPNP
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use UPnP
+        Category: Stay In Tarkov:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, enables the use of UPnP for port forwarding with compatible routers
+        Keywords: port,forwarding,upnp,useUPNP
+        FieldName: useUPNP
+        InputType: checkbox
+        ParamFieldName: $.useUPNP
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: Aki_Data/Server/configs/http.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Aki_Data/Server/configs/http.json
+        AutoMap: true
+        ConfigType: json
+    - path: user/mods/SITCoop/config/coopConfig.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: user/mods/SITCoop/config/coopConfig.json
+        AutoMap: true
+        ConfigType: json
+    - path: user/mods/SITCoop/config/SITConfig.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: user/mods/SITCoop/config/SITConfig.json
+        AutoMap: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: SPTVersion
+    label: SPT AKI Version
+    default: 3.8.3-29197-01783e2
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SITVersion
+    label: SIT Version
+    default: 1.6.5/SITCoop-1.6.5-WithAki3.8.3-449288
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: openAllExfils
+    label: Open All Exfils
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: showPlayerNameTags
+    label: Show Player Tags
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: showPlayerNameTagsOnlyWhenVisible
+    label: Show Player Tags When Visible
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: useUPNP
+    label: Use UPnP
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

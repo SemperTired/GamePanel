@@ -4,14 +4,17 @@ name: Pumpkin
 category: Imported
 summary: The world's fastest Minecraft server. Pumpkin is in early development. Built with Rust for maximum performance.
 install:
-  method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  method: direct_archive
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://github.com/Pumpkin-MC/Pumpkin/releases/download/nightly/pumpkin-X64-Linux
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: pumpkin
+  startup: pumpkin {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +22,4224 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: javaport
+    name: Java Edition Port
+    default: 25565
+    protocol: both
+    required: true
+  - key: bedrockport
+    name: Bedrock Edition Port
+    default: 19132
     protocol: udp
     required: true
-config_files: []
+  - key: rconport
+    name: RCON Port
+    default: 25575
+    protocol: tcp
+    required: true
+config_files:
+  - path: pumpkin.toml
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: java_edition_address
+      label: Java Address
+      category: Minecraft
+      subcategory: Server and Startup
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: java_edition_address
+      default: '{{$ApplicationIPBinding}}:{{$JavaPort}}'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Java Address
+        Category: Minecraft:stadia_controller
+        Subcategory: Server and Startup:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: java_edition_address
+        ParamFieldName: java_edition_address
+        InputType: text
+        DefaultValue: '{{$ApplicationIPBinding}}:{{$JavaPort}}'
+        EnumValues: {}
+        Hidden: true
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+    - key: bedrock_edition_address
+      label: Bedrock Address
+      category: Minecraft
+      subcategory: Server and Startup
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: bedrock_edition_address
+      default: '{{$ApplicationIPBinding}}:{{$BedrockPort}}'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Bedrock Address
+        Category: Minecraft:stadia_controller
+        Subcategory: Server and Startup:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: bedrock_edition_address
+        ParamFieldName: bedrock_edition_address
+        InputType: text
+        DefaultValue: '{{$ApplicationIPBinding}}:{{$BedrockPort}}'
+        EnumValues: {}
+        Hidden: true
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+    - key: query_address
+      label: Query Address
+      category: Minecraft
+      subcategory: Network
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: networking.query.address
+      default: '{{$ApplicationIPBinding}}:{{$JavaPort}}'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Address
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: ''
+        Keywords: ''
+        FieldName: query_address
+        ParamFieldName: networking.query.address
+        InputType: text
+        DefaultValue: '{{$ApplicationIPBinding}}:{{$JavaPort}}'
+        EnumValues: {}
+        Hidden: true
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+    - key: rcon_address
+      label: RCON Address
+      category: Minecraft
+      subcategory: Network
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: networking.rcon.address
+      default: '{{$ApplicationIPBinding}}:{{$RCONPort}}'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Address
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: ''
+        Keywords: ''
+        FieldName: rcon_address
+        ParamFieldName: networking.rcon.address
+        InputType: text
+        DefaultValue: '{{$ApplicationIPBinding}}:{{$RCONPort}}'
+        EnumValues: {}
+        Hidden: true
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+    - key: linear_version
+      label: Linear Version
+      category: Minecraft
+      subcategory: World Generation
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: world.chunk.linear_version
+      default: V1
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Linear Version
+        Category: Minecraft:stadia_controller
+        Subcategory: World Generation:language:3
+        Description: ''
+        Keywords: ''
+        FieldName: linear_version
+        ParamFieldName: world.chunk.linear_version
+        InputType: text
+        DefaultValue: V1
+        EnumValues: {}
+        Hidden: true
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+    - key: logging_color
+      label: Logging Color
+      category: Minecraft
+      subcategory: Logging
+      description: ''
+      keywords: ''
+      input_type: checkbox
+      param_field_name: logging.color
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Logging Color
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: ''
+        Keywords: ''
+        FieldName: logging_color
+        ParamFieldName: logging.color
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        Hidden: true
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+    - key: commands_use_tty
+      label: Use TTY
+      category: Minecraft
+      subcategory: Logging
+      description: ''
+      keywords: ''
+      input_type: checkbox
+      param_field_name: commands.use_tty
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use TTY
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: ''
+        Keywords: ''
+        FieldName: commands_use_tty
+        ParamFieldName: commands.use_tty
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        Hidden: true
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+    - key: motd
+      label: Message of the Day
+      category: Minecraft
+      subcategory: Server and Startup
+      description: Sets the message of the day that is shown in the in-game server list.
+      keywords: motd,description,server-name
+      input_type: text
+      param_field_name: motd
+      default: A blazingly fast Pumpkin server!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Message of the Day
+        Category: Minecraft:stadia_controller
+        Subcategory: Server and Startup:dns:1
+        Description: Sets the message of the day that is shown in the in-game server list.
+        Keywords: motd,description,server-name
+        FieldName: motd
+        ParamFieldName: motd
+        InputType: text
+        DefaultValue: A blazingly fast Pumpkin server!
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: default_level_name
+      label: Level Name
+      category: Minecraft
+      subcategory: Server and Startup
+      description: Sets the name of the level (world) to load, or create if it does not exist.
+      keywords: level,world,name,level-name,default_level_name
+      input_type: text
+      param_field_name: default_level_name
+      default: world
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Level Name
+        Category: Minecraft:stadia_controller
+        Subcategory: Server and Startup:dns:1
+        Description: Sets the name of the level (world) to load, or create if it does not exist.
+        Keywords: level,world,name,level-name,default_level_name
+        FieldName: default_level_name
+        ParamFieldName: default_level_name
+        InputType: text
+        DefaultValue: world
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: seed
+      label: Level Seed
+      category: Minecraft
+      subcategory: Server and Startup
+      description: Sets the seed to randomise the generation of a new world. Empty = random seed.
+      keywords: level,seed,level-seed
+      input_type: text
+      param_field_name: seed
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Level Seed
+        Category: Minecraft:stadia_controller
+        Subcategory: Server and Startup:dns:1
+        Description: Sets the seed to randomise the generation of a new world. Empty = random seed.
+        Keywords: level,seed,level-seed
+        FieldName: seed
+        ParamFieldName: seed
+        InputType: text
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: $MaxUsers
+      label: Player Limit
+      category: Minecraft
+      subcategory: Server and Startup
+      description: Sets the maximum number of players allowed on the server at one time.
+      keywords: max,players,limit,max_players
+      input_type: number
+      param_field_name: max_players
+      default: '1000'
+      placeholder: '1000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 100000
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Minecraft:stadia_controller
+        Subcategory: Server and Startup:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time.
+        Keywords: max,players,limit,max_players
+        FieldName: $MaxUsers
+        ParamFieldName: max_players
+        InputType: number
+        DefaultValue: '1000'
+        Placeholder: '1000'
+        EnumValues: {}
+        Suffix: players
+        MinValue: '1'
+        MaxValue: '100000'
+        IncludeInCommandLine: false
+    - key: java_edition
+      label: Enable Java Edition
+      category: Minecraft
+      subcategory: Server and Startup
+      description: Whether support for Java Edition clients is enabled.
+      keywords: java,enable,java_edition
+      input_type: checkbox
+      param_field_name: java_edition
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Java Edition
+        Category: Minecraft:stadia_controller
+        Subcategory: Server and Startup:dns:1
+        Description: Whether support for Java Edition clients is enabled.
+        Keywords: java,enable,java_edition
+        FieldName: java_edition
+        ParamFieldName: java_edition
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: bedrock_edition
+      label: Enable Bedrock Edition
+      category: Minecraft
+      subcategory: Server and Startup
+      description: Whether support for Bedrock Edition clients is enabled.
+      keywords: bedrock,enable,bedrock_edition
+      input_type: checkbox
+      param_field_name: bedrock_edition
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Bedrock Edition
+        Category: Minecraft:stadia_controller
+        Subcategory: Server and Startup:dns:1
+        Description: Whether support for Bedrock Edition clients is enabled.
+        Keywords: bedrock,enable,bedrock_edition
+        FieldName: bedrock_edition
+        ParamFieldName: bedrock_edition
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: use_favicon
+      label: Use Favicon
+      category: Minecraft
+      subcategory: Server and Startup
+      description: Whether to use a server favicon or not.
+      keywords: favicon,icon,use_favicon
+      input_type: checkbox
+      param_field_name: use_favicon
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use Favicon
+        Category: Minecraft:stadia_controller
+        Subcategory: Server and Startup:dns:1
+        Description: Whether to use a server favicon or not.
+        Keywords: favicon,icon,use_favicon
+        FieldName: use_favicon
+        ParamFieldName: use_favicon
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: favicon_path
+      label: Favicon Path
+      category: Minecraft
+      subcategory: Server and Startup
+      description: The path to the server's favicon.
+      keywords: favicon,path,favicon_path
+      input_type: text
+      param_field_name: favicon_path
+      default: icon.png
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Favicon Path
+        Category: Minecraft:stadia_controller
+        Subcategory: Server and Startup:dns:1
+        Description: The path to the server's favicon.
+        Keywords: favicon,path,favicon_path
+        FieldName: favicon_path
+        ParamFieldName: favicon_path
+        InputType: text
+        DefaultValue: icon.png
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: default_gamemode
+      label: Default Game Mode
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Sets the game mode for new players.
+      keywords: game,mode,gamemode,default_gamemode
+      input_type: enum
+      param_field_name: default_gamemode
+      default: Survival
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Survival: Survival (default)
+        Creative: Creative
+        Adventure: Adventure
+        Spectator: Spectator
+      raw:
+        DisplayName: Default Game Mode
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Sets the game mode for new players.
+        Keywords: game,mode,gamemode,default_gamemode
+        FieldName: default_gamemode
+        ParamFieldName: default_gamemode
+        InputType: enum
+        DefaultValue: Survival
+        EnumValues:
+          Survival: Survival (default)
+          Creative: Creative
+          Adventure: Adventure
+          Spectator: Spectator
+        IncludeInCommandLine: false
+    - key: force_gamemode
+      label: Force Game Mode
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: If set, the server will send game mode values to clients other than the one saved during world creation.
+      keywords: force,gamemode,force_gamemode
+      input_type: checkbox
+      param_field_name: force_gamemode
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Force Game Mode
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: If set, the server will send game mode values to clients other than the one saved during world creation.
+        Keywords: force,gamemode,force_gamemode
+        FieldName: force_gamemode
+        ParamFieldName: force_gamemode
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: default_difficulty
+      label: Difficulty Level
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Sets the difficulty level of the world.
+      keywords: difficulty,level,default_difficulty
+      input_type: enum
+      param_field_name: default_difficulty
+      default: Normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Peaceful: Peaceful
+        Easy: Easy
+        Normal: Normal (default)
+        Hard: Hard
+      raw:
+        DisplayName: Difficulty Level
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Sets the difficulty level of the world.
+        Keywords: difficulty,level,default_difficulty
+        FieldName: default_difficulty
+        ParamFieldName: default_difficulty
+        InputType: enum
+        DefaultValue: Normal
+        EnumValues:
+          Peaceful: Peaceful
+          Easy: Easy
+          Normal: Normal (default)
+          Hard: Hard
+        IncludeInCommandLine: false
+    - key: hardcore
+      label: Enable Hardcore Mode
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Whether the server is in hardcore mode.
+      keywords: hardcore,death
+      input_type: checkbox
+      param_field_name: hardcore
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Hardcore Mode
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Whether the server is in hardcore mode.
+        Keywords: hardcore,death
+        FieldName: hardcore
+        ParamFieldName: hardcore
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: default_op_level
+      label: Default Player Permission Level
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Sets the permission level for new players joining the server for the first time.
+      keywords: default,player,permission,level,default_op_level
+      input_type: enum
+      param_field_name: commands.default_op_level
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': 0 (default)
+        '1': '1'
+        '2': '2'
+        '3': '3'
+        '4': '4'
+      raw:
+        DisplayName: Default Player Permission Level
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Sets the permission level for new players joining the server for the first time.
+        Keywords: default,player,permission,level,default_op_level
+        FieldName: default_op_level
+        ParamFieldName: commands.default_op_level
+        InputType: enum
+        DefaultValue: '0'
+        EnumValues:
+          '0': 0 (default)
+          '1': '1'
+          '2': '2'
+          '3': '3'
+          '4': '4'
+        IncludeInCommandLine: false
+    - key: op_permission_level
+      label: OP Permission Level
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: The permission level assigned by the /op command.
+      keywords: op,permission,level,op_permission_level
+      input_type: enum
+      param_field_name: op_permission_level
+      default: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': '0'
+        '1': '1'
+        '2': '2'
+        '3': '3'
+        '4': 4 (default)
+      raw:
+        DisplayName: OP Permission Level
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: The permission level assigned by the /op command.
+        Keywords: op,permission,level,op_permission_level
+        FieldName: op_permission_level
+        ParamFieldName: op_permission_level
+        InputType: enum
+        DefaultValue: '4'
+        EnumValues:
+          '0': '0'
+          '1': '1'
+          '2': '2'
+          '3': '3'
+          '4': 4 (default)
+        IncludeInCommandLine: false
+    - key: pvp_enabled
+      label: Enable PVP
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Whether PVP is enabled or not.
+      keywords: pvp,combat
+      input_type: checkbox
+      param_field_name: pvp.enabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable PVP
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Whether PVP is enabled or not.
+        Keywords: pvp,combat
+        FieldName: pvp_enabled
+        ParamFieldName: pvp.enabled
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: pvp_protect_creative
+      label: Protect Creative
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Whether to protect players in creative against PVP.
+      keywords: pvp,creative,protection,protect_creative
+      input_type: checkbox
+      param_field_name: pvp.protect_creative
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Protect Creative
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Whether to protect players in creative against PVP.
+        Keywords: pvp,creative,protection,protect_creative
+        FieldName: pvp_protect_creative
+        ParamFieldName: pvp.protect_creative
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: pvp_knockback
+      label: PVP Knockback
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Whether attacks should have knockback or not.
+      keywords: pvp,knockback
+      input_type: checkbox
+      param_field_name: pvp.knockback
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: PVP Knockback
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Whether attacks should have knockback or not.
+        Keywords: pvp,knockback
+        FieldName: pvp_knockback
+        ParamFieldName: pvp.knockback
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: pvp_swing
+      label: PVP Swing
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Whether players should swing when attacking or not.
+      keywords: pvp,swing
+      input_type: checkbox
+      param_field_name: pvp.swing
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: PVP Swing
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Whether players should swing when attacking or not.
+        Keywords: pvp,swing
+        FieldName: pvp_swing
+        ParamFieldName: pvp.swing
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: pvp_hurt_animation
+      label: PVP Hurt Animation
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Whether to show red hurt animation and FOV bobbing.
+      keywords: pvp,animation,hurt_animation
+      input_type: checkbox
+      param_field_name: pvp.hurt_animation
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: PVP Hurt Animation
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Whether to show red hurt animation and FOV bobbing.
+        Keywords: pvp,animation,hurt_animation
+        FieldName: pvp_hurt_animation
+        ParamFieldName: pvp.hurt_animation
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: use_console
+      label: Allow Commands From Console
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Whether commands from the console are accepted or not.
+      keywords: console,commands,use_console
+      input_type: checkbox
+      param_field_name: commands.use_console
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Commands From Console
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Whether commands from the console are accepted or not.
+        Keywords: console,commands,use_console
+        FieldName: use_console
+        ParamFieldName: commands.use_console
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: chat_format
+      label: Chat Format
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Format for chat messages.
+      keywords: chat,format
+      input_type: text
+      param_field_name: chat.format
+      default: <{DISPLAYNAME}> {MESSAGE}
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Chat Format
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Format for chat messages.
+        Keywords: chat,format
+        FieldName: chat_format
+        ParamFieldName: chat.format
+        InputType: text
+        DefaultValue: <{DISPLAYNAME}> {MESSAGE}
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: allow_chat_reports
+      label: Allow Chat Reports
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Allow players to report chat messages.
+      keywords: chat,report,allow_chat_reports
+      input_type: checkbox
+      param_field_name: allow_chat_reports
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Chat Reports
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Allow players to report chat messages.
+        Keywords: chat,report,allow_chat_reports
+        FieldName: allow_chat_reports
+        ParamFieldName: allow_chat_reports
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: april_fools
+      label: Enable April Fools Mode
+      category: Minecraft
+      subcategory: Gameplay and Difficulty
+      description: Enable April Fools features.
+      keywords: fun,april,fools,april_fools
+      input_type: checkbox
+      param_field_name: fun.april_fools
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable April Fools Mode
+        Category: Minecraft:stadia_controller
+        Subcategory: Gameplay and Difficulty:videogame_asset:2
+        Description: Enable April Fools features.
+        Keywords: fun,april,fools,april_fools
+        FieldName: april_fools
+        ParamFieldName: fun.april_fools
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: view_distance
+      label: View Distance
+      category: Minecraft
+      subcategory: World Generation
+      description: Sets the maximum allowed view distance. Higher values have performance impact.
+      keywords: view,distance,view_distance
+      input_type: number
+      param_field_name: view_distance
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 2
+      max: 32
+      suffix: chunks
+      enum_values: {}
+      raw:
+        DisplayName: View Distance
+        Category: Minecraft:stadia_controller
+        Subcategory: World Generation:language:3
+        Description: Sets the maximum allowed view distance. Higher values have performance impact.
+        Keywords: view,distance,view_distance
+        FieldName: view_distance
+        ParamFieldName: view_distance
+        InputType: number
+        DefaultValue: '16'
+        Placeholder: '16'
+        EnumValues: {}
+        Suffix: chunks
+        MinValue: '2'
+        MaxValue: '32'
+        IncludeInCommandLine: false
+    - key: simulation_distance
+      label: Simulation Distance
+      category: Minecraft
+      subcategory: World Generation
+      description: Sets the distance from any player that the world will be ticked. Higher values have performance impact.
+      keywords: simulation,distance,tick-distance
+      input_type: number
+      param_field_name: simulation_distance
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 2
+      max: 32
+      suffix: chunks
+      enum_values: {}
+      raw:
+        DisplayName: Simulation Distance
+        Category: Minecraft:stadia_controller
+        Subcategory: World Generation:language:3
+        Description: Sets the distance from any player that the world will be ticked. Higher values have performance impact.
+        Keywords: simulation,distance,tick-distance
+        FieldName: simulation_distance
+        ParamFieldName: simulation_distance
+        InputType: number
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+        Suffix: chunks
+        MinValue: '2'
+        MaxValue: '32'
+        IncludeInCommandLine: false
+    - key: allow_nether
+      label: Allow Nether
+      category: Minecraft
+      subcategory: World Generation
+      description: Whether the Nether dimension is enabled.
+      keywords: nether,hell,allow_nether
+      input_type: checkbox
+      param_field_name: allow_nether
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Nether
+        Category: Minecraft:stadia_controller
+        Subcategory: World Generation:language:3
+        Description: Whether the Nether dimension is enabled.
+        Keywords: nether,hell,allow_nether
+        FieldName: allow_nether
+        ParamFieldName: allow_nether
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: allow_end
+      label: Allow The End
+      category: Minecraft
+      subcategory: World Generation
+      description: Whether the End dimension is enabled.
+      keywords: end,dimension,allow_end
+      input_type: checkbox
+      param_field_name: allow_end
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow The End
+        Category: Minecraft:stadia_controller
+        Subcategory: World Generation:language:3
+        Description: Whether the End dimension is enabled.
+        Keywords: end,dimension,allow_end
+        FieldName: allow_end
+        ParamFieldName: allow_end
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: world_lighting
+      label: World Lighting Engine
+      category: Minecraft
+      subcategory: World Generation
+      description: The lighting engine to use.
+      keywords: world,lighting
+      input_type: enum
+      param_field_name: world.lighting
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        default: Default
+        full: Full
+        dark: Dark
+      raw:
+        DisplayName: World Lighting Engine
+        Category: Minecraft:stadia_controller
+        Subcategory: World Generation:language:3
+        Description: The lighting engine to use.
+        Keywords: world,lighting
+        FieldName: world_lighting
+        ParamFieldName: world.lighting
+        InputType: enum
+        DefaultValue: default
+        EnumValues:
+          default: Default
+          full: Full
+          dark: Dark
+        IncludeInCommandLine: false
+    - key: world_chunk_type
+      label: World Chunk Type
+      category: Minecraft
+      subcategory: World Generation
+      description: The chunk storage format.
+      keywords: world,chunk,type,anvil,linear,pump
+      input_type: enum
+      param_field_name: world.chunk.type
+      default: pump
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        anvil: Anvil
+        linear: Linear
+        pump: Pump (default)
+      raw:
+        DisplayName: World Chunk Type
+        Category: Minecraft:stadia_controller
+        Subcategory: World Generation:language:3
+        Description: The chunk storage format.
+        Keywords: world,chunk,type,anvil,linear,pump
+        FieldName: world_chunk_type
+        ParamFieldName: world.chunk.type
+        InputType: enum
+        DefaultValue: pump
+        EnumValues:
+          anvil: Anvil
+          linear: Linear
+          pump: Pump (default)
+        IncludeInCommandLine: false
+    - key: world_chunk_write_in_place
+      label: Write Chunks In Place
+      category: Minecraft
+      subcategory: World Generation
+      description: Whether to write chunk data directly to region files.
+      keywords: world,write,in,place,write_in_place
+      input_type: checkbox
+      param_field_name: world.chunk.write_in_place
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Write Chunks In Place
+        Category: Minecraft:stadia_controller
+        Subcategory: World Generation:language:3
+        Description: Whether to write chunk data directly to region files.
+        Keywords: world,write,in,place,write_in_place
+        FieldName: world_chunk_write_in_place
+        ParamFieldName: world.chunk.write_in_place
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: tps
+      label: Target TPS
+      category: Minecraft
+      subcategory: Performance
+      description: The server's target tick rate.
+      keywords: tps,tick,rate
+      input_type: number
+      param_field_name: tps
+      default: '20.0'
+      placeholder: '20.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: tps
+      enum_values: {}
+      raw:
+        DisplayName: Target TPS
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: The server's target tick rate.
+        Keywords: tps,tick,rate
+        FieldName: tps
+        ParamFieldName: tps
+        InputType: number
+        DefaultValue: '20.0'
+        Placeholder: '20.0'
+        EnumValues: {}
+        Suffix: tps
+        IncludeInCommandLine: false
+    - key: world_autosave_ticks
+      label: World Autosave Ticks
+      category: Minecraft
+      subcategory: Performance
+      description: Interval in ticks to autosave the world (0 to disable).
+      keywords: world,autosave,ticks,autosave_ticks
+      input_type: number
+      param_field_name: world.autosave_ticks
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: ticks
+      enum_values: {}
+      raw:
+        DisplayName: World Autosave Ticks
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Interval in ticks to autosave the world (0 to disable).
+        Keywords: world,autosave,ticks,autosave_ticks
+        FieldName: world_autosave_ticks
+        ParamFieldName: world.autosave_ticks
+        InputType: number
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: ticks
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: world_chunk_compression_algorithm
+      label: World Compression Algorithm
+      category: Minecraft
+      subcategory: Performance
+      description: Compression algorithm for world chunks.
+      keywords: world,chunk,compression,compression_algorithm
+      input_type: enum
+      param_field_name: world.chunk.compression.algorithm
+      default: LZ4
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        LZ4: LZ4 (default)
+        GZip: GZip
+        Zlib: Zlib
+        Custom: Custom
+      raw:
+        DisplayName: World Compression Algorithm
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Compression algorithm for world chunks.
+        Keywords: world,chunk,compression,compression_algorithm
+        FieldName: world_chunk_compression_algorithm
+        ParamFieldName: world.chunk.compression.algorithm
+        InputType: enum
+        DefaultValue: LZ4
+        EnumValues:
+          LZ4: LZ4 (default)
+          GZip: GZip
+          Zlib: Zlib
+          Custom: Custom
+        IncludeInCommandLine: false
+    - key: world_chunk_compression_level
+      label: World Compression Level
+      category: Minecraft
+      subcategory: Performance
+      description: Compression level for world chunks.
+      keywords: world,chunk,compression,level,compression_level
+      input_type: number
+      param_field_name: world.chunk.compression.level
+      default: '6'
+      placeholder: '6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Compression Level
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Compression level for world chunks.
+        Keywords: world,chunk,compression,level,compression_level
+        FieldName: world_chunk_compression_level
+        ParamFieldName: world.chunk.compression.level
+        InputType: number
+        DefaultValue: '6'
+        Placeholder: '6'
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: networking_packet_compression_enabled
+      label: 'Java: Enable Packet Compression'
+      category: Minecraft
+      subcategory: Performance
+      description: Whether packet compression is enabled.
+      keywords: compression,enable,packet_compression
+      input_type: checkbox
+      param_field_name: networking.java_compression.enabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: 'Java: Enable Packet Compression'
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Whether packet compression is enabled.
+        Keywords: compression,enable,packet_compression
+        FieldName: networking_packet_compression_enabled
+        ParamFieldName: networking.java_compression.enabled
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_packet_compression_threshold
+      label: 'Java: Compression Threshold'
+      category: Minecraft
+      subcategory: Performance
+      description: Sets the smallest size of raw network payload to compress.
+      keywords: compression,threshold
+      input_type: number
+      param_field_name: networking.java_compression.threshold
+      default: '256'
+      placeholder: '256'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1024
+      suffix: bytes
+      enum_values: {}
+      raw:
+        DisplayName: 'Java: Compression Threshold'
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Sets the smallest size of raw network payload to compress.
+        Keywords: compression,threshold
+        FieldName: networking_packet_compression_threshold
+        ParamFieldName: networking.java_compression.threshold
+        InputType: number
+        DefaultValue: '256'
+        Placeholder: '256'
+        EnumValues: {}
+        Suffix: bytes
+        MinValue: '0'
+        MaxValue: '1024'
+        IncludeInCommandLine: false
+    - key: networking_packet_compression_level
+      label: 'Java: Packet Compression Level'
+      category: Minecraft
+      subcategory: Performance
+      description: Compression level (0 to disable).
+      keywords: compression,level,packet_compression
+      input_type: enum
+      param_field_name: networking.java_compression.level
+      default: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': '0'
+        '1': '1'
+        '2': '2'
+        '3': '3'
+        '4': 4 (default)
+        '5': '5'
+        '6': '6'
+        '7': '7'
+        '8': '8'
+        '9': '9'
+      raw:
+        DisplayName: 'Java: Packet Compression Level'
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Compression level (0 to disable).
+        Keywords: compression,level,packet_compression
+        FieldName: networking_packet_compression_level
+        ParamFieldName: networking.java_compression.level
+        InputType: enum
+        DefaultValue: '4'
+        EnumValues:
+          '0': '0'
+          '1': '1'
+          '2': '2'
+          '3': '3'
+          '4': 4 (default)
+          '5': '5'
+          '6': '6'
+          '7': '7'
+          '8': '8'
+          '9': '9'
+        IncludeInCommandLine: false
+    - key: networking_bedrock_compression_enabled
+      label: 'Bedrock: Enable Packet Compression'
+      category: Minecraft
+      subcategory: Performance
+      description: Whether packet compression is enabled.
+      keywords: compression,enable,packet_compression
+      input_type: checkbox
+      param_field_name: networking.bedrock_compression.enabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: 'Bedrock: Enable Packet Compression'
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Whether packet compression is enabled.
+        Keywords: compression,enable,packet_compression
+        FieldName: networking_bedrock_compression_enabled
+        ParamFieldName: networking.bedrock_compression.enabled
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_bedrock_compression_threshold
+      label: 'Bedrock: Compression Threshold'
+      category: Minecraft
+      subcategory: Performance
+      description: Sets the smallest size of raw network payload to compress.
+      keywords: compression,threshold
+      input_type: number
+      param_field_name: networking.bedrock_compression.threshold
+      default: '256'
+      placeholder: '256'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1024
+      suffix: bytes
+      enum_values: {}
+      raw:
+        DisplayName: 'Bedrock: Compression Threshold'
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Sets the smallest size of raw network payload to compress.
+        Keywords: compression,threshold
+        FieldName: networking_bedrock_compression_threshold
+        ParamFieldName: networking.bedrock_compression.threshold
+        InputType: number
+        DefaultValue: '256'
+        Placeholder: '256'
+        EnumValues: {}
+        Suffix: bytes
+        MinValue: '0'
+        MaxValue: '1024'
+        IncludeInCommandLine: false
+    - key: networking_bedrock_compression_level
+      label: 'Bedrock: Packet Compression Level'
+      category: Minecraft
+      subcategory: Performance
+      description: Compression level (0 to disable).
+      keywords: compression,level,packet_compression
+      input_type: enum
+      param_field_name: networking.bedrock_compression.level
+      default: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': '0'
+        '1': '1'
+        '2': '2'
+        '3': '3'
+        '4': 4 (default)
+        '5': '5'
+        '6': '6'
+        '7': '7'
+        '8': '8'
+        '9': '9'
+      raw:
+        DisplayName: 'Bedrock: Packet Compression Level'
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Compression level (0 to disable).
+        Keywords: compression,level,packet_compression
+        FieldName: networking_bedrock_compression_level
+        ParamFieldName: networking.bedrock_compression.level
+        InputType: enum
+        DefaultValue: '4'
+        EnumValues:
+          '0': '0'
+          '1': '1'
+          '2': '2'
+          '3': '3'
+          '4': 4 (default)
+          '5': '5'
+          '6': '6'
+          '7': '7'
+          '8': '8'
+          '9': '9'
+        IncludeInCommandLine: false
+    - key: player_data_save_player_data
+      label: Save Player Data
+      category: Minecraft
+      subcategory: Performance
+      description: Whether to save player data to disk.
+      keywords: save,player,data,save_player_data
+      input_type: checkbox
+      param_field_name: player_data.save_player_data
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Save Player Data
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Whether to save player data to disk.
+        Keywords: save,player,data,save_player_data
+        FieldName: player_data_save_player_data
+        ParamFieldName: player_data.save_player_data
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: player_data_save_player_cron_interval
+      label: Player Data Save Interval
+      category: Minecraft
+      subcategory: Performance
+      description: Interval to save player data.
+      keywords: save,player,interval,save_player_cron_interval
+      input_type: number
+      param_field_name: player_data.save_player_cron_interval
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Player Data Save Interval
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Interval to save player data.
+        Keywords: save,player,interval,save_player_cron_interval
+        FieldName: player_data_save_player_cron_interval
+        ParamFieldName: player_data.save_player_cron_interval
+        InputType: number
+        DefaultValue: '300'
+        Placeholder: '300'
+        EnumValues: {}
+        Suffix: seconds
+        IncludeInCommandLine: false
+    - key: recipe_send_recipes
+      label: Send Recipes
+      category: Minecraft
+      subcategory: Performance
+      description: Whether to send recipe book data to players. Disabling this can significantly improve login performance.
+      keywords: recipe,send,crafting,send_recipes
+      input_type: checkbox
+      param_field_name: recipe.send_recipes
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Send Recipes
+        Category: Minecraft:stadia_controller
+        Subcategory: Performance:speed:4
+        Description: Whether to send recipe book data to players. Disabling this can significantly improve login performance.
+        Keywords: recipe,send,crafting,send_recipes
+        FieldName: recipe_send_recipes
+        ParamFieldName: recipe.send_recipes
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_proxy_enabled
+      label: Enable Proxy Support
+      category: Minecraft
+      subcategory: Network
+      description: Enables support for proxies.
+      keywords: proxy,enable
+      input_type: checkbox
+      param_field_name: networking.proxy.enabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Proxy Support
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: Enables support for proxies.
+        Keywords: proxy,enable
+        FieldName: networking_proxy_enabled
+        ParamFieldName: networking.proxy.enabled
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_proxy_velocity_enabled
+      label: Enable Velocity
+      category: Minecraft
+      subcategory: Network
+      description: Whether Velocity support is enabled or not.
+      keywords: velocity,proxy
+      input_type: checkbox
+      param_field_name: networking.proxy.velocity.enabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Velocity
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: Whether Velocity support is enabled or not.
+        Keywords: velocity,proxy
+        FieldName: networking_proxy_velocity_enabled
+        ParamFieldName: networking.proxy.velocity.enabled
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_proxy_velocity_secret
+      label: Velocity Secret
+      category: Minecraft
+      subcategory: Network
+      description: The secret as configured in Velocity.
+      keywords: velocity,secret
+      input_type: password
+      param_field_name: networking.proxy.velocity.secret
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Velocity Secret
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: The secret as configured in Velocity.
+        Keywords: velocity,secret
+        FieldName: networking_proxy_velocity_secret
+        ParamFieldName: networking.proxy.velocity.secret
+        InputType: password
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: networking_proxy_bungeecord_enabled
+      label: Enable BungeeCord
+      category: Minecraft
+      subcategory: Network
+      description: Whether BungeeCord support is enabled or not.
+      keywords: bungeecord,proxy
+      input_type: checkbox
+      param_field_name: networking.proxy.bungeecord.enabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable BungeeCord
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: Whether BungeeCord support is enabled or not.
+        Keywords: bungeecord,proxy
+        FieldName: networking_proxy_bungeecord_enabled
+        ParamFieldName: networking.proxy.bungeecord.enabled
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_query_enabled
+      label: Enable Query
+      category: Minecraft
+      subcategory: Network
+      description: Whether to listen for Query protocol requests or not.
+      keywords: query,enable
+      input_type: checkbox
+      param_field_name: networking.query.enabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Query
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: Whether to listen for Query protocol requests or not.
+        Keywords: query,enable
+        FieldName: networking_query_enabled
+        ParamFieldName: networking.query.enabled
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_rcon_enabled
+      label: Enable RCON
+      category: Minecraft
+      subcategory: Network
+      description: Whether the Remote Console RCON protocol is enabled.
+      keywords: rcon,enable
+      input_type: checkbox
+      param_field_name: networking.rcon.enabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable RCON
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: Whether the Remote Console RCON protocol is enabled.
+        Keywords: rcon,enable
+        FieldName: networking_rcon_enabled
+        ParamFieldName: networking.rcon.enabled
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_rcon_password
+      label: RCON Password
+      category: Minecraft
+      subcategory: Network
+      description: The password to use for RCON authentication.
+      keywords: rcon,password
+      input_type: password
+      param_field_name: networking.rcon.password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: The password to use for RCON authentication.
+        Keywords: rcon,password
+        FieldName: networking_rcon_password
+        ParamFieldName: networking.rcon.password
+        InputType: password
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: networking_rcon_max_connections
+      label: RCON Max Connections
+      category: Minecraft
+      subcategory: Network
+      description: The maximum number of RCON connections allowed.
+      keywords: rcon,connections,max_connections
+      input_type: number
+      param_field_name: networking.rcon.max_connections
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Max Connections
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: The maximum number of RCON connections allowed.
+        Keywords: rcon,connections,max_connections
+        FieldName: networking_rcon_max_connections
+        ParamFieldName: networking.rcon.max_connections
+        InputType: number
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: lan_broadcast_enabled
+      label: LAN Broadcast
+      category: Minecraft
+      subcategory: Network
+      description: >-
+        WARNING: READ THIS BEFORE ENABLING THIS SETTING! This setting enables local network discovery for Java clients.
+        This may require manual port allocation (see LAN Broadcast Port).
+      keywords: lan,broadcast,lan_broadcast
+      input_type: checkbox
+      param_field_name: networking.lan_broadcast.enabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: LAN Broadcast
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: >-
+          WARNING: READ THIS BEFORE ENABLING THIS SETTING! This setting enables local network discovery for Java
+          clients. This may require manual port allocation (see LAN Broadcast Port).
+        Keywords: lan,broadcast,lan_broadcast
+        FieldName: lan_broadcast_enabled
+        ParamFieldName: networking.lan_broadcast.enabled
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: lan_broadcast_port
+      label: LAN Broadcast Port
+      category: Minecraft
+      subcategory: Network
+      description: >-
+        Set to 0 for a random port (default). WARNING: In some cases, the default behavior will fail. You MUST set a
+        static port here and map it in the Network and Ports setting for the instance.
+      keywords: lan,broadcast,port
+      input_type: text
+      param_field_name: networking.lan_broadcast.port
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: LAN Broadcast Port
+        Category: Minecraft:stadia_controller
+        Subcategory: Network:settings_ethernet:5
+        Description: >-
+          Set to 0 for a random port (default). WARNING: In some cases, the default behavior will fail. You MUST set a
+          static port here and map it in the Network and Ports setting for the instance.
+        Keywords: lan,broadcast,port
+        FieldName: lan_broadcast_port
+        ParamFieldName: networking.lan_broadcast.port
+        InputType: text
+        DefaultValue: '0'
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: online_mode
+      label: Enable Online Mode
+      category: Minecraft
+      subcategory: Security
+      description: If set, all connected players must be authenticated.
+      keywords: online,mode,online_mode
+      input_type: checkbox
+      param_field_name: online_mode
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Online Mode
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: If set, all connected players must be authenticated.
+        Keywords: online,mode,online_mode
+        FieldName: online_mode
+        ParamFieldName: online_mode
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: white_list
+      label: Enable Allow List
+      category: Minecraft
+      subcategory: Security
+      description: If set, all connected players must be listed in the server whitelist.
+      keywords: allowlist,allow,list,whitelist,white_list
+      input_type: checkbox
+      param_field_name: white_list
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Allow List
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: If set, all connected players must be listed in the server whitelist.
+        Keywords: allowlist,allow,list,whitelist,white_list
+        FieldName: white_list
+        ParamFieldName: white_list
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: enforce_whitelist
+      label: Enforce Allow List
+      category: Minecraft
+      subcategory: Security
+      description: Kick players not on the whitelist.
+      keywords: whitelist,enforce,enforce_whitelist
+      input_type: checkbox
+      param_field_name: enforce_whitelist
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enforce Allow List
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: Kick players not on the whitelist.
+        Keywords: whitelist,enforce,enforce_whitelist
+        FieldName: enforce_whitelist
+        ParamFieldName: enforce_whitelist
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: auth_enabled
+      label: Authentication
+      category: Minecraft
+      subcategory: Security
+      description: Whether authentication is enabled or not.
+      keywords: auth,enable
+      input_type: checkbox
+      param_field_name: networking.authentication.enabled
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Authentication
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: Whether authentication is enabled or not.
+        Keywords: auth,enable
+        FieldName: auth_enabled
+        ParamFieldName: networking.authentication.enabled
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: encryption
+      label: Enable Encryption
+      category: Minecraft
+      subcategory: Security
+      description: Whether packet encryption is enabled.
+      keywords: encryption,security
+      input_type: checkbox
+      param_field_name: encryption
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Encryption
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: Whether packet encryption is enabled.
+        Keywords: encryption,security
+        FieldName: encryption
+        ParamFieldName: encryption
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_authentication_prevent_proxy_connections
+      label: Prevent Proxy Connections
+      category: Minecraft
+      subcategory: Security
+      description: Whether to block proxy connections.
+      keywords: proxy,prevent,prevent_proxy_connections
+      input_type: checkbox
+      param_field_name: networking.authentication.prevent_proxy_connections
+      default: 'false'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Prevent Proxy Connections
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: Whether to block proxy connections.
+        Keywords: proxy,prevent,prevent_proxy_connections
+        FieldName: networking_authentication_prevent_proxy_connections
+        ParamFieldName: networking.authentication.prevent_proxy_connections
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_authentication_prevent_proxy_connection_auth_url
+      label: Auth Prevent Proxy URL
+      category: Minecraft
+      subcategory: Security
+      description: The URL to authenticate with if prevent_proxy_connections is enabled.
+      keywords: auth,url,proxy,prevent_proxy_connection_auth_url
+      input_type: url
+      param_field_name: networking.authentication.prevent_proxy_connection_auth_url
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auth Prevent Proxy URL
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: The URL to authenticate with if prevent_proxy_connections is enabled.
+        Keywords: auth,url,proxy,prevent_proxy_connection_auth_url
+        FieldName: networking_authentication_prevent_proxy_connection_auth_url
+        ParamFieldName: networking.authentication.prevent_proxy_connection_auth_url
+        InputType: url
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: networking_authentication_auth_url
+      label: Auth URL
+      category: Minecraft
+      subcategory: Security
+      description: The URL to authenticate with.
+      keywords: auth,url,auth_url
+      input_type: url
+      param_field_name: networking.authentication.auth_url
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auth URL
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: The URL to authenticate with.
+        Keywords: auth,url,auth_url
+        FieldName: networking_authentication_auth_url
+        ParamFieldName: networking.authentication.auth_url
+        InputType: url
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: networking_authentication_connect_timeout
+      label: Auth Connect Timeout
+      category: Minecraft
+      subcategory: Security
+      description: Timeout for auth connection.
+      keywords: auth,timeout,connect_timeout
+      input_type: number
+      param_field_name: networking.authentication.connect_timeout
+      default: '5000'
+      placeholder: '5000'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: ms
+      enum_values: {}
+      raw:
+        DisplayName: Auth Connect Timeout
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: Timeout for auth connection.
+        Keywords: auth,timeout,connect_timeout
+        FieldName: networking_authentication_connect_timeout
+        ParamFieldName: networking.authentication.connect_timeout
+        InputType: number
+        DefaultValue: '5000'
+        Placeholder: '5000'
+        EnumValues: {}
+        Suffix: ms
+        IncludeInCommandLine: false
+    - key: networking_authentication_read_timeout
+      label: Auth Read Timeout
+      category: Minecraft
+      subcategory: Security
+      description: Timeout for auth reading.
+      keywords: auth,timeout,read_timeout
+      input_type: number
+      param_field_name: networking.authentication.read_timeout
+      default: '5000'
+      placeholder: '5000'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: ms
+      enum_values: {}
+      raw:
+        DisplayName: Auth Read Timeout
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: Timeout for auth reading.
+        Keywords: auth,timeout,read_timeout
+        FieldName: networking_authentication_read_timeout
+        ParamFieldName: networking.authentication.read_timeout
+        InputType: number
+        DefaultValue: '5000'
+        Placeholder: '5000'
+        EnumValues: {}
+        Suffix: ms
+        IncludeInCommandLine: false
+    - key: networking_authentication_player_profile_allow_banned_players
+      label: Allow Banned Players
+      category: Minecraft
+      subcategory: Security
+      description: Allow players flagged by Mojang.
+      keywords: auth,banned,allow,allow_banned_players
+      input_type: checkbox
+      param_field_name: networking.authentication.player_profile.allow_banned_players
+      default: 'false'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Banned Players
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: Allow players flagged by Mojang.
+        Keywords: auth,banned,allow,allow_banned_players
+        FieldName: networking_authentication_player_profile_allow_banned_players
+        ParamFieldName: networking.authentication.player_profile.allow_banned_players
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_authentication_player_profile_allowed_actions
+      label: Auth Allowed Actions
+      category: Minecraft
+      subcategory: Security
+      description: >-
+        Actions allowed if allow_banned_players is enabled. Must follow the exact format: ['FORCED_NAME_CHANGE',
+        'USING_BANNED_SKIN']
+      keywords: auth,actions,banned,allowed_actions
+      input_type: text
+      param_field_name: networking.authentication.player_profile.allowed_actions
+      default: '[''FORCED_NAME_CHANGE'', ''USING_BANNED_SKIN'']'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auth Allowed Actions
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: >-
+          Actions allowed if allow_banned_players is enabled. Must follow the exact format: ['FORCED_NAME_CHANGE',
+          'USING_BANNED_SKIN']
+        Keywords: auth,actions,banned,allowed_actions
+        FieldName: networking_authentication_player_profile_allowed_actions
+        ParamFieldName: networking.authentication.player_profile.allowed_actions
+        InputType: text
+        DefaultValue: '[''FORCED_NAME_CHANGE'', ''USING_BANNED_SKIN'']'
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: networking_authentication_textures_enabled
+      label: Enable Texture Filtering
+      category: Minecraft
+      subcategory: Security
+      description: Whether to filter/validate player textures.
+      keywords: texture,filtering
+      input_type: checkbox
+      param_field_name: networking.authentication.textures.enabled
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Texture Filtering
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: Whether to filter/validate player textures.
+        Keywords: texture,filtering
+        FieldName: networking_authentication_textures_enabled
+        ParamFieldName: networking.authentication.textures.enabled
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_authentication_textures_allowed_url_schemes
+      label: Auth Allowed URL Schemes
+      category: Minecraft
+      subcategory: Security
+      description: 'Allowed URL schemes for textures. Must follow the exact format: [''http'', ''https'']'
+      keywords: auth,url,schemes,allowed_url_schemes
+      input_type: text
+      param_field_name: networking.authentication.textures.allowed_url_schemes
+      default: '[''http'', ''https'']'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auth Allowed URL Schemes
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: 'Allowed URL schemes for textures. Must follow the exact format: [''http'', ''https'']'
+        Keywords: auth,url,schemes,allowed_url_schemes
+        FieldName: networking_authentication_textures_allowed_url_schemes
+        ParamFieldName: networking.authentication.textures.allowed_url_schemes
+        InputType: text
+        DefaultValue: '[''http'', ''https'']'
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: networking_authentication_textures_allowed_url_domains
+      label: Auth Allowed URL Domains
+      category: Minecraft
+      subcategory: Security
+      description: 'Allowed URL domains for textures. Must follow the exact format: [''.minecraft.net'', ''.mojang.com'']'
+      keywords: auth,url,domains,allowed_url_domains
+      input_type: text
+      param_field_name: networking.authentication.textures.allowed_url_domains
+      default: '[''.minecraft.net'', ''.mojang.com'']'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auth Allowed URL Domains
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: 'Allowed URL domains for textures. Must follow the exact format: [''.minecraft.net'', ''.mojang.com'']'
+        Keywords: auth,url,domains,allowed_url_domains
+        FieldName: networking_authentication_textures_allowed_url_domains
+        ParamFieldName: networking.authentication.textures.allowed_url_domains
+        InputType: text
+        DefaultValue: '[''.minecraft.net'', ''.mojang.com'']'
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: scrub_ips
+      label: IP Scrubbing
+      category: Minecraft
+      subcategory: Security
+      description: Whether to scrub players' IP addresses from logs.
+      keywords: security,ip,log,scrub,scrub_ips
+      input_type: checkbox
+      param_field_name: scrub_ips
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: IP Scrubbing
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: Whether to scrub players' IP addresses from logs.
+        Keywords: security,ip,log,scrub,scrub_ips
+        FieldName: scrub_ips
+        ParamFieldName: scrub_ips
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: plugins_blocked_permissions
+      label: Blocked Plugin Permissions
+      category: Minecraft
+      subcategory: Security
+      description: 'A list of permissions to block from plugins. Must follow the exact format: [''permission.node'', ''another.node'']'
+      keywords: plugins,permissions,blocked,blocked_permissions
+      input_type: text
+      param_field_name: plugins.blocked_permissions
+      default: '[]'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Blocked Plugin Permissions
+        Category: Minecraft:stadia_controller
+        Subcategory: Security:security:6
+        Description: 'A list of permissions to block from plugins. Must follow the exact format: [''permission.node'', ''another.node'']'
+        Keywords: plugins,permissions,blocked,blocked_permissions
+        FieldName: plugins_blocked_permissions
+        ParamFieldName: plugins.blocked_permissions
+        InputType: text
+        DefaultValue: '[]'
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: resource_pack_enabled
+      label: 'Java: Require Texture Packs'
+      category: Minecraft
+      subcategory: Resource Packs
+      description: If set, clients must use resource packs in the current world.
+      keywords: resource,pack,enable,resource_pack
+      input_type: checkbox
+      param_field_name: resource_pack.java.enabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: 'Java: Require Texture Packs'
+        Category: Minecraft:stadia_controller
+        Subcategory: Resource Packs:texture:7
+        Description: If set, clients must use resource packs in the current world.
+        Keywords: resource,pack,enable,resource_pack
+        FieldName: resource_pack_enabled
+        ParamFieldName: resource_pack.java.enabled
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: resource_pack_url
+      label: 'Java: Resource Pack URL'
+      category: Minecraft
+      subcategory: Resource Packs
+      description: The direct download URL to the resource pack.
+      keywords: resource,pack,url,resource_pack
+      input_type: url
+      param_field_name: resource_pack.java.url
+      default: ''
+      placeholder: https://example.org/resourcepack.zip
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: 'Java: Resource Pack URL'
+        Category: Minecraft:stadia_controller
+        Subcategory: Resource Packs:texture:7
+        Description: The direct download URL to the resource pack.
+        Keywords: resource,pack,url,resource_pack
+        FieldName: resource_pack_url
+        ParamFieldName: resource_pack.java.url
+        InputType: url
+        DefaultValue: ''
+        Placeholder: https://example.org/resourcepack.zip
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: resource_pack_sha1
+      label: 'Java: Resource Pack SHA1'
+      category: Minecraft
+      subcategory: Resource Packs
+      description: The SHA1 hash of the resource pack.
+      keywords: resource,pack,sha1,resource_pack
+      input_type: text
+      param_field_name: resource_pack.java.sha1
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: 'Java: Resource Pack SHA1'
+        Category: Minecraft:stadia_controller
+        Subcategory: Resource Packs:texture:7
+        Description: The SHA1 hash of the resource pack.
+        Keywords: resource,pack,sha1,resource_pack
+        FieldName: resource_pack_sha1
+        ParamFieldName: resource_pack.java.sha1
+        InputType: text
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: resource_pack_prompt_message
+      label: 'Java: Resource Pack Prompt'
+      category: Minecraft
+      subcategory: Resource Packs
+      description: The message to show to the user when prompted.
+      keywords: resource,pack,prompt,resource_pack,prompt_message
+      input_type: text
+      param_field_name: resource_pack.java.prompt_message
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: 'Java: Resource Pack Prompt'
+        Category: Minecraft:stadia_controller
+        Subcategory: Resource Packs:texture:7
+        Description: The message to show to the user when prompted.
+        Keywords: resource,pack,prompt,resource_pack,prompt_message
+        FieldName: resource_pack_prompt_message
+        ParamFieldName: resource_pack.java.prompt_message
+        InputType: text
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: resource_pack_force
+      label: 'Java: Force Resource Pack'
+      category: Minecraft
+      subcategory: Resource Packs
+      description: Whether to force the client to download the resource pack.
+      keywords: resource,pack,force,resource_pack
+      input_type: checkbox
+      param_field_name: resource_pack.java.force
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: 'Java: Force Resource Pack'
+        Category: Minecraft:stadia_controller
+        Subcategory: Resource Packs:texture:7
+        Description: Whether to force the client to download the resource pack.
+        Keywords: resource,pack,force,resource_pack
+        FieldName: resource_pack_force
+        ParamFieldName: resource_pack.java.force
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: resource_pack_bedrock_enabled
+      label: 'Bedrock: Require Texture Packs'
+      category: Minecraft
+      subcategory: Resource Packs
+      description: If set, clients must use resource packs in the current world.
+      keywords: resource,pack,enable,resource_pack
+      input_type: checkbox
+      param_field_name: resource_pack.bedrock.enabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: 'Bedrock: Require Texture Packs'
+        Category: Minecraft:stadia_controller
+        Subcategory: Resource Packs:texture:7
+        Description: If set, clients must use resource packs in the current world.
+        Keywords: resource,pack,enable,resource_pack
+        FieldName: resource_pack_bedrock_enabled
+        ParamFieldName: resource_pack.bedrock.enabled
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: resource_pack_bedrock_force
+      label: 'Bedrock: Force Resource Pack'
+      category: Minecraft
+      subcategory: Resource Packs
+      description: Whether to force the client to download the resource pack.
+      keywords: resource,pack,force,resource_pack
+      input_type: checkbox
+      param_field_name: resource_pack.bedrock.force
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: 'Bedrock: Force Resource Pack'
+        Category: Minecraft:stadia_controller
+        Subcategory: Resource Packs:texture:7
+        Description: Whether to force the client to download the resource pack.
+        Keywords: resource,pack,force,resource_pack
+        FieldName: resource_pack_bedrock_force
+        ParamFieldName: resource_pack.bedrock.force
+        InputType: checkbox
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: resource_pack_bedrock_packs
+      label: 'Bedrock: Resource Packs'
+      category: Minecraft
+      subcategory: Resource Packs
+      description: 'The Bedrock resource packs to include. Must follow the exact array format: [''pack1'', ''pack2'']'
+      keywords: resource,packs,resource_pack
+      input_type: text
+      param_field_name: resource_pack.bedrock.packs
+      default: '[]'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: 'Bedrock: Resource Packs'
+        Category: Minecraft:stadia_controller
+        Subcategory: Resource Packs:texture:7
+        Description: 'The Bedrock resource packs to include. Must follow the exact array format: [''pack1'', ''pack2'']'
+        Keywords: resource,packs,resource_pack
+        FieldName: resource_pack_bedrock_packs
+        ParamFieldName: resource_pack.bedrock.packs
+        InputType: text
+        DefaultValue: '[]'
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: networking_authentication_textures_types_skin
+      label: Use Skin Textures
+      category: Minecraft
+      subcategory: Resource Packs
+      description: Whether to use player skins or not.
+      keywords: texture,skin,types
+      input_type: checkbox
+      param_field_name: networking.authentication.textures.types.skin
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use Skin Textures
+        Category: Minecraft:stadia_controller
+        Subcategory: Resource Packs:texture:7
+        Description: Whether to use player skins or not.
+        Keywords: texture,skin,types
+        FieldName: networking_authentication_textures_types_skin
+        ParamFieldName: networking.authentication.textures.types.skin
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_authentication_textures_types_cape
+      label: Use Cape Textures
+      category: Minecraft
+      subcategory: Resource Packs
+      description: Whether to use player capes or not.
+      keywords: texture,cape
+      input_type: checkbox
+      param_field_name: networking.authentication.textures.types.cape
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use Cape Textures
+        Category: Minecraft:stadia_controller
+        Subcategory: Resource Packs:texture:7
+        Description: Whether to use player capes or not.
+        Keywords: texture,cape
+        FieldName: networking_authentication_textures_types_cape
+        ParamFieldName: networking.authentication.textures.types.cape
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_authentication_textures_types_elytra
+      label: Use Elytra Textures
+      category: Minecraft
+      subcategory: Resource Packs
+      description: Whether to use player elytras or not.
+      keywords: texture,elytra
+      input_type: checkbox
+      param_field_name: networking.authentication.textures.types.elytra
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use Elytra Textures
+        Category: Minecraft:stadia_controller
+        Subcategory: Resource Packs:texture:7
+        Description: Whether to use player elytras or not.
+        Keywords: texture,elytra
+        FieldName: networking_authentication_textures_types_elytra
+        ParamFieldName: networking.authentication.textures.types.elytra
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: logging_enabled
+      label: Enable Logging
+      category: Minecraft
+      subcategory: Logging
+      description: Whether logging is enabled or not.
+      keywords: logging,enable
+      input_type: checkbox
+      param_field_name: logging.enabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Logging
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: Whether logging is enabled or not.
+        Keywords: logging,enable
+        FieldName: logging_enabled
+        ParamFieldName: logging.enabled
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: logging_threads
+      label: Logging Threads
+      category: Minecraft
+      subcategory: Logging
+      description: Whether to print threads in the logging message.
+      keywords: logging,threads
+      input_type: checkbox
+      param_field_name: logging.threads
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Logging Threads
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: Whether to print threads in the logging message.
+        Keywords: logging,threads
+        FieldName: logging_threads
+        ParamFieldName: logging.threads
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: logging_timestamp
+      label: Logging Timestamp
+      category: Minecraft
+      subcategory: Logging
+      description: Whether to print the timestamp in the message.
+      keywords: logging,timestamp
+      input_type: checkbox
+      param_field_name: logging.timestamp
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Logging Timestamp
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: Whether to print the timestamp in the message.
+        Keywords: logging,timestamp
+        FieldName: logging_timestamp
+        ParamFieldName: logging.timestamp
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: logging_file
+      label: Log File
+      category: Minecraft
+      subcategory: Logging
+      description: Name of the log file.
+      keywords: log,file
+      input_type: text
+      param_field_name: logging.file
+      default: latest.log
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Log File
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: Name of the log file.
+        Keywords: log,file
+        FieldName: logging_file
+        ParamFieldName: logging.file
+        InputType: text
+        DefaultValue: latest.log
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: logging_level
+      label: Logging Level
+      category: Minecraft
+      subcategory: Logging
+      description: The log verbosity level.
+      keywords: logging,level
+      input_type: enum
+      param_field_name: logging.level
+      default: Info
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'Off': 'Off'
+        Error: Error
+        Warn: Warn
+        Info: Info (default)
+        Debug: Debug
+        Trace: Trace
+      raw:
+        DisplayName: Logging Level
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: The log verbosity level.
+        Keywords: logging,level
+        FieldName: logging_level
+        ParamFieldName: logging.level
+        InputType: enum
+        DefaultValue: Info
+        EnumValues:
+          'Off': 'Off'
+          Error: Error
+          Warn: Warn
+          Info: Info (default)
+          Debug: Debug
+          Trace: Trace
+        IncludeInCommandLine: false
+    - key: logging_env
+      label: Use Environment Log Level
+      category: Minecraft
+      subcategory: Logging
+      description: Whether to allow choosing the log level by setting the RUST_LOG environment variable.
+      keywords: logging,env
+      input_type: checkbox
+      param_field_name: logging.env
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use Environment Log Level
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: Whether to allow choosing the log level by setting the RUST_LOG environment variable.
+        Keywords: logging,env
+        FieldName: logging_env
+        ParamFieldName: logging.env
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: commands_log_console
+      label: Log Console Commands
+      category: Minecraft
+      subcategory: Logging
+      description: Whether commands from players should be logged in the console or not.
+      keywords: log,console,commands
+      input_type: checkbox
+      param_field_name: commands.log_console
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Log Console Commands
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: Whether commands from players should be logged in the console or not.
+        Keywords: log,console,commands
+        FieldName: commands_log_console
+        ParamFieldName: commands.log_console
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_rcon_logging_logged_successfully
+      label: Log RCON Success
+      category: Minecraft
+      subcategory: Logging
+      description: Whether successful logins should be logged to console.
+      keywords: rcon,log,success
+      input_type: checkbox
+      param_field_name: networking.rcon.logging.logged_successfully
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Log RCON Success
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: Whether successful logins should be logged to console.
+        Keywords: rcon,log,success
+        FieldName: networking_rcon_logging_logged_successfully
+        ParamFieldName: networking.rcon.logging.logged_successfully
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_rcon_logging_wrong_password
+      label: Log RCON Wrong Password
+      category: Minecraft
+      subcategory: Logging
+      description: Whether wrong password attempts should be logged.
+      keywords: rcon,log,fail
+      input_type: checkbox
+      param_field_name: networking.rcon.logging.wrong_password
+      default: 'true'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Log RCON Wrong Password
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: Whether wrong password attempts should be logged.
+        Keywords: rcon,log,fail
+        FieldName: networking_rcon_logging_wrong_password
+        ParamFieldName: networking.rcon.logging.wrong_password
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_rcon_logging_commands
+      label: Log RCON Commands
+      category: Minecraft
+      subcategory: Logging
+      description: Whether to log commands run from RCON.
+      keywords: rcon,log,commands
+      input_type: checkbox
+      param_field_name: networking.rcon.logging.commands
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Log RCON Commands
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: Whether to log commands run from RCON.
+        Keywords: rcon,log,commands
+        FieldName: networking_rcon_logging_commands
+        ParamFieldName: networking.rcon.logging.commands
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: networking_rcon_logging_quit
+      label: Log RCON Quit
+      category: Minecraft
+      subcategory: Logging
+      description: Whether RCON client quit should be logged.
+      keywords: rcon,log,quit
+      input_type: checkbox
+      param_field_name: networking.rcon.logging.quit
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Log RCON Quit
+        Category: Minecraft:stadia_controller
+        Subcategory: Logging:receipt:8
+        Description: Whether RCON client quit should be logged.
+        Keywords: rcon,log,quit
+        FieldName: networking_rcon_logging_quit
+        ParamFieldName: networking.rcon.logging.quit
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: server_links_enabled
+      label: Enable Server Links
+      category: Minecraft
+      subcategory: Server Links
+      description: Enable custom server links.
+      keywords: link,enabled
+      input_type: checkbox
+      param_field_name: server_links.enabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Server Links
+        Category: Minecraft:stadia_controller
+        Subcategory: Server Links:link:9
+        Description: Enable custom server links.
+        Keywords: link,enabled
+        FieldName: server_links_enabled
+        ParamFieldName: server_links.enabled
+        InputType: checkbox
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+        IncludeInCommandLine: false
+    - key: link_bug_report
+      label: Bug Report Link
+      category: Minecraft
+      subcategory: Server Links
+      description: Link for bug reports.
+      keywords: link,bug,report
+      input_type: url
+      param_field_name: server_links.bug_report
+      default: https://github.com/Pumpkin-MC/Pumpkin/issues
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Bug Report Link
+        Category: Minecraft:stadia_controller
+        Subcategory: Server Links:link:9
+        Description: Link for bug reports.
+        Keywords: link,bug,report
+        FieldName: link_bug_report
+        ParamFieldName: server_links.bug_report
+        InputType: url
+        DefaultValue: https://github.com/Pumpkin-MC/Pumpkin/issues
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: server_links_support
+      label: Support Link
+      category: Minecraft
+      subcategory: Server Links
+      description: Link for support.
+      keywords: link,support
+      input_type: url
+      param_field_name: server_links.support
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Support Link
+        Category: Minecraft:stadia_controller
+        Subcategory: Server Links:link:9
+        Description: Link for support.
+        Keywords: link,support
+        FieldName: server_links_support
+        ParamFieldName: server_links.support
+        InputType: url
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: server_links_status
+      label: Status Link
+      category: Minecraft
+      subcategory: Server Links
+      description: Link for server status.
+      keywords: link,status
+      input_type: url
+      param_field_name: server_links.status
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Status Link
+        Category: Minecraft:stadia_controller
+        Subcategory: Server Links:link:9
+        Description: Link for server status.
+        Keywords: link,status
+        FieldName: server_links_status
+        ParamFieldName: server_links.status
+        InputType: url
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: server_links_feedback
+      label: Feedback Link
+      category: Minecraft
+      subcategory: Server Links
+      description: Link for feedback.
+      keywords: link,feedback
+      input_type: url
+      param_field_name: server_links.feedback
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Feedback Link
+        Category: Minecraft:stadia_controller
+        Subcategory: Server Links:link:9
+        Description: Link for feedback.
+        Keywords: link,feedback
+        FieldName: server_links_feedback
+        ParamFieldName: server_links.feedback
+        InputType: url
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: server_links_community
+      label: Community Link
+      category: Minecraft
+      subcategory: Server Links
+      description: Link for community.
+      keywords: link,community
+      input_type: url
+      param_field_name: server_links.community
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Community Link
+        Category: Minecraft:stadia_controller
+        Subcategory: Server Links:link:9
+        Description: Link for community.
+        Keywords: link,community
+        FieldName: server_links_community
+        ParamFieldName: server_links.community
+        InputType: url
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: server_links_website
+      label: Website Link
+      category: Minecraft
+      subcategory: Server Links
+      description: Link for website.
+      keywords: link,website
+      input_type: url
+      param_field_name: server_links.website
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Website Link
+        Category: Minecraft:stadia_controller
+        Subcategory: Server Links:link:9
+        Description: Link for website.
+        Keywords: link,website
+        FieldName: server_links_website
+        ParamFieldName: server_links.website
+        InputType: url
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: server_links_forums
+      label: Forums Link
+      category: Minecraft
+      subcategory: Server Links
+      description: Link for forums.
+      keywords: link,forums
+      input_type: url
+      param_field_name: server_links.forums
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Forums Link
+        Category: Minecraft:stadia_controller
+        Subcategory: Server Links:link:9
+        Description: Link for forums.
+        Keywords: link,forums
+        FieldName: server_links_forums
+        ParamFieldName: server_links.forums
+        InputType: url
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: server_links_news
+      label: News Link
+      category: Minecraft
+      subcategory: Server Links
+      description: Link for news.
+      keywords: link,news
+      input_type: url
+      param_field_name: server_links.news
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: News Link
+        Category: Minecraft:stadia_controller
+        Subcategory: Server Links:link:9
+        Description: Link for news.
+        Keywords: link,news
+        FieldName: server_links_news
+        ParamFieldName: server_links.news
+        InputType: url
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: server_links_announcements
+      label: Announcements Link
+      category: Minecraft
+      subcategory: Server Links
+      description: Link for announcements.
+      keywords: link,announcements
+      input_type: url
+      param_field_name: server_links.announcements
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Announcements Link
+        Category: Minecraft:stadia_controller
+        Subcategory: Server Links:link:9
+        Description: Link for announcements.
+        Keywords: link,announcements
+        FieldName: server_links_announcements
+        ParamFieldName: server_links.announcements
+        InputType: url
+        DefaultValue: ''
+        EnumValues: {}
+        IncludeInCommandLine: false
+    - key: server_links_custom_discord
+      label: Discord Link
+      category: Minecraft
+      subcategory: Server Links
+      description: The URL for the Discord link.
+      keywords: discord,link,url
+      input_type: url
+      param_field_name: server_links.custom.Discord
+      default: https://discord.gg/pumpkin
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Discord Link
+        Category: Minecraft:stadia_controller
+        Subcategory: Server Links:link:9
+        Description: The URL for the Discord link.
+        Keywords: discord,link,url
+        FieldName: server_links_custom_discord
+        ParamFieldName: server_links.custom.Discord
+        InputType: url
+        DefaultValue: https://discord.gg/pumpkin
+        EnumValues: {}
+        IncludeInCommandLine: false
+  files:
+    - path: pumpkin.toml
+      type: kvp
+      format: '{0} = "{1}"'
+      subsections: []
+      raw:
+        ConfigFile: pumpkin.toml
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
+        ConfigFormat: '{0} = "{1}"'
+        ConfigFormatRegex: ^\s*(?<key>.+?) = "(?<value>.*?)"\r?$
+    - path: pumpkin.toml
+      type: kvp
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: pumpkin.toml
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^\s*(?<key>.+?) = (?<value>true|false|[\d\.-]+|\[.*?\])\r?$
+    - path: pumpkin.toml
+      type: ini
+      format: '{0} = "{1}"'
+      subsections: []
+      raw:
+        ConfigFile: pumpkin.toml
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0} = "{1}"'
+        ConfigFormatRegex: ^\s*(?<key>.+?) = "(?<value>.*?)"\r?$
+    - path: pumpkin.toml
+      type: ini
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: pumpkin.toml
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^\s*(?<key>.+?) = (?<value>true|false|[\d\.-]+|\[.*?\])\r?$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: java_edition_address
+    label: Java Address
+    default: '{{$ApplicationIPBinding}}:{{$JavaPort}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bedrock_edition_address
+    label: Bedrock Address
+    default: '{{$ApplicationIPBinding}}:{{$BedrockPort}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query_address
+    label: Query Address
+    default: '{{$ApplicationIPBinding}}:{{$JavaPort}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rcon_address
+    label: RCON Address
+    default: '{{$ApplicationIPBinding}}:{{$RCONPort}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: linear_version
+    label: Linear Version
+    default: V1
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logging_color
+    label: Logging Color
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: commands_use_tty
+    label: Use TTY
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: motd
+    label: Message of the Day
+    default: A blazingly fast Pumpkin server!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: default_level_name
+    label: Level Name
+    default: world
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: seed
+    label: Level Seed
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: java_edition
+    label: Enable Java Edition
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bedrock_edition
+    label: Enable Bedrock Edition
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: use_favicon
+    label: Use Favicon
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: favicon_path
+    label: Favicon Path
+    default: icon.png
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: default_gamemode
+    label: Default Game Mode
+    default: Survival
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: force_gamemode
+    label: Force Game Mode
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: default_difficulty
+    label: Difficulty Level
+    default: Normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: hardcore
+    label: Enable Hardcore Mode
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: default_op_level
+    label: Default Player Permission Level
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: op_permission_level
+    label: OP Permission Level
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pvp_enabled
+    label: Enable PVP
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pvp_protect_creative
+    label: Protect Creative
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pvp_knockback
+    label: PVP Knockback
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pvp_swing
+    label: PVP Swing
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pvp_hurt_animation
+    label: PVP Hurt Animation
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: use_console
+    label: Allow Commands From Console
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: chat_format
+    label: Chat Format
+    default: <{DISPLAYNAME}> {MESSAGE}
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow_chat_reports
+    label: Allow Chat Reports
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: april_fools
+    label: Enable April Fools Mode
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: view_distance
+    label: View Distance
+    default: '16'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: simulation_distance
+    label: Simulation Distance
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow_nether
+    label: Allow Nether
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allow_end
+    label: Allow The End
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: world_lighting
+    label: World Lighting Engine
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: world_chunk_type
+    label: World Chunk Type
+    default: pump
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: world_chunk_write_in_place
+    label: Write Chunks In Place
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tps
+    label: Target TPS
+    default: '20.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: world_autosave_ticks
+    label: World Autosave Ticks
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: world_chunk_compression_algorithm
+    label: World Compression Algorithm
+    default: LZ4
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: world_chunk_compression_level
+    label: World Compression Level
+    default: '6'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_packet_compression_enabled
+    label: 'Java: Enable Packet Compression'
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_packet_compression_threshold
+    label: 'Java: Compression Threshold'
+    default: '256'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_packet_compression_level
+    label: 'Java: Packet Compression Level'
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_bedrock_compression_enabled
+    label: 'Bedrock: Enable Packet Compression'
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_bedrock_compression_threshold
+    label: 'Bedrock: Compression Threshold'
+    default: '256'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_bedrock_compression_level
+    label: 'Bedrock: Packet Compression Level'
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: player_data_save_player_data
+    label: Save Player Data
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: player_data_save_player_cron_interval
+    label: Player Data Save Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: recipe_send_recipes
+    label: Send Recipes
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_proxy_enabled
+    label: Enable Proxy Support
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_proxy_velocity_enabled
+    label: Enable Velocity
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_proxy_velocity_secret
+    label: Velocity Secret
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_proxy_bungeecord_enabled
+    label: Enable BungeeCord
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_query_enabled
+    label: Enable Query
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_rcon_enabled
+    label: Enable RCON
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_rcon_password
+    label: RCON Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_rcon_max_connections
+    label: RCON Max Connections
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lan_broadcast_enabled
+    label: LAN Broadcast
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lan_broadcast_port
+    label: LAN Broadcast Port
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: online_mode
+    label: Enable Online Mode
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: white_list
+    label: Enable Allow List
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enforce_whitelist
+    label: Enforce Allow List
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: auth_enabled
+    label: Authentication
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: encryption
+    label: Enable Encryption
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_authentication_prevent_proxy_connections
+    label: Prevent Proxy Connections
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_authentication_prevent_proxy_connection_auth_url
+    label: Auth Prevent Proxy URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_authentication_auth_url
+    label: Auth URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_authentication_connect_timeout
+    label: Auth Connect Timeout
+    default: '5000'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_authentication_read_timeout
+    label: Auth Read Timeout
+    default: '5000'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_authentication_player_profile_allow_banned_players
+    label: Allow Banned Players
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_authentication_player_profile_allowed_actions
+    label: Auth Allowed Actions
+    default: '[''FORCED_NAME_CHANGE'', ''USING_BANNED_SKIN'']'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_authentication_textures_enabled
+    label: Enable Texture Filtering
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_authentication_textures_allowed_url_schemes
+    label: Auth Allowed URL Schemes
+    default: '[''http'', ''https'']'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_authentication_textures_allowed_url_domains
+    label: Auth Allowed URL Domains
+    default: '[''.minecraft.net'', ''.mojang.com'']'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: scrub_ips
+    label: IP Scrubbing
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: plugins_blocked_permissions
+    label: Blocked Plugin Permissions
+    default: '[]'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resource_pack_enabled
+    label: 'Java: Require Texture Packs'
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resource_pack_url
+    label: 'Java: Resource Pack URL'
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resource_pack_sha1
+    label: 'Java: Resource Pack SHA1'
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resource_pack_prompt_message
+    label: 'Java: Resource Pack Prompt'
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resource_pack_force
+    label: 'Java: Force Resource Pack'
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resource_pack_bedrock_enabled
+    label: 'Bedrock: Require Texture Packs'
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resource_pack_bedrock_force
+    label: 'Bedrock: Force Resource Pack'
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resource_pack_bedrock_packs
+    label: 'Bedrock: Resource Packs'
+    default: '[]'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_authentication_textures_types_skin
+    label: Use Skin Textures
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_authentication_textures_types_cape
+    label: Use Cape Textures
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_authentication_textures_types_elytra
+    label: Use Elytra Textures
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: logging_enabled
+    label: Enable Logging
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logging_threads
+    label: Logging Threads
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logging_timestamp
+    label: Logging Timestamp
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logging_file
+    label: Log File
+    default: latest.log
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logging_level
+    label: Logging Level
+    default: Info
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logging_env
+    label: Use Environment Log Level
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: commands_log_console
+    label: Log Console Commands
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_rcon_logging_logged_successfully
+    label: Log RCON Success
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_rcon_logging_wrong_password
+    label: Log RCON Wrong Password
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: networking_rcon_logging_commands
+    label: Log RCON Commands
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networking_rcon_logging_quit
+    label: Log RCON Quit
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_links_enabled
+    label: Enable Server Links
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: link_bug_report
+    label: Bug Report Link
+    default: https://github.com/Pumpkin-MC/Pumpkin/issues
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_links_support
+    label: Support Link
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_links_status
+    label: Status Link
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_links_feedback
+    label: Feedback Link
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_links_community
+    label: Community Link
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_links_website
+    label: Website Link
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_links_forums
+    label: Forums Link
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_links_news
+    label: News Link
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_links_announcements
+    label: Announcements Link
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_links_custom_discord
+    label: Discord Link
+    default: https://discord.gg/pumpkin
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

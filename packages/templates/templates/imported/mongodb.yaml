@@ -4,14 +4,18 @@ name: MongoDB
 category: Imported
 summary: MongoDB Service Instance
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: custom
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: mongosh/bin/mongosh
+  startup: >-
+    mongosh/bin/mongosh "mongodb://127.0.0.1:{ServerPort}/admin" {CustomClientOptions} --username admin --password
+    {AdminPassword} --authenticationDatabase admin {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,14 +23,278 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 27017
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: mongod.conf
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: AdminPassword
+      label: Admin User Password
+      category: MongoDB
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: AdminPassword
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin User Password
+        Category: MongoDB:database
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: AdminPassword
+        InputType: text
+        Hidden: true
+        ParamFieldName: AdminPassword
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: ConfigurationFileOptions
+      label: Server Configuration File Options
+      category: MongoDB
+      subcategory: Server
+      description: >-
+        Specifies [configuration file options](https://www.mongodb.com/docs/manual/reference/configuration-options/) to
+        include in 'mongod.conf' for the MongoDB server that are not otherwise set by AMP. Must be in YAML format. Use
+        with care
+      keywords: configuration,file,options
+      input_type: Textarea
+      param_field_name: ConfigurationFileOptions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Configuration File Options
+        Category: MongoDB:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies [configuration file options](https://www.mongodb.com/docs/manual/reference/configuration-options/)
+          to include in 'mongod.conf' for the MongoDB server that are not otherwise set by AMP. Must be in YAML format.
+          Use with care
+        Keywords: configuration,file,options
+        FieldName: ConfigurationFileOptions
+        InputType: Textarea
+        ParamFieldName: ConfigurationFileOptions
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomServerOptions
+      label: Additional Server Command Line Options
+      category: MongoDB
+      subcategory: Server
+      description: >-
+        Specifies [additional command line
+        options](https://www.mongodb.com/docs/manual/reference/program/mongod/#options) for the MongoDB server that are
+        not otherwise set by AMP. Use with care
+      keywords: custom,server,options,arguments
+      input_type: Textarea
+      param_field_name: CustomServerOptions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Command Line Options
+        Category: MongoDB:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies [additional command line
+          options](https://www.mongodb.com/docs/manual/reference/program/mongod/#options) for the MongoDB server that
+          are not otherwise set by AMP. Use with care
+        Keywords: custom,server,options,arguments
+        FieldName: CustomServerOptions
+        InputType: Textarea
+        ParamFieldName: CustomServerOptions
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomClientOptions
+      label: Additional Client Command Line Options
+      category: MongoDB
+      subcategory: Server
+      description: >-
+        Specifies [additional command line options](https://www.mongodb.com/docs/mongodb-shell/reference/options/) for
+        the MongoDB client run by AMP (a root user called 'admin') that are not otherwise set by AMP. Use with care
+      keywords: custom,client,options,arguments
+      input_type: Textarea
+      param_field_name: CustomClientOptions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Client Command Line Options
+        Category: MongoDB:database
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies [additional command line options](https://www.mongodb.com/docs/mongodb-shell/reference/options/) for
+          the MongoDB client run by AMP (a root user called 'admin') that are not otherwise set by AMP. Use with care
+        Keywords: custom,client,options,arguments
+        FieldName: CustomClientOptions
+        InputType: Textarea
+        ParamFieldName: CustomClientOptions
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerVersion
+      label: MongoDB Release Stream
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the MongoDB release stream from which to install the latest version, unless a specific version is specified
+        under MongoDB Version. Check [system
+        compatibility](https://www.mongodb.com/docs/manual/administration/production-notes/#platform-support-matrix).
+        WARNING: SWITCHING BETWEEN RELEASE STREAMS OR DOWNGRADING VERSIONS MAY CORRUPT DATA! Update the server after
+        changing this setting
+      keywords: mongodb,release,stream,MongoDBRelease
+      input_type: enum
+      param_field_name: MongoDBRelease
+      default: '8.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '8.0': 8.0 (default)
+        '7.0': '7.0'
+        '6.0': 6.0 (Windows only)
+      raw:
+        DisplayName: MongoDB Release Stream
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the MongoDB release stream from which to install the latest version, unless a specific version is
+          specified under MongoDB Version. Check [system
+          compatibility](https://www.mongodb.com/docs/manual/administration/production-notes/#platform-support-matrix).
+          WARNING: SWITCHING BETWEEN RELEASE STREAMS OR DOWNGRADING VERSIONS MAY CORRUPT DATA! Update the server after
+          changing this setting
+        Keywords: mongodb,release,stream,MongoDBRelease
+        FieldName: ServerVersion
+        InputType: enum
+        ParamFieldName: MongoDBRelease
+        DefaultValue: '8.0'
+        EnumValues:
+          '8.0': 8.0 (default)
+          '7.0': '7.0'
+          '6.0': 6.0 (Windows only)
+    - key: CustomServerVersion
+      label: MongoDB Version
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the [MongoDB version](https://www.mongodb.com/try/download/community-edition/releases/archive) to install.
+        Empty = latest version for the release stream specified under MongoDB Release Stream. Check [system
+        compatibility](https://www.mongodb.com/docs/manual/administration/production-notes/#platform-support-matrix).
+        WARNING: SWITCHING BETWEEN RELEASE STREAMS OR DOWNGRADING VERSIONS MAY CORRUPT DATA! Update the server after
+        changing this setting
+      keywords: mongodb,version,MongoDBVersion
+      input_type: text
+      param_field_name: MongoDBVersion
+      default: ''
+      placeholder: 8.0.9
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: MongoDB Version
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the [MongoDB version](https://www.mongodb.com/try/download/community-edition/releases/archive) to
+          install. Empty = latest version for the release stream specified under MongoDB Release Stream. Check [system
+          compatibility](https://www.mongodb.com/docs/manual/administration/production-notes/#platform-support-matrix).
+          WARNING: SWITCHING BETWEEN RELEASE STREAMS OR DOWNGRADING VERSIONS MAY CORRUPT DATA! Update the server after
+          changing this setting
+        Keywords: mongodb,version,MongoDBVersion
+        FieldName: CustomServerVersion
+        InputType: text
+        ParamFieldName: MongoDBVersion
+        DefaultValue: ''
+        Placeholder: 8.0.9
+        EnumValues: {}
+  files:
+    - path: mongod.conf
+      type: kvp
+      format: '{0}{1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            '': ConfigurationFileOptions
+      raw:
+        ConfigFile: mongod.conf
+        ConfigType: kvp
+        ConfigFormat: '{0}{1}'
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              '': ConfigurationFileOptions
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: AdminPassword
+    label: Admin User Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: ConfigurationFileOptions
+    label: Server Configuration File Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerOptions
+    label: Additional Server Command Line Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomClientOptions
+    label: Additional Client Command Line Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerVersion
+    label: MongoDB Release Stream
+    default: '8.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerVersion
+    label: MongoDB Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: false
   providers: []

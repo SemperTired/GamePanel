@@ -4,14 +4,17 @@ name: San Andreas Multiplayer
 category: Imported
 summary: 'San Andreas Multiplayer Mod for Grand Theft Auto: San Andreas'
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: direct_archive
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: https://files.samp-sc.com/downloader.php?filename=samp037_svr_R2-1-1_win32.zip
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: samp03svr
+  startup: samp03svr {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1047 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 7777
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: server.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Server Port
+      category: San Andreas MP
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: port
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Server/RCON IP Binding
+      category: San Andreas MP
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: bind
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server/RCON IP Binding
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: bind
+        EnumValues: {}
+    - key: hostname
+      label: Server Name
+      category: San Andreas MP
+      subcategory: Server
+      description: Sets the name of the server as shown in the server browser and when players connect to the server
+      keywords: server,name,hostname
+      input_type: text
+      param_field_name: hostname
+      default: AMP Powered SA-MP Server
+      placeholder: AMP Powered SA-MP Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as shown in the server browser and when players connect to the server
+        Keywords: server,name,hostname
+        FieldName: hostname
+        InputType: text
+        ParamFieldName: hostname
+        DefaultValue: AMP Powered SA-MP Server
+        Placeholder: AMP Powered SA-MP Server
+        EnumValues: {}
+    - key: mapname
+      label: Map Name
+      category: San Andreas MP
+      subcategory: Server
+      description: Sets the map name as shown in the server browser. This can be anything
+      keywords: map,name,mapname
+      input_type: text
+      param_field_name: mapname
+      default: My SA-MP Map
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Map Name
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map name as shown in the server browser. This can be anything
+        Keywords: map,name,mapname
+        FieldName: mapname
+        InputType: text
+        ParamFieldName: mapname
+        DefaultValue: My SA-MP Map
+        EnumValues: {}
+    - key: weburl
+      label: Web URL
+      category: San Andreas MP
+      subcategory: Server
+      description: >-
+        Sets the URL of a website that will be displayed in the server browser and that has more information about the
+        server
+      keywords: web,url,weburl
+      input_type: text
+      param_field_name: weburl
+      default: www.sa-mp.com
+      placeholder: www.sa-mp.com
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Web URL
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the URL of a website that will be displayed in the server browser and that has more information about the
+          server
+        Keywords: web,url,weburl
+        FieldName: weburl
+        InputType: text
+        ParamFieldName: weburl
+        DefaultValue: www.sa-mp.com
+        Placeholder: www.sa-mp.com
+        EnumValues: {}
+    - key: password
+      label: Server Password
+      category: San Andreas MP
+      subcategory: Server
+      description: Sets the password required for players to join the server. Default is no password
+      keywords: server,password
+      input_type: password
+      param_field_name: password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for players to join the server. Default is no password
+        Keywords: server,password
+        FieldName: password
+        InputType: password
+        ParamFieldName: password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: rcon_password
+      label: RCON Password
+      category: San Andreas MP
+      subcategory: Server
+      description: Sets the password required to connect to the server's RCON. Default is a strong, random password
+      keywords: rcon,password,rcon_password
+      input_type: password
+      param_field_name: rcon_password
+      default: '{{newguid()}}'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server's RCON. Default is a strong, random password
+        Keywords: rcon,password,rcon_password
+        FieldName: rcon_password
+        InputType: password
+        ParamFieldName: rcon_password
+        DefaultValue: '{{newguid()}}'
+        EnumValues: {}
+    - key: gamemode0
+      label: Initial Gamemode
+      category: San Andreas MP
+      subcategory: Server
+      description: >-
+        Sets the gamemode to start the server with. If "Custom" is selected, Custom Initial Gamemode must also be
+        specified. Subsequent gamemodes (gamemode1 to gamemode15) can be set under Additional Server Settings
+      keywords: initial,gamemode,gamemode0
+      input_type: enum
+      param_field_name: gamemode0
+      default: grandlarc
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        grandlarc: Grand Larceny
+        rivershell: Rivershell
+        lvdm: LVDM (Ventura's DeathMatch) ~ Moneygrub
+        timertest: Timer Test
+        barron: RC Barnstorm
+        bare: Bare Script
+        '{{CustomGamemode}}': '--Custom--'
+      raw:
+        DisplayName: Initial Gamemode
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the gamemode to start the server with. If "Custom" is selected, Custom Initial Gamemode must also be
+          specified. Subsequent gamemodes (gamemode1 to gamemode15) can be set under Additional Server Settings
+        Keywords: initial,gamemode,gamemode0
+        FieldName: gamemode0
+        InputType: enum
+        ParamFieldName: gamemode0
+        DefaultValue: grandlarc
+        EnumValues:
+          grandlarc: Grand Larceny
+          rivershell: Rivershell
+          lvdm: LVDM (Ventura's DeathMatch) ~ Moneygrub
+          timertest: Timer Test
+          barron: RC Barnstorm
+          bare: Bare Script
+          '{{CustomGamemode}}': '--Custom--'
+    - key: CustomGamemode
+      label: Custom Initial Gamemode
+      category: San Andreas MP
+      subcategory: Server
+      description: >-
+        Sets a custom gamemode to use for the Initial Gamemode, if "Custom" is selected. The custom gamemode files must
+        be included in the gamemodes directory
+      keywords: custom,initial,gamemode,gamemode0
+      input_type: text
+      param_field_name: CustomGamemode
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Initial Gamemode
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a custom gamemode to use for the Initial Gamemode, if "Custom" is selected. The custom gamemode files
+          must be included in the gamemodes directory
+        Keywords: custom,initial,gamemode,gamemode0
+        FieldName: CustomGamemode
+        InputType: text
+        ParamFieldName: CustomGamemode
+        DefaultValue: ''
+        EnumValues: {}
+    - key: gamemode0count
+      label: Initial Gamemode Count
+      category: San Andreas MP
+      subcategory: Server
+      description: Sets how many times the server should run the initial gamemode before switching to the next gamemode
+      keywords: initial,gamemode,gamemode0,count
+      input_type: number
+      param_field_name: gamemode0count
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Initial Gamemode Count
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how many times the server should run the initial gamemode before switching to the next gamemode
+        Keywords: initial,gamemode,gamemode0,count
+        FieldName: gamemode0count
+        InputType: number
+        ParamFieldName: gamemode0count
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: filterscripts
+      label: Filterscripts
+      category: San Andreas MP
+      subcategory: Server
+      description: >-
+        Space-separated list of filterscripts (scripts that run in the background of the gamemode and add extras to the
+        server without editing the gamemode). Specify the names of scripts (without the .amx extension) in the
+        filterscripts directory or using a path relative to that directory
+      keywords: filterscripts,scripts
+      input_type: text
+      param_field_name: filterscripts
+      default: base gl_actions gl_property gl_realtime
+      placeholder: base gl_actions gl_property gl_realtime
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Filterscripts
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Space-separated list of filterscripts (scripts that run in the background of the gamemode and add extras to
+          the server without editing the gamemode). Specify the names of scripts (without the .amx extension) in the
+          filterscripts directory or using a path relative to that directory
+        Keywords: filterscripts,scripts
+        FieldName: filterscripts
+        InputType: text
+        ParamFieldName: filterscripts
+        DefaultValue: base gl_actions gl_property gl_realtime
+        Placeholder: base gl_actions gl_property gl_realtime
+        EnumValues: {}
+    - key: plugins
+      label: Plugins
+      category: San Andreas MP
+      subcategory: Server
+      description: >-
+        Space-separated list of plugins (scripts designed to enhance gamemodes and filterscripts). Specify the names of
+        scripts (without the .dll or .so extension) in the plugins directory
+      keywords: plugins,scripts
+      input_type: text
+      param_field_name: plugins
+      default: ''
+      placeholder: crashdetect filemanager geoip mysql regex routeconnector sscanf streamer xml
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Plugins
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Space-separated list of plugins (scripts designed to enhance gamemodes and filterscripts). Specify the names
+          of scripts (without the .dll or .so extension) in the plugins directory
+        Keywords: plugins,scripts
+        FieldName: plugins
+        InputType: text
+        ParamFieldName: plugins
+        DefaultValue: ''
+        Placeholder: crashdetect filemanager geoip mysql regex routeconnector sscanf streamer xml
+        EnumValues: {}
+    - key: lanmode
+      label: Enable LAN Mode
+      category: San Andreas MP
+      subcategory: Server
+      description: If set, the server will run in LAN mode, allowing higher bandwidth
+      keywords: lan,mode,lanmode
+      input_type: checkbox
+      param_field_name: lanmode
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable LAN Mode
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will run in LAN mode, allowing higher bandwidth
+        Keywords: lan,mode,lanmode
+        FieldName: lanmode
+        InputType: checkbox
+        ParamFieldName: lanmode
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: announce
+      label: Announce To Master Server List
+      category: San Andreas MP
+      subcategory: Server
+      description: If set, the server will be announced to the master server list
+      keywords: announce,master,server,list
+      input_type: checkbox
+      param_field_name: announce
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Announce To Master Server List
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be announced to the master server list
+        Keywords: announce,master,server,list
+        FieldName: announce
+        InputType: checkbox
+        ParamFieldName: announce
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: query
+      label: Display In Server Browser
+      category: San Andreas MP
+      subcategory: Server
+      description: If set, information on the server will be displayed in the server browser
+      keywords: server,browser,information,query
+      input_type: checkbox
+      param_field_name: query
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Display In Server Browser
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, information on the server will be displayed in the server browser
+        Keywords: server,browser,information,query
+        FieldName: query
+        InputType: checkbox
+        ParamFieldName: query
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: $MaxUsers
+      label: Player Limit
+      category: San Andreas MP
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,clients,limit,maxplayers
+      input_type: number
+      param_field_name: maxplayers
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 1000
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,clients,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '1000'
+        ParamFieldName: maxplayers
+        DefaultValue: '50'
+        Placeholder: '50'
+        Suffix: players
+        EnumValues: {}
+    - key: language
+      label: Language
+      category: San Andreas MP
+      subcategory: Server
+      description: Sets the language of the server that appears in the server browser
+      keywords: language
+      input_type: text
+      param_field_name: language
+      default: English
+      placeholder: English
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Language
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the language of the server that appears in the server browser
+        Keywords: language
+        FieldName: language
+        InputType: text
+        ParamFieldName: language
+        DefaultValue: English
+        Placeholder: English
+        EnumValues: {}
+    - key: maxnpc
+      label: Maximum NPCs
+      category: San Andreas MP
+      subcategory: Server
+      description: >-
+        Sets the maximum number of NPCs (bots) that the server can hold, limiting how many player slots can be taken by
+        NPCs
+      keywords: maximum,npcs,bots,maxnpc
+      input_type: number
+      param_field_name: maxnpc
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1000
+      suffix: NPCs
+      enum_values: {}
+      raw:
+        DisplayName: Maximum NPCs
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of NPCs (bots) that the server can hold, limiting how many player slots can be taken
+          by NPCs
+        Keywords: maximum,npcs,bots,maxnpc
+        FieldName: maxnpc
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1000'
+        ParamFieldName: maxnpc
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: NPCs
+        EnumValues: {}
+    - key: onfoot_rate
+      label: On-Foot Update Rate
+      category: San Andreas MP
+      subcategory: Server
+      description: Sets the time that a client should update the server with new data while on foot
+      keywords: onfoot,foot,rate,onfoot_rate
+      input_type: number
+      param_field_name: onfoot_rate
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: On-Foot Update Rate
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time that a client should update the server with new data while on foot
+        Keywords: onfoot,foot,rate,onfoot_rate
+        FieldName: onfoot_rate
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: onfoot_rate
+        DefaultValue: '40'
+        Placeholder: '40'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: incar_rate
+      label: In-Vehicle Update Rate
+      category: San Andreas MP
+      subcategory: Server
+      description: Sets the time that a client should update the server with new data while in a vehicle
+      keywords: incar,car,vehicle,rate,incar_rate
+      input_type: number
+      param_field_name: incar_rate
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: In-Vehicle Update Rate
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time that a client should update the server with new data while in a vehicle
+        Keywords: incar,car,vehicle,rate,incar_rate
+        FieldName: incar_rate
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: incar_rate
+        DefaultValue: '40'
+        Placeholder: '40'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: weapon_rate
+      label: Weapon Rate
+      category: San Andreas MP
+      subcategory: Server
+      description: Sets the time that a client should update the server with new data while firing a weapon
+      keywords: weapon,rate,weapon_rate
+      input_type: number
+      param_field_name: weapon_rate
+      default: '40'
+      placeholder: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Weapon Rate
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time that a client should update the server with new data while firing a weapon
+        Keywords: weapon,rate,weapon_rate
+        FieldName: weapon_rate
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: weapon_rate
+        DefaultValue: '40'
+        Placeholder: '40'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: stream_distance
+      label: Stream Distance
+      category: San Andreas MP
+      subcategory: Server
+      description: >-
+        Sets the distance on the X,Y plane that players will stream in server entities. Higher values makes players see
+        server entities at a greater distance, but requires more client processing and potentially more bandwidth
+      keywords: stream,distance,stream_distance
+      input_type: number
+      param_field_name: stream_distance
+      default: '300.0'
+      placeholder: '300.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 50
+      max: 400
+      enum_values: {}
+      raw:
+        DisplayName: Stream Distance
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the distance on the X,Y plane that players will stream in server entities. Higher values makes players
+          see server entities at a greater distance, but requires more client processing and potentially more bandwidth
+        Keywords: stream,distance,stream_distance
+        FieldName: stream_distance
+        InputType: number
+        MinValue: '50'
+        MaxValue: '400'
+        ParamFieldName: stream_distance
+        DefaultValue: '300.0'
+        Placeholder: '300.0'
+        EnumValues: {}
+    - key: stream_rate
+      label: Stream Rate
+      category: San Andreas MP
+      subcategory: Server
+      description: >-
+        Sets the time before the streaming in of server entities is retested for each player. Lower values increases
+        server processing as it has to recheck streaming conditions more frequently for each player
+      keywords: stream,rate,stream_rate
+      input_type: number
+      param_field_name: stream_rate
+      default: '1000'
+      placeholder: '1000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 500
+      max: 5000
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Stream Rate
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the time before the streaming in of server entities is retested for each player. Lower values increases
+          server processing as it has to recheck streaming conditions more frequently for each player
+        Keywords: stream,rate,stream_rate
+        FieldName: stream_rate
+        InputType: number
+        MinValue: '500'
+        MaxValue: '5000'
+        ParamFieldName: stream_rate
+        DefaultValue: '1000'
+        Placeholder: '1000'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: lagcompmode
+      label: Lag Compensation Mode
+      category: San Andreas MP
+      subcategory: Server
+      description: Sets the lag compensation mode for the server
+      keywords: lag,compensation,mode,lagcompmode
+      input_type: enum
+      param_field_name: lagcompmode
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Disabled
+        '1': Full (default)
+        '2': Position only
+      raw:
+        DisplayName: Lag Compensation Mode
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the lag compensation mode for the server
+        Keywords: lag,compensation,mode,lagcompmode
+        FieldName: lagcompmode
+        InputType: enum
+        ParamFieldName: lagcompmode
+        DefaultValue: '1'
+        EnumValues:
+          '0': Disabled
+          '1': Full (default)
+          '2': Position only
+    - key: chatlogging
+      label: Show Player Chat In Console
+      category: San Andreas MP
+      subcategory: Server
+      description: If set, player chat will be shown in the server console
+      keywords: log,logging,chat,chatlogging
+      input_type: checkbox
+      param_field_name: chatlogging
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Show Player Chat In Console
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, player chat will be shown in the server console
+        Keywords: log,logging,chat,chatlogging
+        FieldName: chatlogging
+        InputType: checkbox
+        ParamFieldName: chatlogging
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: logtimeformat
+      label: Log Time Format
+      category: San Andreas MP
+      subcategory: Server
+      description: >-
+        Sets the logfile timestamp format that should be used, based on the [strftime
+        format](https://cplusplus.com/reference/ctime/strftime/)
+      keywords: log,file,format,timestamp,logtimeformat
+      input_type: text
+      param_field_name: logtimeformat
+      default: '[%H:%M:%S]'
+      placeholder: '[%H:%M:%S]'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Log Time Format
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the logfile timestamp format that should be used, based on the [strftime
+          format](https://cplusplus.com/reference/ctime/strftime/)
+        Keywords: log,file,format,timestamp,logtimeformat
+        FieldName: logtimeformat
+        InputType: text
+        ParamFieldName: logtimeformat
+        DefaultValue: '[%H:%M:%S]'
+        Placeholder: '[%H:%M:%S]'
+        EnumValues: {}
+    - key: UserSettings
+      label: Additional Server Settings
+      category: San Andreas MP
+      subcategory: Server
+      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per line
+      keywords: additional,settings,custom
+      input_type: Textarea
+      param_field_name: UserSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Settings
+        Category: San Andreas MP:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per
+          line
+        Keywords: additional,settings,custom
+        FieldName: UserSettings
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: UserSettings
+        DefaultValue: ''
+        EnumValues: {}
+  files:
+    - path: server.cfg
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: server.cfg
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: AMP_server.cfg
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: hostname
+    label: Server Name
+    default: AMP Powered SA-MP Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mapname
+    label: Map Name
+    default: My SA-MP Map
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: weburl
+    label: Web URL
+    default: www.sa-mp.com
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: rcon_password
+    label: RCON Password
+    default: '{{newguid()}}'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: gamemode0
+    label: Initial Gamemode
+    default: grandlarc
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomGamemode
+    label: Custom Initial Gamemode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gamemode0count
+    label: Initial Gamemode Count
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: filterscripts
+    label: Filterscripts
+    default: base gl_actions gl_property gl_realtime
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: plugins
+    label: Plugins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lanmode
+    label: Enable LAN Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: announce
+    label: Announce To Master Server List
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: query
+    label: Display In Server Browser
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: language
+    label: Language
+    default: English
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: maxnpc
+    label: Maximum NPCs
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: onfoot_rate
+    label: On-Foot Update Rate
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: incar_rate
+    label: In-Vehicle Update Rate
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: weapon_rate
+    label: Weapon Rate
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: stream_distance
+    label: Stream Distance
+    default: '300.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: stream_rate
+    label: Stream Rate
+    default: '1000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lagcompmode
+    label: Lag Compensation Mode
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: chatlogging
+    label: Show Player Chat In Console
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logtimeformat
+    label: Log Time Format
+    default: '[%H:%M:%S]'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UserSettings
+    label: Additional Server Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '12120'
+  collection_support: true
 backup:
   include:
     - /data

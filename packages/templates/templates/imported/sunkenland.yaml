@@ -5,13 +5,18 @@ category: Imported
 summary: Sunkenland Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2667530'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: >-
+    /usr/bin/xvfb-run {PlatformArgs} -nographics -batchmode -logFile "./server.log" -port "{ServerPort}" -publicPort
+    "{ServerPort}" -ip "{ApplicationIPBinding}" {FormattedArgs} {makeSessionInvisible}{CustomArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,388 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: serverport
+    name: Server Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: sunkenlandconfig.json
+    type: json
+    editable: true
+  - path: sunkenlandmetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: worldGuid
+      label: World GUID
+      category: Sunkenland
+      subcategory: Server
+      description: >-
+        Sets the GUID of the world save to load (the part of the world save name after the ~ symbol). The save must be
+        in the Worlds directory. Default = world supplied by AMP
+      keywords: world,save,guid,worldGuid
+      input_type: text
+      param_field_name: worldGuid
+      default: 9280d1af-d354-4b43-adae-901a15bd5ec7
+      placeholder: 9280d1af-d354-4b43-adae-901a15bd5ec7
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World GUID
+        Category: Sunkenland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the GUID of the world save to load (the part of the world save name after the ~ symbol). The save must be
+          in the Worlds directory. Default = world supplied by AMP
+        Keywords: world,save,guid,worldGuid
+        FieldName: worldGuid
+        InputType: text
+        ParamFieldName: worldGuid
+        IncludeInCommandLine: true
+        DefaultValue: 9280d1af-d354-4b43-adae-901a15bd5ec7
+        Placeholder: 9280d1af-d354-4b43-adae-901a15bd5ec7
+        Required: true
+        EnumValues: {}
+    - key: password
+      label: Server Password
+      category: Sunkenland
+      subcategory: Server
+      description: Sets the password required for players to join the server. Default is no password. Maximum 8 characters
+      keywords: password,server
+      input_type: password
+      param_field_name: password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Sunkenland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for players to join the server. Default is no password. Maximum 8 characters
+        Keywords: password,server
+        FieldName: password
+        InputType: password
+        ParamFieldName: password
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: region
+      label: Server Region
+      category: Sunkenland
+      subcategory: Server
+      description: Sets the region for the server. The game client must have the same region selected to join correctly
+      keywords: server,region
+      input_type: enum
+      param_field_name: region
+      default: asia
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        asia: Asia
+        cn: Chinese Mainland
+        jp: Japan
+        eu: Europe
+        sa: South America
+        kr: South Korea
+        us: USA, East
+        usw: USA, West
+      raw:
+        DisplayName: Server Region
+        Category: Sunkenland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the region for the server. The game client must have the same region selected to join correctly
+        Keywords: server,region
+        FieldName: region
+        InputType: enum
+        ParamFieldName: region
+        IncludeInCommandLine: true
+        DefaultValue: asia
+        EnumValues:
+          asia: Asia
+          cn: Chinese Mainland
+          jp: Japan
+          eu: Europe
+          sa: South America
+          kr: South Korea
+          us: USA, East
+          usw: USA, West
+    - key: makeSessionInvisible
+      label: Make Server Invisible
+      category: Sunkenland
+      subcategory: Server
+      description: >-
+        If enabled, the server will not appear in other players' session list and can only be joined by manually
+        entering the Server ID or via Steam Friend Invite
+      keywords: hide,session,list,invisible,makeSessionInvisible
+      input_type: checkbox
+      param_field_name: makeSessionInvisible
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-makeSessionInvisible '
+      raw:
+        DisplayName: Make Server Invisible
+        Category: Sunkenland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will not appear in other players' session list and can only be joined by manually
+          entering the Server ID or via Steam Friend Invite
+        Keywords: hide,session,list,invisible,makeSessionInvisible
+        FieldName: makeSessionInvisible
+        InputType: checkbox
+        ParamFieldName: makeSessionInvisible
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-makeSessionInvisible '
+    - key: $MaxUsers
+      label: Player Limit
+      category: Sunkenland
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,slots,limit,maxPlayerCapacity
+      input_type: number
+      param_field_name: maxPlayerCapacity
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 3
+      max: 15
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Sunkenland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,slots,limit,maxPlayerCapacity
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '3'
+        MaxValue: '15'
+        ParamFieldName: maxPlayerCapacity
+        IncludeInCommandLine: true
+        DefaultValue: '3'
+        Placeholder: '3'
+        Suffix: players
+        EnumValues: {}
+    - key: publicIP
+      label: Public IP Selection Mode
+      category: Sunkenland
+      subcategory: Server
+      description: >-
+        Sets whether and how the public IP advertised for the server is set. If 'Manually set' is selected, specify the
+        desired public IP under Manual Public IP
+      keywords: public,ip,publicip
+      input_type: enum
+      param_field_name: publicIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values:
+        '': Not explicity set (default)
+        '{{$ExternalIP}}': Automatically set by AMP
+        '{{ManualPublicIP}}': Manually set
+      raw:
+        DisplayName: Public IP Selection Mode
+        Category: Sunkenland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether and how the public IP advertised for the server is set. If 'Manually set' is selected, specify
+          the desired public IP under Manual Public IP
+        Keywords: public,ip,publicip
+        FieldName: publicIP
+        InputType: enum
+        ParamFieldName: publicIP
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues:
+          '': Not explicity set (default)
+          '{{$ExternalIP}}': Automatically set by AMP
+          '{{ManualPublicIP}}': Manually set
+    - key: ManualPublicIP
+      label: Manual Public IP
+      category: Sunkenland
+      subcategory: Server
+      description: >-
+        Sets the public IP advertised for the server, if 'Manually set' is selected as the Public IP Selection Mode.
+        Useful if the host network has multiple public IPs, or the server is behind a public proxy
+      keywords: manual,public,ip,publicip
+      input_type: text
+      param_field_name: ManualPublicIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Manual Public IP
+        Category: Sunkenland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public IP advertised for the server, if 'Manually set' is selected as the Public IP Selection Mode.
+          Useful if the host network has multiple public IPs, or the server is behind a public proxy
+        Keywords: manual,public,ip,publicip
+        FieldName: ManualPublicIP
+        InputType: text
+        ParamFieldName: ManualPublicIP
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomArgs
+      label: Custom Command Line Arguments
+      category: Sunkenland
+      subcategory: Server
+      description: >-
+        Sets custom command line arguments to start the server with. Format: -<key> "<value>". Don't use options already
+        in AMP's settings!
+      keywords: custom,command,line,arguments
+      input_type: text
+      param_field_name: CustomArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Command Line Arguments
+        Category: Sunkenland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets custom command line arguments to start the server with. Format: -<key> "<value>". Don't use options
+          already in AMP's settings!
+        Keywords: custom,command,line,arguments
+        FieldName: CustomArgs
+        InputType: text
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Download
+      description: Sets the server branch to install. Update the server after switching branches
+      keywords: server,branch,depot,public,public-test
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        public-test: Public test build
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Download:download
+        Description: Sets the server branch to install. Update the server after switching branches
+        Keywords: server,branch,depot,public,public-test
+        FieldName: ServerBranch
+        InputType: enum
+        ParamFieldName: ServerBranch
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          public-test: Public test build
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: worldGuid
+    label: World GUID
+    default: 9280d1af-d354-4b43-adae-901a15bd5ec7
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: region
+    label: Server Region
+    default: asia
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: makeSessionInvisible
+    label: Make Server Invisible
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: publicIP
+    label: Public IP Selection Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualPublicIP
+    label: Manual Public IP
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Custom Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '2080690'
+  collection_support: true
 backup:
   include:
     - /data

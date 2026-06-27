@@ -5,13 +5,16 @@ category: Imported
 summary: 'The Lord of the Rings: Return to Moria Dedicated Server'
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '3349480'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: /usr/bin/wine {PlatformArgs} Moria -log
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1085 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 7777
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: MoriaServerConfig.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Listen Port
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: Host.ListenPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Listen Port
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: Host.ListenPort
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: Console.Enabled
+      label: Enable Console
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: Console.Enabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable Console
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: Console.Enabled
+        InputType: text
+        Hidden: true
+        ParamFieldName: Console.Enabled
+        DefaultValue: 'false'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: World.Name
+      label: Server Name
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: >-
+        Sets the name of the world to load, or to create if it does not exist. This will also be the server name that is
+        displayed publicly. Note that apostrophes in the name may cause loading issues
+      keywords: server,name
+      input_type: text
+      param_field_name: World.Name
+      default: 'AMP Powered LOTR: Return to Moria Server'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the world to load, or to create if it does not exist. This will also be the server name that
+          is displayed publicly. Note that apostrophes in the name may cause loading issues
+        Keywords: server,name
+        FieldName: World.Name
+        InputType: text
+        ParamFieldName: World.Name
+        DefaultValue: 'AMP Powered LOTR: Return to Moria Server'
+        EnumValues: {}
+    - key: World.OptionalWorldFilename
+      label: World Filename
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: Sets an optional file name of the world to load. Helpful if you have multiple worlds with the same name
+      keywords: world,filename,OptionalWorldFilename
+      input_type: text
+      param_field_name: World.OptionalWorldFilename
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Filename
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets an optional file name of the world to load. Helpful if you have multiple worlds with the same name
+        Keywords: world,filename,OptionalWorldFilename
+        FieldName: World.OptionalWorldFilename
+        InputType: text
+        ParamFieldName: World.OptionalWorldFilename
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Main.Password
+      label: Server Password
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: Sets the password required for players to join the server. Default is no password
+      keywords: password,server
+      input_type: password
+      param_field_name: Main.OptionalPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for players to join the server. Default is no password
+        Keywords: password,server
+        FieldName: Main.Password
+        InputType: password
+        ParamFieldName: Main.OptionalPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Host.ListenAddress
+      label: Binding IP Address
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: >-
+        Sets the local IP address to bind the server to. Normally keep this setting empty, which will result in the
+        server binding to all network interfaces. Otherwise, specify an IPv4 or IPv6 address that is configured on the
+        host to bind to
+      keywords: listen,address,ListenAddress
+      input_type: text
+      param_field_name: Host.ListenAddress
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Binding IP Address
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the local IP address to bind the server to. Normally keep this setting empty, which will result in the
+          server binding to all network interfaces. Otherwise, specify an IPv4 or IPv6 address that is configured on the
+          host to bind to
+        Keywords: listen,address,ListenAddress
+        FieldName: Host.ListenAddress
+        InputType: text
+        ParamFieldName: Host.ListenAddress
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Host.AdvertiseAddress
+      label: Advertised IP Address
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: >-
+        Sets the server IP address reported to clients. Normally keep this set as 'Auto', however if there is an issue
+        with automatic detection of your public IP address, then select 'Specific address' and configure Specific
+        Advertise Address accordingly
+      keywords: advertise,address,AdvertiseAddress
+      input_type: enum
+      param_field_name: Host.AdvertiseAddress
+      default: auto
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        auto: Auto (default)
+        local: Local (LAN only)
+        '{{SpecificAdvertiseAddress}}': Specific address
+      raw:
+        DisplayName: Advertised IP Address
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the server IP address reported to clients. Normally keep this set as 'Auto', however if there is an issue
+          with automatic detection of your public IP address, then select 'Specific address' and configure Specific
+          Advertise Address accordingly
+        Keywords: advertise,address,AdvertiseAddress
+        FieldName: Host.AdvertiseAddress
+        InputType: enum
+        ParamFieldName: Host.AdvertiseAddress
+        DefaultValue: auto
+        EnumValues:
+          auto: Auto (default)
+          local: Local (LAN only)
+          '{{SpecificAdvertiseAddress}}': Specific address
+    - key: SpecificAdvertiseAddress
+      label: Specific Advertise Address
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: >-
+        Sets a specific public IPv4 or IPv6 address to report to clients, if 'Specific address' is selected under
+        Advertise Address
+      keywords: advertise,address,specific,SpecificAdvertiseAddress,AdvertiseAddress
+      input_type: text
+      param_field_name: SpecificAdvertiseAddress
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Specific Advertise Address
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a specific public IPv4 or IPv6 address to report to clients, if 'Specific address' is selected under
+          Advertise Address
+        Keywords: advertise,address,specific,SpecificAdvertiseAddress,AdvertiseAddress
+        FieldName: SpecificAdvertiseAddress
+        InputType: text
+        ParamFieldName: SpecificAdvertiseAddress
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Host.AdvertisePort
+      label: Advertise Port
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: >-
+        Sets the server port reported to clients. Normally keep this set as '-1', which equates to the Listen Port. Only
+        change this if the public port needs to be different to the Listen Port
+      keywords: advertise,port,AdvertisePort
+      input_type: number
+      param_field_name: Host.AdvertisePort
+      default: '-1'
+      placeholder: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Advertise Port
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the server port reported to clients. Normally keep this set as '-1', which equates to the Listen Port.
+          Only change this if the public port needs to be different to the Listen Port
+        Keywords: advertise,port,AdvertisePort
+        FieldName: Host.AdvertisePort
+        InputType: number
+        ParamFieldName: Host.AdvertisePort
+        DefaultValue: '-1'
+        Placeholder: '-1'
+        EnumValues: {}
+    - key: Host.InitialConnectionRetryTime
+      label: Initial Connection Retry Time
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: >-
+        Sets the initial connection retry time - if the server fails to host on launch, this is the maximum time to
+        retry
+      keywords: connection,retry,time,InitialConnectionRetryTime
+      input_type: number
+      param_field_name: Host.InitialConnectionRetryTime
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Initial Connection Retry Time
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the initial connection retry time - if the server fails to host on launch, this is the maximum time to
+          retry
+        Keywords: connection,retry,time,InitialConnectionRetryTime
+        FieldName: Host.InitialConnectionRetryTime
+        InputType: number
+        ParamFieldName: Host.InitialConnectionRetryTime
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Host.AfterDisconnectionRetryTime
+      label: After Disconnection Retry Time
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: Sets the retry time after disconnection - if the hosted session drops, this is the maximum time to try to rehost
+      keywords: disconnection,retry,time,AfterDisconnectionRetryTime
+      input_type: number
+      param_field_name: Host.AfterDisconnectionRetryTime
+      default: '600'
+      placeholder: '600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: After Disconnection Retry Time
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the retry time after disconnection - if the hosted session drops, this is the maximum time to try to
+          rehost
+        Keywords: disconnection,retry,time,AfterDisconnectionRetryTime
+        FieldName: Host.AfterDisconnectionRetryTime
+        InputType: number
+        ParamFieldName: Host.AfterDisconnectionRetryTime
+        DefaultValue: '600'
+        Placeholder: '600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Performance.ServerFPS
+      label: Server Tickrate
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: Sets the tickrate for the server. Typically leave this at 60 - higher values are unlikely to improve the server
+      keywords: performance,fps,ticks,tickrate,serverfps
+      input_type: number
+      param_field_name: Performance.ServerFPS
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: fps
+      enum_values: {}
+      raw:
+        DisplayName: Server Tickrate
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the tickrate for the server. Typically leave this at 60 - higher values are unlikely to improve the
+          server
+        Keywords: performance,fps,ticks,tickrate,serverfps
+        FieldName: Performance.ServerFPS
+        InputType: number
+        ParamFieldName: Performance.ServerFPS
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: fps
+        EnumValues: {}
+    - key: Performance.LoadedAreaLimit
+      label: Loaded Area Limit
+      category: LOTR Return to Moria
+      subcategory: Server
+      description: >-
+        Sets the maximum number of areas to keep loaded at once. This number greatly impacts memory, CPU usage and
+        bandwidth. The default of 12 generally supports 8 player sessions well
+      keywords: loaded,area,limit,LoadedAreaLimit
+      input_type: number
+      param_field_name: Performance.LoadedAreaLimit
+      default: '12'
+      placeholder: '12'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 4
+      max: 32
+      enum_values: {}
+      raw:
+        DisplayName: Loaded Area Limit
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of areas to keep loaded at once. This number greatly impacts memory, CPU usage and
+          bandwidth. The default of 12 generally supports 8 player sessions well
+        Keywords: loaded,area,limit,LoadedAreaLimit
+        FieldName: Performance.LoadedAreaLimit
+        InputType: number
+        MinValue: '4'
+        MaxValue: '32'
+        ParamFieldName: Performance.LoadedAreaLimit
+        DefaultValue: '12'
+        Placeholder: '12'
+        EnumValues: {}
+    - key: World.Create.Type
+      label: World Creation Type
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: Sets the type for world creation
+      keywords: type,world,create,creation,campaign,sandbox
+      input_type: enum
+      param_field_name: World.Create.Type
+      default: campaign
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        campaign: Campaign (default)
+        sandbox: Sandbox
+      raw:
+        DisplayName: World Creation Type
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the type for world creation
+        Keywords: type,world,create,creation,campaign,sandbox
+        FieldName: World.Create.Type
+        InputType: enum
+        ParamFieldName: World.Create.Type
+        DefaultValue: campaign
+        EnumValues:
+          campaign: Campaign (default)
+          sandbox: Sandbox
+    - key: World.Create.Seed
+      label: World Creation Seed
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: >-
+        Sets the seed for world creation. Specify 'random' to generate a random seed, or otherwise use a specific
+        integer
+      keywords: seed,world,create,creation
+      input_type: text
+      param_field_name: World.Create.Seed
+      default: random
+      placeholder: random
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Creation Seed
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the seed for world creation. Specify 'random' to generate a random seed, or otherwise use a specific
+          integer
+        Keywords: seed,world,create,creation
+        FieldName: World.Create.Seed
+        InputType: text
+        ParamFieldName: World.Create.Seed
+        DefaultValue: random
+        Placeholder: random
+        EnumValues: {}
+    - key: World.Create.OptionalDLC.Array
+      label: Optional DLCs For New Worlds
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: >-
+        Comma-separated list of DLCs enabled when creating a new world. Once a DLC is enabled for a world, it cannot be
+        disabled
+      keywords: dlc,optional,new,world,OptionalDLC.Array
+      input_type: text
+      param_field_name: World.Create.OptionalDLC.Array
+      default: DurinsFolk
+      placeholder: DurinsFolk
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Optional DLCs For New Worlds
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Comma-separated list of DLCs enabled when creating a new world. Once a DLC is enabled for a world, it cannot
+          be disabled
+        Keywords: dlc,optional,new,world,OptionalDLC.Array
+        FieldName: World.Create.OptionalDLC.Array
+        InputType: text
+        ParamFieldName: World.Create.OptionalDLC.Array
+        DefaultValue: DurinsFolk
+        Placeholder: DurinsFolk
+        EnumValues: {}
+    - key: World.Create.UpgradeOptionalDLC.Array
+      label: Upgrade Optional DLCs For Existing Worlds
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: >-
+        Comma-separated list of DLCs to apply when upgrading worlds without them. Once a DLC is enabled for a world, it
+        cannot be disabled
+      keywords: dlc,upgrade,existing,world,UpgradeOptionalDLC.Array
+      input_type: text
+      param_field_name: World.Create.UpgradeOptionalDLC.Array
+      default: ''
+      placeholder: DurinsFolk
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Upgrade Optional DLCs For Existing Worlds
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Comma-separated list of DLCs to apply when upgrading worlds without them. Once a DLC is enabled for a world,
+          it cannot be disabled
+        Keywords: dlc,upgrade,existing,world,UpgradeOptionalDLC.Array
+        FieldName: World.Create.UpgradeOptionalDLC.Array
+        InputType: text
+        ParamFieldName: World.Create.UpgradeOptionalDLC.Array
+        DefaultValue: ''
+        Placeholder: DurinsFolk
+        EnumValues: {}
+    - key: World.Create.Difficulty.Preset
+      label: Difficulty Level
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: Sets the difficulty level for world creation. If 'Custom' is selected, set the difficulty settings accordingly
+      keywords: difficulty,level,preset
+      input_type: enum
+      param_field_name: World.Create.Difficulty.Preset
+      default: normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        story: Story
+        solo: Solo
+        normal: Normal (default)
+        hard: Hard
+        custom: Custom
+      raw:
+        DisplayName: Difficulty Level
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the difficulty level for world creation. If 'Custom' is selected, set the difficulty settings accordingly
+        Keywords: difficulty,level,preset
+        FieldName: World.Create.Difficulty.Preset
+        InputType: enum
+        ParamFieldName: World.Create.Difficulty.Preset
+        DefaultValue: normal
+        EnumValues:
+          story: Story
+          solo: Solo
+          normal: Normal (default)
+          hard: Hard
+          custom: Custom
+    - key: World.Create.Difficulty.Custom.CombatDifficulty
+      label: Custom Combat Difficulty
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: Sets the base enemy damage and hit points. Only applicable to the 'Custom' Difficulty Level
+      keywords: difficulty,combat,CombatDifficulty
+      input_type: enum
+      param_field_name: World.Create.Difficulty.Custom.CombatDifficulty
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        verylow: Very low
+        low: Low
+        default: Default
+        high: High
+        veryhigh: Very high
+      raw:
+        DisplayName: Custom Combat Difficulty
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the base enemy damage and hit points. Only applicable to the 'Custom' Difficulty Level
+        Keywords: difficulty,combat,CombatDifficulty
+        FieldName: World.Create.Difficulty.Custom.CombatDifficulty
+        InputType: enum
+        ParamFieldName: World.Create.Difficulty.Custom.CombatDifficulty
+        DefaultValue: default
+        EnumValues:
+          verylow: Very low
+          low: Low
+          default: Default
+          high: High
+          veryhigh: Very high
+    - key: World.Create.Difficulty.Custom.EnemyAggression
+      label: Custom Enemy Aggression
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: Sets how often enemies attack and how many will attack at once. Only applicable to the 'Custom' Difficulty Level
+      keywords: difficulty,enemy,aggression,EnemyAggression
+      input_type: enum
+      param_field_name: World.Create.Difficulty.Custom.EnemyAggression
+      default: high
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        verylow: Very low
+        low: Low
+        default: Default
+        high: High
+        veryhigh: Very high
+      raw:
+        DisplayName: Custom Enemy Aggression
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets how often enemies attack and how many will attack at once. Only applicable to the 'Custom' Difficulty
+          Level
+        Keywords: difficulty,enemy,aggression,EnemyAggression
+        FieldName: World.Create.Difficulty.Custom.EnemyAggression
+        InputType: enum
+        ParamFieldName: World.Create.Difficulty.Custom.EnemyAggression
+        DefaultValue: high
+        EnumValues:
+          verylow: Very low
+          low: Low
+          default: Default
+          high: High
+          veryhigh: Very high
+    - key: World.Create.Difficulty.Custom.SurvivalDifficulty
+      label: Custom Survival Difficulty
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: >-
+        Sets the streangth of various buffs, the speed a dwarf succumbs to despair and the decay rates of stamina,
+        energy and hunger. Only applicable to the 'Custom' Difficulty Level
+      keywords: difficulty,survival,SurvivalDifficulty
+      input_type: enum
+      param_field_name: World.Create.Difficulty.Custom.SurvivalDifficulty
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        verylow: Very low
+        low: Low
+        default: Default
+        high: High
+        veryhigh: Very high
+      raw:
+        DisplayName: Custom Survival Difficulty
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the streangth of various buffs, the speed a dwarf succumbs to despair and the decay rates of stamina,
+          energy and hunger. Only applicable to the 'Custom' Difficulty Level
+        Keywords: difficulty,survival,SurvivalDifficulty
+        FieldName: World.Create.Difficulty.Custom.SurvivalDifficulty
+        InputType: enum
+        ParamFieldName: World.Create.Difficulty.Custom.SurvivalDifficulty
+        DefaultValue: default
+        EnumValues:
+          verylow: Very low
+          low: Low
+          default: Default
+          high: High
+          veryhigh: Very high
+    - key: World.Create.Difficulty.Custom.MiningDrops
+      label: Custom Mining Drops
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: Sets the volume of ore that drops from each vein. Only applicable to the 'Custom' Difficulty Level
+      keywords: difficulty,mining,drops,MiningDrops
+      input_type: enum
+      param_field_name: World.Create.Difficulty.Custom.MiningDrops
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        verylow: Very low
+        low: Low
+        default: Default
+        high: High
+        veryhigh: Very high
+      raw:
+        DisplayName: Custom Mining Drops
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the volume of ore that drops from each vein. Only applicable to the 'Custom' Difficulty Level
+        Keywords: difficulty,mining,drops,MiningDrops
+        FieldName: World.Create.Difficulty.Custom.MiningDrops
+        InputType: enum
+        ParamFieldName: World.Create.Difficulty.Custom.MiningDrops
+        DefaultValue: default
+        EnumValues:
+          verylow: Very low
+          low: Low
+          default: Default
+          high: High
+          veryhigh: Very high
+    - key: World.Create.Difficulty.Custom.WorldDrops
+      label: Custom World Drops
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: Sets the drop rates of rewards for defeating orcs and enemies. Only applicable to the 'Custom' Difficulty Level
+      keywords: difficulty,world,drops,WorldDrops
+      input_type: enum
+      param_field_name: World.Create.Difficulty.Custom.WorldDrops
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        verylow: Very low
+        low: Low
+        default: Default
+        high: High
+        veryhigh: Very high
+      raw:
+        DisplayName: Custom World Drops
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the drop rates of rewards for defeating orcs and enemies. Only applicable to the 'Custom' Difficulty
+          Level
+        Keywords: difficulty,world,drops,WorldDrops
+        FieldName: World.Create.Difficulty.Custom.WorldDrops
+        InputType: enum
+        ParamFieldName: World.Create.Difficulty.Custom.WorldDrops
+        DefaultValue: default
+        EnumValues:
+          verylow: Very low
+          low: Low
+          default: Default
+          high: High
+          veryhigh: Very high
+    - key: World.Create.Difficulty.Custom.HordeFrequency
+      label: Custom Horde Frequency
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: Sets how often noisy actions will trigger a horde of orcs. Only applicable to the 'Custom' Difficulty Level
+      keywords: difficulty,horde,frequency,HordeFrequency
+      input_type: enum
+      param_field_name: World.Create.Difficulty.Custom.HordeFrequency
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        verylow: Very low
+        low: Low
+        default: Default
+        high: High
+        veryhigh: Very high
+      raw:
+        DisplayName: Custom Horde Frequency
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how often noisy actions will trigger a horde of orcs. Only applicable to the 'Custom' Difficulty Level
+        Keywords: difficulty,horde,frequency,HordeFrequency
+        FieldName: World.Create.Difficulty.Custom.HordeFrequency
+        InputType: enum
+        ParamFieldName: World.Create.Difficulty.Custom.HordeFrequency
+        DefaultValue: default
+        EnumValues:
+          verylow: Very low
+          low: Low
+          default: Default
+          high: High
+          veryhigh: Very high
+    - key: World.Create.Difficulty.Custom.SiegeFrequency
+      label: Custom Siege Frequency
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: Sets how often orcs will target and attack a dwarf base. Only applicable to the 'Custom' Difficulty Level
+      keywords: difficulty,siege,frequency,SiegeFrequency
+      input_type: enum
+      param_field_name: World.Create.Difficulty.Custom.SiegeFrequency
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        verylow: Very low
+        low: Low
+        default: Default
+        high: High
+        veryhigh: Very high
+      raw:
+        DisplayName: Custom Siege Frequency
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how often orcs will target and attack a dwarf base. Only applicable to the 'Custom' Difficulty Level
+        Keywords: difficulty,siege,frequency,SiegeFrequency
+        FieldName: World.Create.Difficulty.Custom.SiegeFrequency
+        InputType: enum
+        ParamFieldName: World.Create.Difficulty.Custom.SiegeFrequency
+        DefaultValue: default
+        EnumValues:
+          verylow: Very low
+          low: Low
+          default: Default
+          high: High
+          veryhigh: Very high
+    - key: World.Create.Difficulty.Custom.PatrolFrequency
+      label: Custom Patrol Frequency
+      category: LOTR Return to Moria
+      subcategory: Gameplay
+      description: Sets the how often orc and enemy groups spawn. Only applicable to the 'Custom' Difficulty Level
+      keywords: difficulty,patrol,frequency,PatrolFrequency
+      input_type: enum
+      param_field_name: World.Create.Difficulty.Custom.PatrolFrequency
+      default: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        verylow: Very low
+        low: Low
+        default: Default
+        high: High
+        veryhigh: Very high
+      raw:
+        DisplayName: Custom Patrol Frequency
+        Category: LOTR Return to Moria:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the how often orc and enemy groups spawn. Only applicable to the 'Custom' Difficulty Level
+        Keywords: difficulty,patrol,frequency,PatrolFrequency
+        FieldName: World.Create.Difficulty.Custom.PatrolFrequency
+        InputType: enum
+        ParamFieldName: World.Create.Difficulty.Custom.PatrolFrequency
+        DefaultValue: default
+        EnumValues:
+          verylow: Very low
+          low: Low
+          default: Default
+          high: High
+          veryhigh: Very high
+  files:
+    - path: MoriaServerConfig.ini
+      type: ini
+      format: '{0}="{1}"'
+      subsections: []
+      raw:
+        ConfigFile: MoriaServerConfig.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0}="{1}"'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*"(?<value>.*?)"$
+    - path: MoriaServerConfig.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: MoriaServerConfig.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>[^"]*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: Console.Enabled
+    label: Enable Console
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Name
+    label: Server Name
+    default: 'AMP Powered LOTR: Return to Moria Server'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.OptionalWorldFilename
+    label: World Filename
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Main.Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Host.ListenAddress
+    label: Binding IP Address
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Host.AdvertiseAddress
+    label: Advertised IP Address
+    default: auto
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificAdvertiseAddress
+    label: Specific Advertise Address
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Host.AdvertisePort
+    label: Advertise Port
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Host.InitialConnectionRetryTime
+    label: Initial Connection Retry Time
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Host.AfterDisconnectionRetryTime
+    label: After Disconnection Retry Time
+    default: '600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Performance.ServerFPS
+    label: Server Tickrate
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Performance.LoadedAreaLimit
+    label: Loaded Area Limit
+    default: '12'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.Type
+    label: World Creation Type
+    default: campaign
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.Seed
+    label: World Creation Seed
+    default: random
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.OptionalDLC.Array
+    label: Optional DLCs For New Worlds
+    default: DurinsFolk
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.UpgradeOptionalDLC.Array
+    label: Upgrade Optional DLCs For Existing Worlds
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.Difficulty.Preset
+    label: Difficulty Level
+    default: normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.Difficulty.Custom.CombatDifficulty
+    label: Custom Combat Difficulty
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.Difficulty.Custom.EnemyAggression
+    label: Custom Enemy Aggression
+    default: high
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.Difficulty.Custom.SurvivalDifficulty
+    label: Custom Survival Difficulty
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.Difficulty.Custom.MiningDrops
+    label: Custom Mining Drops
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.Difficulty.Custom.WorldDrops
+    label: Custom World Drops
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.Difficulty.Custom.HordeFrequency
+    label: Custom Horde Frequency
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.Difficulty.Custom.SiegeFrequency
+    label: Custom Siege Frequency
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: World.Create.Difficulty.Custom.PatrolFrequency
+    label: Custom Patrol Frequency
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '2933130'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,16 @@ category: Imported
 summary: FOUNDRY Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2915550'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/xvfb-run
+  startup: /usr/bin/xvfb-run {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,437 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: serverport
+    name: Server Port
+    default: 3724
+    protocol: both
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: app.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: server_name
+      label: Server Name
+      category: FOUNDRY
+      subcategory: Server
+      description: Sets the name of the server as shown in the Steam server browser
+      keywords: name,server_name
+      input_type: text
+      param_field_name: server_name
+      default: AMP Powered FOUNDRY Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: FOUNDRY:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as shown in the Steam server browser
+        Keywords: name,server_name
+        FieldName: server_name
+        InputType: text
+        ParamFieldName: server_name
+        DefaultValue: AMP Powered FOUNDRY Server
+        EnumValues: {}
+    - key: mapseed
+      label: World Seed
+      category: FOUNDRY
+      subcategory: Server
+      description: Sets the map seed for generating a new world
+      keywords: world,map,seed,mapseed
+      input_type: number
+      param_field_name: mapseed
+      default: '{{randomdigits(11)}}'
+      placeholder: '42938743982'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Seed
+        Category: FOUNDRY:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map seed for generating a new world
+        Keywords: world,map,seed,mapseed
+        FieldName: mapseed
+        InputType: number
+        ParamFieldName: mapseed
+        DefaultValue: '{{randomdigits(11)}}'
+        Placeholder: '42938743982'
+        EnumValues: {}
+    - key: server_world_name
+      label: World Save Name
+      category: FOUNDRY
+      subcategory: Server
+      description: Sets the name of the world save to load, or to create if it does not exist
+      keywords: world,save,name,server_world_name
+      input_type: text
+      param_field_name: server_world_name
+      default: MyFancyFactory
+      placeholder: MyFancyFactory
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Save Name
+        Category: FOUNDRY:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the world save to load, or to create if it does not exist
+        Keywords: world,save,name,server_world_name
+        FieldName: server_world_name
+        InputType: text
+        ParamFieldName: server_world_name
+        DefaultValue: MyFancyFactory
+        Placeholder: MyFancyFactory
+        Required: true
+        EnumValues: {}
+    - key: server_is_public
+      label: Make Server Public
+      category: FOUNDRY
+      subcategory: Server
+      description: If set, the server will appear in the Steam server browser
+      keywords: server,public,browser,list,server_is_public
+      input_type: checkbox
+      param_field_name: server_is_public
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Make Server Public
+        Category: FOUNDRY:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will appear in the Steam server browser
+        Keywords: server,public,browser,list,server_is_public
+        FieldName: server_is_public
+        InputType: checkbox
+        ParamFieldName: server_is_public
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: server_password
+      label: Server Password
+      category: FOUNDRY
+      subcategory: Server
+      description: Sets the password for players to join the server. Default is no password
+      keywords: server,password,server_password
+      input_type: password
+      param_field_name: server_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: FOUNDRY:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for players to join the server. Default is no password
+        Keywords: server,password,server_password
+        FieldName: server_password
+        InputType: password
+        ParamFieldName: server_password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: FOUNDRY
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,limit,server_max_players
+      input_type: number
+      param_field_name: server_max_players
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: FOUNDRY:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,limit,server_max_players
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: server_max_players
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: players
+        EnumValues: {}
+    - key: pause_server_when_empty
+      label: Pause Server When Empty
+      category: FOUNDRY
+      subcategory: Server
+      description: If set, the server will pause when no players are logged in
+      keywords: pause,empty,pause_server_when_empty
+      input_type: checkbox
+      param_field_name: pause_server_when_empty
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Pause Server When Empty
+        Category: FOUNDRY:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will pause when no players are logged in
+        Keywords: pause,empty,pause_server_when_empty
+        FieldName: pause_server_when_empty
+        InputType: checkbox
+        ParamFieldName: pause_server_when_empty
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: max_transfer_rate
+      label: Maximum Data Transfer Rate
+      category: FOUNDRY
+      subcategory: Server
+      description: >-
+        Sets the maximum rate for transfer of server data to clients. Higher values may be needed to avoid timeouts with
+        larger world saves
+      keywords: transfer,rate,server,data,max_transfer_rate
+      input_type: number
+      param_field_name: max_transfer_rate
+      default: '1024'
+      placeholder: '1024'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 32000
+      suffix: kB/s
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Data Transfer Rate
+        Category: FOUNDRY:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum rate for transfer of server data to clients. Higher values may be needed to avoid timeouts
+          with larger world saves
+        Keywords: transfer,rate,server,data,max_transfer_rate
+        FieldName: max_transfer_rate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '32000'
+        ParamFieldName: max_transfer_rate
+        DefaultValue: '1024'
+        Placeholder: '1024'
+        Suffix: kB/s
+        EnumValues: {}
+    - key: autosave_interval
+      label: Autosave Interval
+      category: FOUNDRY
+      subcategory: Server
+      description: Sets the interval between server autosaves
+      keywords: autosave,interval,period,autosave_interval
+      input_type: number
+      param_field_name: autosave_interval
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Autosave Interval
+        Category: FOUNDRY:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the interval between server autosaves
+        Keywords: autosave,interval,period,autosave_interval
+        FieldName: autosave_interval
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: autosave_interval
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: >-
+        Sets the server branch to install. Set any required password under "Beta Password". Update the server after
+        switching branches
+      keywords: server,branch,public,hotfixtesting
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        hotfixtesting: Hotfix testing builds
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: >-
+          Sets the server branch to install. Set any required password under "Beta Password". Update the server after
+          switching branches
+        Keywords: server,branch,public,hotfixtesting
+        FieldName: ServerBranch
+        InputType: enum
+        ParamFieldName: ServerBranch
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          hotfixtesting: Hotfix testing builds
+  files:
+    - path: app.cfg
+      type: kvp
+      format: '{0}={1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            server_name: server_name
+            server_password: server_password
+            server_world_name: server_world_name
+            pause_server_when_empty: pause_server_when_empty
+            autosave_interval: autosave_interval
+            server_max_players: $MaxUsers
+            server_is_public: server_is_public
+            server_port: $ServerPort
+            server_query_port: $QueryPort
+            mapseed: mapseed
+            max_transfer_rate: max_transfer_rate
+            server_persistent_data_override_folder: .
+      raw:
+        ConfigFile: app.cfg
+        ConfigType: kvp
+        ConfigFormat: '{0}={1}'
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              server_name: server_name
+              server_password: server_password
+              server_world_name: server_world_name
+              pause_server_when_empty: pause_server_when_empty
+              autosave_interval: autosave_interval
+              server_max_players: $MaxUsers
+              server_is_public: server_is_public
+              server_port: $ServerPort
+              server_query_port: $QueryPort
+              mapseed: mapseed
+              max_transfer_rate: max_transfer_rate
+              server_persistent_data_override_folder: .
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: server_name
+    label: Server Name
+    default: AMP Powered FOUNDRY Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mapseed
+    label: World Seed
+    default: '{{randomdigits(11)}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_world_name
+    label: World Save Name
+    default: MyFancyFactory
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: server_is_public
+    label: Make Server Public
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: server_password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: pause_server_when_empty
+    label: Pause Server When Empty
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: max_transfer_rate
+    label: Maximum Data Transfer Rate
+    default: '1024'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autosave_interval
+    label: Autosave Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '983870'
+  collection_support: true
 backup:
   include:
     - /data

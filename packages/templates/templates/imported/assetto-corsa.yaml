@@ -5,13 +5,16 @@ category: Imported
 summary: Assetto Corsa Dedicated Server
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '302550'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 302550/acServer
+  startup: 302550/acServer {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1760 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
-    protocol: udp
+    default: 9600
+    protocol: both
     required: true
-config_files: []
+  - key: httpport
+    name: HTTP Port
+    default: 9601
+    protocol: tcp
+    required: true
+config_files:
+  - path: cfg/server_cfg.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: UDP Port
+      category: Assetto Corsa
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: SERVER.UDP_PORT
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: UDP Port
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: SERVER.UDP_PORT
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $GamePort
+      label: TCP Port
+      category: Assetto Corsa
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: SERVER.TCP_PORT
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: TCP Port
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: SERVER.TCP_PORT
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $HTTPPort
+      label: HTTP Port
+      category: Assetto Corsa
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: SERVER.HTTP_PORT
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: HTTP Port
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $HTTPPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: SERVER.HTTP_PORT
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: SERVER_NAME
+      label: Server Name
+      category: Assetto Corsa
+      subcategory: Server
+      description: The name of the server as it appears publicly
+      keywords: name
+      input_type: text
+      param_field_name: SERVER.NAME
+      default: Assetto Corsa Server - Powered by AMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The name of the server as it appears publicly
+        Keywords: name
+        FieldName: SERVER_NAME
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: SERVER.NAME
+        IncludeInCommandLine: false
+        DefaultValue: Assetto Corsa Server - Powered by AMP
+        EnumValues: {}
+    - key: SERVER_REGISTER_TO_LOBBY
+      label: Make Server Public
+      category: Assetto Corsa
+      subcategory: Server
+      description: If enabled, the server will be registered in the in-game lobby
+      keywords: public
+      input_type: checkbox
+      param_field_name: SERVER.REGISTER_TO_LOBBY
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Make Server Public
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will be registered in the in-game lobby
+        Keywords: public
+        FieldName: SERVER_REGISTER_TO_LOBBY
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SERVER.REGISTER_TO_LOBBY
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: SERVER_PASSWORD
+      label: Server Password
+      category: Assetto Corsa
+      subcategory: Server
+      description: Password to connect to the server. Default is no password
+      keywords: password
+      input_type: password
+      param_field_name: SERVER.PASSWORD
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Password to connect to the server. Default is no password
+        Keywords: password
+        FieldName: SERVER_PASSWORD
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: SERVER.PASSWORD
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: SERVER_ADMIN_PASSWORD
+      label: Admin Password
+      category: Assetto Corsa
+      subcategory: Server
+      description: >-
+        In-game "admin" user password (can be used to join instead of the server password). NOTE: Change this after
+        installing the server!
+      keywords: admin,password
+      input_type: password
+      param_field_name: SERVER.ADMIN_PASSWORD
+      default: mypassword
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          In-game "admin" user password (can be used to join instead of the server password). NOTE: Change this after
+          installing the server!
+        Keywords: admin,password
+        FieldName: SERVER_ADMIN_PASSWORD
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: SERVER.ADMIN_PASSWORD
+        IncludeInCommandLine: false
+        DefaultValue: mypassword
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Assetto Corsa
+      subcategory: Server
+      description: >-
+        Maximum number of players that may connect to the server. Must be less than the number of pits for the selected
+        track
+      keywords: players,limit
+      input_type: number
+      param_field_name: SERVER.MAX_CLIENTS
+      default: '18'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Maximum number of players that may connect to the server. Must be less than the number of pits for the
+          selected track
+        Keywords: players,limit
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: SERVER.MAX_CLIENTS
+        IncludeInCommandLine: false
+        DefaultValue: '18'
+        Suffix: players
+        EnumValues: {}
+        MinValue: '1'
+    - key: SERVER_BLACKLIST_MODE
+      label: Blacklist Mode
+      category: Assetto Corsa
+      subcategory: Server
+      description: Sets the blacklist mode
+      keywords: blacklist,mode
+      input_type: enum
+      param_field_name: SERVER.BLACKLIST_MODE
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Kick and allow rejoin
+        '1': Kick until server restart
+        '2': Kick and add to blacklist
+      raw:
+        DisplayName: Blacklist Mode
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the blacklist mode
+        Keywords: blacklist,mode
+        FieldName: SERVER_BLACKLIST_MODE
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: SERVER.BLACKLIST_MODE
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': Kick and allow rejoin
+          '1': Kick until server restart
+          '2': Kick and add to blacklist
+    - key: SERVER_KICK_QUORUM
+      label: Kick Quorum
+      category: Assetto Corsa
+      subcategory: Server
+      description: Voting percentage threshold required to kick a player
+      keywords: kick,quorum
+      input_type: number
+      param_field_name: SERVER.KICK_QUORUM
+      default: '85'
+      placeholder: '85'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Kick Quorum
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Voting percentage threshold required to kick a player
+        Keywords: kick,quorum
+        FieldName: SERVER_KICK_QUORUM
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: SERVER.KICK_QUORUM
+        IncludeInCommandLine: false
+        DefaultValue: '85'
+        Suffix: '%'
+        Placeholder: '85'
+        EnumValues: {}
+    - key: SERVER_VOTING_QUORUM
+      label: Voting Quorum
+      category: Assetto Corsa
+      subcategory: Server
+      description: Voting percentage threshold required for the SESSION vote to pass
+      keywords: vote,voting,quorum
+      input_type: number
+      param_field_name: SERVER.VOTING_QUORUM
+      default: '80'
+      placeholder: '80'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Voting Quorum
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Voting percentage threshold required for the SESSION vote to pass
+        Keywords: vote,voting,quorum
+        FieldName: SERVER_VOTING_QUORUM
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: SERVER.VOTING_QUORUM
+        IncludeInCommandLine: false
+        DefaultValue: '80'
+        Suffix: '%'
+        Placeholder: '80'
+        EnumValues: {}
+    - key: SERVER_VOTE_DURATION
+      label: Voting Duration
+      category: Assetto Corsa
+      subcategory: Server
+      description: Time during which a SESSION vote is open
+      keywords: vote,voting,duration
+      input_type: number
+      param_field_name: SERVER.VOTE_DURATION
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Voting Duration
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Time during which a SESSION vote is open
+        Keywords: vote,voting,duration
+        FieldName: SERVER_VOTE_DURATION
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: SERVER.VOTE_DURATION
+        IncludeInCommandLine: false
+        DefaultValue: '20'
+        Suffix: seconds
+        Placeholder: '20'
+        EnumValues: {}
+    - key: SERVER_TRACK
+      label: Track Selection
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the track for the server. Select a track name from "content/tracks"
+      keywords: track
+      input_type: text
+      param_field_name: SERVER.TRACK
+      default: magione
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Track Selection
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the track for the server. Select a track name from "content/tracks"
+        Keywords: track
+        FieldName: SERVER_TRACK
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: SERVER.TRACK
+        IncludeInCommandLine: false
+        DefaultValue: magione
+        EnumValues: {}
+    - key: SERVER_CONFIG_TRACK
+      label: Track Variant Selection
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the variant of the server track. Select a variant name for the selected track from "content/tracks/TRACK"
+      keywords: track,subversion
+      input_type: text
+      param_field_name: SERVER.CONFIG_TRACK
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Track Variant Selection
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the variant of the server track. Select a variant name for the selected track from "content/tracks/TRACK"
+        Keywords: track,subversion
+        FieldName: SERVER_CONFIG_TRACK
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: SERVER.CONFIG_TRACK
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: SERVER_CARS
+      label: Car Selection
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Semi-colon separated list of car types that are allowed on the server. Select car name(s) from "content/cars"
+      keywords: track
+      input_type: text
+      param_field_name: SERVER.CARS
+      default: bmw_m3_e30
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Car Selection
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Semi-colon separated list of car types that are allowed on the server. Select car name(s) from "content/cars"
+        Keywords: track
+        FieldName: SERVER_CARS
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: SERVER.CARS
+        IncludeInCommandLine: false
+        DefaultValue: bmw_m3_e30
+        EnumValues: {}
+    - key: RACE_NAME
+      label: Race Name
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the name of the race
+      keywords: race,name
+      input_type: text
+      param_field_name: RACE.NAME
+      default: Race
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Race Name
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the name of the race
+        Keywords: race,name
+        FieldName: RACE_NAME
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: RACE.NAME
+        IncludeInCommandLine: false
+        DefaultValue: Race
+        EnumValues: {}
+    - key: RACE_LAPS
+      label: Race Laps
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the number of laps for the race
+      keywords: race,laps
+      input_type: number
+      param_field_name: RACE.LAPS
+      default: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Race Laps
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of laps for the race
+        Keywords: race,laps
+        FieldName: RACE_LAPS
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: RACE.LAPS
+        IncludeInCommandLine: false
+        DefaultValue: '5'
+        EnumValues: {}
+    - key: RACE_WAIT_TIME
+      label: Race Wait Time
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the period of time before the start of the session
+      keywords: race,wait,time
+      input_type: number
+      param_field_name: RACE.WAIT_TIME
+      default: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Race Wait Time
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the period of time before the start of the session
+        Keywords: race,wait,time
+        FieldName: RACE_WAIT_TIME
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: RACE.WAIT_TIME
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        Suffix: seconds
+        EnumValues: {}
+    - key: SERVER_RACE_OVER_TIME
+      label: Race Over Time
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Time remaining to finish the race from the moment the first player passes the finish line
+      keywords: race,over,time
+      input_type: number
+      param_field_name: SERVER.RACE_OVER_TIME
+      default: '180'
+      placeholder: '180'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Race Over Time
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Time remaining to finish the race from the moment the first player passes the finish line
+        Keywords: race,over,time
+        FieldName: SERVER_RACE_OVER_TIME
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: SERVER.RACE_OVER_TIME
+        IncludeInCommandLine: false
+        DefaultValue: '180'
+        Suffix: seconds
+        Placeholder: '180'
+        EnumValues: {}
+    - key: RACE_IS_OPEN
+      label: Race Join Status
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the join status for the race
+      keywords: race,join,open
+      input_type: enum
+      param_field_name: RACE.IS_OPEN
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No join
+        '1': Free join
+        '2': Free join until 20 secs before green light
+      raw:
+        DisplayName: Race Join Status
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the join status for the race
+        Keywords: race,join,open
+        FieldName: RACE_IS_OPEN
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: RACE.IS_OPEN
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': No join
+          '1': Free join
+          '2': Free join until 20 secs before green light
+    - key: QUALIFY_NAME
+      label: Qualifying Session Name
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the name of the qualifying session
+      keywords: qualify,name
+      input_type: text
+      param_field_name: QUALIFY.NAME
+      default: Qualify
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Qualifying Session Name
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the name of the qualifying session
+        Keywords: qualify,name
+        FieldName: QUALIFY_NAME
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: QUALIFY.NAME
+        IncludeInCommandLine: false
+        DefaultValue: Qualify
+        EnumValues: {}
+    - key: QUALIFY_TIME
+      label: Qualifying Session Time
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the period of time for the qualifying session
+      keywords: qualify,time
+      input_type: number
+      param_field_name: QUALIFY.TIME
+      default: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Qualifying Session Time
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the period of time for the qualifying session
+        Keywords: qualify,time
+        FieldName: QUALIFY_TIME
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: QUALIFY.TIME
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Suffix: minutes
+        EnumValues: {}
+    - key: QUALIFY_IS_OPEN
+      label: Qualifying Session Join Status
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the join status for the qualifying session
+      keywords: qualify,join,open
+      input_type: enum
+      param_field_name: QUALIFY.IS_OPEN
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No join
+        '1': Free join
+      raw:
+        DisplayName: Qualifying Session Join Status
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the join status for the qualifying session
+        Keywords: qualify,join,open
+        FieldName: QUALIFY_IS_OPEN
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: QUALIFY.IS_OPEN
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': No join
+          '1': Free join
+    - key: PRACTICE_NAME
+      label: Practice Session Name
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the name of the practice session
+      keywords: practice,name
+      input_type: text
+      param_field_name: PRACTICE.NAME
+      default: Practice
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Practice Session Name
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the name of the practice session
+        Keywords: practice,name
+        FieldName: PRACTICE_NAME
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: PRACTICE.NAME
+        IncludeInCommandLine: false
+        DefaultValue: Practice
+        EnumValues: {}
+    - key: PRACTICE_TIME
+      label: Practice Session Time
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the period of time for the practice session
+      keywords: practice,time
+      input_type: number
+      param_field_name: PRACTICE_TIME
+      default: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Practice Session Time
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the period of time for the practice session
+        Keywords: practice,time
+        FieldName: PRACTICE_TIME
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: PRACTICE_TIME
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Suffix: minutes
+        EnumValues: {}
+    - key: PRACTICE_IS_OPEN
+      label: Practice Session Join Status
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the join status for the practice session
+      keywords: practice,join,open
+      input_type: enum
+      param_field_name: PRACTICE.IS_OPEN
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No join
+        '1': Free join
+      raw:
+        DisplayName: Practice Session Join Status
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the join status for the practice session
+        Keywords: practice,join,open
+        FieldName: PRACTICE_IS_OPEN
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: PRACTICE.IS_OPEN
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': No join
+          '1': Free join
+    - key: SERVER_LOOP_MODE
+      label: Enable Loop Mode
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: If enabled, the server restarts from the first track
+      keywords: loop,mode
+      input_type: checkbox
+      param_field_name: SERVER.LOOP_MODE
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Loop Mode
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the server restarts from the first track
+        Keywords: loop,mode
+        FieldName: SERVER_LOOP_MODE
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SERVER.LOOP_MODE
+        IncludeInCommandLine: false
+        SkipIfEmpty: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: SERVER_FUEL_RATE
+      label: Fuel Rate
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the fuel usage rate. 0 = no fuel usage, 100 = a realistic rate
+      keywords: fuel,rate
+      input_type: number
+      param_field_name: SERVER.FUEL_RATE
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Fuel Rate
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the fuel usage rate. 0 = no fuel usage, 100 = a realistic rate
+        Keywords: fuel,rate
+        FieldName: SERVER_FUEL_RATE
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: SERVER.FUEL_RATE
+        IncludeInCommandLine: false
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: SERVER_DAMAGE_MULTIPLIER
+      label: Damage Multiplier
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the damage multiplier
+      keywords: damage,multiplier
+      input_type: number
+      param_field_name: SERVER.DAMAGE_MULTIPLIER
+      default: '100'
+      placeholder: 0-100
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Damage Multiplier
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the damage multiplier
+        Keywords: damage,multiplier
+        FieldName: SERVER_DAMAGE_MULTIPLIER
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: SERVER.DAMAGE_MULTIPLIER
+        IncludeInCommandLine: false
+        DefaultValue: '100'
+        Placeholder: 0-100
+        EnumValues: {}
+    - key: SERVER_LEGAL_TYRES
+      label: Tyre Types Allowed
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: >-
+        Semi-colon separated list of tyre shortnames that are allowed on the server. Select from SV, ST, SM, SS, S, M,
+        H, SH, HR, I, V
+      keywords: legal,tyres
+      input_type: text
+      param_field_name: SERVER.LEGAL_TYRES
+      default: SV
+      placeholder: V;E;HR;ST
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Tyre Types Allowed
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Semi-colon separated list of tyre shortnames that are allowed on the server. Select from SV, ST, SM, SS, S, M,
+          H, SH, HR, I, V
+        Keywords: legal,tyres
+        FieldName: SERVER_LEGAL_TYRES
+        InputType: text
+        IsFlagArgument: false
+        Hidden: false
+        ParamFieldName: SERVER.LEGAL_TYRES
+        IncludeInCommandLine: false
+        DefaultValue: SV
+        Placeholder: V;E;HR;ST
+        EnumValues: {}
+    - key: SERVER_TYRE_WEAR_RATE
+      label: Tyre Wear Rate
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the tyre wear usage rate. 0 = no tyre wear, 100 = a realistic rate
+      keywords: tyre,wear,rate
+      input_type: number
+      param_field_name: SERVER.TYRE_WEAR_RATE
+      default: '100'
+      placeholder: 0-100
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Tyre Wear Rate
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the tyre wear usage rate. 0 = no tyre wear, 100 = a realistic rate
+        Keywords: tyre,wear,rate
+        FieldName: SERVER_TYRE_WEAR_RATE
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: SERVER.TYRE_WEAR_RATE
+        IncludeInCommandLine: false
+        DefaultValue: '100'
+        Placeholder: 0-100
+        EnumValues: {}
+    - key: SERVER_TYRE_BLANKETS_ALLOWED
+      label: Enable Tyre Blankets
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: If enabled, tyres will have optimal temperature at the start of a session and after a pitstop
+      keywords: tyre,blankets
+      input_type: checkbox
+      param_field_name: SERVER.TYRE_BLANKETS_ALLOWED
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Tyre Blankets
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, tyres will have optimal temperature at the start of a session and after a pitstop
+        Keywords: tyre,blankets
+        FieldName: SERVER_TYRE_BLANKETS_ALLOWED
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SERVER.TYRE_BLANKETS_ALLOWED
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: SERVER_ALLOWED_TYRES_OUT
+      label: Allowed Tyres Out Number
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the number of tyres allowed to be off-track without invalidating a lap
+      keywords: tyres,out
+      input_type: number
+      param_field_name: SERVER.ALLOWED_TYRES_OUT
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Allowed Tyres Out Number
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of tyres allowed to be off-track without invalidating a lap
+        Keywords: tyres,out
+        FieldName: SERVER_ALLOWED_TYRES_OUT
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: SERVER.ALLOWED_TYRES_OUT
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        Placeholder: '2'
+        EnumValues: {}
+    - key: SERVER_ABS_ALLOWED
+      label: Allow Anti-lock Braking System
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets whether anti-lock braking system is allowed
+      keywords: abs,anti-lock,braking
+      input_type: enum
+      param_field_name: SERVER.ABS_ALLOWED
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No car can use
+        '1': Only cars given ABS can use
+        '2': Any car can use
+      raw:
+        DisplayName: Allow Anti-lock Braking System
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets whether anti-lock braking system is allowed
+        Keywords: abs,anti-lock,braking
+        FieldName: SERVER_ABS_ALLOWED
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: SERVER.ABS_ALLOWED
+        IncludeInCommandLine: false
+        SkipIfEmpty: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': No car can use
+          '1': Only cars given ABS can use
+          '2': Any car can use
+    - key: SERVER_TC_ALLOWED
+      label: Allow Traction Control
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets whether traction control is allowed
+      keywords: tc,traction,control
+      input_type: enum
+      param_field_name: SERVER.TC_ALLOWED
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No car can use
+        '1': Only cars given TC can use
+        '2': Any car can use
+      raw:
+        DisplayName: Allow Traction Control
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets whether traction control is allowed
+        Keywords: tc,traction,control
+        FieldName: SERVER_TC_ALLOWED
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: SERVER.TC_ALLOWED
+        IncludeInCommandLine: false
+        SkipIfEmpty: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': No car can use
+          '1': Only cars given TC can use
+          '2': Any car can use
+    - key: SERVER_STABILITY_ALLOWED
+      label: Enable Stability Assist
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: If enabled, stability assist will apply
+      keywords: stability,assist
+      input_type: checkbox
+      param_field_name: SERVER.STABILITY_ALLOWED
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Stability Assist
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, stability assist will apply
+        Keywords: stability,assist
+        FieldName: SERVER_STABILITY_ALLOWED
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SERVER.STABILITY_ALLOWED
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: SERVER_AUTOCLUTCH_ALLOWED
+      label: Enable Autoclutch Assist
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: If enabled, autoclutch assist will apply
+      keywords: auto,clutch,assist
+      input_type: checkbox
+      param_field_name: SERVER.AUTOCLUTCH_ALLOWED
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Autoclutch Assist
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, autoclutch assist will apply
+        Keywords: auto,clutch,assist
+        FieldName: SERVER_AUTOCLUTCH_ALLOWED
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SERVER.AUTOCLUTCH_ALLOWED
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: SERVER_FORCE_VIRTUAL_MIRROR
+      label: Enable Virtual Mirror
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: If enabled, a virtual mirror will be enabled for every player
+      keywords: force,virtual,mirror
+      input_type: checkbox
+      param_field_name: SERVER.FORCE_VIRTUAL_MIRROR
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Virtual Mirror
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, a virtual mirror will be enabled for every player
+        Keywords: force,virtual,mirror
+        FieldName: SERVER_FORCE_VIRTUAL_MIRROR
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SERVER.FORCE_VIRTUAL_MIRROR
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: SERVER_SUN_ANGLE
+      label: Sun Position Angle
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the angle of the position of the sun
+      keywords: sun,angle
+      input_type: number
+      param_field_name: SERVER.SUN_ANGLE
+      default: '48'
+      placeholder: '48'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: degrees
+      enum_values: {}
+      raw:
+        DisplayName: Sun Position Angle
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the angle of the position of the sun
+        Keywords: sun,angle
+        FieldName: SERVER_SUN_ANGLE
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: SERVER.SUN_ANGLE
+        IncludeInCommandLine: false
+        DefaultValue: '48'
+        Suffix: degrees
+        Placeholder: '48'
+        EnumValues: {}
+    - key: DYNAMIC_TRACK_SESSION_START
+      label: Session Starting Grip
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the percentage level of grip at the start of the session
+      keywords: session,start,grip
+      input_type: number
+      param_field_name: DYNAMIC_TRACK.SESSION_START
+      default: '95'
+      placeholder: '95'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Session Starting Grip
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the percentage level of grip at the start of the session
+        Keywords: session,start,grip
+        FieldName: DYNAMIC_TRACK_SESSION_START
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: DYNAMIC_TRACK.SESSION_START
+        IncludeInCommandLine: false
+        DefaultValue: '95'
+        Suffix: '%'
+        Placeholder: '95'
+        EnumValues: {}
+    - key: DYNAMIC_TRACK_RANDOMNESS
+      label: Session Starting Grip Randomness
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the level of randomness added to the session starting grip
+      keywords: session,start,grip,random
+      input_type: number
+      param_field_name: DYNAMIC_TRACK.RANDOMNESS
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Session Starting Grip Randomness
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the level of randomness added to the session starting grip
+        Keywords: session,start,grip,random
+        FieldName: DYNAMIC_TRACK_RANDOMNESS
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: DYNAMIC_TRACK.RANDOMNESS
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        Suffix: '%'
+        Placeholder: '2'
+        EnumValues: {}
+    - key: DYNAMIC_TRACK_LAP_GAIN
+      label: Laps for Grip Gain
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: Sets the number of laps needed to add 1% grip
+      keywords: grip,gain,laps
+      input_type: number
+      param_field_name: DYNAMIC_TRACK.LAP_GAIN
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Laps for Grip Gain
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of laps needed to add 1% grip
+        Keywords: grip,gain,laps
+        FieldName: DYNAMIC_TRACK_LAP_GAIN
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: DYNAMIC_TRACK.LAP_GAIN
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+    - key: DYNAMIC_TRACK_SESSION_TRANSFER
+      label: Grip Session Transfer
+      category: Assetto Corsa
+      subcategory: Gameplay
+      description: >-
+        Sets how much of the gained grip is to be added to the next session (as a percentage). 100 = all of the gained
+        grip
+      keywords: grip,gain,session,transfer
+      input_type: number
+      param_field_name: DYNAMIC_TRACK.SESSION_TRANSFER
+      default: '90'
+      placeholder: '90'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 100
+      suffix: '%'
+      enum_values: {}
+      raw:
+        DisplayName: Grip Session Transfer
+        Category: Assetto Corsa:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets how much of the gained grip is to be added to the next session (as a percentage). 100 = all of the gained
+          grip
+        Keywords: grip,gain,session,transfer
+        FieldName: DYNAMIC_TRACK_SESSION_TRANSFER
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        IsFlagArgument: false
+        ParamFieldName: DYNAMIC_TRACK.SESSION_TRANSFER
+        IncludeInCommandLine: false
+        DefaultValue: '90'
+        Suffix: '%'
+        Placeholder: '90'
+        EnumValues: {}
+    - key: ServerVersion
+      label: Server Version
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the server version to install. The Modded version is installed from the
+        [AssettoServer](https://assettoserver.org/) repo. Select the required Dotnet Version as well. NOTE: Update the
+        server after switching versions!
+      keywords: server,version,modded
+      input_type: enum
+      param_field_name: ServerVersion
+      default: vanilla
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        vanilla: Vanilla (default)
+        modded: Modded (AssettoServer)
+      raw:
+        DisplayName: Server Version
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the server version to install. The Modded version is installed from the
+          [AssettoServer](https://assettoserver.org/) repo. Select the required Dotnet Version as well. NOTE: Update the
+          server after switching versions!
+        Keywords: server,version,modded
+        FieldName: ServerVersion
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ServerVersion
+        IncludeInCommandLine: false
+        DefaultValue: vanilla
+        EnumValues:
+          vanilla: Vanilla (default)
+          modded: Modded (AssettoServer)
+    - key: DotnetVersion
+      label: Dotnet Version
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the [ASP.NET Core Runtime 7.0 version](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) to install
+        for the Modded server. Empty = latest. NOTE: Update the server after switching versions!
+      keywords: dotnet,version
+      input_type: text
+      param_field_name: DotnetVersion
+      default: ''
+      placeholder: 7.0.5
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Dotnet Version
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the [ASP.NET Core Runtime 7.0 version](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) to install
+          for the Modded server. Empty = latest. NOTE: Update the server after switching versions!
+        Keywords: dotnet,version
+        FieldName: DotnetVersion
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: DotnetVersion
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: 7.0.5
+        EnumValues: {}
+  files:
+    - path: cfg/server_cfg.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: cfg/server_cfg.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: SERVER_NAME
+    label: Server Name
+    default: Assetto Corsa Server - Powered by AMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_REGISTER_TO_LOBBY
+    label: Make Server Public
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_PASSWORD
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: SERVER_ADMIN_PASSWORD
+    label: Admin Password
+    default: mypassword
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: SERVER_BLACKLIST_MODE
+    label: Blacklist Mode
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_KICK_QUORUM
+    label: Kick Quorum
+    default: '85'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_VOTING_QUORUM
+    label: Voting Quorum
+    default: '80'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_VOTE_DURATION
+    label: Voting Duration
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_TRACK
+    label: Track Selection
+    default: magione
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_CONFIG_TRACK
+    label: Track Variant Selection
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_CARS
+    label: Car Selection
+    default: bmw_m3_e30
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RACE_NAME
+    label: Race Name
+    default: Race
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RACE_LAPS
+    label: Race Laps
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RACE_WAIT_TIME
+    label: Race Wait Time
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_RACE_OVER_TIME
+    label: Race Over Time
+    default: '180'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RACE_IS_OPEN
+    label: Race Join Status
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: QUALIFY_NAME
+    label: Qualifying Session Name
+    default: Qualify
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: QUALIFY_TIME
+    label: Qualifying Session Time
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: QUALIFY_IS_OPEN
+    label: Qualifying Session Join Status
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PRACTICE_NAME
+    label: Practice Session Name
+    default: Practice
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PRACTICE_TIME
+    label: Practice Session Time
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PRACTICE_IS_OPEN
+    label: Practice Session Join Status
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_LOOP_MODE
+    label: Enable Loop Mode
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_FUEL_RATE
+    label: Fuel Rate
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_DAMAGE_MULTIPLIER
+    label: Damage Multiplier
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_LEGAL_TYRES
+    label: Tyre Types Allowed
+    default: SV
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_TYRE_WEAR_RATE
+    label: Tyre Wear Rate
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_TYRE_BLANKETS_ALLOWED
+    label: Enable Tyre Blankets
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_ALLOWED_TYRES_OUT
+    label: Allowed Tyres Out Number
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_ABS_ALLOWED
+    label: Allow Anti-lock Braking System
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_TC_ALLOWED
+    label: Allow Traction Control
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_STABILITY_ALLOWED
+    label: Enable Stability Assist
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_AUTOCLUTCH_ALLOWED
+    label: Enable Autoclutch Assist
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_FORCE_VIRTUAL_MIRROR
+    label: Enable Virtual Mirror
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SERVER_SUN_ANGLE
+    label: Sun Position Angle
+    default: '48'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DYNAMIC_TRACK_SESSION_START
+    label: Session Starting Grip
+    default: '95'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DYNAMIC_TRACK_RANDOMNESS
+    label: Session Starting Grip Randomness
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DYNAMIC_TRACK_LAP_GAIN
+    label: Laps for Grip Gain
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DYNAMIC_TRACK_SESSION_TRANSFER
+    label: Grip Session Transfer
+    default: '90'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerVersion
+    label: Server Version
+    default: vanilla
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DotnetVersion
+    label: Dotnet Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '244210'
+  collection_support: true
 backup:
   include:
     - /data

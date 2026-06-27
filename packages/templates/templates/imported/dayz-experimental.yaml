@@ -5,13 +5,19 @@ category: Imported
 summary: DayZ (Experimental) Dedicated Server
 install:
   method: steamcmd
-  app_id: NotMods
+  app_id: '1042420'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1042420/DayZServer
+  startup: >-
+    1042420/DayZServer {PlatformArgs} "-profiles={FullBaseDir}DayZServerData" "-bepath={FullBaseDir}battleye"
+    -port={GamePort} -config=serverDZ.cfg {doLogs}-adminLog -freezeCheck -ip={ApplicationIPBinding} {FormattedArgs}
+    {filePatching}{EnableLimitFPS}{CustomServerArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +25,2871 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 2302
     protocol: udp
     required: true
-config_files: []
+  - key: reservedport
+    name: Reserved Port
+    default: 2303
+    protocol: udp
+    required: true
+  - key: battleyeport
+    name: BattlEye Port
+    default: 2304
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Steam Query Port
+    default: 27016
+    protocol: udp
+    required: true
+  - key: rconport
+    name: RCON Port
+    default: 2305
+    protocol: udp
+    required: true
+config_files:
+  - path: ./serverDZ.cfg
+    type: text
+    editable: true
+  - path: ./battleye/beserver_x64.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $QueryPort
+      label: Steam Query Port
+      category: DayZ
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: steamQueryPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Steam Query Port
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: steamQueryPort
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: hostname
+      label: Server Name
+      category: DayZ
+      subcategory: Server
+      description: Sets the server name visible in the game browser
+      keywords: server,name,hostname
+      input_type: text
+      param_field_name: hostname
+      default: AMP Powered DayZ Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server name visible in the game browser
+        Keywords: server,name,hostname
+        FieldName: hostname
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: hostname
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered DayZ Server
+        EnumValues: {}
+    - key: password
+      label: Server Password
+      category: DayZ
+      subcategory: Server
+      description: Sets the password required to connect to the server. Default is no password
+      keywords: server,password
+      input_type: password
+      param_field_name: password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server. Default is no password
+        Keywords: server,password
+        FieldName: password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: passwordAdmin
+      label: Admin Password
+      category: DayZ
+      subcategory: Server
+      description: Sets the password required for admin access to the server. Default is no password
+      keywords: server,admin,passwordadmin
+      input_type: password
+      param_field_name: passwordAdmin
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for admin access to the server. Default is no password
+        Keywords: server,admin,passwordadmin
+        FieldName: passwordAdmin
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: passwordAdmin
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: RCONPassword
+      label: RCON Password
+      category: DayZ
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's RCON
+      keywords: rcon,password
+      input_type: hidden
+      param_field_name: RCONPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's RCON
+        Keywords: rcon,password
+        FieldName: RCONPassword
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: RCONPassword
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: motd
+      label: Message Of The Day
+      category: DayZ
+      subcategory: Server
+      description: Sets the player welcome message (MOTD). Format is "Line1","Line2"
+      keywords: motd,welcome,message
+      input_type: text
+      param_field_name: motd
+      default: '"Welcome to DayZ","Hosted using AMP by CubeCoders"'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Message Of The Day
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the player welcome message (MOTD). Format is "Line1","Line2"
+        Keywords: motd,welcome,message
+        FieldName: motd
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: motd
+        IncludeInCommandLine: false
+        DefaultValue: '"Welcome to DayZ","Hosted using AMP by CubeCoders"'
+        EnumValues: {}
+    - key: motdInterval
+      label: MOTD Interval
+      category: DayZ
+      subcategory: Server
+      description: Sets the time interval between between display of each line of the MOTD
+      keywords: motd,message,delay,interval,motdinterval
+      input_type: number
+      param_field_name: motdInterval
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: MOTD Interval
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time interval between between display of each line of the MOTD
+        Keywords: motd,message,delay,interval,motdinterval
+        FieldName: motdInterval
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: motdInterval
+        IncludeInCommandLine: false
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: seconds
+        EnumValues: {}
+    - key: enableWhitelist
+      label: Enable Whitelist
+      category: DayZ
+      subcategory: Server
+      description: If set, enables the server whitelist. Enter Player IDs under "Whitelisted Players"
+      keywords: whitelist,userlist,allowlist,enablewhitelist
+      input_type: checkbox
+      param_field_name: enableWhitelist
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Whitelist
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, enables the server whitelist. Enter Player IDs under "Whitelisted Players"
+        Keywords: whitelist,userlist,allowlist,enablewhitelist
+        FieldName: enableWhitelist
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: enableWhitelist
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: AdminPlayers
+      label: Whitelisted Players
+      category: DayZ
+      subcategory: Server
+      description: >-
+        Sets a list of whitelisted Player IDs (44 characters long ID), which can be found in the admin log file (.ADM).
+        Comments can be added after two forward slashes. Example: 1111111111112222222222222333333333XXXXXXAAAA //Bilbo
+        Baggins
+      keywords: ''
+      input_type: list
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./dayz/1042420/whitelist.txt
+      raw:
+        DisplayName: Whitelisted Players
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a list of whitelisted Player IDs (44 characters long ID), which can be found in the admin log file
+          (.ADM). Comments can be added after two forward slashes. Example: 1111111111112222222222222333333333XXXXXXAAAA
+          //Bilbo Baggins
+        FieldName: AdminPlayers
+        InputType: list
+        Special: listfile:./dayz/1042420/whitelist.txt
+    - key: BanPlayers
+      label: Banned Players
+      category: DayZ
+      subcategory: Server
+      description: >-
+        Sets a list of banned Player IDs, in the same format as Whitelisted Players. These bans are separate to BattlEye
+        bans
+      keywords: ''
+      input_type: list
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./dayz/1042420/ban.txt
+      raw:
+        DisplayName: Banned Players
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a list of banned Player IDs, in the same format as Whitelisted Players. These bans are separate to
+          BattlEye bans
+        FieldName: BanPlayers
+        InputType: list
+        Special: listfile:./dayz/1042420/ban.txt
+    - key: instanceId
+      label: Instance ID
+      category: DayZ
+      subcategory: Server
+      description: >-
+        Sets the DayZ server instance ID, to identify the number of instances per box and their storage folders with
+        persistence files
+      keywords: instance,id,instanceid
+      input_type: number
+      param_field_name: instanceId
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Instance ID
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the DayZ server instance ID, to identify the number of instances per box and their storage folders with
+          persistence files
+        Keywords: instance,id,instanceid
+        FieldName: instanceId
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: instanceId
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: template
+      label: Server Mission
+      category: DayZ
+      subcategory: Server
+      description: >-
+        Sets the mission to load on server startup. If Custom is selected, the "Custom Mission Name" must also be
+        specified
+      keywords: mission,terrain,template
+      input_type: enum
+      param_field_name: template
+      default: dayzOffline.chernarusplus
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        dayzOffline.chernarusplus: Vanilla - Chernarus Plus (default)
+        dayzOffline.enoch: Livonia DLC - Enoch
+        dayzOffline.sakhal: Frostline DLC - Sakhal
+        '{{customTemplate}}': Custom
+      raw:
+        DisplayName: Server Mission
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the mission to load on server startup. If Custom is selected, the "Custom Mission Name" must also be
+          specified
+        Keywords: mission,terrain,template
+        FieldName: template
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: template
+        IncludeInCommandLine: false
+        DefaultValue: dayzOffline.chernarusplus
+        EnumValues:
+          dayzOffline.chernarusplus: Vanilla - Chernarus Plus (default)
+          dayzOffline.enoch: Livonia DLC - Enoch
+          dayzOffline.sakhal: Frostline DLC - Sakhal
+          '{{customTemplate}}': Custom
+    - key: customTemplate
+      label: Custom Mission Name
+      category: DayZ
+      subcategory: Server
+      description: >-
+        Sets a custom mission to load on startup. Format is <MissionName>.<TerrainName>. The Custom mission type must be
+        selected under "Server Mission"
+      keywords: mission,terrain,template,customtemplate
+      input_type: text
+      param_field_name: customTemplate
+      default: ''
+      placeholder: Expansion.ChenarusPlus
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Mission Name
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a custom mission to load on startup. Format is <MissionName>.<TerrainName>. The Custom mission type must
+          be selected under "Server Mission"
+        Keywords: mission,terrain,template,customtemplate
+        FieldName: customTemplate
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: customTemplate
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: Expansion.ChenarusPlus
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: DayZ
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,clients,limit,maxplayers
+      input_type: number
+      param_field_name: maxPlayers
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,clients,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: maxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: players
+        EnumValues: {}
+    - key: loginQueueMaxPlayers
+      label: Login Queue Limit
+      category: DayZ
+      subcategory: Server
+      description: Sets the maximum number of players that can wait in the server login queue
+      keywords: login,queue,loginqueuemaxplayers
+      input_type: number
+      param_field_name: loginQueueMaxPlayers
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Login Queue Limit
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that can wait in the server login queue
+        Keywords: login,queue,loginqueuemaxplayers
+        FieldName: loginQueueMaxPlayers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: loginQueueMaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '500'
+        Placeholder: '500'
+        Suffix: players
+        EnumValues: {}
+    - key: loginQueueConcurrentPlayers
+      label: Login Queue Concurrent Players
+      category: DayZ
+      subcategory: Server
+      description: >-
+        Sets the number of players concurrently processed during the login process, to prevent a performance drop when
+        many people are connecting at the same time
+      keywords: login,queue,loginqueueconcurrentplayers
+      input_type: number
+      param_field_name: loginQueueConcurrentPlayers
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Login Queue Concurrent Players
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the number of players concurrently processed during the login process, to prevent a performance drop when
+          many people are connecting at the same time
+        Keywords: login,queue,loginqueueconcurrentplayers
+        FieldName: loginQueueConcurrentPlayers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: loginQueueConcurrentPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: players
+        EnumValues: {}
+    - key: mod
+      label: Load Mods
+      category: DayZ
+      subcategory: Server
+      description: >-
+        Semi-colon separated list (moddir1;moddir2) of [mod
+        directories](https://discourse.cubecoders.com/t/dayz-server-guide/3454#p-7248-h-52-loading-7) to load (not
+        server-side only mods). ONE LINE ONLY! Specify simply the mod ID or @modname (as applicable to the Updates
+        settings) for any mods downloaded under Updates or the Store. Otherwise, use mod directory paths relative to the
+        server base directory or full paths
+      keywords: mods,addons,modding,modification,workshop,plugins,mod
+      input_type: Textarea
+      param_field_name: mod
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Load Mods
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Semi-colon separated list (moddir1;moddir2) of [mod
+          directories](https://discourse.cubecoders.com/t/dayz-server-guide/3454#p-7248-h-52-loading-7) to load (not
+          server-side only mods). ONE LINE ONLY! Specify simply the mod ID or @modname (as applicable to the Updates
+          settings) for any mods downloaded under Updates or the Store. Otherwise, use mod directory paths relative to
+          the server base directory or full paths
+        Keywords: mods,addons,modding,modification,workshop,plugins,mod
+        FieldName: mod
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: mod
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: serverMod
+      label: Load Server Mods
+      category: DayZ
+      subcategory: Server
+      description: >-
+        Semi-colon separated list (moddir1;moddir2) of [server-side only mod
+        directories](https://discourse.cubecoders.com/t/dayz-server-guide/3454#p-7248-h-52-loading-7) to load (the mods
+        are not broadcast to clients). ONE LINE ONLY! Specify simply the mod ID or @modname (as applicable to the
+        Updates settings) for any mods downloaded under Updates or the Store. Otherwise, use mod directory paths
+        relative to the server base directory or full paths
+      keywords: mods,addons,modding,modification,workshop,plugins,server,servermod
+      input_type: Textarea
+      param_field_name: serverMod
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Load Server Mods
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Semi-colon separated list (moddir1;moddir2) of [server-side only mod
+          directories](https://discourse.cubecoders.com/t/dayz-server-guide/3454#p-7248-h-52-loading-7) to load (the
+          mods are not broadcast to clients). ONE LINE ONLY! Specify simply the mod ID or @modname (as applicable to the
+          Updates settings) for any mods downloaded under Updates or the Store. Otherwise, use mod directory paths
+          relative to the server base directory or full paths
+        Keywords: mods,addons,modding,modification,workshop,plugins,server,servermod
+        FieldName: serverMod
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: serverMod
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: clientmod
+      label: Client Mods
+      category: DayZ
+      subcategory: Server
+      description: >-
+        Semi-colon separated list (moddir1;moddir2) of [client-side only mod
+        directories](https://discourse.cubecoders.com/t/dayz-server-guide/3454#p-7248-h-52-loading-7). ONE LINE ONLY!
+        These won't be loaded by the server, but will be used by the Manage Bikeys setting if enabled. Specify simply
+        the mod ID or @modname (as applicable to the Updates settings) for any mods downloaded under Updates or the
+        Store. Otherwise, use mod directory paths relative to the server base directory or full paths
+      keywords: mods,addons,modding,modification,workshop,plugins,client,clientmod
+      input_type: Textarea
+      param_field_name: clientmod
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Client Mods
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Semi-colon separated list (moddir1;moddir2) of [client-side only mod
+          directories](https://discourse.cubecoders.com/t/dayz-server-guide/3454#p-7248-h-52-loading-7). ONE LINE ONLY!
+          These won't be loaded by the server, but will be used by the Manage Bikeys setting if enabled. Specify simply
+          the mod ID or @modname (as applicable to the Updates settings) for any mods downloaded under Updates or the
+          Store. Otherwise, use mod directory paths relative to the server base directory or full paths
+        Keywords: mods,addons,modding,modification,workshop,plugins,client,clientmod
+        FieldName: clientmod
+        InputType: Textarea
+        ParamFieldName: clientmod
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ManageBikeys
+      label: Manage Bikeys
+      category: DayZ
+      subcategory: Server
+      description: >-
+        If enabled, the bikey files for each of the mods specified in Load Mods and Client Mods will be copied to the
+        'keys' directory on server start, to enable addon signature verification. All existing bikeys in that directory
+        (other than the default 'dayz.bikey') will be deleted
+      keywords: mods,addons,bikeys
+      input_type: checkbox
+      param_field_name: ManageBikeys
+      default: 'false'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Manage Bikeys
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the bikey files for each of the mods specified in Load Mods and Client Mods will be copied to the
+          'keys' directory on server start, to enable addon signature verification. All existing bikeys in that
+          directory (other than the default 'dayz.bikey') will be deleted
+        Keywords: mods,addons,bikeys
+        FieldName: ManageBikeys
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: ManageBikeys
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ip
+      label: Server/RCON IP Binding
+      category: DayZ
+      subcategory: Server
+      description: >-
+        If required, you can change the binding of the server and BattlEye RCON by changing the Application IP Binding
+        for this instance. NOTE: The IP must be reachable by AMP, otherwise AMP's console won't work
+      keywords: ip,binding
+      input_type: hidden
+      param_field_name: ip
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server/RCON IP Binding
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If required, you can change the binding of the server and BattlEye RCON by changing the Application IP Binding
+          for this instance. NOTE: The IP must be reachable by AMP, otherwise AMP's console won't work
+        Keywords: ip,binding
+        FieldName: ip
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ip
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: filePatching
+      label: Enable Server File Patching
+      category: DayZ
+      subcategory: Server
+      description: If enabled, allows loading of unpacked data
+      keywords: file,patching,filepatching
+      input_type: checkbox
+      param_field_name: filePatching
+      default: '-filePatching '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-filePatching '
+      raw:
+        DisplayName: Enable Server File Patching
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, allows loading of unpacked data
+        Keywords: file,patching,filepatching
+        FieldName: filePatching
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: filePatching
+        IncludeInCommandLine: false
+        DefaultValue: '-filePatching '
+        EnumValues:
+          'False': ''
+          'True': '-filePatching '
+    - key: allowFilePatching
+      label: Allow Client File Patching
+      category: DayZ
+      subcategory: Server
+      description: If enabled, clients with the "-filePatching" launch parameter enabled will be able to connect
+      keywords: file,patching,allowfilepatching
+      input_type: checkbox
+      param_field_name: allowFilePatching
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Client File Patching
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, clients with the "-filePatching" launch parameter enabled will be able to connect
+        Keywords: file,patching,allowfilepatching
+        FieldName: allowFilePatching
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: allowFilePatching
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: forceSameBuild
+      label: Force Same Build
+      category: DayZ
+      subcategory: Server
+      description: If enabled, the server will allow connections only by clients with same the build version as the server
+      keywords: version,build,forcesamebuild
+      input_type: checkbox
+      param_field_name: forceSameBuild
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Force Same Build
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will allow connections only by clients with same the build version as the server
+        Keywords: version,build,forcesamebuild
+        FieldName: forceSameBuild
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: forceSameBuild
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: EnableLimitFPS
+      label: Enable FPS Limit
+      category: DayZ
+      subcategory: Server
+      description: >-
+        If enabled, the server FPS will be limited to the value set under "FPS Limit Value". Disabling this setting can
+        have a severe effect on server performance
+      keywords: enable,frames,fps,limitfps
+      input_type: checkbox
+      param_field_name: EnableLimitFPS
+      default: '-limitFPS={{limitFPS}} '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-limitFPS={{limitFPS}} '
+      raw:
+        DisplayName: Enable FPS Limit
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server FPS will be limited to the value set under "FPS Limit Value". Disabling this setting
+          can have a severe effect on server performance
+        Keywords: enable,frames,fps,limitfps
+        FieldName: EnableLimitFPS
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: EnableLimitFPS
+        IncludeInCommandLine: false
+        DefaultValue: '-limitFPS={{limitFPS}} '
+        EnumValues:
+          'False': ''
+          'True': '-limitFPS={{limitFPS}} '
+    - key: limitFPS
+      label: FPS Limit Value
+      category: DayZ
+      subcategory: Server
+      description: >-
+        Sets the limit for the server FPS, to lower CPU usage of low population servers. Requires "Enable FPS Limit" to
+        be set
+      keywords: frames,fps,value,limitfps
+      input_type: number
+      param_field_name: limitFPS
+      default: '200'
+      placeholder: '200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 200
+      suffix: fps
+      enum_values: {}
+      raw:
+        DisplayName: FPS Limit Value
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the limit for the server FPS, to lower CPU usage of low population servers. Requires "Enable FPS Limit"
+          to be set
+        Keywords: frames,fps,value,limitfps
+        FieldName: limitFPS
+        InputType: number
+        MinValue: '1'
+        MaxValue: '200'
+        IsFlagArgument: false
+        ParamFieldName: limitFPS
+        IncludeInCommandLine: false
+        DefaultValue: '200'
+        Placeholder: '200'
+        Suffix: fps
+        EnumValues: {}
+    - key: serverFpsWarning
+      label: FPS Warning Trigger Value
+      category: DayZ
+      subcategory: Server
+      description: Sets the server FPS value under which the initial server FPS warning will be triggered
+      keywords: frames,fps,warning,trigger,serverfpswarning
+      input_type: number
+      param_field_name: serverFpsWarning
+      default: '15'
+      placeholder: '15'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 11
+      max: 200
+      suffix: fps
+      enum_values: {}
+      raw:
+        DisplayName: FPS Warning Trigger Value
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server FPS value under which the initial server FPS warning will be triggered
+        Keywords: frames,fps,warning,trigger,serverfpswarning
+        FieldName: serverFpsWarning
+        InputType: number
+        MinValue: '11'
+        MaxValue: '200'
+        IsFlagArgument: false
+        ParamFieldName: serverFpsWarning
+        IncludeInCommandLine: false
+        DefaultValue: '15'
+        Placeholder: '15'
+        Suffix: fps
+        EnumValues: {}
+    - key: maxPing
+      label: Maximum Ping
+      category: DayZ
+      subcategory: Server
+      description: Sets the maximum ping value for clients, above which the clients will be kicked
+      keywords: ping,maximum,lagging,lag,kick,maxping
+      input_type: number
+      param_field_name: maxPing
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Ping
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum ping value for clients, above which the clients will be kicked
+        Keywords: ping,maximum,lagging,lag,kick,maxping
+        FieldName: maxPing
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: maxPing
+        IncludeInCommandLine: false
+        DefaultValue: '500'
+        Placeholder: '500'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: pingWarning
+      label: Ping Initial Warning Trigger Value
+      category: DayZ
+      subcategory: Server
+      description: Sets the ping value that will trigger the initial yellow ping warning for clients
+      keywords: ping,initial,yellow,warning,trigger,pingwarning
+      input_type: number
+      param_field_name: pingWarning
+      default: '200'
+      placeholder: '200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Ping Initial Warning Trigger Value
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the ping value that will trigger the initial yellow ping warning for clients
+        Keywords: ping,initial,yellow,warning,trigger,pingwarning
+        FieldName: pingWarning
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: pingWarning
+        IncludeInCommandLine: false
+        DefaultValue: '200'
+        Placeholder: '200'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: pingCritical
+      label: Ping Critical Warning Trigger Value
+      category: DayZ
+      subcategory: Server
+      description: Sets the ping value that will trigger the critical red ping warning for clients
+      keywords: ping,critical,red,warning,trigger,pingcritical
+      input_type: number
+      param_field_name: pingCritical
+      default: '250'
+      placeholder: '250'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Ping Critical Warning Trigger Value
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the ping value that will trigger the critical red ping warning for clients
+        Keywords: ping,critical,red,warning,trigger,pingcritical
+        FieldName: pingCritical
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: pingCritical
+        IncludeInCommandLine: false
+        DefaultValue: '250'
+        Placeholder: '250'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: doLogs
+      label: Enable RPT File Logging
+      category: DayZ
+      subcategory: Server
+      description: >-
+        If set, enables all log messages in the server RPT file. Generally preferable to keep enabled, however some mods
+        will stop the server from starting if this is set
+      keywords: enable,logs,logging,rpt,dologs
+      input_type: checkbox
+      param_field_name: doLogs
+      default: '-doLogs '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-doLogs '
+      raw:
+        DisplayName: Enable RPT File Logging
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, enables all log messages in the server RPT file. Generally preferable to keep enabled, however some
+          mods will stop the server from starting if this is set
+        Keywords: enable,logs,logging,rpt,dologs
+        FieldName: doLogs
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: doLogs
+        IncludeInCommandLine: false
+        DefaultValue: '-doLogs '
+        EnumValues:
+          'False': ''
+          'True': '-doLogs '
+    - key: CustomServerArgs
+      label: Additional Server Startup Parameters
+      category: DayZ
+      subcategory: Server
+      description: Specifies additional startup parameters that are not otherwise set by AMP. Use with care
+      keywords: custom,server,arguments,parameters
+      input_type: text
+      param_field_name: CustomServerArgs
+      default: ''
+      placeholder: '-cpuCount=2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Startup Parameters
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Specifies additional startup parameters that are not otherwise set by AMP. Use with care
+        Keywords: custom,server,arguments,parameters
+        FieldName: CustomServerArgs
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomServerArgs
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: '-cpuCount=2'
+        EnumValues: {}
+    - key: UserSettings
+      label: Additional Server Settings
+      category: DayZ
+      subcategory: Server
+      description: >-
+        Specifies additional settings to include in "serverDZ.cfg" that are not otherwise set by AMP. One setting per
+        line
+      keywords: additional,settings,custom
+      input_type: Textarea
+      param_field_name: UserSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Settings
+        Category: DayZ:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional settings to include in "serverDZ.cfg" that are not otherwise set by AMP. One setting per
+          line
+        Keywords: additional,settings,custom
+        FieldName: UserSettings
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: UserSettings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: disableVoN
+      label: Disable Voice Chat
+      category: DayZ
+      subcategory: Gameplay
+      description: If set, players will not be able to use in-game voice chat
+      keywords: voice,chat,voicechat,disablevon
+      input_type: checkbox
+      param_field_name: disableVoN
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Voice Chat
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will not be able to use in-game voice chat
+        Keywords: voice,chat,voicechat,disablevon
+        FieldName: disableVoN
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: disableVoN
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: vonCodecQuality
+      label: Voice Chat Quality
+      category: DayZ
+      subcategory: Gameplay
+      description: Sets the voice chat codec quality, the higher the better
+      keywords: voice,chat,voicechat,codec,quality,voncodecquality
+      input_type: number
+      param_field_name: vonCodecQuality
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 30
+      enum_values: {}
+      raw:
+        DisplayName: Voice Chat Quality
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the voice chat codec quality, the higher the better
+        Keywords: voice,chat,voicechat,codec,quality,voncodecquality
+        FieldName: vonCodecQuality
+        InputType: number
+        MinValue: '0'
+        MaxValue: '30'
+        IsFlagArgument: false
+        ParamFieldName: vonCodecQuality
+        IncludeInCommandLine: false
+        DefaultValue: '20'
+        Placeholder: '20'
+        EnumValues: {}
+    - key: disable3rdPerson
+      label: Disable Third Person View
+      category: DayZ
+      subcategory: Gameplay
+      description: If set, disables the third person view for players
+      keywords: view,3rd,third,person,camera,disable3rdperson
+      input_type: checkbox
+      param_field_name: disable3rdPerson
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Third Person View
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, disables the third person view for players
+        Keywords: view,3rd,third,person,camera,disable3rdperson
+        FieldName: disable3rdPerson
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: disable3rdPerson
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: disableCrosshair
+      label: Disable Crosshair
+      category: DayZ
+      subcategory: Gameplay
+      description: If set, disables the crosshair for players
+      keywords: crosshair,disablecrosshair
+      input_type: checkbox
+      param_field_name: disableCrosshair
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Crosshair
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, disables the crosshair for players
+        Keywords: crosshair,disablecrosshair
+        FieldName: disableCrosshair
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: disableCrosshair
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: disablePersonalLight
+      label: Disable Personal Light
+      category: DayZ
+      subcategory: Gameplay
+      description: If set, disables personal light for all clients connected to the server
+      keywords: light,lighting,flashlight,torch,disablepersonallight
+      input_type: checkbox
+      param_field_name: disablePersonalLight
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Personal Light
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, disables personal light for all clients connected to the server
+        Keywords: light,lighting,flashlight,torch,disablepersonallight
+        FieldName: disablePersonalLight
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: disablePersonalLight
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: lightingConfig
+      label: Enable Darker Nights
+      category: DayZ
+      subcategory: Gameplay
+      description: Use 1 for darker nights on vanilla maps. Modded maps maybe use different values
+      keywords: light,lighting,dark,night,lightingconfig
+      input_type: number
+      param_field_name: lightingConfig
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable Darker Nights
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Use 1 for darker nights on vanilla maps. Modded maps maybe use different values
+        Keywords: light,lighting,dark,night,lightingconfig
+        FieldName: lightingConfig
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: lightingConfig
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: disableBaseDamage
+      label: Disable Base Damage
+      category: DayZ
+      subcategory: Gameplay
+      description: If set, disables the damage or destruction of fences and watchtowers
+      keywords: disable,base,damage,fence,watchtower,disablebasedamage
+      input_type: checkbox
+      param_field_name: disableBaseDamage
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Base Damage
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, disables the damage or destruction of fences and watchtowers
+        Keywords: disable,base,damage,fence,watchtower,disablebasedamage
+        FieldName: disableBaseDamage
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: disableBaseDamage
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: disableContainerDamage
+      label: Disable Container Damage
+      category: DayZ
+      subcategory: Gameplay
+      description: If set, disables the damage or destruction of tents, barrels, wooden crates and seachests
+      keywords: disable,container,damage,tent,barrel,crate,seachest,disablecontainerdamage
+      input_type: checkbox
+      param_field_name: disableContainerDamage
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Container Damage
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, disables the damage or destruction of tents, barrels, wooden crates and seachests
+        Keywords: disable,container,damage,tent,barrel,crate,seachest,disablecontainerdamage
+        FieldName: disableContainerDamage
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: disableContainerDamage
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: enableDebugMonitor
+      label: Enable Debug Monitor
+      category: DayZ
+      subcategory: Gameplay
+      description: If enabled, the server shows information about the character using a debug window in the corner of the screen
+      keywords: debug,monitor,character,information,enabledebugmonitor
+      input_type: checkbox
+      param_field_name: enableDebugMonitor
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Debug Monitor
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the server shows information about the character using a debug window in the corner of the screen
+        Keywords: debug,monitor,character,information,enabledebugmonitor
+        FieldName: enableDebugMonitor
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: enableDebugMonitor
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: disableRespawnDialog
+      label: Disable Respawn Dialog
+      category: DayZ
+      subcategory: Gameplay
+      description: If set, disables the respawn dialog (new characters will randomly spawn)
+      keywords: disable,respawn,dialog,disablerespawndialog
+      input_type: checkbox
+      param_field_name: disableRespawnDialog
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Respawn Dialog
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, disables the respawn dialog (new characters will randomly spawn)
+        Keywords: disable,respawn,dialog,disablerespawndialog
+        FieldName: disableRespawnDialog
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: disableRespawnDialog
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: respawnTime
+      label: Respawn Time
+      category: DayZ
+      subcategory: Gameplay
+      description: >-
+        Sets the respawn delay before a player is able to get a new character on the server, when the previous one is
+        dead
+      keywords: spawn,respawn,time,death,respawntime
+      input_type: number
+      param_field_name: respawnTime
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Respawn Time
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the respawn delay before a player is able to get a new character on the server, when the previous one is
+          dead
+        Keywords: spawn,respawn,time,death,respawntime
+        FieldName: respawnTime
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: respawnTime
+        IncludeInCommandLine: false
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: seconds
+        EnumValues: {}
+    - key: serverTime
+      label: Server Time
+      category: DayZ
+      subcategory: Gameplay
+      description: >-
+        Sets the initial in-game time of the server. "SystemTime" means the local time of the machine. Or set the time
+        to some value in "YYYY/MM/DD/HH/MM" format, e.g "2015/4/8/17/23"
+      keywords: time,server,systemtime,servertime
+      input_type: text
+      param_field_name: serverTime
+      default: SystemTime
+      placeholder: SystemTime
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Time
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the initial in-game time of the server. "SystemTime" means the local time of the machine. Or set the time
+          to some value in "YYYY/MM/DD/HH/MM" format, e.g "2015/4/8/17/23"
+        Keywords: time,server,systemtime,servertime
+        FieldName: serverTime
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: serverTime
+        IncludeInCommandLine: false
+        DefaultValue: SystemTime
+        Placeholder: SystemTime
+        EnumValues: {}
+    - key: serverTimeAcceleration
+      label: Server Time Acceleration
+      category: DayZ
+      subcategory: Gameplay
+      description: >-
+        Sets a multiplier (0.1-64) for server time acceleration or deceleration. For example, if set to 24, time would
+        move 24 times faster than normal, and an entire day would pass in one hour
+      keywords: time,server,daytime,cycle,servertime,servertimeacceleration
+      input_type: number
+      param_field_name: serverTimeAcceleration
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 64
+      enum_values: {}
+      raw:
+        DisplayName: Server Time Acceleration
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets a multiplier (0.1-64) for server time acceleration or deceleration. For example, if set to 24, time would
+          move 24 times faster than normal, and an entire day would pass in one hour
+        Keywords: time,server,daytime,cycle,servertime,servertimeacceleration
+        FieldName: serverTimeAcceleration
+        InputType: number
+        MinValue: '0'
+        MaxValue: '64'
+        IsFlagArgument: false
+        ParamFieldName: serverTimeAcceleration
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: serverNightTimeAcceleration
+      label: Server Night Time Acceleration
+      category: DayZ
+      subcategory: Gameplay
+      description: >-
+        Sets a multiplier (0.1-64) for server night time acceleration or deceleration, which is combined with the
+        "Server Time Acceleration" multiplier. For example, if set to 4 and Server Time Acceleration is set to 2, night
+        time would move 8 times faster than normal
+      keywords: time,server,nighttime,cycle,servertime,servernighttimeacceleration
+      input_type: number
+      param_field_name: serverNightTimeAcceleration
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 64
+      enum_values: {}
+      raw:
+        DisplayName: Server Night Time Acceleration
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets a multiplier (0.1-64) for server night time acceleration or deceleration, which is combined with the
+          "Server Time Acceleration" multiplier. For example, if set to 4 and Server Time Acceleration is set to 2,
+          night time would move 8 times faster than normal
+        Keywords: time,server,nighttime,cycle,servertime,servernighttimeacceleration
+        FieldName: serverNightTimeAcceleration
+        InputType: number
+        MinValue: '0'
+        MaxValue: '64'
+        IsFlagArgument: false
+        ParamFieldName: serverNightTimeAcceleration
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: serverTimePersistent
+      label: Persistent Server Time
+      category: DayZ
+      subcategory: Gameplay
+      description: If enabled, the actual server time is saved to storage, so the next server start will use the saved time value
+      keywords: time,servertime,persistent,servertimepersistent
+      input_type: checkbox
+      param_field_name: serverTimePersistent
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Persistent Server Time
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, the actual server time is saved to storage, so the next server start will use the saved time value
+        Keywords: time,servertime,persistent,servertimepersistent
+        FieldName: serverTimePersistent
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: serverTimePersistent
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: defaultVisibility
+      label: Maximum Terrain Render Distance
+      category: DayZ
+      subcategory: Gameplay
+      description: >-
+        Sets the maximum terrain render distance on the server (if higher than "viewDistance=" in a client profile, the
+        client side parameter applies)
+      keywords: maximum,terrain,render,distance,visibility,defaultVisibility
+      input_type: number
+      param_field_name: defaultVisibility
+      default: '1375'
+      placeholder: '1375'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Terrain Render Distance
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the maximum terrain render distance on the server (if higher than "viewDistance=" in a client profile,
+          the client side parameter applies)
+        Keywords: maximum,terrain,render,distance,visibility,defaultVisibility
+        FieldName: defaultVisibility
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: defaultVisibility
+        IncludeInCommandLine: false
+        DefaultValue: '1375'
+        Placeholder: '1375'
+        EnumValues: {}
+    - key: defaultObjectViewDistance
+      label: Maximum Object Render Distance
+      category: DayZ
+      subcategory: Gameplay
+      description: >-
+        Sets the maximum object render distance on the server (if higher than "preferredObjectViewDistance=" in a client
+        profile, the client side parameter applies)
+      keywords: maximum,object,render,distance,visibility,defaultObjectViewDistance
+      input_type: number
+      param_field_name: defaultObjectViewDistance
+      default: '1375'
+      placeholder: '1375'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Object Render Distance
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the maximum object render distance on the server (if higher than "preferredObjectViewDistance=" in a
+          client profile, the client side parameter applies)
+        Keywords: maximum,object,render,distance,visibility,defaultObjectViewDistance
+        FieldName: defaultObjectViewDistance
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: defaultObjectViewDistance
+        IncludeInCommandLine: false
+        DefaultValue: '1375'
+        Placeholder: '1375'
+        EnumValues: {}
+    - key: enableCfgGameplayFile
+      label: Enable Gameplay Settings File
+      category: DayZ
+      subcategory: Gameplay
+      description: >-
+        If enabled, allows the use of cfggameplay.json to modify [gameplay
+        settings](https://community.bistudio.com/wiki/DayZ:Gameplay_Settings)
+      keywords: gameplay,settings,file,cfggameplay,enablecfggameplayfile
+      input_type: checkbox
+      param_field_name: enableCfgGameplayFile
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Gameplay Settings File
+        Category: DayZ:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, allows the use of cfggameplay.json to modify [gameplay
+          settings](https://community.bistudio.com/wiki/DayZ:Gameplay_Settings)
+        Keywords: gameplay,settings,file,cfggameplay,enablecfggameplayfile
+        FieldName: enableCfgGameplayFile
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: enableCfgGameplayFile
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: storageAutoFix
+      label: Storage Auto Fix
+      category: DayZ
+      subcategory: Miscellaneous
+      description: If enabled, checks if the persistence files are corrupted and replaces corrupted ones with empty ones
+      keywords: storage,fix,persistence,storageautofix
+      input_type: checkbox
+      param_field_name: storageAutoFix
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Storage Auto Fix
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: If enabled, checks if the persistence files are corrupted and replaces corrupted ones with empty ones
+        Keywords: storage,fix,persistence,storageautofix
+        FieldName: storageAutoFix
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: storageAutoFix
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: simulatedPlayersBatch
+      label: Player Simulation Limit
+      category: DayZ
+      subcategory: Miscellaneous
+      description: Sets the limit on how much players can be simulated per frame (for server performance gains)
+      keywords: player,simulation,limit,simulatedPlayersBatch
+      input_type: number
+      param_field_name: simulatedPlayersBatch
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Player Simulation Limit
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: Sets the limit on how much players can be simulated per frame (for server performance gains)
+        Keywords: player,simulation,limit,simulatedPlayersBatch
+        FieldName: simulatedPlayersBatch
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: simulatedPlayersBatch
+        IncludeInCommandLine: false
+        DefaultValue: '20'
+        Placeholder: '20'
+        EnumValues: {}
+    - key: multithreadedReplication
+      label: Enable Multi-Threaded Replication
+      category: DayZ
+      subcategory: Miscellaneous
+      description: >-
+        If set, enables multi-threaded processing of the server's replication system. The number of worker threads is
+        derived by the "maxcores" and "reservedcores" parameters for jobsystem in dayzsettings.xml
+      keywords: multi,threaded,replication,multithreadedreplication
+      input_type: checkbox
+      param_field_name: multithreadedReplication
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Multi-Threaded Replication
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: >-
+          If set, enables multi-threaded processing of the server's replication system. The number of worker threads is
+          derived by the "maxcores" and "reservedcores" parameters for jobsystem in dayzsettings.xml
+        Keywords: multi,threaded,replication,multithreadedreplication
+        FieldName: multithreadedReplication
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: multithreadedReplication
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: EnableSpeedHackDetection
+      label: Enable Speed Hack Detection
+      category: DayZ
+      subcategory: Miscellaneous
+      description: If set, enables speed hack detection. Set the level of detection under "Speed Hack Detection Level"
+      keywords: speed,hack,detection,speedhackdetection
+      input_type: checkbox
+      param_field_name: EnableSpeedHackDetection
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': speedhackDetection = {{speedhackDetection}};
+      raw:
+        DisplayName: Enable Speed Hack Detection
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: If set, enables speed hack detection. Set the level of detection under "Speed Hack Detection Level"
+        Keywords: speed,hack,detection,speedhackdetection
+        FieldName: EnableSpeedHackDetection
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: EnableSpeedHackDetection
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': speedhackDetection = {{speedhackDetection}};
+    - key: speedhackDetection
+      label: Speed Hack Detection Level
+      category: DayZ
+      subcategory: Miscellaneous
+      description: >-
+        Sets the speed back detection level. 1 = strict, 10 = benevolent. "Speed Hack Detection" must be enabled for
+        this to take effect
+      keywords: speed,hack,detection,level,speedhackdetection
+      input_type: number
+      param_field_name: speedhackDetection
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Speed Hack Detection Level
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: >-
+          Sets the speed back detection level. 1 = strict, 10 = benevolent. "Speed Hack Detection" must be enabled for
+          this to take effect
+        Keywords: speed,hack,detection,level,speedhackdetection
+        FieldName: speedhackDetection
+        InputType: number
+        MinValue: '1'
+        MaxValue: '10'
+        IsFlagArgument: false
+        ParamFieldName: speedhackDetection
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: networkRangeClose
+      label: Close Object Spawn Distance
+      category: DayZ
+      subcategory: Miscellaneous
+      description: Sets the network bubble distance for spawn of close objects with items in them (such as backpacks)
+      keywords: network,bubble,distance,spawn,close,objects,networkrangeclose
+      input_type: number
+      param_field_name: networkRangeClose
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: metres
+      enum_values: {}
+      raw:
+        DisplayName: Close Object Spawn Distance
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: Sets the network bubble distance for spawn of close objects with items in them (such as backpacks)
+        Keywords: network,bubble,distance,spawn,close,objects,networkrangeclose
+        FieldName: networkRangeClose
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: networkRangeClose
+        IncludeInCommandLine: false
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: metres
+        EnumValues: {}
+    - key: networkRangeNear
+      label: Near Object Spawn Distance
+      category: DayZ
+      subcategory: Miscellaneous
+      description: Sets the network bubble distance for spawn (despawn +10%) of near inventory item objects
+      keywords: network,bubble,distance,spawn,near,inventory,objects,networkrangenear
+      input_type: number
+      param_field_name: networkRangeNear
+      default: '150'
+      placeholder: '150'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: metres
+      enum_values: {}
+      raw:
+        DisplayName: Near Object Spawn Distance
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: Sets the network bubble distance for spawn (despawn +10%) of near inventory item objects
+        Keywords: network,bubble,distance,spawn,near,inventory,objects,networkrangenear
+        FieldName: networkRangeNear
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: networkRangeNear
+        IncludeInCommandLine: false
+        DefaultValue: '150'
+        Placeholder: '150'
+        Suffix: metres
+        EnumValues: {}
+    - key: networkRangeFar
+      label: Far Object Spawn Distance
+      category: DayZ
+      subcategory: Miscellaneous
+      description: Sets the network bubble distance for spawn (despawn +10%) of far objects (other than inventory items)
+      keywords: network,bubble,distance,spawn,far,objects,networkrangefar
+      input_type: number
+      param_field_name: networkRangeFar
+      default: '1000'
+      placeholder: '1000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: metres
+      enum_values: {}
+      raw:
+        DisplayName: Far Object Spawn Distance
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: Sets the network bubble distance for spawn (despawn +10%) of far objects (other than inventory items)
+        Keywords: network,bubble,distance,spawn,far,objects,networkrangefar
+        FieldName: networkRangeFar
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: networkRangeFar
+        IncludeInCommandLine: false
+        DefaultValue: '1000'
+        Placeholder: '1000'
+        Suffix: metres
+        EnumValues: {}
+    - key: networkRangeDistantEffect
+      label: Effects Spawn Distance
+      category: DayZ
+      subcategory: Miscellaneous
+      description: Sets the network bubble distance for spawn of effects (curently only sound effects)
+      keywords: network,bubble,distance,spawn,effects,networkrangedistanteffect
+      input_type: number
+      param_field_name: networkRangeDistantEffect
+      default: '4000'
+      placeholder: '4000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: metres
+      enum_values: {}
+      raw:
+        DisplayName: Effects Spawn Distance
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: Sets the network bubble distance for spawn of effects (curently only sound effects)
+        Keywords: network,bubble,distance,spawn,effects,networkrangedistanteffect
+        FieldName: networkRangeDistantEffect
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: networkRangeDistantEffect
+        IncludeInCommandLine: false
+        DefaultValue: '4000'
+        Placeholder: '4000'
+        Suffix: metres
+        EnumValues: {}
+    - key: timeStampFormat
+      label: Log Time Stamp Format
+      category: DayZ
+      subcategory: Miscellaneous
+      description: Sets the format of the time stamps used in the .RPT log file
+      keywords: log,time,stamp,format,timestampformat
+      input_type: enum
+      param_field_name: timeStampFormat
+      default: Short
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Short: Short (default)
+        Full: Full
+      raw:
+        DisplayName: Log Time Stamp Format
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: Sets the format of the time stamps used in the .RPT log file
+        Keywords: log,time,stamp,format,timestampformat
+        FieldName: timeStampFormat
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: timeStampFormat
+        IncludeInCommandLine: false
+        DefaultValue: Short
+        EnumValues:
+          Short: Short (default)
+          Full: Full
+    - key: logAverageFps
+      label: Log Server FPS
+      category: DayZ
+      subcategory: Miscellaneous
+      description: Sets the interval at which the server logs the average server FPS. 0 = disabled
+      keywords: log,average,fps,logaveragefps
+      input_type: number
+      param_field_name: logAverageFps
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Log Server FPS
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: Sets the interval at which the server logs the average server FPS. 0 = disabled
+        Keywords: log,average,fps,logaveragefps
+        FieldName: logAverageFps
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: logAverageFps
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: seconds
+        EnumValues: {}
+    - key: logMemory
+      label: Log Server Memory
+      category: DayZ
+      subcategory: Miscellaneous
+      description: Sets the interval at which the server logs the server memory usage. 0 = disabled
+      keywords: log,memory,usage,logmemory
+      input_type: number
+      param_field_name: logMemory
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Log Server Memory
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: Sets the interval at which the server logs the server memory usage. 0 = disabled
+        Keywords: log,memory,usage,logmemory
+        FieldName: logMemory
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: logMemory
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: seconds
+        EnumValues: {}
+    - key: logPlayers
+      label: Log Player Count
+      category: DayZ
+      subcategory: Miscellaneous
+      description: Sets the interval at which the server logs the count of currently connected players. 0 = disabled
+      keywords: log,connected,players,logplayers
+      input_type: number
+      param_field_name: logPlayers
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Log Player Count
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: Sets the interval at which the server logs the count of currently connected players. 0 = disabled
+        Keywords: log,connected,players,logplayers
+        FieldName: logPlayers
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: logPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: seconds
+        EnumValues: {}
+    - key: adminLogPlayerHitsOnly
+      label: Log Player Hits Only
+      category: DayZ
+      subcategory: Miscellaneous
+      description: If enabled, the server logs player hits only, instead of all hits, in the admin log
+      keywords: log,player,hits,only,adminlogplayerhitsonly
+      input_type: checkbox
+      param_field_name: adminLogPlayerHitsOnly
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Log Player Hits Only
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: If enabled, the server logs player hits only, instead of all hits, in the admin log
+        Keywords: log,player,hits,only,adminlogplayerhitsonly
+        FieldName: adminLogPlayerHitsOnly
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: adminLogPlayerHitsOnly
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: adminLogPlacement
+      label: Log Placement Actions
+      category: DayZ
+      subcategory: Miscellaneous
+      description: If enabled, the server logs placement actions such as traps and tents, in the admin log
+      keywords: log,placement,action,adminlogplacement
+      input_type: checkbox
+      param_field_name: adminLogPlacement
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Log Placement Actions
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: If enabled, the server logs placement actions such as traps and tents, in the admin log
+        Keywords: log,placement,action,adminlogplacement
+        FieldName: adminLogPlacement
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: adminLogPlacement
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: adminLogBuildActions
+      label: Log Basebuilding Actions
+      category: DayZ
+      subcategory: Miscellaneous
+      description: If enabled, the server logs basebuilding actions (build, dismantle, destroy), in the admin log
+      keywords: log,basebuilding,building,action,adminlogbuildactions
+      input_type: checkbox
+      param_field_name: adminLogBuildActions
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Log Basebuilding Actions
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: If enabled, the server logs basebuilding actions (build, dismantle, destroy), in the admin log
+        Keywords: log,basebuilding,building,action,adminlogbuildactions
+        FieldName: adminLogBuildActions
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: adminLogBuildActions
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: adminLogPlayerList
+      label: Log Player Position List
+      category: DayZ
+      subcategory: Miscellaneous
+      description: If enabled, the server logs the position of players every 5 minutes, in the admin log
+      keywords: log,adminlogplayerlist
+      input_type: checkbox
+      param_field_name: adminLogPlayerList
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Log Player Position List
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: If enabled, the server logs the position of players every 5 minutes, in the admin log
+        Keywords: log,adminlogplayerlist
+        FieldName: adminLogPlayerList
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: adminLogPlayerList
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: steamProtocolMaxDataSize
+      label: Steam Query Packet Size
+      category: DayZ
+      subcategory: Miscellaneous
+      description: Sets the maximum Steam query packet size. Required for mods on DayZ v1.26+
+      keywords: query,packet,size,steamprotocolmaxdatasize
+      input_type: number
+      param_field_name: steamProtocolMaxDataSize
+      default: '4096'
+      placeholder: '4096'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Steam Query Packet Size
+        Category: DayZ:stadia_controller
+        Subcategory: Miscellaneous:tune:3
+        Description: Sets the maximum Steam query packet size. Required for mods on DayZ v1.26+
+        Keywords: query,packet,size,steamprotocolmaxdatasize
+        FieldName: steamProtocolMaxDataSize
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: steamProtocolMaxDataSize
+        IncludeInCommandLine: false
+        DefaultValue: '4096'
+        Placeholder: '4096'
+        EnumValues: {}
+    - key: ModDirFormat
+      label: Enable Named Mod Directory Links
+      category: Updates
+      subcategory: Steam Workshop
+      description: >-
+        If set, mods downloaded under "Steam workshop items" will be linked to the server base directory in the format
+        @modname, rather than just by reference to the mod ID. NOTE: Update the server after changing this setting
+      keywords: mod,directory,name,format,moddirformat
+      input_type: checkbox
+      param_field_name: ModDirFormat
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Named Mod Directory Links
+        Category: Updates
+        Subcategory: Steam Workshop:share
+        Description: >-
+          If set, mods downloaded under "Steam workshop items" will be linked to the server base directory in the format
+          @modname, rather than just by reference to the mod ID. NOTE: Update the server after changing this setting
+        Keywords: mod,directory,name,format,moddirformat
+        FieldName: ModDirFormat
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: ModDirFormat
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: ./serverDZ.cfg
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: ./serverDZ.cfg
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: ./dayz/AMP_serverDZ.cfg
+    - path: ./battleye/beserver_x64.cfg
+      type: kvp
+      format: '{0} {1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            RConPassword: $RemoteAdminPassword
+            RConPort: $RCONPort
+            RConIP: $ApplicationIPBinding
+            RestrictRCon: '0'
+      raw:
+        ConfigFile: ./battleye/beserver_x64.cfg
+        ConfigType: kvp
+        ConfigFormat: '{0} {1}'
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              RConPassword: $RemoteAdminPassword
+              RConPort: $RCONPort
+              RConIP: $ApplicationIPBinding
+              RestrictRCon: '0'
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: hostname
+    label: Server Name
+    default: AMP Powered DayZ Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: passwordAdmin
+    label: Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: motd
+    label: Message Of The Day
+    default: '"Welcome to DayZ","Hosted using AMP by CubeCoders"'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: motdInterval
+    label: MOTD Interval
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableWhitelist
+    label: Enable Whitelist
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AdminPlayers
+    label: Whitelisted Players
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BanPlayers
+    label: Banned Players
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: instanceId
+    label: Instance ID
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: template
+    label: Server Mission
+    default: dayzOffline.chernarusplus
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: customTemplate
+    label: Custom Mission Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: loginQueueMaxPlayers
+    label: Login Queue Limit
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: loginQueueConcurrentPlayers
+    label: Login Queue Concurrent Players
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mod
+    label: Load Mods
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverMod
+    label: Load Server Mods
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: clientmod
+    label: Client Mods
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManageBikeys
+    label: Manage Bikeys
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: filePatching
+    label: Enable Server File Patching
+    default: '-filePatching '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowFilePatching
+    label: Allow Client File Patching
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: forceSameBuild
+    label: Force Same Build
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableLimitFPS
+    label: Enable FPS Limit
+    default: '-limitFPS={{limitFPS}} '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: limitFPS
+    label: FPS Limit Value
+    default: '200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverFpsWarning
+    label: FPS Warning Trigger Value
+    default: '15'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: maxPing
+    label: Maximum Ping
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pingWarning
+    label: Ping Initial Warning Trigger Value
+    default: '200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pingCritical
+    label: Ping Critical Warning Trigger Value
+    default: '250'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: doLogs
+    label: Enable RPT File Logging
+    default: '-doLogs '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerArgs
+    label: Additional Server Startup Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UserSettings
+    label: Additional Server Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disableVoN
+    label: Disable Voice Chat
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: vonCodecQuality
+    label: Voice Chat Quality
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disable3rdPerson
+    label: Disable Third Person View
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disableCrosshair
+    label: Disable Crosshair
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disablePersonalLight
+    label: Disable Personal Light
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lightingConfig
+    label: Enable Darker Nights
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disableBaseDamage
+    label: Disable Base Damage
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disableContainerDamage
+    label: Disable Container Damage
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableDebugMonitor
+    label: Enable Debug Monitor
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: disableRespawnDialog
+    label: Disable Respawn Dialog
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: respawnTime
+    label: Respawn Time
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverTime
+    label: Server Time
+    default: SystemTime
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverTimeAcceleration
+    label: Server Time Acceleration
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverNightTimeAcceleration
+    label: Server Night Time Acceleration
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverTimePersistent
+    label: Persistent Server Time
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: defaultVisibility
+    label: Maximum Terrain Render Distance
+    default: '1375'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: defaultObjectViewDistance
+    label: Maximum Object Render Distance
+    default: '1375'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enableCfgGameplayFile
+    label: Enable Gameplay Settings File
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: storageAutoFix
+    label: Storage Auto Fix
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: simulatedPlayersBatch
+    label: Player Simulation Limit
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: multithreadedReplication
+    label: Enable Multi-Threaded Replication
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableSpeedHackDetection
+    label: Enable Speed Hack Detection
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: speedhackDetection
+    label: Speed Hack Detection Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networkRangeClose
+    label: Close Object Spawn Distance
+    default: '20'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networkRangeNear
+    label: Near Object Spawn Distance
+    default: '150'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networkRangeFar
+    label: Far Object Spawn Distance
+    default: '1000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: networkRangeDistantEffect
+    label: Effects Spawn Distance
+    default: '4000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: timeStampFormat
+    label: Log Time Stamp Format
+    default: Short
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logAverageFps
+    label: Log Server FPS
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logMemory
+    label: Log Server Memory
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: logPlayers
+    label: Log Player Count
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminLogPlayerHitsOnly
+    label: Log Player Hits Only
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminLogPlacement
+    label: Log Placement Actions
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminLogBuildActions
+    label: Log Basebuilding Actions
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: adminLogPlayerList
+    label: Log Player Position List
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: steamProtocolMaxDataSize
+    label: Steam Query Packet Size
+    default: '4096'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ModDirFormat
+    label: Enable Named Mod Directory Links
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '221100'
+  collection_support: true
 backup:
   include:
     - /data

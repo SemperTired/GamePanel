@@ -5,13 +5,16 @@ category: Imported
 summary: Starbound Dedicated Server
 install:
   method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  app_id: '211820'
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 211820/linux/starbound_server
+  startup: 211820/linux/starbound_server {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1334 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: gameserverport
+    name: Game and Query Port
+    default: 21025
+    protocol: both
     required: true
-config_files: []
+  - key: rconserverport
+    name: RCON Port
+    default: 21026
+    protocol: both
+    required: true
+config_files:
+  - path: storage/starbound_server.config
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $gameServerPort
+      label: Server Port
+      category: Starbound
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.gameServerPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $gameServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.gameServerPort
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Server Binding
+      category: Starbound
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.gameServerBind
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Binding
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.gameServerBind
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $gameServerPort
+      label: Query Port
+      category: Starbound
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.queryServerPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Port
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $gameServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.queryServerPort
+        ExcludeFromImport: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: runQueryServer
+      label: Query Enabled
+      category: Starbound
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.runQueryServer
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Enabled
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: runQueryServer
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.runQueryServer
+        ExcludeFromImport: true
+        DefaultValue: 'true'
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Query Binding
+      category: Starbound
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.queryServerBind
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Binding
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.queryServerBind
+        ExcludeFromImport: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $rconServerPort
+      label: RCON Port
+      category: Starbound
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.rconServerPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Port
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $rconServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.rconServerPort
+        ExcludeFromImport: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: runRconServer
+      label: RCON Enabled
+      category: Starbound
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.runRconServer
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Enabled
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: runRconServer
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.runRconServer
+        ExcludeFromImport: true
+        DefaultValue: 'true'
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: RCON Binding
+      category: Starbound
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.rconServerBind
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Binding
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.rconServerBind
+        ExcludeFromImport: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: rconServerTimeout
+      label: RCON Timeout
+      category: Starbound
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.rconServerTimeout
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Timeout
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: rconServerTimeout
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.rconServerTimeout
+        ExcludeFromImport: true
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: Name
+      label: Server Name
+      category: Starbound
+      subcategory: Server
+      description: Sets the name of the server as it appears in the server browser
+      keywords: server,name,serverName
+      input_type: text
+      param_field_name: $.serverName
+      default: AMP Powered Starbound Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as it appears in the server browser
+        Keywords: server,name,serverName
+        FieldName: Name
+        InputType: text
+        ParamFieldName: $.serverName
+        DefaultValue: AMP Powered Starbound Server
+        EnumValues: {}
+    - key: clientIPJoinable
+      label: Client IP Joinable
+      category: Starbound
+      subcategory: Server
+      description: If set, clients can join using the server's IP address
+      keywords: client,ip,joinable,connect,clientIPJoinable
+      input_type: checkbox
+      param_field_name: $.clientIPJoinable
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Client IP Joinable
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients can join using the server's IP address
+        Keywords: client,ip,joinable,connect,clientIPJoinable
+        FieldName: clientIPJoinable
+        InputType: checkbox
+        ParamFieldName: $.clientIPJoinable
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: clientP2PJoinable
+      label: Client P2P Joinable
+      category: Starbound
+      subcategory: Server
+      description: If set, clients can join using P2P
+      keywords: client,p2p,joinable,connect,clientP2PJoinable
+      input_type: checkbox
+      param_field_name: $.clientP2PJoinable
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Client P2P Joinable
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients can join using P2P
+        Keywords: client,p2p,joinable,connect,clientP2PJoinable
+        FieldName: clientP2PJoinable
+        InputType: checkbox
+        ParamFieldName: $.clientP2PJoinable
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: $MaxUsers
+      label: Player Limit
+      category: Starbound
+      subcategory: Server
+      description: Sets the maximum number of players that can connect to the server at one time
+      keywords: max,maximum,players,limit,users,maxPlayers
+      input_type: number
+      param_field_name: $.maxPlayers
+      default: '8'
+      placeholder: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that can connect to the server at one time
+        Keywords: max,maximum,players,limit,users,maxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: $.maxPlayers
+        DefaultValue: '8'
+        Placeholder: '8'
+        Suffix: players
+        EnumValues: {}
+    - key: bannedIPs
+      label: Banned IPs
+      category: Starbound
+      subcategory: Server
+      description: List of banned IP addresses that cannot connect to the server
+      keywords: banned,ip,banlist,bannedIPs
+      input_type: list
+      param_field_name: $.bannedIPs
+      default: '[]'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: array:text
+      raw:
+        DisplayName: Banned IPs
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: List of banned IP addresses that cannot connect to the server
+        Keywords: banned,ip,banlist,bannedIPs
+        FieldName: bannedIPs
+        InputType: list
+        ParamFieldName: $.bannedIPs
+        DefaultValue: '[]'
+        Special: array:text
+        EnumValues: {}
+    - key: bannedUuids
+      label: Banned Player IDs
+      category: Starbound
+      subcategory: Server
+      description: List of banned player IDs that cannot connect to the server
+      keywords: banned,uuid,banlist,bannedUuids
+      input_type: list
+      param_field_name: $.bannedUuids
+      default: '[]'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: array:text
+      raw:
+        DisplayName: Banned Player IDs
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: List of banned player IDs that cannot connect to the server
+        Keywords: banned,uuid,banlist,bannedUuids
+        FieldName: bannedUuids
+        InputType: list
+        ParamFieldName: $.bannedUuids
+        DefaultValue: '[]'
+        Special: array:text
+        EnumValues: {}
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Starbound
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's RCON
+      keywords: rcon,password
+      input_type: hidden
+      param_field_name: $.rconServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's RCON
+        Keywords: rcon,password
+        FieldName: $RemoteAdminPassword
+        InputType: hidden
+        ParamFieldName: $.rconServerPassword
+        EnumValues: {}
+    - key: allowAdminCommands
+      label: Allow Admin Commands
+      category: Starbound
+      subcategory: Server
+      description: If set, server admins will be able to use cheats and manage players
+      keywords: admin,commands,allowAdminCommands
+      input_type: checkbox
+      param_field_name: $.allowAdminCommands
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Allow Admin Commands
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, server admins will be able to use cheats and manage players
+        Keywords: admin,commands,allowAdminCommands
+        FieldName: allowAdminCommands
+        InputType: checkbox
+        DefaultValue: 'true'
+        ParamFieldName: $.allowAdminCommands
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: allowAdminCommandsFromAnyone
+      label: Allow Admin Commands From Anyone
+      category: Starbound
+      subcategory: Server
+      description: If set, all players who join the server will be able to run any admin command
+      keywords: admin,commands,for,anyone,allowAdminCommandsFromAnyone
+      input_type: checkbox
+      param_field_name: $.allowAdminCommandsFromAnyone
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Allow Admin Commands From Anyone
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, all players who join the server will be able to run any admin command
+        Keywords: admin,commands,for,anyone,allowAdminCommandsFromAnyone
+        FieldName: allowAdminCommandsFromAnyone
+        InputType: checkbox
+        ParamFieldName: $.allowAdminCommandsFromAnyone
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: allowAnonymousConnections
+      label: Allow Anonymous Connections
+      category: Starbound
+      subcategory: Server
+      description: >-
+        If set, anonymous players (that is, players not listed in the serverUsers setting in 'starbound_server.config')
+        can join the server, meaning they are not required to provide a username or password
+      keywords: allow,anonymous,connections,allowAnonymousConnections
+      input_type: checkbox
+      param_field_name: $.allowAnonymousConnections
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Allow Anonymous Connections
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, anonymous players (that is, players not listed in the serverUsers setting in
+          'starbound_server.config') can join the server, meaning they are not required to provide a username or
+          password
+        Keywords: allow,anonymous,connections,allowAnonymousConnections
+        FieldName: allowAnonymousConnections
+        InputType: checkbox
+        ParamFieldName: $.allowAnonymousConnections
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: anonymousConnectionsAreAdmin
+      label: Anonymous Connections Are Admin
+      category: Starbound
+      subcategory: Server
+      description: If set, anonymous players who join the server will be able to run any admin command
+      keywords: anonymous,connections,admin,anonymousConnectionsAreAdmin
+      input_type: checkbox
+      param_field_name: $.anonymousConnectionsAreAdmin
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Anonymous Connections Are Admin
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, anonymous players who join the server will be able to run any admin command
+        Keywords: anonymous,connections,admin,anonymousConnectionsAreAdmin
+        FieldName: anonymousConnectionsAreAdmin
+        InputType: checkbox
+        ParamFieldName: $.anonymousConnectionsAreAdmin
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: activityDetails
+      label: Discord Activity Details
+      category: Starbound
+      subcategory: Server
+      description: Customizes the details displayed in Discord rich presence
+      keywords: discord,activity,details,presence,details,discord.activityDetails,activityDetails
+      input_type: text
+      param_field_name: $.discord.activityDetails
+      default: <playerName> | <worldName>
+      placeholder: <playerName> | <worldName>
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Discord Activity Details
+        Category: Starbound:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Customizes the details displayed in Discord rich presence
+        Keywords: discord,activity,details,presence,details,discord.activityDetails,activityDetails
+        FieldName: activityDetails
+        InputType: text
+        ParamFieldName: $.discord.activityDetails
+        DefaultValue: <playerName> | <worldName>
+        Placeholder: <playerName> | <worldName>
+        EnumValues: {}
+    - key: maxTeamSize
+      label: Maximum Team Size
+      category: Starbound
+      subcategory: Gameplay
+      description: Sets the maximum number of players allowed on a team
+      keywords: max,maximum,team,size,limit,maxTeamSize
+      input_type: number
+      param_field_name: $.maxTeamSize
+      default: '4'
+      placeholder: '4'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Team Size
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of players allowed on a team
+        Keywords: max,maximum,team,size,limit,maxTeamSize
+        FieldName: maxTeamSize
+        InputType: number
+        ParamFieldName: $.maxTeamSize
+        DefaultValue: '4'
+        Placeholder: '4'
+        Suffix: players
+        EnumValues: {}
+    - key: checkAssetsDigest
+      label: Force Matching Assets
+      category: Starbound
+      subcategory: Gameplay
+      description: If set, players will forced to have a matching assets pack
+      keywords: check,assets,digest,integrity,checkAssetsDigest
+      input_type: checkbox
+      param_field_name: $.checkAssetsDigest
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Force Matching Assets
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will forced to have a matching assets pack
+        Keywords: check,assets,digest,integrity,checkAssetsDigest
+        FieldName: checkAssetsDigest
+        InputType: checkbox
+        ParamFieldName: $.checkAssetsDigest
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: clearPlayerFiles
+      label: Clear Player Files
+      category: Starbound
+      subcategory: Gameplay
+      description: If set, players will be forced to use new characters or to have no gear or tech
+      keywords: clear,player,files,reset,clearPlayerFiles
+      input_type: checkbox
+      param_field_name: $.clearPlayerFiles
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Clear Player Files
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will be forced to use new characters or to have no gear or tech
+        Keywords: clear,player,files,reset,clearPlayerFiles
+        FieldName: clearPlayerFiles
+        InputType: checkbox
+        ParamFieldName: $.clearPlayerFiles
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: clearUniverseFiles
+      label: Clear Universe Files
+      category: Starbound
+      subcategory: Gameplay
+      description: If set, player characters will be forced to use fresh universe data and navigation maps
+      keywords: clear,universe,files,reset,clearUniverseFiles
+      input_type: checkbox
+      param_field_name: $.clearUniverseFiles
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Clear Universe Files
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, player characters will be forced to use fresh universe data and navigation maps
+        Keywords: clear,universe,files,reset,clearUniverseFiles
+        FieldName: clearUniverseFiles
+        InputType: checkbox
+        ParamFieldName: $.clearUniverseFiles
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: serverFidelity
+      label: Server Fidelity
+      category: Starbound
+      subcategory: Gameplay
+      description: Sets the fidelity level of the server
+      keywords: server,fidelity,serverFidelity
+      input_type: enum
+      param_field_name: $.serverFidelity
+      default: automatic
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        automatic: Automatic (default)
+        minimum: Minimum
+        low: Low
+        medium: Medium
+        high: High
+      raw:
+        DisplayName: Server Fidelity
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the fidelity level of the server
+        Keywords: server,fidelity,serverFidelity
+        FieldName: serverFidelity
+        InputType: enum
+        ParamFieldName: $.serverFidelity
+        DefaultValue: automatic
+        EnumValues:
+          automatic: Automatic (default)
+          minimum: Minimum
+          low: Low
+          medium: Medium
+          high: High
+    - key: tutorialMessages
+      label: Display Tutorial Messages
+      category: Starbound
+      subcategory: Gameplay
+      description: If set, tutorial messages will be displayed to all new players
+      keywords: tutorial,messages,tutorialMessages
+      input_type: checkbox
+      param_field_name: $.tutorialMessages
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Display Tutorial Messages
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, tutorial messages will be displayed to all new players
+        Keywords: tutorial,messages,tutorialMessages
+        FieldName: tutorialMessages
+        InputType: checkbox
+        ParamFieldName: $.tutorialMessages
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: filterHaveMaterials
+      label: Filter Crafting By Available Materials
+      category: Starbound
+      subcategory: Gameplay
+      description: If set, crafting menus will filter recipes by available materials
+      keywords: crafting,filter,materials,filterHaveMaterials
+      input_type: checkbox
+      param_field_name: $.crafting.filterHaveMaterials
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Filter Crafting By Available Materials
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, crafting menus will filter recipes by available materials
+        Keywords: crafting,filter,materials,filterHaveMaterials
+        FieldName: filterHaveMaterials
+        InputType: checkbox
+        ParamFieldName: $.crafting.filterHaveMaterials
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: pickupToActionBar
+      label: Add Picked Up Items To Action Bar
+      category: Starbound
+      subcategory: Gameplay
+      description: If set, items picked up will go directly to the action bar if available
+      keywords: inventory,pickup,actionbar,pickupToActionBar
+      input_type: checkbox
+      param_field_name: $.inventory.pickupToActionBar
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Add Picked Up Items To Action Bar
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, items picked up will go directly to the action bar if available
+        Keywords: inventory,pickup,actionbar,pickupToActionBar
+        FieldName: pickupToActionBar
+        InputType: checkbox
+        ParamFieldName: $.inventory.pickupToActionBar
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: interactiveHighlight
+      label: Enable Interactive Object Highlighting
+      category: Starbound
+      subcategory: Gameplay
+      description: If set, interactive objects will be highlighted
+      keywords: interactive,highlight,interactiveHighlight
+      input_type: checkbox
+      param_field_name: $.interactiveHighlight
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable Interactive Object Highlighting
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, interactive objects will be highlighted
+        Keywords: interactive,highlight,interactiveHighlight
+        FieldName: interactiveHighlight
+        InputType: checkbox
+        ParamFieldName: $.interactiveHighlight
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: monochromeLighting
+      label: Enable Monochrome Lighting
+      category: Starbound
+      subcategory: Gameplay
+      description: If set, the game will use monochrome lighting
+      keywords: monochrome,lighting,monochromeLighting
+      input_type: checkbox
+      param_field_name: $.monochromeLighting
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable Monochrome Lighting
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the game will use monochrome lighting
+        Keywords: monochrome,lighting,monochromeLighting
+        FieldName: monochromeLighting
+        InputType: checkbox
+        ParamFieldName: $.monochromeLighting
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: playerBackupFileCount
+      label: Player Backup File Count
+      category: Starbound
+      subcategory: Gameplay
+      description: Sets the number of backups made of player save files
+      keywords: player,backup,files,count,playerBackupFileCount
+      input_type: number
+      param_field_name: $.playerBackupFileCount
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: backups
+      enum_values: {}
+      raw:
+        DisplayName: Player Backup File Count
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of backups made of player save files
+        Keywords: player,backup,files,count,playerBackupFileCount
+        FieldName: playerBackupFileCount
+        InputType: number
+        ParamFieldName: $.playerBackupFileCount
+        DefaultValue: '3'
+        Placeholder: '3'
+        Suffix: backups
+        EnumValues: {}
+    - key: safeScripts
+      label: Allow Only Safe Scripts
+      category: Starbound
+      subcategory: Gameplay
+      description: If set, the server will only run safe scripts
+      keywords: safe,scripts,safeScripts
+      input_type: checkbox
+      param_field_name: $.safeScripts
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Allow Only Safe Scripts
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the server will only run safe scripts
+        Keywords: safe,scripts,safeScripts
+        FieldName: safeScripts
+        InputType: checkbox
+        ParamFieldName: $.safeScripts
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: scriptInstructionLimit
+      label: Script Instruction Limit
+      category: Starbound
+      subcategory: Gameplay
+      description: Sets the maximum number of script instructions that can be executed
+      keywords: script,instruction,limit,scriptInstructionLimit
+      input_type: number
+      param_field_name: $.scriptInstructionLimit
+      default: '10000000'
+      placeholder: '10000000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: instructions
+      enum_values: {}
+      raw:
+        DisplayName: Script Instruction Limit
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of script instructions that can be executed
+        Keywords: script,instruction,limit,scriptInstructionLimit
+        FieldName: scriptInstructionLimit
+        InputType: number
+        ParamFieldName: $.scriptInstructionLimit
+        DefaultValue: '10000000'
+        Placeholder: '10000000'
+        Suffix: instructions
+        EnumValues: {}
+    - key: scriptInstructionMeasureInterval
+      label: Script Instruction Measure Interval
+      category: Starbound
+      subcategory: Gameplay
+      description: Sets the interval at which the Script Instruction Limit is measured
+      keywords: script,instruction,interval,measure,scriptInstructionMeasureInterval
+      input_type: number
+      param_field_name: $.scriptInstructionMeasureInterval
+      default: '10000'
+      placeholder: '10000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Script Instruction Measure Interval
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the interval at which the Script Instruction Limit is measured
+        Keywords: script,instruction,interval,measure,scriptInstructionMeasureInterval
+        FieldName: scriptInstructionMeasureInterval
+        InputType: number
+        ParamFieldName: $.scriptInstructionMeasureInterval
+        DefaultValue: '10000'
+        Placeholder: '10000'
+        EnumValues: {}
+    - key: scriptRecursionLimit
+      label: Script Recursion Limit
+      category: Starbound
+      subcategory: Gameplay
+      description: Sets the maximum recursion depth for scripts
+      keywords: script,recursion,limit,scriptRecursionLimit
+      input_type: number
+      param_field_name: $.scriptRecursionLimit
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Script Recursion Limit
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum recursion depth for scripts
+        Keywords: script,recursion,limit,scriptRecursionLimit
+        FieldName: scriptRecursionLimit
+        InputType: number
+        ParamFieldName: $.scriptRecursionLimit
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: scriptProfilingEnabled
+      label: Enable Script Profiling
+      category: Starbound
+      subcategory: Gameplay
+      description: If set, script profiling will be enabled, allowing debugging and performance analysis
+      keywords: script,profiling,scriptProfilingEnabled
+      input_type: checkbox
+      param_field_name: $.scriptProfilingEnabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable Script Profiling
+        Category: Starbound:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, script profiling will be enabled, allowing debugging and performance analysis
+        Keywords: script,profiling,scriptProfilingEnabled
+        FieldName: scriptProfilingEnabled
+        InputType: checkbox
+        ParamFieldName: $.scriptProfilingEnabled
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+  files:
+    - path: storage/starbound_server.config
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: storage/starbound_server.config
+        AutoMap: true
+        Importable: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: runQueryServer
+    label: Query Enabled
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: runRconServer
+    label: RCON Enabled
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: rconServerTimeout
+    label: RCON Timeout
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Name
+    label: Server Name
+    default: AMP Powered Starbound Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: clientIPJoinable
+    label: Client IP Joinable
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: clientP2PJoinable
+    label: Client P2P Joinable
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bannedIPs
+    label: Banned IPs
+    default: '[]'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bannedUuids
+    label: Banned Player IDs
+    default: '[]'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowAdminCommands
+    label: Allow Admin Commands
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowAdminCommandsFromAnyone
+    label: Allow Admin Commands From Anyone
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: allowAnonymousConnections
+    label: Allow Anonymous Connections
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: anonymousConnectionsAreAdmin
+    label: Anonymous Connections Are Admin
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: activityDetails
+    label: Discord Activity Details
+    default: <playerName> | <worldName>
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: maxTeamSize
+    label: Maximum Team Size
+    default: '4'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: checkAssetsDigest
+    label: Force Matching Assets
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: clearPlayerFiles
+    label: Clear Player Files
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: clearUniverseFiles
+    label: Clear Universe Files
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: serverFidelity
+    label: Server Fidelity
+    default: automatic
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tutorialMessages
+    label: Display Tutorial Messages
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: filterHaveMaterials
+    label: Filter Crafting By Available Materials
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pickupToActionBar
+    label: Add Picked Up Items To Action Bar
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: interactiveHighlight
+    label: Enable Interactive Object Highlighting
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: monochromeLighting
+    label: Enable Monochrome Lighting
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: playerBackupFileCount
+    label: Player Backup File Count
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: safeScripts
+    label: Allow Only Safe Scripts
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scriptInstructionLimit
+    label: Script Instruction Limit
+    default: '10000000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scriptInstructionMeasureInterval
+    label: Script Instruction Measure Interval
+    default: '10000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scriptRecursionLimit
+    label: Script Recursion Limit
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: scriptProfilingEnabled
+    label: Enable Script Profiling
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '211820'
+  collection_support: true
 backup:
   include:
     - /data

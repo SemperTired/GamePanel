@@ -5,13 +5,19 @@ category: Imported
 summary: Squad Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '403240'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 403240/SquadGame/Binaries/Linux/SquadGameServer
+  startup: >-
+    403240/SquadGame/Binaries/Linux/SquadGameServer MULTIHOME={ApplicationIPBinding} Port={ApplicationPort1}
+    QueryPort={ApplicationPort2} RCONPORT={RemoteAdminPort} RCONPASSWORD={RemoteAdminPassword} FIXEDMAXTICKRATE={MaxTPS}
+    -beaconport={ApplicationPort3} -log -fullcrashdump {CustomArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -24,13 +30,1170 @@ ports:
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: ./SquadGame/ServerConfig/Server.cfg
+    type: text
+    editable: true
+  - path: ./SquadGame/ServerConfig/VoteConfig.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: RCONPassword
+      label: RCON Password
+      category: Squad
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's RCON
+      keywords: rcon,password
+      input_type: hidden
+      param_field_name: RCONPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's RCON
+        Keywords: rcon,password
+        FieldName: RCONPassword
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: RCONPassword
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Squad
+      subcategory: Server
+      description: Set the Name for the server in the Server Browser
+      keywords: server name, name
+      input_type: text
+      param_field_name: ServerName
+      default: A Squad Server Powered by AMP
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set the Name for the server in the Server Browser
+        Keywords: server name, name
+        FieldName: ServerName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: ServerName
+        IncludeInCommandLine: false
+        DefaultValue: A Squad Server Powered by AMP
+    - key: $MaxUsers
+      label: Max Players
+      category: Squad
+      subcategory: Server
+      description: Set the max players allowed on the server (minus reserved slots)
+      keywords: max players, players
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Max Players
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set the max players allowed on the server (minus reserved slots)
+        Keywords: max players, players
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: MaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '100'
+        Suffix: players
+        MinValue: '1'
+    - key: MaxTPS
+      label: Max TPS
+      category: Squad
+      subcategory: Server
+      description: Set the maximum tickrate for the server (Set below 45 for best stability)
+      keywords: tps, tickrate
+      input_type: number
+      param_field_name: MaxTPS
+      default: '40'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 10
+      suffix: tps
+      enum_values: {}
+      raw:
+        DisplayName: Max TPS
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set the maximum tickrate for the server (Set below 45 for best stability)
+        Keywords: tps, tickrate
+        FieldName: MaxTPS
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: MaxTPS
+        IncludeInCommandLine: false
+        DefaultValue: '40'
+        Suffix: tps
+        MinValue: '10'
+    - key: IsLANMatch
+      label: LAN Mode
+      category: Squad
+      subcategory: Server
+      description: Set the server to LAN mode
+      keywords: Lan,Server
+      input_type: checkbox
+      param_field_name: IsLANMatch
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: LAN Mode
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set the server to LAN mode
+        Keywords: Lan,Server
+        FieldName: IsLANMatch
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: IsLANMatch
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ShouldAdvertise
+      label: Should Advertise
+      category: Squad
+      subcategory: Server
+      description: Control visibility in the server browser - disabling removes the server from the Server Browser
+      keywords: Visibility,Server
+      input_type: checkbox
+      param_field_name: ShouldAdvertise
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Should Advertise
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Control visibility in the server browser - disabling removes the server from the Server Browser
+        Keywords: Visibility,Server
+        FieldName: ShouldAdvertise
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: ShouldAdvertise
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: NumReservedSlots
+      label: Number of Reserved Slots
+      category: Squad
+      subcategory: Server
+      description: Number of reserved slots for admins within the Admins.cfg file with the 'reserved' group permission
+      keywords: reserved players, players
+      input_type: number
+      param_field_name: NumReservedSlots
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Number of Reserved Slots
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Number of reserved slots for admins within the Admins.cfg file with the 'reserved' group permission
+        Keywords: reserved players, players
+        FieldName: NumReservedSlots
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: NumReservedSlots
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+    - key: PublicQueueLimit
+      label: Public Queue Limit
+      category: Squad
+      subcategory: Server
+      description: >-
+        Size of the server queuing, for regular user (Setting this to 0 disables the ability for players to join the
+        server)
+      keywords: queue,players
+      input_type: number
+      param_field_name: PublicQueueLimit
+      default: '25'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Public Queue Limit
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Size of the server queuing, for regular user (Setting this to 0 disables the ability for players to join the
+          server)
+        Keywords: queue,players
+        FieldName: PublicQueueLimit
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: PublicQueueLimit
+        IncludeInCommandLine: false
+        DefaultValue: '25'
+    - key: MapRotationMode
+      label: Map Rotation Mode
+      category: Squad
+      subcategory: Server
+      description: >-
+        Map rotation mode: Can be LevelList (use order in level rotation config file), LayerList (use order in layer
+        rotation config file), the Randomized version of each, or the Voting enabled version of LayerList_Vote 
+      keywords: Map Rotation,Rotation
+      input_type: enum
+      param_field_name: MapRotationMode
+      default: LayerList
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        LevelList: LevelList
+        LayerList: LayerList
+        LevelList_Randomized: LevelList_Randomized
+        LayerList_Randomized: LayerList_Randomized
+        LayerList_Vote: LayerList_Vote
+      raw:
+        DisplayName: Map Rotation Mode
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Map rotation mode: Can be LevelList (use order in level rotation config file), LayerList (use order in layer
+          rotation config file), the Randomized version of each, or the Voting enabled version of LayerList_Vote 
+        Keywords: Map Rotation,Rotation
+        FieldName: MapRotationMode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: MapRotationMode
+        IncludeInCommandLine: false
+        DefaultValue: LayerList
+        EnumValues:
+          LevelList: LevelList
+          LayerList: LayerList
+          LevelList_Randomized: LevelList_Randomized
+          LayerList_Randomized: LayerList_Randomized
+          LayerList_Vote: LayerList_Vote
+        SkipIfEmpty: false
+    - key: RandomizeAtStart
+      label: Randomize At Start
+      category: Squad
+      subcategory: Server
+      description: Should the Map/Layer rotations list be randomized at start?
+      keywords: Map Rotation,Rotation
+      input_type: checkbox
+      param_field_name: RandomizeAtStart
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Randomize At Start
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Should the Map/Layer rotations list be randomized at start?
+        Keywords: Map Rotation,Rotation
+        FieldName: RandomizeAtStart
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: RandomizeAtStart
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: UseVoteFactions
+      label: Use Vote Factions
+      category: Squad
+      subcategory: Server
+      description: Should Faction be voted for on generic layers?
+      keywords: Factions,Vote
+      input_type: checkbox
+      param_field_name: UseVoteFactions
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use Vote Factions
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Should Faction be voted for on generic layers?
+        Keywords: Factions,Vote
+        FieldName: UseVoteFactions
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: UseVoteFactions
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: UseVoteLevel
+      label: Vote for map at end of round
+      category: Squad
+      subcategory: Server
+      description: Should next Map be voted for at end of round?
+      keywords: Map,Vote
+      input_type: checkbox
+      param_field_name: UseVoteLevel
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Vote for map at end of round
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Should next Map be voted for at end of round?
+        Keywords: Map,Vote
+        FieldName: UseVoteLevel
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: UseVoteLevel
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: UseVoteLayer
+      label: Vote for layer at end of round
+      category: Squad
+      subcategory: Server
+      description: Should next Layer be voted for at end of round?
+      keywords: Layer,Vote
+      input_type: checkbox
+      param_field_name: UseVoteLayer
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Vote for layer at end of round
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Should next Layer be voted for at end of round?
+        Keywords: Layer,Vote
+        FieldName: UseVoteLayer
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: UseVoteLayer
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowTeamChanges
+      label: Allow Team Change
+      category: Squad
+      subcategory: Server
+      description: >-
+        Completly Allow or Disallow Team change to all players. Only users with 'balance' permission within Admins.cfg
+        can bypass this flag
+      keywords: Layer,Vote
+      input_type: checkbox
+      param_field_name: AllowTeamChanges
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Team Change
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Completly Allow or Disallow Team change to all players. Only users with 'balance' permission within Admins.cfg
+          can bypass this flag
+        Keywords: Layer,Vote
+        FieldName: AllowTeamChanges
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: AllowTeamChanges
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PreventTeamChangeIfUnbalanced
+      label: Prevent Team Change If Unbalanced
+      category: Squad
+      subcategory: Server
+      description: >-
+        If set to false, players can change teams regardless of team balance. Otherwise, the
+        NumPlayersDiffForTeamChanges Value is used
+      keywords: Layer,Vote
+      input_type: checkbox
+      param_field_name: PreventTeamChangeIfUnbalanced
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Prevent Team Change If Unbalanced
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set to false, players can change teams regardless of team balance. Otherwise, the
+          NumPlayersDiffForTeamChanges Value is used
+        Keywords: Layer,Vote
+        FieldName: PreventTeamChangeIfUnbalanced
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: PreventTeamChangeIfUnbalanced
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: NumPlayersDiffForTeamChanges
+      label: Max Allowed Difference in player count
+      category: Squad
+      subcategory: Server
+      description: >-
+        Maximum Allowed difference in player count between teams. This takes into account the team the player leaves and
+        the team the player joins
+      keywords: queue,players
+      input_type: number
+      param_field_name: NumPlayersDiffForTeamChanges
+      default: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Max Allowed Difference in player count
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Maximum Allowed difference in player count between teams. This takes into account the team the player leaves
+          and the team the player joins
+        Keywords: queue,players
+        FieldName: NumPlayersDiffForTeamChanges
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: NumPlayersDiffForTeamChanges
+        IncludeInCommandLine: false
+        DefaultValue: '3'
+    - key: RejoinSquadDelayAfterKick
+      label: Rejoin Squad Delay After Kick
+      category: Squad
+      subcategory: Server
+      description: Sets the delay after which a player is allowed to rejoin a squad after being kicked.
+      keywords: delay,players,kick
+      input_type: number
+      param_field_name: RejoinSquadDelayAfterKick
+      default: '180'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Rejoin Squad Delay After Kick
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the delay after which a player is allowed to rejoin a squad after being kicked.
+        Keywords: delay,players,kick
+        FieldName: RejoinSquadDelayAfterKick
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: RejoinSquadDelayAfterKick
+        IncludeInCommandLine: false
+        DefaultValue: '180'
+        Suffix: seconds
+    - key: RecordDemos
+      label: Record Demos - Server
+      category: Squad
+      subcategory: Server
+      description: Enable Demo Recording Server-side - the server will save a demo of every match
+      keywords: Record,Demo
+      input_type: checkbox
+      param_field_name: RecordDemos
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Record Demos - Server
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Enable Demo Recording Server-side - the server will save a demo of every match
+        Keywords: Record,Demo
+        FieldName: RecordDemos
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: RecordDemos
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowPublicClientsToRecord
+      label: Record Demos - Client
+      category: Squad
+      subcategory: Server
+      description: Enable Demo Recording Client-side, allowing players to record demos of matches
+      keywords: Record,Demo
+      input_type: checkbox
+      param_field_name: AllowPublicClientsToRecord
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Record Demos - Client
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Enable Demo Recording Client-side, allowing players to record demos of matches
+        Keywords: Record,Demo
+        FieldName: AllowPublicClientsToRecord
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: AllowPublicClientsToRecord
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ServerMessageInterval
+      label: Server Message Interval
+      category: Squad
+      subcategory: Server
+      description: >-
+        Frequency in which the server displays the information inside the ServerMessages.cfg file as a broadcast to all
+        players
+      keywords: Interval, Message
+      input_type: number
+      param_field_name: ServerMessageInterval
+      default: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Server Message Interval
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Frequency in which the server displays the information inside the ServerMessages.cfg file as a broadcast to
+          all players
+        Keywords: Interval, Message
+        FieldName: ServerMessageInterval
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: ServerMessageInterval
+        IncludeInCommandLine: false
+        DefaultValue: '300'
+        Suffix: seconds
+    - key: ForceNonSeamlessTravelIntervalSeconds
+      label: Force Server Non-Seamless Travel
+      category: Squad
+      subcategory: Server
+      description: Forces the server to do non-seamless travel (disconnect when changing maps) every X seconds
+      keywords: travel
+      input_type: number
+      param_field_name: ForceNonSeamlessTravelIntervalSeconds
+      default: '43200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Force Server Non-Seamless Travel
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Forces the server to do non-seamless travel (disconnect when changing maps) every X seconds
+        Keywords: travel
+        FieldName: ForceNonSeamlessTravelIntervalSeconds
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: ForceNonSeamlessTravelIntervalSeconds
+        IncludeInCommandLine: false
+        DefaultValue: '43200'
+        SkipIfEmpty: true
+    - key: TKAutoKickEnabled
+      label: Team Kill Auto Kick Enabled
+      category: Squad
+      subcategory: Server
+      description: Enable Auto Kick for teamkilling
+      keywords: Kick,Auto,Team,Kill
+      input_type: checkbox
+      param_field_name: TKAutoKickEnabled
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Team Kill Auto Kick Enabled
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Enable Auto Kick for teamkilling
+        Keywords: Kick,Auto,Team,Kill
+        FieldName: TKAutoKickEnabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: TKAutoKickEnabled
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AutoTKBanNumberTKs
+      label: Auto Team Kill Ban Number
+      category: Squad
+      subcategory: Server
+      description: Maximum allowed teamkills before an automatic ban
+      keywords: Interval, Message
+      input_type: number
+      param_field_name: AutoTKBanNumberTKs
+      default: '7'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auto Team Kill Ban Number
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Maximum allowed teamkills before an automatic ban
+        Keywords: Interval, Message
+        FieldName: AutoTKBanNumberTKs
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: AutoTKBanNumberTKs
+        IncludeInCommandLine: false
+        DefaultValue: '7'
+    - key: AutoTKBanTime
+      label: Auto Team Kill Ban Timer
+      category: Squad
+      subcategory: Server
+      description: Time a teamkiling player is banned for before being allowed to rejoin match.
+      keywords: Interval,Message,Time
+      input_type: number
+      param_field_name: AutoTKBanTime
+      default: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Auto Team Kill Ban Timer
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Time a teamkiling player is banned for before being allowed to rejoin match.
+        Keywords: Interval,Message,Time
+        FieldName: AutoTKBanTime
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: AutoTKBanTime
+        IncludeInCommandLine: false
+        DefaultValue: '300'
+        Suffix: seconds
+    - key: VehicleKitRequirementDisabled
+      label: Vehicle Kit Requirement Disabled
+      category: Squad
+      subcategory: Server
+      description: Toggle to disable vehicle kit requirement
+      keywords: Vehicle,Kit
+      input_type: checkbox
+      param_field_name: VehicleKitRequirementDisabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Vehicle Kit Requirement Disabled
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Toggle to disable vehicle kit requirement
+        Keywords: Vehicle,Kit
+        FieldName: VehicleKitRequirementDisabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: VehicleKitRequirementDisabled
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowCommunityAdminAccess
+      label: Allow Community Admin Access
+      category: Squad
+      subcategory: Server
+      description: Enable QA Admin Access (Required for Licensed Servers)
+      keywords: Admin
+      input_type: checkbox
+      param_field_name: AllowCommunityAdminAccess
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Community Admin Access
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Enable QA Admin Access (Required for Licensed Servers)
+        Keywords: Admin
+        FieldName: AllowCommunityAdminAccess
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: AllowCommunityAdminAccess
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowDevProfiling
+      label: Offworld Developers only Admin
+      category: Squad
+      subcategory: Server
+      description: Allow Offworld Industries QA Dev Profiling (Required for Licensed Servers)
+      keywords: Admin
+      input_type: checkbox
+      param_field_name: AllowDevProfiling
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Offworld Developers only Admin
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Allow Offworld Industries QA Dev Profiling (Required for Licensed Servers)
+        Keywords: Admin
+        FieldName: AllowDevProfiling
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: AllowDevProfiling
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowQA
+      label: Allow QA
+      category: Squad
+      subcategory: Server
+      description: Allow Offworld Industries QA (Required for Licensed Servers)
+      keywords: QA
+      input_type: checkbox
+      param_field_name: AllowQA
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow QA
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Allow Offworld Industries QA (Required for Licensed Servers)
+        Keywords: QA
+        FieldName: AllowQA
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: AllowQA
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: VehicleClaimingDisabled
+      label: Vehicle Claiming Disabled
+      category: Squad
+      subcategory: Server
+      description: Disable Vehicle Claiming
+      keywords: Vehicle
+      input_type: checkbox
+      param_field_name: VehicleClaimingDisabled
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Vehicle Claiming Disabled
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Disable Vehicle Claiming
+        Keywords: Vehicle
+        FieldName: VehicleClaimingDisabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: VehicleClaimingDisabled
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: CustomArgs
+      label: Additional Command Line Arguments
+      category: Squad
+      subcategory: Server
+      description: >-
+        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AMP.
+        Use with care
+      keywords: custom,server,arguments,parameters
+      input_type: text
+      param_field_name: CustomArgs
+      default: ''
+      placeholder: '-useperfthreads'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Arguments
+        Category: Squad:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by
+          AMP. Use with care
+        Keywords: custom,server,arguments,parameters
+        FieldName: CustomArgs
+        InputType: text
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        Placeholder: '-useperfthreads'
+        EnumValues: {}
+  files:
+    - path: ./SquadGame/ServerConfig/Server.cfg
+      type: kvp
+      format: '{0}="{1}"'
+      subsections: []
+      raw:
+        ConfigFile: ./SquadGame/ServerConfig/Server.cfg
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormat: '{0}="{1}"'
+    - path: ./SquadGame/ServerConfig/VoteConfig.cfg
+      type: kvp
+      format: '{0}="{1}"'
+      subsections: []
+      raw:
+        ConfigFile: ./SquadGame/ServerConfig/VoteConfig.cfg
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormat: '{0}="{1}"'
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: A Squad Server Powered by AMP
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxTPS
+    label: Max TPS
+    default: '40'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: IsLANMatch
+    label: LAN Mode
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ShouldAdvertise
+    label: Should Advertise
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NumReservedSlots
+    label: Number of Reserved Slots
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PublicQueueLimit
+    label: Public Queue Limit
+    default: '25'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MapRotationMode
+    label: Map Rotation Mode
+    default: LayerList
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RandomizeAtStart
+    label: Randomize At Start
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseVoteFactions
+    label: Use Vote Factions
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseVoteLevel
+    label: Vote for map at end of round
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseVoteLayer
+    label: Vote for layer at end of round
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowTeamChanges
+    label: Allow Team Change
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PreventTeamChangeIfUnbalanced
+    label: Prevent Team Change If Unbalanced
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NumPlayersDiffForTeamChanges
+    label: Max Allowed Difference in player count
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RejoinSquadDelayAfterKick
+    label: Rejoin Squad Delay After Kick
+    default: '180'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RecordDemos
+    label: Record Demos - Server
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowPublicClientsToRecord
+    label: Record Demos - Client
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerMessageInterval
+    label: Server Message Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ForceNonSeamlessTravelIntervalSeconds
+    label: Force Server Non-Seamless Travel
+    default: '43200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TKAutoKickEnabled
+    label: Team Kill Auto Kick Enabled
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutoTKBanNumberTKs
+    label: Auto Team Kill Ban Number
+    default: '7'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AutoTKBanTime
+    label: Auto Team Kill Ban Timer
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VehicleKitRequirementDisabled
+    label: Vehicle Kit Requirement Disabled
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowCommunityAdminAccess
+    label: Allow Community Admin Access
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowDevProfiling
+    label: Offworld Developers only Admin
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowQA
+    label: Allow QA
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VehicleClaimingDisabled
+    label: Vehicle Claiming Disabled
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Additional Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '393380'
+  collection_support: true
 backup:
   include:
     - /data

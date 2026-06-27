@@ -5,13 +5,16 @@ category: Imported
 summary: Unturned 3 Dedicated Server with RocketMod and optional OpenMod
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1110390'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1110390/Unturned_Headless.x86_64
+  startup: 1110390/Unturned_Headless.x86_64 {PlatformArgs} -batchmode -nographics {FormattedArgs} +{ServerType}/{ServerID}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1032 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: applicationport1
     name: Game Port
     default: 27015
-    protocol: udp
+    protocol: both
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 27016
+    protocol: both
+    required: true
+  - key: remoteadminport
+    name: RCON Port
+    default: 27115
+    protocol: tcp
+    required: true
+config_files:
+  - path: Servers/{{ServerID}}/Server/Commands.dat
+    type: text
+    editable: true
+  - path: Servers/{{ServerID}}/WorkshopDownloadConfig.json
+    type: text
+    editable: true
+  - path: Servers/{{ServerID}}/Rocket/Rocket.config.xml
+    type: xml
+    editable: true
+  - path: Servers/{{ServerID}}/OpenMod/openmod.unturned.yaml
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $ApplicationPort1
+      label: Game Port
+      category: Unturned
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationPort1
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: Port
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: RCONEnabled
+      label: Enable RCON
+      category: Unturned
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /RocketSettings/RCON/@Enabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enable RCON
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: RCONEnabled
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: /RocketSettings/RCON/@Enabled
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: $RemoteAdminPort
+      label: RCON Port
+      category: Unturned
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /RocketSettings/RCON/@Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Port
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RemoteAdminPort
+        InputType: number
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: /RocketSettings/RCON/@Port
+        IncludeInCommandLine: false
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: permissionSystem
+      label: OpenMod Permission System
+      category: Unturned
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: permissionSystem
+      default: OpenMod
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: OpenMod Permission System
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: permissionSystem
+        InputType: text
+        IsFlagArgument: false
+        Hidden: true
+        ParamFieldName: permissionSystem
+        IncludeInCommandLine: false
+        DefaultValue: OpenMod
+        ExcludeFromImport: true
+        EnumValues: {}
+    - key: Name
+      label: Server Name
+      category: Unturned
+      subcategory: Server
+      description: Sets the name of the server shown publicly
+      keywords: name
+      input_type: text
+      param_field_name: Name
+      default: AMP Powered Unturned Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server shown publicly
+        Keywords: name
+        FieldName: Name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: Name
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Unturned Server
+        EnumValues: {}
+    - key: ServerType
+      label: Server Type
+      category: Unturned
+      subcategory: Server
+      description: ''
+      keywords: server,type,internet,lan
+      input_type: enum
+      default: InternetServer
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        InternetServer: Internet Server
+        LanServer: LAN Server
+      raw:
+        DisplayName: Server Type
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: server,type,internet,lan
+        FieldName: ServerType
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ''
+        IncludeInCommandLine: false
+        DefaultValue: InternetServer
+        EnumValues:
+          InternetServer: Internet Server
+          LanServer: LAN Server
+    - key: Password
+      label: Server Password
+      category: Unturned
+      subcategory: Server
+      description: Password to connect to the server. Default is no password
+      keywords: password
+      input_type: password
+      param_field_name: Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Password to connect to the server. Default is no password
+        Keywords: password
+        FieldName: Password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: Password
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Unturned
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's RCON
+      keywords: rcon,password
+      input_type: hidden
+      param_field_name: /RocketSettings/RCON/@Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's RCON
+        Keywords: rcon,password
+        FieldName: $RemoteAdminPassword
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: /RocketSettings/RCON/@Password
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: Owner
+      label: Owner
+      category: Unturned
+      subcategory: Server
+      description: >-
+        [Steam64 ID](https://steamid.io/) of the server's owner, which gives them administrator commands and fully sets
+        up the server
+      keywords: owner
+      input_type: number
+      param_field_name: Owner
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Owner
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          [Steam64 ID](https://steamid.io/) of the server's owner, which gives them administrator commands and fully
+          sets up the server
+        Keywords: owner
+        FieldName: Owner
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: Owner
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: GSLT
+      label: GSLT
+      category: Unturned
+      subcategory: Server
+      description: >-
+        Sets the [Game Server Login Token](https://steamcommunity.com/dev/managegameservers) for the server. Required
+        for the server to appear in the server list. Use Steam App ID 304930
+      keywords: GSLT,token
+      input_type: text
+      param_field_name: GSLT
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: GSLT
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [Game Server Login Token](https://steamcommunity.com/dev/managegameservers) for the server. Required
+          for the server to appear in the server list. Use Steam App ID 304930
+        Keywords: GSLT,token
+        FieldName: GSLT
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: GSLT
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: Welcome
+      label: Welcome Message
+      category: Unturned
+      subcategory: Server
+      description: Player welcome message
+      keywords: welcome,message
+      input_type: text
+      param_field_name: Welcome
+      default: Welcome to Unturned
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Welcome Message
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Player welcome message
+        Keywords: welcome,message
+        FieldName: Welcome
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: Welcome
+        IncludeInCommandLine: false
+        DefaultValue: Welcome to Unturned
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Unturned
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: players,limit
+      input_type: number
+      param_field_name: Maxplayers
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: players,limit
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: Maxplayers
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: players
+        EnumValues: {}
+    - key: Map
+      label: Map
+      category: Unturned
+      subcategory: Server
+      description: Sets the map for the server. If Custom is selected, Custom Map Name must also be set
+      keywords: map
+      input_type: enum
+      param_field_name: Map
+      default: PEI
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Alpha Valley: Alpha Valley (Arena)
+        Germany: Germany
+        Monolith: Monolith (Arena)
+        Paintball Arena: Paintball Arena
+        PEI: PEI (default)
+        PEI Arena: PEI Arena
+        Russia: Russia
+        Washington: Washington
+        Washington Arena: Washington Arena
+        Yukon: Yukon
+        '{{CustomMap}}': '--Custom--'
+      raw:
+        DisplayName: Map
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map for the server. If Custom is selected, Custom Map Name must also be set
+        Keywords: map
+        FieldName: Map
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: Map
+        IncludeInCommandLine: false
+        DefaultValue: PEI
+        EnumValues:
+          Alpha Valley: Alpha Valley (Arena)
+          Germany: Germany
+          Monolith: Monolith (Arena)
+          Paintball Arena: Paintball Arena
+          PEI: PEI (default)
+          PEI Arena: PEI Arena
+          Russia: Russia
+          Washington: Washington
+          Washington Arena: Washington Arena
+          Yukon: Yukon
+          '{{CustomMap}}': '--Custom--'
+    - key: CustomMap
+      label: Custom Map Name
+      category: Unturned
+      subcategory: Server
+      description: >-
+        Sets a custom map name for the server. "Custom" type must be selected under Map, and the map files must be
+        installed via Workshop Items
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      placeholder: Hawaii
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Map Name
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a custom map name for the server. "Custom" type must be selected under Map, and the map files must be
+          installed via Workshop Items
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomMap
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: Hawaii
+        EnumValues: {}
+    - key: Mode
+      label: Difficulty Mode
+      category: Unturned
+      subcategory: Server
+      description: Sets the difficulty mode
+      keywords: difficulty,mode
+      input_type: enum
+      param_field_name: Mode
+      default: Normal
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Easy: Easy
+        Normal: Normal
+        Hard: Hard
+      raw:
+        DisplayName: Difficulty Mode
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the difficulty mode
+        Keywords: difficulty,mode
+        FieldName: Mode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: Mode
+        IncludeInCommandLine: false
+        DefaultValue: Normal
+        EnumValues:
+          Easy: Easy
+          Normal: Normal
+          Hard: Hard
+    - key: Perspective
+      label: Perspective View
+      category: Unturned
+      subcategory: Server
+      description: Sets the perspective view
+      keywords: perspective,view
+      input_type: enum
+      param_field_name: Perspective
+      default: Both
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        First: First person only
+        Third: Third person only
+        Both: First and third person allowed
+        Vehicle: Third person in vehicle only
+      raw:
+        DisplayName: Perspective View
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the perspective view
+        Keywords: perspective,view
+        FieldName: Perspective
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: Perspective
+        IncludeInCommandLine: false
+        DefaultValue: Both
+        EnumValues:
+          First: First person only
+          Third: Third person only
+          Both: First and third person allowed
+          Vehicle: Third person in vehicle only
+    - key: Weather
+      label: Weather
+      category: Unturned
+      subcategory: Server
+      description: Sets the weather
+      keywords: weather
+      input_type: enum
+      param_field_name: Weather
+      default: None
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        None: None
+        Storm: Storm
+        Blizzard: Blizzard
+      raw:
+        DisplayName: Weather
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the weather
+        Keywords: weather
+        FieldName: Weather
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: Weather
+        IncludeInCommandLine: false
+        DefaultValue: None
+        EnumValues:
+          None: None
+          Storm: Storm
+          Blizzard: Blizzard
+    - key: Cycle
+      label: Day/Night Cycle Period
+      category: Unturned
+      subcategory: Server
+      description: Sets the day/night cycle period
+      keywords: day,night,cycle
+      input_type: number
+      param_field_name: Cycle
+      default: '3600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Day/Night Cycle Period
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the day/night cycle period
+        Keywords: day,night,cycle
+        FieldName: Cycle
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: Cycle
+        IncludeInCommandLine: false
+        DefaultValue: '3600'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Chatrate
+      label: Chat Rate
+      category: Unturned
+      subcategory: Server
+      description: Sets the minimum time between chat messages in order to prevent spam
+      keywords: chatrate
+      input_type: number
+      param_field_name: Chatrate
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Chat Rate
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum time between chat messages in order to prevent spam
+        Keywords: chatrate
+        FieldName: Chatrate
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: Chatrate
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: seconds
+        EnumValues: {}
+    - key: Timeout
+      label: Timeout
+      category: Unturned
+      subcategory: Server
+      description: Sets the maximum ping for players before they time out (400 - 600 ms recommended)
+      keywords: timeout
+      input_type: number
+      param_field_name: Timeout
+      default: '500'
+      placeholder: '500'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: milliseconds
+      enum_values: {}
+      raw:
+        DisplayName: Timeout
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum ping for players before they time out (400 - 600 ms recommended)
+        Keywords: timeout
+        FieldName: Timeout
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: Timeout
+        IncludeInCommandLine: false
+        DefaultValue: '500'
+        Placeholder: '500'
+        Suffix: milliseconds
+        EnumValues: {}
+    - key: FileIDs
+      label: Workshop Items
+      category: Unturned
+      subcategory: Server
+      description: Comma separated list of IDs of workshop items to install on the server
+      keywords: workshop,items
+      input_type: text
+      param_field_name: FileIDs
+      default: ''
+      placeholder: 2478247379,2566953935
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Workshop Items
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Comma separated list of IDs of workshop items to install on the server
+        Keywords: workshop,items
+        FieldName: FileIDs
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: FileIDs
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: 2478247379,2566953935
+        EnumValues: {}
+    - key: ChildrenFileIDs
+      label: Excluded Workshop Items
+      category: Unturned
+      subcategory: Server
+      description: Comma separated list of IDs of children items to ignore when installing workshop items
+      keywords: workshop,children,items
+      input_type: text
+      param_field_name: ChildrenFileIDs
+      default: ''
+      placeholder: 5685656858,7697679654
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Excluded Workshop Items
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Comma separated list of IDs of children items to ignore when installing workshop items
+        Keywords: workshop,children,items
+        FieldName: ChildrenFileIDs
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: ChildrenFileIDs
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: 5685656858,7697679654
+        EnumValues: {}
+    - key: MaxRetries
+      label: Maximum Workshop Retries
+      category: Unturned
+      subcategory: Server
+      description: Sets the maximum number of retries to download workshop items
+      keywords: retries
+      input_type: number
+      param_field_name: MaxRetries
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Workshop Retries
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of retries to download workshop items
+        Keywords: retries
+        FieldName: MaxRetries
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: MaxRetries
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        Placeholder: '2'
+        EnumValues: {}
+    - key: ServerID
+      label: Server ID
+      category: Unturned
+      subcategory: Server
+      description: >-
+        Server ID for the directory where savedata and configuration files are stored. WARNING: Do not change unless you
+        know what you are doing! Make sure you update the server if this is changed, and you may also need to
+        reconfigure config files, including for RocketMod and OpenMod, as applicable
+      keywords: server,id,serverid
+      input_type: text
+      param_field_name: ServerID
+      default: Unturned
+      placeholder: Unturned
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server ID
+        Category: Unturned:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Server ID for the directory where savedata and configuration files are stored. WARNING: Do not change unless
+          you know what you are doing! Make sure you update the server if this is changed, and you may also need to
+          reconfigure config files, including for RocketMod and OpenMod, as applicable
+        Keywords: server,id,serverid
+        FieldName: ServerID
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: ServerID
+        IncludeInCommandLine: false
+        DefaultValue: Unturned
+        Placeholder: Unturned
+        Required: true
+        EnumValues: {}
+    - key: OpenMod
+      label: Install OpenMod
+      category: Updates
+      subcategory: OpenMod
+      description: If enabled, OpenMod will be installed when the server is updated
+      keywords: openmod
+      input_type: checkbox
+      param_field_name: OpenMod
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Install OpenMod
+        Category: Updates
+        Subcategory: OpenMod:code:3
+        Description: If enabled, OpenMod will be installed when the server is updated
+        Keywords: openmod
+        FieldName: OpenMod
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: OpenMod
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: Servers/{{ServerID}}/Server/Commands.dat
+      type: kvp
+      format: '{0} {1}'
+      subsections: []
+      raw:
+        ConfigFile: Servers/{{ServerID}}/Server/Commands.dat
+        AutoMap: true
+        Importable: true
+        ConfigType: kvp
+        ConfigFormat: '{0} {1}'
+        ConfigFormatRegex: ^(?<key>.+?) (?<value>.*?)$
+    - path: Servers/{{ServerID}}/WorkshopDownloadConfig.json
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: Servers/{{ServerID}}/WorkshopDownloadConfig.json
+        AutoMap: true
+        Importable: true
+        ConfigType: template
+        ConfigFileTemplate: unturnedworkshopconfig.json
+    - path: Servers/{{ServerID}}/Rocket/Rocket.config.xml
+      type: xml
+      subsections: []
+      raw:
+        ConfigFile: Servers/{{ServerID}}/Rocket/Rocket.config.xml
+        AutoMap: true
+        ConfigType: xml
+    - path: Servers/{{ServerID}}/OpenMod/openmod.unturned.yaml
+      type: kvp
+      format: '  {0}: {1}'
+      subsections: []
+      raw:
+        ConfigFile: Servers/{{ServerID}}/OpenMod/openmod.unturned.yaml
+        AutoMap: true
+        ConfigType: kvp
+        ConfigFormat: '  {0}: {1}'
+        ConfigFormatRegex: '^  (?<key>.+?): (?<value>.*?)$'
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: RCONEnabled
+    label: Enable RCON
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: permissionSystem
+    label: OpenMod Permission System
+    default: OpenMod
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Name
+    label: Server Name
+    default: AMP Powered Unturned Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerType
+    label: Server Type
+    default: InternetServer
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Owner
+    label: Owner
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GSLT
+    label: GSLT
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: Welcome
+    label: Welcome Message
+    default: Welcome to Unturned
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Map
+    label: Map
+    default: PEI
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Map Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Mode
+    label: Difficulty Mode
+    default: Normal
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Perspective
+    label: Perspective View
+    default: Both
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Weather
+    label: Weather
+    default: None
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Cycle
+    label: Day/Night Cycle Period
+    default: '3600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Chatrate
+    label: Chat Rate
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Timeout
+    label: Timeout
+    default: '500'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FileIDs
+    label: Workshop Items
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ChildrenFileIDs
+    label: Excluded Workshop Items
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxRetries
+    label: Maximum Workshop Retries
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerID
+    label: Server ID
+    default: Unturned
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: OpenMod
+    label: Install OpenMod
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '304930'
+  collection_support: true
 backup:
   include:
     - /data

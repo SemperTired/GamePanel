@@ -5,13 +5,18 @@ category: Imported
 summary: Ground Branch Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '476400'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: >-
+    /usr/bin/wine {PlatformArgs} {ServerMap}?Mission={ServerMission}?{FormattedArgs}{CustomServerArgs}
+    QueryPort={QueryPort} MultiHome={ApplicationIPBinding} -nohomedir -stdout -FullStdOutLogOutput
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,2002 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: ./GroundBranch/ServerConfig/Server.ini
+    type: ini
+    editable: true
+  - path: ./GroundBranch/ServerConfig/Vote.ini
+    type: ini
+    editable: true
+  - path: ./GroundBranch/ServerConfig/Ban.ini
+    type: ini
+    editable: true
+  - path: ./GroundBranch/ServerConfig/TeamKill.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: ServerName
+      label: Server Name
+      category: Ground Branch
+      subcategory: Server
+      description: Sets the name of the server as shown in the server browser. Maximum 64 characters
+      keywords: name,servername
+      input_type: text
+      param_field_name: /Script/RBZooKeeper.ZKServer.ServerName
+      default: AMP Powered Ground Branch Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as shown in the server browser. Maximum 64 characters
+        Keywords: name,servername
+        FieldName: ServerName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.ServerName
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Ground Branch Server
+        EnumValues: {}
+    - key: ServerMOTD
+      label: MOTD
+      category: Ground Branch
+      subcategory: Server
+      description: >-
+        Sets the player welcome message (MOTD). Maximum 512 characters. <br> = line break, <b> = bold line, <h1 - 3> =
+        heading 1, 2, 3 etc
+      keywords: motd,welcome,message,servermotd
+      input_type: Textarea
+      param_field_name: /Script/RBZooKeeper.ZKServer.ServerMOTD
+      default: <h1>Welcome!<br>This is my Ground Branch server.<br><b>Enjoy!
+      placeholder: <h1>Welcome!<br>This is my Ground Branch server.<br><b>Enjoy!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: MOTD
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the player welcome message (MOTD). Maximum 512 characters. <br> = line break, <b> = bold line, <h1 - 3> =
+          heading 1, 2, 3 etc
+        Keywords: motd,welcome,message,servermotd
+        FieldName: ServerMOTD
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.ServerMOTD
+        IncludeInCommandLine: false
+        DefaultValue: <h1>Welcome!<br>This is my Ground Branch server.<br><b>Enjoy!
+        Placeholder: <h1>Welcome!<br>This is my Ground Branch server.<br><b>Enjoy!
+        EnumValues: {}
+    - key: ServerWebBanner
+      label: Server Web Banner
+      category: Ground Branch
+      subcategory: Server
+      description: Sets the URL of a jpg image to act as a server banner in-game where possible. Recommended resolution = 788 x 386
+      keywords: web,banner,serverwebbanner
+      input_type: text
+      param_field_name: /Script/RBZooKeeper.ZKServer.ServerWebBanner
+      default: ''
+      placeholder: www.images.com/myimage.jpeg
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Web Banner
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the URL of a jpg image to act as a server banner in-game where possible. Recommended resolution = 788 x
+          386
+        Keywords: web,banner,serverwebbanner
+        FieldName: ServerWebBanner
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.ServerWebBanner
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: www.images.com/myimage.jpeg
+        EnumValues: {}
+    - key: ServerPassword
+      label: Server Password
+      category: Ground Branch
+      subcategory: Server
+      description: Sets the password for players to join the server. Default is no password
+      keywords: server,password,serverpassword
+      input_type: password
+      param_field_name: /Script/RBZooKeeper.ZKServer.ServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for players to join the server. Default is no password
+        Keywords: server,password,serverpassword
+        FieldName: ServerPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.ServerPassword
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: SpectatorOnlyPassword
+      label: Spectator Password
+      category: Ground Branch
+      subcategory: Server
+      description: Sets the password to join the server as a permanent spectator. Default is no password
+      keywords: server,password,spectator,spectatoronlypassword
+      input_type: password
+      param_field_name: /Script/RBZooKeeper.ZKServer.SpectatorOnlyPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Spectator Password
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password to join the server as a permanent spectator. Default is no password
+        Keywords: server,password,spectator,spectatoronlypassword
+        FieldName: SpectatorOnlyPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.SpectatorOnlyPassword
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: MapList
+      label: Server Map List
+      category: Ground Branch
+      subcategory: Server
+      description: >-
+        A map list can be specified in GroundBranch/ServerConfig/MapList.ini. Used for automatic rotation or voting
+        selection of maps. The map list is easiest to build from the in-game Admin menu, but can also be done manually
+      keywords: map,list,maplist
+      input_type: hidden
+      param_field_name: MapList
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Map List
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          A map list can be specified in GroundBranch/ServerConfig/MapList.ini. Used for automatic rotation or voting
+          selection of maps. The map list is easiest to build from the in-game Admin menu, but can also be done manually
+        Keywords: map,list,maplist
+        FieldName: MapList
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: MapList
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: ServerMap
+      label: Server Map
+      category: Ground Branch
+      subcategory: Server
+      description: >-
+        Sets the map for the server, if no map list is specified in MapList.ini. Requires the Server Mission also to be
+        set, otherwise the Server Default map will be used. To use a map not listed in the dropdown, select Custom and
+        set the "Custom Map Name"
+      keywords: map
+      input_type: enum
+      param_field_name: ServerMap
+      default: '747'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '747': '747'
+        Arena: Arena
+        Arena2: Arena II
+        City: City
+        Compound: Compound
+        Creek: Creek
+        Depot: Depot
+        Depot_Compound: Depot (Compound)
+        Docks: Docks
+        Paintball: Paintball
+        PowerStation: Power Station
+        RunDown: Run Down
+        Rig: Rig
+        SmallTown: Small Town
+        StorageFacility: Storage Facility
+        Tanker: Tanker
+        TheFarm: The Farm
+        '{{CustomMap}}': Custom
+      raw:
+        DisplayName: Server Map
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the map for the server, if no map list is specified in MapList.ini. Requires the Server Mission also to
+          be set, otherwise the Server Default map will be used. To use a map not listed in the dropdown, select Custom
+          and set the "Custom Map Name"
+        Keywords: map
+        FieldName: ServerMap
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ServerMap
+        IncludeInCommandLine: false
+        DefaultValue: '747'
+        EnumValues:
+          '747': '747'
+          Arena: Arena
+          Arena2: Arena II
+          City: City
+          Compound: Compound
+          Creek: Creek
+          Depot: Depot
+          Depot_Compound: Depot (Compound)
+          Docks: Docks
+          Paintball: Paintball
+          PowerStation: Power Station
+          RunDown: Run Down
+          Rig: Rig
+          SmallTown: Small Town
+          StorageFacility: Storage Facility
+          Tanker: Tanker
+          TheFarm: The Farm
+          '{{CustomMap}}': Custom
+    - key: CustomMap
+      label: Custom Map Name
+      category: Ground Branch
+      subcategory: Server
+      description: Sets a custom map for the server. Custom type must be selected under "Server Map"
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Map Name
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom map for the server. Custom type must be selected under "Server Map"
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomMap
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: ''
+        EnumValues: {}
+    - key: ServerMission
+      label: Server Mission
+      category: Ground Branch
+      subcategory: Server
+      description: >-
+        Sets the mission to be used with the selected map. Check missions available for a map in
+        GroundBranch/Content/GroundBranch/Mission. To use a mission not listed in the dropdown, select Custom and set
+        the "Custom Mission Name"
+      keywords: mission
+      input_type: enum
+      param_field_name: ServerMission
+      default: Deathmatch
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Deathmatch: Deathmatch
+        DTAS: Dynamic Take and Secure (DTAS)
+        HostageRescue: Hostage Rescue
+        IntelRetrieval: Intel Retrieval
+        LastManStanding: Last Man Standing
+        TeamElimination: Team Elimination
+        TerroristHunt: Terrorist Hunt
+        Training: Training
+        Uplink: Uplink
+        '{{CustomMission}}': Custom
+      raw:
+        DisplayName: Server Mission
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the mission to be used with the selected map. Check missions available for a map in
+          GroundBranch/Content/GroundBranch/Mission. To use a mission not listed in the dropdown, select Custom and set
+          the "Custom Mission Name"
+        Keywords: mission
+        FieldName: ServerMission
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ServerMission
+        IncludeInCommandLine: false
+        DefaultValue: Deathmatch
+        EnumValues:
+          Deathmatch: Deathmatch
+          DTAS: Dynamic Take and Secure (DTAS)
+          HostageRescue: Hostage Rescue
+          IntelRetrieval: Intel Retrieval
+          LastManStanding: Last Man Standing
+          TeamElimination: Team Elimination
+          TerroristHunt: Terrorist Hunt
+          Training: Training
+          Uplink: Uplink
+          '{{CustomMission}}': Custom
+    - key: CustomMission
+      label: Custom Mission Name
+      category: Ground Branch
+      subcategory: Server
+      description: Sets a custom mission to be used with the selected map. Custom type must be selected under "Server Mission"
+      keywords: custom,mission
+      input_type: text
+      param_field_name: CustomMission
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Mission Name
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom mission to be used with the selected map. Custom type must be selected under "Server Mission"
+        Keywords: custom,mission
+        FieldName: CustomMission
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: CustomMission
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Placeholder: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Ground Branch
+      subcategory: Server
+      description: >-
+        Sets the maximum number of players that may connect to the server at one time. Recommended maximums: PvE/Co-op =
+        8, PvP = 16
+      keywords: maximum,players,limit,maxplayers
+      input_type: number
+      param_field_name: MaxPlayers
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      max: 16
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of players that may connect to the server at one time. Recommended maximums: PvE/Co-op
+          = 8, PvP = 16
+        Keywords: maximum,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '16'
+        IsFlagArgument: false
+        ParamFieldName: MaxPlayers
+        IncludeInCommandLine: true
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: players
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Ground Branch
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKServer.MaxPlayers
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $MaxUsers
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.MaxPlayers
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: MaxSpectators
+      label: Spectator Limit
+      category: Ground Branch
+      subcategory: Server
+      description: Sets the maximum number of spectators that may connect to the server at one time
+      keywords: maximum,spectators,limit,maxspectators
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKServer.MaxSpectators
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: spectators
+      enum_values: {}
+      raw:
+        DisplayName: Spectator Limit
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of spectators that may connect to the server at one time
+        Keywords: maximum,spectators,limit,maxspectators
+        FieldName: MaxSpectators
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.MaxSpectators
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: spectators
+        EnumValues: {}
+    - key: ServerAdmins
+      label: Server Admins
+      category: Ground Branch
+      subcategory: Server
+      description: >-
+        Server admins can be specified in GroundBranch/ServerConfig/Admin.ini. Each admin on a new line, in the format:
+        Admins=(Name="<name>",UniqueId="<uniqueid>",ContactInfo="<optional>",Group="<group>")
+      keywords: server,admins,serveradmins
+      input_type: hidden
+      param_field_name: ServerAdmins
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Admins
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Server admins can be specified in GroundBranch/ServerConfig/Admin.ini. Each admin on a new line, in the
+          format: Admins=(Name="<name>",UniqueId="<uniqueid>",ContactInfo="<optional>",Group="<group>")
+        Keywords: server,admins,serveradmins
+        FieldName: ServerAdmins
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: ServerAdmins
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: ModsList
+      label: Mods List
+      category: Ground Branch
+      subcategory: Server
+      description: >-
+        List of Steam workshop item IDs of mods for the server to install and load on start. One ID per line. Requires
+        v1035 or higher
+      keywords: steam,workshop,mods,modding,modslist
+      input_type: list
+      param_field_name: ModsList
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./ground-branch/476400/GroundBranch/ServerConfig/mods.txt
+      raw:
+        DisplayName: Mods List
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          List of Steam workshop item IDs of mods for the server to install and load on start. One ID per line. Requires
+          v1035 or higher
+        Keywords: steam,workshop,mods,modding,modslist
+        FieldName: ModsList
+        InputType: list
+        IsFlagArgument: false
+        ParamFieldName: ModsList
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Special: listfile:./ground-branch/476400/GroundBranch/ServerConfig/mods.txt
+        EnumValues: {}
+    - key: CustomServerArgs
+      label: Additional Command Line Options
+      category: Ground Branch
+      subcategory: Server
+      description: >-
+        Specifies additional command line options (if any) that are not otherwise set by AMP. ONE LINE ONLY! Format:
+        ?<setting>=<value> (with no spaces between settings). Use with care
+      keywords: custom,server,options
+      input_type: Textarea
+      param_field_name: CustomServerArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Options
+        Category: Ground Branch:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line options (if any) that are not otherwise set by AMP. ONE LINE ONLY! Format:
+          ?<setting>=<value> (with no spaces between settings). Use with care
+        Keywords: custom,server,options
+        FieldName: CustomServerArgs
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: CustomServerArgs
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: MaxAI
+      label: Maximum AI
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the maximum number of AI used in any game mode. Recommended maximum = 30
+      keywords: ai,maximum,maxai
+      input_type: number
+      param_field_name: MaxAI
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      max: 50
+      suffix: AI
+      enum_values: {}
+      raw:
+        DisplayName: Maximum AI
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of AI used in any game mode. Recommended maximum = 30
+        Keywords: ai,maximum,maxai
+        FieldName: MaxAI
+        InputType: number
+        MinValue: '0'
+        MaxValue: '50'
+        IsFlagArgument: false
+        ParamFieldName: MaxAI
+        IncludeInCommandLine: true
+        DefaultValue: '2'
+        Placeholder: '2'
+        Suffix: AI
+        EnumValues: {}
+    - key: OpForCount
+      label: AI Number For Intel Retrieval / Terrorist Hunt
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the number of AI to spawn in the Intel Retrieval and Terrorist Hunt mission types. Limited to Maximum AI
+      keywords: ai,spawn,opforcount
+      input_type: number
+      param_field_name: OpForCount
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      max: 50
+      suffix: AI
+      enum_values: {}
+      raw:
+        DisplayName: AI Number For Intel Retrieval / Terrorist Hunt
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of AI to spawn in the Intel Retrieval and Terrorist Hunt mission types. Limited to Maximum AI
+        Keywords: ai,spawn,opforcount
+        FieldName: OpForCount
+        InputType: number
+        MinValue: '1'
+        MaxValue: '50'
+        IsFlagArgument: false
+        ParamFieldName: OpForCount
+        IncludeInCommandLine: true
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: AI
+        EnumValues: {}
+    - key: Difficulty
+      label: AI Difficulty Level
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the difficulty settings to use for AI in the Intel Retrieval and Terrorist Hunt mission types
+      keywords: ai,difficulty
+      input_type: enum
+      param_field_name: Difficulty
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '0': Custom
+        '1': Easy
+        '2': Normal
+        '3': Hard
+        '4': Veteran
+      raw:
+        DisplayName: AI Difficulty Level
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the difficulty settings to use for AI in the Intel Retrieval and Terrorist Hunt mission types
+        Keywords: ai,difficulty
+        FieldName: Difficulty
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: Difficulty
+        IncludeInCommandLine: true
+        DefaultValue: '2'
+        EnumValues:
+          '0': Custom
+          '1': Easy
+          '2': Normal
+          '3': Hard
+          '4': Veteran
+    - key: TimeLimit
+      label: Time Limit
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time period until the game ends and the map changes. 0 = disabled
+      keywords: time,limit,timelimit
+      input_type: number
+      param_field_name: TimeLimit
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Time Limit
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period until the game ends and the map changes. 0 = disabled
+        Keywords: time,limit,timelimit
+        FieldName: TimeLimit
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: TimeLimit
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: minutes
+        EnumValues: {}
+    - key: ReadyCountdownTime
+      label: Ready Countdown Time
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time period between declaring ready and everyone being sent to the play area
+      keywords: ready,countdown,time,readycountdowntime
+      input_type: number
+      param_field_name: ReadyCountdownTime
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 5
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Ready Countdown Time
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period between declaring ready and everyone being sent to the play area
+        Keywords: ready,countdown,time,readycountdowntime
+        FieldName: ReadyCountdownTime
+        InputType: number
+        MinValue: '5'
+        IsFlagArgument: false
+        ParamFieldName: ReadyCountdownTime
+        IncludeInCommandLine: true
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: seconds
+        EnumValues: {}
+    - key: PreRoundWaitTime
+      label: Pre Round Wait Time
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time period for which players are frozen before the round begins
+      keywords: pre,round,wait,time,preroundwaittime
+      input_type: number
+      param_field_name: PreRoundWaitTime
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 5
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Pre Round Wait Time
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period for which players are frozen before the round begins
+        Keywords: pre,round,wait,time,preroundwaittime
+        FieldName: PreRoundWaitTime
+        InputType: number
+        MinValue: '5'
+        IsFlagArgument: false
+        ParamFieldName: PreRoundWaitTime
+        IncludeInCommandLine: true
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: seconds
+        EnumValues: {}
+    - key: RoundTime
+      label: Round Time
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time period for which each round lasts
+      keywords: round,time,roundtime
+      input_type: number
+      param_field_name: RoundTime
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 3
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Round Time
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period for which each round lasts
+        Keywords: round,time,roundtime
+        FieldName: RoundTime
+        InputType: number
+        MinValue: '3'
+        IsFlagArgument: false
+        ParamFieldName: RoundTime
+        IncludeInCommandLine: true
+        DefaultValue: '3'
+        Placeholder: '3'
+        Suffix: minutes
+        EnumValues: {}
+    - key: PostRoundWaitTime
+      label: Post Round Wait Time
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time period after a round ends before players are sent back to the ready room
+      keywords: post,round,wait,time,postroundwaittime
+      input_type: number
+      param_field_name: PostRoundWaitTime
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 5
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Post Round Wait Time
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period after a round ends before players are sent back to the ready room
+        Keywords: post,round,wait,time,postroundwaittime
+        FieldName: PostRoundWaitTime
+        InputType: number
+        MinValue: '5'
+        IsFlagArgument: false
+        ParamFieldName: PostRoundWaitTime
+        IncludeInCommandLine: true
+        DefaultValue: '5'
+        Placeholder: '5'
+        Suffix: seconds
+        EnumValues: {}
+    - key: PVEMatchType
+      label: Default PvE/Co-op Match Type
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the default match type for the PvE/Co-op game mode
+      keywords: match,type,pve,co-op,game,mode,pvematchtype
+      input_type: enum
+      param_field_name: /Script/RBZooKeeper.ZKServer.PVEMatchType
+      default: Continuous
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Continuous: Continuous (default)
+        BestOf: Best Of
+        FirstTo: First To
+        Play: Play
+        PlayUntilWin: Play Until Win
+        TimeLimit: Time Limit
+      raw:
+        DisplayName: Default PvE/Co-op Match Type
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the default match type for the PvE/Co-op game mode
+        Keywords: match,type,pve,co-op,game,mode,pvematchtype
+        FieldName: PVEMatchType
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.PVEMatchType
+        IncludeInCommandLine: false
+        DefaultValue: Continuous
+        EnumValues:
+          Continuous: Continuous (default)
+          BestOf: Best Of
+          FirstTo: First To
+          Play: Play
+          PlayUntilWin: Play Until Win
+          TimeLimit: Time Limit
+    - key: PVERoundLimit
+      label: Default PvE/Co-op Round Limit
+      category: Ground Branch
+      subcategory: Gameplay
+      description: >-
+        Sets the default number of rounds (or default number of minutes in the case of the Time Limit match type) for
+        the PvE/Co-op game mode
+      keywords: round,time,limit,pve,co-op,pveroundlimit
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKServer.PVERoundLimit
+      default: '2'
+      placeholder: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: rounds/minutes
+      enum_values: {}
+      raw:
+        DisplayName: Default PvE/Co-op Round Limit
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the default number of rounds (or default number of minutes in the case of the Time Limit match type) for
+          the PvE/Co-op game mode
+        Keywords: round,time,limit,pve,co-op,pveroundlimit
+        FieldName: PVERoundLimit
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.PVERoundLimit
+        IncludeInCommandLine: false
+        DefaultValue: '2'
+        Placeholder: '2'
+        Suffix: rounds/minutes
+        EnumValues: {}
+    - key: PVPMatchType
+      label: Default PvP Match Type
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the default match type for the PvP game mode
+      keywords: match,type,game,mode,pvp,pvpmatchtype
+      input_type: enum
+      param_field_name: /Script/RBZooKeeper.ZKServer.PVPMatchType
+      default: Continuous
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Continuous: Continuous (default)
+        BestOf: Best Of
+        FirstTo: First To
+        Play: Play
+        PlayUntilWin: Play Until Win
+        TimeLimit: Time Limit
+      raw:
+        DisplayName: Default PvP Match Type
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the default match type for the PvP game mode
+        Keywords: match,type,game,mode,pvp,pvpmatchtype
+        FieldName: PVPMatchType
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.PVPMatchType
+        IncludeInCommandLine: false
+        DefaultValue: Continuous
+        EnumValues:
+          Continuous: Continuous (default)
+          BestOf: Best Of
+          FirstTo: First To
+          Play: Play
+          PlayUntilWin: Play Until Win
+          TimeLimit: Time Limit
+    - key: PVPRoundLimit
+      label: Default PvP Round Limit
+      category: Ground Branch
+      subcategory: Gameplay
+      description: >-
+        Sets the default number of rounds (or default number of minutes in the case of the Time Limit match type) for
+        the PvP game mode
+      keywords: round,time,limit,pvp,pvproundlimit
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKServer.PVPRoundLimit
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: rounds/minutes
+      enum_values: {}
+      raw:
+        DisplayName: Default PvP Round Limit
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the default number of rounds (or default number of minutes in the case of the Time Limit match type) for
+          the PvP game mode
+        Keywords: round,time,limit,pvp,pvproundlimit
+        FieldName: PVPRoundLimit
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.PVPRoundLimit
+        IncludeInCommandLine: false
+        DefaultValue: '3'
+        Placeholder: '3'
+        Suffix: rounds/minutes
+        EnumValues: {}
+    - key: PVPFFAMatchType
+      label: Default PvP Free-For-All Match Type
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the default match type for the PvP free-for-all game mode
+      keywords: match,type,game,mode,pvp,ffa,pvpffamatchtype
+      input_type: enum
+      param_field_name: /Script/RBZooKeeper.ZKServer.PVPFFAMatchType
+      default: Continuous
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        Continuous: Continuous (default)
+        BestOf: Best Of
+        FirstTo: First To
+        Play: Play
+        PlayUntilWin: Play Until Win
+        TimeLimit: Time Limit
+      raw:
+        DisplayName: Default PvP Free-For-All Match Type
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the default match type for the PvP free-for-all game mode
+        Keywords: match,type,game,mode,pvp,ffa,pvpffamatchtype
+        FieldName: PVPFFAMatchType
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.PVPFFAMatchType
+        IncludeInCommandLine: false
+        DefaultValue: Continuous
+        EnumValues:
+          Continuous: Continuous (default)
+          BestOf: Best Of
+          FirstTo: First To
+          Play: Play
+          PlayUntilWin: Play Until Win
+          TimeLimit: Time Limit
+    - key: PVPFFARoundLimit
+      label: Default PvP Free-For-All Round Limit
+      category: Ground Branch
+      subcategory: Gameplay
+      description: >-
+        Sets the default number of rounds (or default number of minutes in the case of the Time Limit match type) for
+        the PvP free-for-all game mode
+      keywords: round,time,limit,pvp,ffa,pvpffaroundlimit
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKServer.PVPFFARoundLimit
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: rounds/minutes
+      enum_values: {}
+      raw:
+        DisplayName: Default PvP Free-For-All Round Limit
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          Sets the default number of rounds (or default number of minutes in the case of the Time Limit match type) for
+          the PvP free-for-all game mode
+        Keywords: round,time,limit,pvp,ffa,pvpffaroundlimit
+        FieldName: PVPFFARoundLimit
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.PVPFFARoundLimit
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: rounds/minutes
+        EnumValues: {}
+    - key: GameRules
+      label: Game Rules
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the default game rules for the server
+      keywords: game,rules,gamerules
+      input_type: Textarea
+      param_field_name: /Script/RBZooKeeper.ZKServer.GameRules
+      default: >-
+        (("AllowCheats", False),("AllowDeadChat", True),("AllowUnrestrictedRadio", False),("AllowUnrestrictedVoice",
+        False),("SpectateEnemies", True),("SpectateForceFirstPerson", False),("SpectateFreeCam",
+        True),("UseTeamRestrictions", False))
+      placeholder: >-
+        (("AllowCheats", False),("AllowDeadChat", True),("AllowUnrestrictedRadio", False),("AllowUnrestrictedVoice",
+        False),("SpectateEnemies", True),("SpectateForceFirstPerson", False),("SpectateFreeCam",
+        True),("UseTeamRestrictions", False))
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Rules
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the default game rules for the server
+        Keywords: game,rules,gamerules
+        FieldName: GameRules
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKServer.GameRules
+        IncludeInCommandLine: false
+        DefaultValue: >-
+          (("AllowCheats", False),("AllowDeadChat", True),("AllowUnrestrictedRadio", False),("AllowUnrestrictedVoice",
+          False),("SpectateEnemies", True),("SpectateForceFirstPerson", False),("SpectateFreeCam",
+          True),("UseTeamRestrictions", False))
+        Placeholder: >-
+          (("AllowCheats", False),("AllowDeadChat", True),("AllowUnrestrictedRadio", False),("AllowUnrestrictedVoice",
+          False),("SpectateEnemies", True),("SpectateForceFirstPerson", False),("SpectateFreeCam",
+          True),("UseTeamRestrictions", False))
+        EnumValues: {}
+    - key: TimeOfDay
+      label: Time Of Day
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time of day for starting the server, in military time
+      keywords: time,day,timeofday
+      input_type: number
+      param_field_name: TimeOfDay
+      default: '1200'
+      placeholder: '1200'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      max: 2400
+      enum_values: {}
+      raw:
+        DisplayName: Time Of Day
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time of day for starting the server, in military time
+        Keywords: time,day,timeofday
+        FieldName: TimeOfDay
+        InputType: number
+        MinValue: '0000'
+        MaxValue: '2400'
+        IsFlagArgument: false
+        ParamFieldName: TimeOfDay
+        IncludeInCommandLine: true
+        DefaultValue: '1200'
+        Placeholder: '1200'
+        EnumValues: {}
+    - key: SpectateFreeCam
+      label: Enable Spectator Free Camera
+      category: Ground Branch
+      subcategory: Gameplay
+      description: If enabled, spectators will be able to fly around freely without following anyone
+      keywords: spectator,fly,free,camera,spectatefreecam
+      input_type: checkbox
+      param_field_name: SpectateFreeCam
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Spectator Free Camera
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, spectators will be able to fly around freely without following anyone
+        Keywords: spectator,fly,free,camera,spectatefreecam
+        FieldName: SpectateFreeCam
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SpectateFreeCam
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: SpectateEnemies
+      label: Allow Spectators To Follow Enemies
+      category: Ground Branch
+      subcategory: Gameplay
+      description: If enabled, spectators will be able to follow members of enemy teams
+      keywords: spectator,enemy,follow,spectateenemies
+      input_type: checkbox
+      param_field_name: SpectateEnemies
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Spectators To Follow Enemies
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, spectators will be able to follow members of enemy teams
+        Keywords: spectator,enemy,follow,spectateenemies
+        FieldName: SpectateEnemies
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SpectateEnemies
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: SpectateForceFirstPerson
+      label: Force Spectator First Person View
+      category: Ground Branch
+      subcategory: Gameplay
+      description: If enabled, spectators' view mode will be forced to first-person only
+      keywords: spectator,view,first,person,spectateforcefirstferson
+      input_type: checkbox
+      param_field_name: SpectateForceFirstPerson
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Force Spectator First Person View
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, spectators' view mode will be forced to first-person only
+        Keywords: spectator,view,first,person,spectateforcefirstferson
+        FieldName: SpectateForceFirstPerson
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: SpectateForceFirstPerson
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: DefaultBanDuration
+      label: Default Ban Duration
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the default time period that will populate in the Ban Duration prompt when a player moves to ban someone
+      keywords: ban,duration,defaultbanduration
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKBan.DefaultBanDuration
+      default: '720'
+      placeholder: '720'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Default Ban Duration
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the default time period that will populate in the Ban Duration prompt when a player moves to ban someone
+        Keywords: ban,duration,defaultbanduration
+        FieldName: DefaultBanDuration
+        InputType: number
+        MinValue: '0'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKBan.DefaultBanDuration
+        IncludeInCommandLine: false
+        DefaultValue: '720'
+        Placeholder: '720'
+        Suffix: minutes
+        EnumValues: {}
+    - key: VoteDuration
+      label: Vote Duration
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time period for voting
+      keywords: vote,duration,voteduration
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKVote.VoteDuration
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Vote Duration
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period for voting
+        Keywords: vote,duration,voteduration
+        FieldName: VoteDuration
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKVote.VoteDuration
+        IncludeInCommandLine: false
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: seconds
+        EnumValues: {}
+    - key: VoteSucceededTimeout
+      label: Successful Vote Timeout
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time period that must pass after a successful vote before another vote can be called
+      keywords: vote,successful,timeout,votesucceededtimeout
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKVote.VoteSucceededTimeout
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Successful Vote Timeout
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period that must pass after a successful vote before another vote can be called
+        Keywords: vote,successful,timeout,votesucceededtimeout
+        FieldName: VoteSucceededTimeout
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKVote.VoteSucceededTimeout
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: seconds
+        EnumValues: {}
+    - key: VoteFailedTimeout
+      label: Failed Vote Timeout
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time period that must pass after a failed vote before another vote can be called
+      keywords: vote,failed,timeout,votefailedtimeout
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKVote.VoteFailedTimeout
+      default: '180'
+      placeholder: '180'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Failed Vote Timeout
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period that must pass after a failed vote before another vote can be called
+        Keywords: vote,failed,timeout,votefailedtimeout
+        FieldName: VoteFailedTimeout
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKVote.VoteFailedTimeout
+        IncludeInCommandLine: false
+        DefaultValue: '180'
+        Placeholder: '180'
+        Suffix: seconds
+        EnumValues: {}
+    - key: MapVoteTimeout
+      label: Map Vote Timeout
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time period that must pass before another map vote can be called
+      keywords: vote,map,timeout,mapvotetimeout
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKVote.MapVoteTimeout
+      default: '300'
+      placeholder: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Map Vote Timeout
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period that must pass before another map vote can be called
+        Keywords: vote,map,timeout,mapvotetimeout
+        FieldName: MapVoteTimeout
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKVote.MapVoteTimeout
+        IncludeInCommandLine: false
+        DefaultValue: '300'
+        Placeholder: '300'
+        Suffix: seconds
+        EnumValues: {}
+    - key: MinPlayers
+      label: Minimum Players For Voting
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the minimum number of players required to cast a vote
+      keywords: vote,minimum,players,minplayers
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKVote.MinPlayers
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Players For Voting
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the minimum number of players required to cast a vote
+        Keywords: vote,minimum,players,minplayers
+        FieldName: MinPlayers
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKVote.MinPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: players
+        EnumValues: {}
+    - key: bAllowVotingOffMapList
+      label: Allow Voting Off Map List
+      category: Ground Branch
+      subcategory: Gameplay
+      description: >-
+        If enabled, players can vote for maps outside of the server map list, assuming the "changemap" VotingCommands is
+        specified in Vote.ini, and subject to any PermittedGameModes restrictions in Vote.ini
+      keywords: vote,map,off,list,ballowvotingoffmaplist
+      input_type: checkbox
+      param_field_name: /Script/RBZooKeeper.ZKVote.bAllowVotingOffMapList
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Voting Off Map List
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, players can vote for maps outside of the server map list, assuming the "changemap" VotingCommands
+          is specified in Vote.ini, and subject to any PermittedGameModes restrictions in Vote.ini
+        Keywords: vote,map,off,list,ballowvotingoffmaplist
+        FieldName: bAllowVotingOffMapList
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKVote.bAllowVotingOffMapList
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: MaxTeamKills
+      label: Maximum Teamkills
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the threshold number of teamkills before the server automoderates by banning the relevant player
+      keywords: teamkill,maximum,maxteamkills
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKTeamKill.MaxTeamKills
+      default: '3'
+      placeholder: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: teamkills
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Teamkills
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the threshold number of teamkills before the server automoderates by banning the relevant player
+        Keywords: teamkill,maximum,maxteamkills
+        FieldName: MaxTeamKills
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKTeamKill.MaxTeamKills
+        IncludeInCommandLine: false
+        DefaultValue: '3'
+        Placeholder: '3'
+        Suffix: teamkills
+        EnumValues: {}
+    - key: BanTime
+      label: Teamkill Ban Time
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time period for which a player will be banned if the teamkill server automoderation is activated
+      keywords: teamkill,ban,time,bantime
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKTeamKill.BanTime
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Teamkill Ban Time
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period for which a player will be banned if the teamkill server automoderation is activated
+        Keywords: teamkill,ban,time,bantime
+        FieldName: BanTime
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKTeamKill.BanTime
+        IncludeInCommandLine: false
+        DefaultValue: '60'
+        Placeholder: '60'
+        Suffix: minutes
+        EnumValues: {}
+    - key: TeamKillExpireTime
+      label: Teamkill Expire Time Period
+      category: Ground Branch
+      subcategory: Gameplay
+      description: Sets the time period after which a teamkill will not be counted towards the Maximum Teamkills number
+      keywords: teamkill,expire,refresh,time,teamkillexpiretime
+      input_type: number
+      param_field_name: /Script/RBZooKeeper.ZKTeamKill.TeamKillExpireTime
+      default: '30'
+      placeholder: '30'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Teamkill Expire Time Period
+        Category: Ground Branch:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the time period after which a teamkill will not be counted towards the Maximum Teamkills number
+        Keywords: teamkill,expire,refresh,time,teamkillexpiretime
+        FieldName: TeamKillExpireTime
+        InputType: number
+        MinValue: '1'
+        IsFlagArgument: false
+        ParamFieldName: /Script/RBZooKeeper.ZKTeamKill.TeamKillExpireTime
+        IncludeInCommandLine: false
+        DefaultValue: '30'
+        Placeholder: '30'
+        Suffix: minutes
+        EnumValues: {}
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: >-
+        Sets the server branch to install. The 'Community Test' branch requires a password, which must be set under Beta
+        Password. NOTE: Update the server after switching branches!
+      keywords: server,branch
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        communitytest-ds: Community Test
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: >-
+          Sets the server branch to install. The 'Community Test' branch requires a password, which must be set under
+          Beta Password. NOTE: Update the server after switching branches!
+        Keywords: server,branch
+        FieldName: ServerBranch
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ServerBranch
+        IncludeInCommandLine: false
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          communitytest-ds: Community Test
+  files:
+    - path: ./GroundBranch/ServerConfig/Server.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: ./GroundBranch/ServerConfig/Server.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: ./GroundBranch/ServerConfig/Vote.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: ./GroundBranch/ServerConfig/Vote.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: ./GroundBranch/ServerConfig/Ban.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: ./GroundBranch/ServerConfig/Ban.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: ./GroundBranch/ServerConfig/TeamKill.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: ./GroundBranch/ServerConfig/TeamKill.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered Ground Branch Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerMOTD
+    label: MOTD
+    default: <h1>Welcome!<br>This is my Ground Branch server.<br><b>Enjoy!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerWebBanner
+    label: Server Web Banner
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: SpectatorOnlyPassword
+    label: Spectator Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: ServerMap
+    label: Server Map
+    default: '747'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Map Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerMission
+    label: Server Mission
+    default: Deathmatch
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMission
+    label: Custom Mission Name
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxSpectators
+    label: Spectator Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ModsList
+    label: Mods List
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomServerArgs
+    label: Additional Command Line Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxAI
+    label: Maximum AI
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: OpForCount
+    label: AI Number For Intel Retrieval / Terrorist Hunt
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Difficulty
+    label: AI Difficulty Level
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TimeLimit
+    label: Time Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ReadyCountdownTime
+    label: Ready Countdown Time
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PreRoundWaitTime
+    label: Pre Round Wait Time
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RoundTime
+    label: Round Time
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PostRoundWaitTime
+    label: Post Round Wait Time
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PVEMatchType
+    label: Default PvE/Co-op Match Type
+    default: Continuous
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PVERoundLimit
+    label: Default PvE/Co-op Round Limit
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PVPMatchType
+    label: Default PvP Match Type
+    default: Continuous
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PVPRoundLimit
+    label: Default PvP Round Limit
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PVPFFAMatchType
+    label: Default PvP Free-For-All Match Type
+    default: Continuous
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PVPFFARoundLimit
+    label: Default PvP Free-For-All Round Limit
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GameRules
+    label: Game Rules
+    default: >-
+      (("AllowCheats", False),("AllowDeadChat", True),("AllowUnrestrictedRadio", False),("AllowUnrestrictedVoice",
+      False),("SpectateEnemies", True),("SpectateForceFirstPerson", False),("SpectateFreeCam",
+      True),("UseTeamRestrictions", False))
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TimeOfDay
+    label: Time Of Day
+    default: '1200'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpectateFreeCam
+    label: Enable Spectator Free Camera
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpectateEnemies
+    label: Allow Spectators To Follow Enemies
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpectateForceFirstPerson
+    label: Force Spectator First Person View
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DefaultBanDuration
+    label: Default Ban Duration
+    default: '720'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VoteDuration
+    label: Vote Duration
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VoteSucceededTimeout
+    label: Successful Vote Timeout
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: VoteFailedTimeout
+    label: Failed Vote Timeout
+    default: '180'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MapVoteTimeout
+    label: Map Vote Timeout
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MinPlayers
+    label: Minimum Players For Voting
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowVotingOffMapList
+    label: Allow Voting Off Map List
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaxTeamKills
+    label: Maximum Teamkills
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BanTime
+    label: Teamkill Ban Time
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TeamKillExpireTime
+    label: Teamkill Expire Time Period
+    default: '30'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '16900'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,20 @@ category: Imported
 summary: Abiotic Factor Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2857200'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: >-
+    /usr/bin/wine {PlatformArgs} AbioticFactor -stdout -FullStdOutLogOutput
+    {useperfthreads}{NoAsyncLoadingThread}{useallavailablecores}{LANOnly}{UseLocalIPs} -Port={GamePort}
+    -QueryPort={QueryPort} -SteamServerName="{ServerName}" -SandboxIniPath=Config/WindowsServer/SandboxSettings.ini
+    {FormattedArgs} {CustomArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +26,2570 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 7777
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: AbioticFactor/Saved/Config/WindowsServer/SandboxSettings.ini
+    type: ini
+    editable: true
+  - path: AbioticFactor/Binaries/Win64/ue4ss/UE4SS-settings.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: Debug.ConsoleEnabled
+      label: Disable UE4SS Console
+      category: Abiotic Factor
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: Debug.ConsoleEnabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Disable UE4SS Console
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: Debug.ConsoleEnabled
+        InputType: number
+        Hidden: true
+        ParamFieldName: Debug.ConsoleEnabled
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: GuiConsoleEnabled
+      label: Disable UE4SS GUI Console
+      category: Abiotic Factor
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: Debug.GuiConsoleEnabled
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Disable UE4SS GUI Console
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: GuiConsoleEnabled
+        InputType: number
+        Hidden: true
+        ParamFieldName: Debug.GuiConsoleEnabled
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: ServerName
+      label: Server Name
+      category: Abiotic Factor
+      subcategory: Server
+      description: Sets the name of the server as shown in the Steam server browser
+      keywords: name,ServerName
+      input_type: text
+      param_field_name: ServerName
+      default: AMP Powered Abiotic Factor Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server as shown in the Steam server browser
+        Keywords: name,ServerName
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: ServerName
+        DefaultValue: AMP Powered Abiotic Factor Server
+        EnumValues: {}
+    - key: WorldSaveName
+      label: World Save Name
+      category: Abiotic Factor
+      subcategory: Server
+      description: Sets the name of the world save folder to load, or to create if it does not exist
+      keywords: world,save,name,WorldSaveName
+      input_type: text
+      param_field_name: WorldSaveName
+      default: Cascade
+      placeholder: Cascade
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: World Save Name
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the world save folder to load, or to create if it does not exist
+        Keywords: world,save,name,WorldSaveName
+        FieldName: WorldSaveName
+        InputType: text
+        ParamFieldName: WorldSaveName
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: Cascade
+        Placeholder: Cascade
+        Required: true
+        EnumValues: {}
+    - key: ServerPassword
+      label: Server Password
+      category: Abiotic Factor
+      subcategory: Server
+      description: Sets the password for players to join the server. Default is no password
+      keywords: server,password,ServerPassword
+      input_type: password
+      param_field_name: ServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for players to join the server. Default is no password
+        Keywords: server,password,ServerPassword
+        FieldName: ServerPassword
+        InputType: password
+        ParamFieldName: ServerPassword
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: AdminPassword
+      label: Admin Password
+      category: Abiotic Factor
+      subcategory: Server
+      description: >-
+        Sets the password for players to become a whitelisted admin in-game. Default is no password (disabled).
+        Recommended for console users, as manual admin whitelisting is only supported for Steam
+      keywords: admin,password,AdminPassword
+      input_type: password
+      param_field_name: AdminPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Admin Password
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the password for players to become a whitelisted admin in-game. Default is no password (disabled).
+          Recommended for console users, as manual admin whitelisting is only supported for Steam
+        Keywords: admin,password,AdminPassword
+        FieldName: AdminPassword
+        InputType: password
+        ParamFieldName: AdminPassword
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Abiotic Factor
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,limit,MaxServerPlayers
+      input_type: number
+      param_field_name: MaxServerPlayers
+      default: '6'
+      placeholder: '6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      min: 1
+      max: 24
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,limit,MaxServerPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '24'
+        ParamFieldName: MaxServerPlayers
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: '6'
+        Placeholder: '6'
+        Suffix: players
+        EnumValues: {}
+    - key: PlatformLimited
+      label: Crossplay Mode
+      category: Abiotic Factor
+      subcategory: Server
+      description: Sets whether to allow crossplay or to limit the server to a specific platform
+      keywords: crossplay,playstation,pc,xbox,PlatformLimited
+      input_type: enum
+      param_field_name: PlatformLimited
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values:
+        '': Enable crossplay (default)
+        PC: Disable crossplay - PC only
+        Playstation: Disable crossplay - Playstation only
+        Xbox: Disable crossplay - Xbox only
+      raw:
+        DisplayName: Crossplay Mode
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether to allow crossplay or to limit the server to a specific platform
+        Keywords: crossplay,playstation,pc,xbox,PlatformLimited
+        FieldName: PlatformLimited
+        InputType: enum
+        ParamFieldName: PlatformLimited
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues:
+          '': Enable crossplay (default)
+          PC: Disable crossplay - PC only
+          Playstation: Disable crossplay - Playstation only
+          Xbox: Disable crossplay - Xbox only
+    - key: useperfthreads
+      label: Use CPU Performance Threads
+      category: Abiotic Factor
+      subcategory: Server
+      description: If set, the server will be forced to use performance threads on the CPU. Recommended
+      keywords: force,use,performance,threads,cpu,useperfthreads
+      input_type: checkbox
+      param_field_name: useperfthreads
+      default: '-useperfthreads '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-useperfthreads '
+      raw:
+        DisplayName: Use CPU Performance Threads
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be forced to use performance threads on the CPU. Recommended
+        Keywords: force,use,performance,threads,cpu,useperfthreads
+        FieldName: useperfthreads
+        InputType: checkbox
+        ParamFieldName: useperfthreads
+        DefaultValue: '-useperfthreads '
+        EnumValues:
+          'False': ''
+          'True': '-useperfthreads '
+    - key: useallavailablecores
+      label: Use All Available Cores
+      category: Abiotic Factor
+      subcategory: Server
+      description: >-
+        If set, the server will be forced to use all available cores. Disable Pause To Load Assets if you use this.
+        Recommended on newer hardware
+      keywords: force,use,available,all,cores,cpu,useallavailablecores
+      input_type: checkbox
+      param_field_name: useallavailablecores
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-useallavailablecores '
+      raw:
+        DisplayName: Use All Available Cores
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server will be forced to use all available cores. Disable Pause To Load Assets if you use this.
+          Recommended on newer hardware
+        Keywords: force,use,available,all,cores,cpu,useallavailablecores
+        FieldName: useallavailablecores
+        InputType: checkbox
+        ParamFieldName: useallavailablecores
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-useallavailablecores '
+    - key: NoAsyncLoadingThread
+      label: Pause To Load Assets
+      category: Abiotic Factor
+      subcategory: Server
+      description: >-
+        If set, the server will be forced to pause to load new assets/level sectors instead of slowly loading them.
+        Recommended on older hardware
+      keywords: force,pause,load,assets,sectors,NoAsyncLoadingThread
+      input_type: checkbox
+      param_field_name: NoAsyncLoadingThread
+      default: '-NoAsyncLoadingThread '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-NoAsyncLoadingThread '
+      raw:
+        DisplayName: Pause To Load Assets
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server will be forced to pause to load new assets/level sectors instead of slowly loading them.
+          Recommended on older hardware
+        Keywords: force,pause,load,assets,sectors,NoAsyncLoadingThread
+        FieldName: NoAsyncLoadingThread
+        InputType: checkbox
+        ParamFieldName: NoAsyncLoadingThread
+        DefaultValue: '-NoAsyncLoadingThread '
+        EnumValues:
+          'False': ''
+          'True': '-NoAsyncLoadingThread '
+    - key: LANOnly
+      label: LAN Only
+      category: Abiotic Factor
+      subcategory: Server
+      description: >-
+        If set, the server will be run as LAN only, which allows the server to be found in-game using the server browser
+        set to LAN Only. Port 14001 must be accessible for server discovery to work
+      keywords: lan,only,LANOnly
+      input_type: checkbox
+      param_field_name: LANOnly
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-LANOnly '
+      raw:
+        DisplayName: LAN Only
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server will be run as LAN only, which allows the server to be found in-game using the server
+          browser set to LAN Only. Port 14001 must be accessible for server discovery to work
+        Keywords: lan,only,LANOnly
+        FieldName: LANOnly
+        InputType: checkbox
+        ParamFieldName: LANOnly
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-LANOnly '
+    - key: UseLocalIPs
+      label: Use Local IPs
+      category: Abiotic Factor
+      subcategory: Server
+      description: >-
+        If set, allows the server to bind to local IPs as well as the Application IP Binding, assuming the Application
+        IP Binding does not otherwise do this. Use with care, as enabling this setting may cause port conflicts
+      keywords: use,local,ips,UseLocalIPs
+      input_type: checkbox
+      param_field_name: UseLocalIPs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-UseLocalIPs '
+      raw:
+        DisplayName: Use Local IPs
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, allows the server to bind to local IPs as well as the Application IP Binding, assuming the Application
+          IP Binding does not otherwise do this. Use with care, as enabling this setting may cause port conflicts
+        Keywords: use,local,ips,UseLocalIPs
+        FieldName: UseLocalIPs
+        InputType: checkbox
+        ParamFieldName: UseLocalIPs
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-UseLocalIPs '
+    - key: bUseUObjectArrayCache
+      label: Enable UE4SS UObject Listeners
+      category: Abiotic Factor
+      subcategory: Server
+      description: >-
+        If set, UObject listeners will be created in GUObjectArray to create a fast cache for use instead of iterating
+        GUObjectArray. Recommended to keep disabled for UE4SS mods to avoid crashes
+      keywords: ue4ss,uobject,listeners,bUseUObjectArrayCache
+      input_type: checkbox
+      param_field_name: General.bUseUObjectArrayCache
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable UE4SS UObject Listeners
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, UObject listeners will be created in GUObjectArray to create a fast cache for use instead of iterating
+          GUObjectArray. Recommended to keep disabled for UE4SS mods to avoid crashes
+        Keywords: ue4ss,uobject,listeners,bUseUObjectArrayCache
+        FieldName: bUseUObjectArrayCache
+        InputType: checkbox
+        ParamFieldName: General.bUseUObjectArrayCache
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: CustomArgs
+      label: Additional Command Line Arguments
+      category: Abiotic Factor
+      subcategory: Server
+      description: >-
+        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AMP.
+        Use with care
+      keywords: custom,server,arguments,parameters
+      input_type: text
+      param_field_name: CustomArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Arguments
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by
+          AMP. Use with care
+        Keywords: custom,server,arguments,parameters
+        FieldName: CustomArgs
+        InputType: text
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: GameDifficulty
+      label: Difficulty Level
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        When creating a new world save, sets (for all players) how many enemies may be present in some areas, how
+        aggressive they are, and how fast they react in combat. Overridden to Apocalyptic if Hardcore Mode is enabled
+      keywords: game,difficulty,level,GameDifficulty
+      input_type: enum
+      param_field_name: SandboxSettings.GameDifficulty
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': Normal
+        '2': Hard
+        '3': Apocalyptic
+      raw:
+        DisplayName: Difficulty Level
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          When creating a new world save, sets (for all players) how many enemies may be present in some areas, how
+          aggressive they are, and how fast they react in combat. Overridden to Apocalyptic if Hardcore Mode is enabled
+        Keywords: game,difficulty,level,GameDifficulty
+        FieldName: GameDifficulty
+        InputType: enum
+        ParamFieldName: SandboxSettings.GameDifficulty
+        DefaultValue: '1'
+        EnumValues:
+          '1': Normal
+          '2': Hard
+          '3': Apocalyptic
+    - key: HardcoreMode
+      label: Enable Hardcore Mode
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: If set, characters only have one life and difficulty is forced to Apocalyptic
+      keywords: hardcore,apocalyptic,HardcoreMode
+      input_type: checkbox
+      param_field_name: SandboxSettings.HardcoreMode
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Hardcore Mode
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: If set, characters only have one life and difficulty is forced to Apocalyptic
+        Keywords: hardcore,apocalyptic,HardcoreMode
+        FieldName: HardcoreMode
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.HardcoreMode
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: LootRespawnEnabled
+      label: Enable Loot Respawn
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        If set, resources (other than furniture) will spontaneously respawn around the Facility. Good for public
+        servers, but can cause objects to intersect or float, and will make some resource gathering very unbalanced
+      keywords: loot,respawn,resources,LootRespawnEnabled
+      input_type: checkbox
+      param_field_name: SandboxSettings.LootRespawnEnabled
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Loot Respawn
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          If set, resources (other than furniture) will spontaneously respawn around the Facility. Good for public
+          servers, but can cause objects to intersect or float, and will make some resource gathering very unbalanced
+        Keywords: loot,respawn,resources,LootRespawnEnabled
+        FieldName: LootRespawnEnabled
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.LootRespawnEnabled
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: PowerSocketsOffAtNight
+      label: Shut Off Power Sockets At Night
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        If set, power in the Facility will be shut off at night, including power sockets. Disabling this setting will
+        make the game easier as things like Batteries will not be required. Disabling may also be required if the
+        Day-Night Cycle State is set to 'Always night'
+      keywords: power,sockets,night,game,batteries,PowerSocketsOffAtNight
+      input_type: checkbox
+      param_field_name: SandboxSettings.PowerSocketsOffAtNight
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Shut Off Power Sockets At Night
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          If set, power in the Facility will be shut off at night, including power sockets. Disabling this setting will
+          make the game easier as things like Batteries will not be required. Disabling may also be required if the
+          Day-Night Cycle State is set to 'Always night'
+        Keywords: power,sockets,night,game,batteries,PowerSocketsOffAtNight
+        FieldName: PowerSocketsOffAtNight
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.PowerSocketsOffAtNight
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: DayNightCycleState
+      label: Day-Night Cycle State
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets whether to disable the day-night cycle. If 'Always day' or 'Always night', time will pass as normal, but
+        there will be no day-night transition. Change from 'Normal' at your own risk, as that may affect things that can
+        only happen during day or night
+      keywords: day,night,cycle,transition,DayNightCycleState
+      input_type: enum
+      param_field_name: SandboxSettings.DayNightCycleState
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Normal
+        '1': Always day
+        '2': Always night
+      raw:
+        DisplayName: Day-Night Cycle State
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets whether to disable the day-night cycle. If 'Always day' or 'Always night', time will pass as normal, but
+          there will be no day-night transition. Change from 'Normal' at your own risk, as that may affect things that
+          can only happen during day or night
+        Keywords: day,night,cycle,transition,DayNightCycleState
+        FieldName: DayNightCycleState
+        InputType: enum
+        ParamFieldName: SandboxSettings.DayNightCycleState
+        DefaultValue: '0'
+        EnumValues:
+          '0': Normal
+          '1': Always day
+          '2': Always night
+    - key: DayNightCycleSpeedMultiplier
+      label: Day-Night Cycle Speed Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets the speed multiplier for the day-night cycle. Higher will make clock time pass faster. This will NOT affect
+        the speed of other cooldowns, respawn times, and so on
+      keywords: day,night,cycle,speed,multiplier,time,DayNightCycleSpeedMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.DayNightCycleSpeedMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 3
+      enum_values: {}
+      raw:
+        DisplayName: Day-Night Cycle Speed Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets the speed multiplier for the day-night cycle. Higher will make clock time pass faster. This will NOT
+          affect the speed of other cooldowns, respawn times, and so on
+        Keywords: day,night,cycle,speed,multiplier,time,DayNightCycleSpeedMultiplier
+        FieldName: DayNightCycleSpeedMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '3'
+        ParamFieldName: SandboxSettings.DayNightCycleSpeedMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: WeatherFrequency
+      label: Weather Frequency
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets how often weather events are triggered. Even frequent weather still requires the correct progression to
+        trigger, however
+      keywords: weather,frequency,WeatherFrequency
+      input_type: enum
+      param_field_name: SandboxSettings.WeatherFrequency
+      default: '3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': Never
+        '2': Infrequent
+        '3': Normal
+        '4': Frequent
+        '5': Daily
+      raw:
+        DisplayName: Weather Frequency
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets how often weather events are triggered. Even frequent weather still requires the correct progression to
+          trigger, however
+        Keywords: weather,frequency,WeatherFrequency
+        FieldName: WeatherFrequency
+        InputType: enum
+        ParamFieldName: SandboxSettings.WeatherFrequency
+        DefaultValue: '3'
+        EnumValues:
+          '1': Never
+          '2': Infrequent
+          '3': Normal
+          '4': Frequent
+          '5': Daily
+    - key: SinkRefillRate
+      label: Sink Refill Rate
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets how quickly sinks will passively refill over time. Higher will mean sinks refill more quickly, and a lower
+        value will make them refill more slowly. 0 = disable sink refill, making the game much more challenging
+      keywords: sink,refill,rate,drinking,SinkRefillRate
+      input_type: number
+      param_field_name: SandboxSettings.SinkRefillRate
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Sink Refill Rate
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets how quickly sinks will passively refill over time. Higher will mean sinks refill more quickly, and a
+          lower value will make them refill more slowly. 0 = disable sink refill, making the game much more challenging
+        Keywords: sink,refill,rate,drinking,SinkRefillRate
+        FieldName: SinkRefillRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: SandboxSettings.SinkRefillRate
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: FoodSpoilSpeedMultiplier
+      label: Food Spoil Speed Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets how fast food spoils. By default, most food will eventually decay and turn into rotten food. Higher will
+        mean faster decay, lower means slower. 0 = decay disabled
+      keywords: food,spoil,speed,multiplier,decay,FoodSpoilSpeedMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.FoodSpoilSpeedMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Food Spoil Speed Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets how fast food spoils. By default, most food will eventually decay and turn into rotten food. Higher will
+          mean faster decay, lower means slower. 0 = decay disabled
+        Keywords: food,spoil,speed,multiplier,decay,FoodSpoilSpeedMultiplier
+        FieldName: FoodSpoilSpeedMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '2'
+        ParamFieldName: SandboxSettings.FoodSpoilSpeedMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: RefrigerationEffectivenessMultiplier
+      label: Refrigeration Effectiveness Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets how effective it is to refrigerate items. Also affects how effective hot items maintain their heat if they
+        prefer staying warm and are kept in a warm location
+      keywords: refrigeration,effectiveness,multiplier,hot,items,RefrigerationEffectivenessMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.RefrigerationEffectivenessMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Refrigeration Effectiveness Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets how effective it is to refrigerate items. Also affects how effective hot items maintain their heat if
+          they prefer staying warm and are kept in a warm location
+        Keywords: refrigeration,effectiveness,multiplier,hot,items,RefrigerationEffectivenessMultiplier
+        FieldName: RefrigerationEffectivenessMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '2'
+        ParamFieldName: SandboxSettings.RefrigerationEffectivenessMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: EnemySpawnRate
+      label: Enemy Spawn Rate
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets how frequently enemies respawn. Lower will increase enemy respawn timers, higher will cause enemies to
+        respawn more quickly than normal. Minimum 0.5
+      keywords: enemy,spawn rate,respawn,timers,EnemySpawnRate
+      input_type: number
+      param_field_name: SandboxSettings.EnemySpawnRate
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 3
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Spawn Rate
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets how frequently enemies respawn. Lower will increase enemy respawn timers, higher will cause enemies to
+          respawn more quickly than normal. Minimum 0.5
+        Keywords: enemy,spawn rate,respawn,timers,EnemySpawnRate
+        FieldName: EnemySpawnRate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '3'
+        ParamFieldName: SandboxSettings.EnemySpawnRate
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: EnemyHealthMultiplier
+      label: Enemy Health Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets the multiplier for enemy health. Lower will make enemies easier to kill, higher will mean enemies will take
+        more damage to kill. Minimum 0.75
+      keywords: enemy,health,multiplier,damage,EnemyHealthMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.EnemyHealthMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 3
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Health Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets the multiplier for enemy health. Lower will make enemies easier to kill, higher will mean enemies will
+          take more damage to kill. Minimum 0.75
+        Keywords: enemy,health,multiplier,damage,EnemyHealthMultiplier
+        FieldName: EnemyHealthMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '3'
+        ParamFieldName: SandboxSettings.EnemyHealthMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: EnemyPlayerDamageMultiplier
+      label: Enemy Player Damage Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets how damaging enemies are, as a multiplier of their damage. Default value is tuned for a fair and balanced
+        experience. Lower will make survivability easier, higher will make combat more challenging and enemies more
+        lethal. Minimum 0.25
+      keywords: enemy,player,damage,multiplier,survivability,combat,EnemyPlayerDamageMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.EnemyPlayerDamageMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 3
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Player Damage Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets how damaging enemies are, as a multiplier of their damage. Default value is tuned for a fair and balanced
+          experience. Lower will make survivability easier, higher will make combat more challenging and enemies more
+          lethal. Minimum 0.25
+        Keywords: enemy,player,damage,multiplier,survivability,combat,EnemyPlayerDamageMultiplier
+        FieldName: EnemyPlayerDamageMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '3'
+        ParamFieldName: SandboxSettings.EnemyPlayerDamageMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: EnemyDeployableDamageMultiplier
+      label: Enemy Deployable Damage Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets how much damage enemies do to deployables, as a multiplier of their damage. Lower will make bases more
+        resistant to enemy attacks. Minimum 0.1
+      keywords: enemy,deployable,damage,multiplier,bases,threaten,EnemyDeployableDamageMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.EnemyDeployableDamageMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Deployable Damage Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets how much damage enemies do to deployables, as a multiplier of their damage. Lower will make bases more
+          resistant to enemy attacks. Minimum 0.1
+        Keywords: enemy,deployable,damage,multiplier,bases,threaten,EnemyDeployableDamageMultiplier
+        FieldName: EnemyDeployableDamageMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: SandboxSettings.EnemyDeployableDamageMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: DamageToAlliesMultiplier
+      label: Damage To Allies Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets how much damage players do to other players, as a proportion of normal damage. To allow players to engage
+        in PvP combat, set to 1.0 (100%) or higher
+      keywords: damage,allies,multiplier,pvp,combat,DamageToAlliesMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.DamageToAlliesMultiplier
+      default: '0.5'
+      placeholder: '0.5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 3
+      enum_values: {}
+      raw:
+        DisplayName: Damage To Allies Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets how much damage players do to other players, as a proportion of normal damage. To allow players to engage
+          in PvP combat, set to 1.0 (100%) or higher
+        Keywords: damage,allies,multiplier,pvp,combat,DamageToAlliesMultiplier
+        FieldName: DamageToAlliesMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '3'
+        ParamFieldName: SandboxSettings.DamageToAlliesMultiplier
+        DefaultValue: '0.5'
+        Placeholder: '0.5'
+        EnumValues: {}
+    - key: HungerSpeedMultiplier
+      label: Hunger Speed Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: Sets the multiplier for how fast Hunger increases. Higher will mean players need to eat more often
+      keywords: hunger,speed,multiplier,food,HungerSpeedMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.HungerSpeedMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Hunger Speed Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: Sets the multiplier for how fast Hunger increases. Higher will mean players need to eat more often
+        Keywords: hunger,speed,multiplier,food,HungerSpeedMultiplier
+        FieldName: HungerSpeedMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '2'
+        ParamFieldName: SandboxSettings.HungerSpeedMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: ThirstSpeedMultiplier
+      label: Thirst Speed Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: Sets the multiplier for how fast Thirst increases. Higher will mean players need to drink more often
+      keywords: thirst,speed,multiplier,drink,ThirstSpeedMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.ThirstSpeedMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Thirst Speed Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: Sets the multiplier for how fast Thirst increases. Higher will mean players need to drink more often
+        Keywords: thirst,speed,multiplier,drink,ThirstSpeedMultiplier
+        FieldName: ThirstSpeedMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '2'
+        ParamFieldName: SandboxSettings.ThirstSpeedMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: FatigueSpeedMultiplier
+      label: Fatigue Speed Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: Sets the multiplier for how fast Fatigue increases. Higher will mean players get sleepier more quickly
+      keywords: fatigue,speed,multiplier,sleep,FatigueSpeedMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.FatigueSpeedMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Fatigue Speed Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: Sets the multiplier for how fast Fatigue increases. Higher will mean players get sleepier more quickly
+        Keywords: fatigue,speed,multiplier,sleep,FatigueSpeedMultiplier
+        FieldName: FatigueSpeedMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '2'
+        ParamFieldName: SandboxSettings.FatigueSpeedMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: ContinenceSpeedMultiplier
+      label: Continence Speed Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: Sets the multiplier for how fast Continence drains. Higher will mean players have to use the toilet more often
+      keywords: continence,speed,multiplier,toilet,ContinenceSpeedMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.ContinenceSpeedMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 2
+      enum_values: {}
+      raw:
+        DisplayName: Continence Speed Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: Sets the multiplier for how fast Continence drains. Higher will mean players have to use the toilet more often
+        Keywords: continence,speed,multiplier,toilet,ContinenceSpeedMultiplier
+        FieldName: ContinenceSpeedMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '2'
+        ParamFieldName: SandboxSettings.ContinenceSpeedMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: DetectionSpeedMultiplier
+      label: Detection Speed Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets how fast enemies detect players. Above 1 will mean enemies will detect players faster than normal. Minimum
+        0.1
+      keywords: detection,speed,multiplier,enemies,players,DetectionSpeedMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.DetectionSpeedMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 3
+      enum_values: {}
+      raw:
+        DisplayName: Detection Speed Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets how fast enemies detect players. Above 1 will mean enemies will detect players faster than normal.
+          Minimum 0.1
+        Keywords: detection,speed,multiplier,enemies,players,DetectionSpeedMultiplier
+        FieldName: DetectionSpeedMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '3'
+        ParamFieldName: SandboxSettings.DetectionSpeedMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: BonusPerkPoints
+      label: Bonus Perk Points
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: Determines how many additional perk points are available on top of the points given by each selected job
+      keywords: bonus,perk,points,perks,BonusPerkPoints
+      input_type: number
+      param_field_name: SandboxSettings.BonusPerkPoints
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 99
+      enum_values: {}
+      raw:
+        DisplayName: Bonus Perk Points
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: Determines how many additional perk points are available on top of the points given by each selected job
+        Keywords: bonus,perk,points,perks,BonusPerkPoints
+        FieldName: BonusPerkPoints
+        InputType: number
+        MinValue: '0'
+        MaxValue: '99'
+        ParamFieldName: SandboxSettings.BonusPerkPoints
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: PlayerXPGainMultiplier
+      label: Player XP Gain Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets the multiplier for how fast XP is gained by players. Above 1 will mean XP is gained at a higher rate, below
+        1 will mean XP is gained slower. 0 = disable ability to level up skills
+      keywords: player,xp,gain,multiplier,level,skills,PlayerXPGainMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.PlayerXPGainMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 3
+      enum_values: {}
+      raw:
+        DisplayName: Player XP Gain Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets the multiplier for how fast XP is gained by players. Above 1 will mean XP is gained at a higher rate,
+          below 1 will mean XP is gained slower. 0 = disable ability to level up skills
+        Keywords: player,xp,gain,multiplier,level,skills,PlayerXPGainMultiplier
+        FieldName: PlayerXPGainMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '3'
+        ParamFieldName: SandboxSettings.PlayerXPGainMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: ItemStackSizeMultiplier
+      label: Item Stack Size Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets the multiplier for how many times items can be stacked in an inventory slot. For example, 2 = double stack
+        height. Non-stackable items are excluded
+      keywords: item,stack,size,multiplier,inventory,slot,ItemStackSizeMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.ItemStackSizeMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 30
+      enum_values: {}
+      raw:
+        DisplayName: Item Stack Size Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets the multiplier for how many times items can be stacked in an inventory slot. For example, 2 = double
+          stack height. Non-stackable items are excluded
+        Keywords: item,stack,size,multiplier,inventory,slot,ItemStackSizeMultiplier
+        FieldName: ItemStackSizeMultiplier
+        InputType: number
+        MinValue: '1'
+        MaxValue: '30'
+        ParamFieldName: SandboxSettings.ItemStackSizeMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: ItemWeightMultiplier
+      label: Item Weight Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets the multiplier affecting how heavy items are in a player's inventory. For example, 2 = twice as heavy. For
+        items to be lighter, set this value lower than 1
+      keywords: item,weight,multiplier,inventory,ItemWeightMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.ItemWeightMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Item Weight Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets the multiplier affecting how heavy items are in a player's inventory. For example, 2 = twice as heavy.
+          For items to be lighter, set this value lower than 1
+        Keywords: item,weight,multiplier,inventory,ItemWeightMultiplier
+        FieldName: ItemWeightMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: SandboxSettings.ItemWeightMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: ItemDurabilityMultiplier
+      label: Item Durability Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets the multiplier for item durability. For example, 2 = double durability. To break items faster, set this
+        value below 1
+      keywords: item,durability,multiplier,ItemDurabilityMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.ItemDurabilityMultiplier
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 10
+      enum_values: {}
+      raw:
+        DisplayName: Item Durability Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets the multiplier for item durability. For example, 2 = double durability. To break items faster, set this
+          value below 1
+        Keywords: item,durability,multiplier,ItemDurabilityMultiplier
+        FieldName: ItemDurabilityMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '10'
+        ParamFieldName: SandboxSettings.ItemDurabilityMultiplier
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: DurabilityLossOnDeathMultiplier
+      label: Durability Loss On Death Multiplier
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: Sets how much durability is lost on weapons and items in a player's inventory when respawning
+      keywords: durability,loss,death,multiplier,inventory,DurabilityLossOnDeathMultiplier
+      input_type: number
+      param_field_name: SandboxSettings.DurabilityLossOnDeathMultiplier
+      default: '0.1'
+      placeholder: '0.1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Durability Loss On Death Multiplier
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: Sets how much durability is lost on weapons and items in a player's inventory when respawning
+        Keywords: durability,loss,death,multiplier,inventory,DurabilityLossOnDeathMultiplier
+        FieldName: DurabilityLossOnDeathMultiplier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: SandboxSettings.DurabilityLossOnDeathMultiplier
+        DefaultValue: '0.1'
+        Placeholder: '0.1'
+        EnumValues: {}
+    - key: ShowDeathMessages
+      label: Show Death Messages
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: If sets, players will be notified when someone is killed by something
+      keywords: show,death,messages,notifications,ShowDeathMessages
+      input_type: checkbox
+      param_field_name: SandboxSettings.ShowDeathMessages
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Show Death Messages
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: If sets, players will be notified when someone is killed by something
+        Keywords: show,death,messages,notifications,ShowDeathMessages
+        FieldName: ShowDeathMessages
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.ShowDeathMessages
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AllowRecipeSharing
+      label: Allow Recipe Sharing
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: If set, players will be able to share item recipes with other players
+      keywords: recipe,sharing,AllowRecipeSharing
+      input_type: checkbox
+      param_field_name: SandboxSettings.AllowRecipeSharing
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Recipe Sharing
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: If set, players will be able to share item recipes with other players
+        Keywords: recipe,sharing,AllowRecipeSharing
+        FieldName: AllowRecipeSharing
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.AllowRecipeSharing
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AllowPagers
+      label: Allow Pagers
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        If set, Pagers will be usable in inventory and via the emote wheel. Disabling this setting will make it harder
+        to find other players
+      keywords: pagers,inventory,emote,wheel,AllowPagers
+      input_type: checkbox
+      param_field_name: SandboxSettings.AllowPagers
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Pagers
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          If set, Pagers will be usable in inventory and via the emote wheel. Disabling this setting will make it harder
+          to find other players
+        Keywords: pagers,inventory,emote,wheel,AllowPagers
+        FieldName: AllowPagers
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.AllowPagers
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AllowTransmog
+      label: Allow Transmog
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        If set, players can transmogrify their armour to look like other pieces of armour using a certain piece of base
+        equipment
+      keywords: transmog,armor,armour,customization,disguise,equipment,AllowTransmog
+      input_type: checkbox
+      param_field_name: SandboxSettings.AllowTransmog
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Transmog
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          If set, players can transmogrify their armour to look like other pieces of armour using a certain piece of
+          base equipment
+        Keywords: transmog,armor,armour,customization,disguise,equipment,AllowTransmog
+        FieldName: AllowTransmog
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.AllowTransmog
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: DisableResearchMinigame
+      label: Disable Research Minigames
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        If set, the Research Minigames will be removed when unlocking new recipes and simply unlock the recipe right
+        away
+      keywords: research minigame,disable,unlocking,recipes,DisableResearchMinigame
+      input_type: checkbox
+      param_field_name: SandboxSettings.DisableResearchMinigame
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Disable Research Minigames
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          If set, the Research Minigames will be removed when unlocking new recipes and simply unlock the recipe right
+          away
+        Keywords: research minigame,disable,unlocking,recipes,DisableResearchMinigame
+        FieldName: DisableResearchMinigame
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.DisableResearchMinigame
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: DeathPenalties
+      label: Death Penalties
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: Sets what penalties a player receives for respawning after death (or by using the Unstick option)
+      keywords: death,penalties,respawning,unstick,option,DeathPenalties
+      input_type: enum
+      param_field_name: SandboxSettings.DeathPenalties
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Keep all items
+        '1': Keep equipped items & hotbar (default)
+        '2': Keep hotbar only
+        '3': Keep equipped items only
+        '4': Lose all items including hotbar
+        '5': All items are destroyed
+      raw:
+        DisplayName: Death Penalties
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: Sets what penalties a player receives for respawning after death (or by using the Unstick option)
+        Keywords: death,penalties,respawning,unstick,option,DeathPenalties
+        FieldName: DeathPenalties
+        InputType: enum
+        ParamFieldName: SandboxSettings.DeathPenalties
+        DefaultValue: '1'
+        EnumValues:
+          '0': Keep all items
+          '1': Keep equipped items & hotbar (default)
+          '2': Keep hotbar only
+          '3': Keep equipped items only
+          '4': Lose all items including hotbar
+          '5': All items are destroyed
+    - key: FirstTimeStartingWeapon
+      label: First Time Starting Weapon
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Sets the weapon players receive when spawning for the first time, in addition to starting items from their
+        selected Job
+      keywords: first,time,starting,weapon,spawning,world,FirstTimeStartingWeapon
+      input_type: enum
+      param_field_name: SandboxSettings.FirstTimeStartingWeapon
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None (default)
+        '1': Shiv
+        '2': Desk leg
+        '3': Kitchen knife
+        '4': Starter baton
+        '5': Pipe club
+        '6': Random
+      raw:
+        DisplayName: First Time Starting Weapon
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Sets the weapon players receive when spawning for the first time, in addition to starting items from their
+          selected Job
+        Keywords: first,time,starting,weapon,spawning,world,FirstTimeStartingWeapon
+        FieldName: FirstTimeStartingWeapon
+        InputType: enum
+        ParamFieldName: SandboxSettings.FirstTimeStartingWeapon
+        DefaultValue: '0'
+        EnumValues:
+          '0': None (default)
+          '1': Shiv
+          '2': Desk leg
+          '3': Kitchen knife
+          '4': Starter baton
+          '5': Pipe club
+          '6': Random
+    - key: HostAccessPlayerCorpses
+      label: Allow Death Bag Inventory Access
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        If set, the host will be able to access the inventory items found in Death Bags, which are typically dropped by
+        players on death
+      keywords: death,bag,inventory,host,access,HostAccessPlayerCorpses
+      input_type: checkbox
+      param_field_name: SandboxSettings.HostAccessPlayerCorpses
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Death Bag Inventory Access
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          If set, the host will be able to access the inventory items found in Death Bags, which are typically dropped
+          by players on death
+        Keywords: death,bag,inventory,host,access,HostAccessPlayerCorpses
+        FieldName: HostAccessPlayerCorpses
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.HostAccessPlayerCorpses
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: StorageByTag
+      label: Restrict Containers
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: If set, containers will be restricted by item type
+      keywords: containers,restrict,item,type,StorageByTag
+      input_type: checkbox
+      param_field_name: SandboxSettings.StorageByTag
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Restrict Containers
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: If set, containers will be restricted by item type
+        Keywords: containers,restrict,item,type,StorageByTag
+        FieldName: StorageByTag
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.StorageByTag
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: StructuralSupportLimit
+      label: Structural Support Limit
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: Sets the limit on how much furniture and other deployables can be stacked. 0 = disabled
+      keywords: structural,support,limit,stack,furniture,deployables,StructuralSupportLimit
+      input_type: number
+      param_field_name: SandboxSettings.StructuralSupportLimit
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Structural Support Limit
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: Sets the limit on how much furniture and other deployables can be stacked. 0 = disabled
+        Keywords: structural,support,limit,stack,furniture,deployables,StructuralSupportLimit
+        FieldName: StructuralSupportLimit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: SandboxSettings.StructuralSupportLimit
+        DefaultValue: '5'
+        Placeholder: '5'
+        EnumValues: {}
+    - key: AllowCharacterReset
+      label: Allow Character Reset
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        If set, allows players to reset their jobs, skills, and traits later in the game. Disabling removes the ability
+        for scientists to change their mind
+      keywords: character,reset,jobs,skills,traits,AllowCharacterReset
+      input_type: checkbox
+      param_field_name: SandboxSettings.AllowCharacterReset
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Character Reset
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          If set, allows players to reset their jobs, skills, and traits later in the game. Disabling removes the
+          ability for scientists to change their mind
+        Keywords: character,reset,jobs,skills,traits,AllowCharacterReset
+        FieldName: AllowCharacterReset
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.AllowCharacterReset
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: BridgeSupports
+      label: Bridge Supports Level
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        Bridges require two supports by default. When lowered, bridges will work with less or 0 additional support
+        (besides the initial location the bridge is placed)
+      keywords: bridge,supports,BridgeSupports
+      input_type: enum
+      param_field_name: SandboxSettings.BridgeSupports
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': No support required
+        '1': One support required
+        '2': Two supports required (default)
+      raw:
+        DisplayName: Bridge Supports Level
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          Bridges require two supports by default. When lowered, bridges will work with less or 0 additional support
+          (besides the initial location the bridge is placed)
+        Keywords: bridge,supports,BridgeSupports
+        FieldName: BridgeSupports
+        InputType: enum
+        ParamFieldName: SandboxSettings.BridgeSupports
+        DefaultValue: '2'
+        EnumValues:
+          '0': No support required
+          '1': One support required
+          '2': Two supports required (default)
+    - key: HomeWorlds
+      label: Allow Home Worlds
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        If set, Home Worlds can be used in the world. If disabled, access (for all scientists) to Home World portal
+        worlds will be restricted. This includes free or DLC Home Worlds, such as Torii
+      keywords: home,worlds,allow,access,HomeWorlds
+      input_type: checkbox
+      param_field_name: SandboxSettings.HomeWorlds
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Home Worlds
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          If set, Home Worlds can be used in the world. If disabled, access (for all scientists) to Home World portal
+          worlds will be restricted. This includes free or DLC Home Worlds, such as Torii
+        Keywords: home,worlds,allow,access,HomeWorlds
+        FieldName: HomeWorlds
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.HomeWorlds
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: InvisibleRadiation
+      label: Enable Invisible Radiation
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: If set, radiation will not show any screen effect, requiring Geiger Counters to track radiation
+      keywords: radiation,invisible,geiger,InvisibleRadiation
+      input_type: checkbox
+      param_field_name: SandboxSettings.InvisibleRadiation
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Invisible Radiation
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: If set, radiation will not show any screen effect, requiring Geiger Counters to track radiation
+        Keywords: radiation,invisible,geiger,InvisibleRadiation
+        FieldName: InvisibleRadiation
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.InvisibleRadiation
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: BaseInventorySize
+      label: Base Inventory Size
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: Sets the default inventory size when no backpack is equipped
+      keywords: inventory,base,size,backpack,BaseInventorySize
+      input_type: number
+      param_field_name: SandboxSettings.BaseInventorySize
+      default: '12'
+      placeholder: '12'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 42
+      enum_values: {}
+      raw:
+        DisplayName: Base Inventory Size
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: Sets the default inventory size when no backpack is equipped
+        Keywords: inventory,base,size,backpack,BaseInventorySize
+        FieldName: BaseInventorySize
+        InputType: number
+        MinValue: '0'
+        MaxValue: '42'
+        ParamFieldName: SandboxSettings.BaseInventorySize
+        DefaultValue: '12'
+        Placeholder: '12'
+        EnumValues: {}
+    - key: TaintedSinkWater
+      label: Enable Tainted Sink Water
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: If set, sink (or similar) drinkable water sources will instead be tainted water
+      keywords: tainted,water,sink,TaintedSinkWater
+      input_type: checkbox
+      param_field_name: SandboxSettings.TaintedSinkWater
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Tainted Sink Water
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: If set, sink (or similar) drinkable water sources will instead be tainted water
+        Keywords: tainted,water,sink,TaintedSinkWater
+        FieldName: TaintedSinkWater
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.TaintedSinkWater
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: RadiationDealsDamage
+      label: Radiation Deals Damage
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: If set, radiation will actively deal damage to health
+      keywords: radiation,damage,health,RadiationDealsDamage
+      input_type: checkbox
+      param_field_name: SandboxSettings.RadiationDealsDamage
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Radiation Deals Damage
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: If set, radiation will actively deal damage to health
+        Keywords: radiation,damage,health,RadiationDealsDamage
+        FieldName: RadiationDealsDamage
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.RadiationDealsDamage
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: PlayerFurnitureDestruction
+      label: Enable Player Furniture Destruction
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: If set, player-built furniture will be destroyed when it reaches zero durability
+      keywords: furniture,destruction,durability,PlayerFurnitureDestruction
+      input_type: checkbox
+      param_field_name: SandboxSettings.PlayerFurnitureDestruction
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Player Furniture Destruction
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: If set, player-built furniture will be destroyed when it reaches zero durability
+        Keywords: furniture,destruction,durability,PlayerFurnitureDestruction
+        FieldName: PlayerFurnitureDestruction
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.PlayerFurnitureDestruction
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AllowIronMode
+      label: Allow Iron Mode
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: >-
+        If set, enables Iron Mode (additional restrictions when Hardcore is enabled). Requires Hardcore Mode to be
+        enabled to take effect
+      keywords: iron,mode,hardcore,AllowIronMode
+      input_type: checkbox
+      param_field_name: SandboxSettings.AllowIronMode
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Iron Mode
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: >-
+          If set, enables Iron Mode (additional restrictions when Hardcore is enabled). Requires Hardcore Mode to be
+          enabled to take effect
+        Keywords: iron,mode,hardcore,AllowIronMode
+        FieldName: AllowIronMode
+        InputType: checkbox
+        ParamFieldName: SandboxSettings.AllowIronMode
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: EnemyAccuracy
+      label: Enemy Accuracy Level
+      category: Abiotic Factor
+      subcategory: Sandbox
+      description: Determines how accurate enemies are, on average
+      keywords: enemy,accuracy,aim,EnemyAccuracy
+      input_type: enum
+      param_field_name: SandboxSettings.EnemyAccuracy
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Pathetic
+        '1': Low
+        '2': Default
+        '3': High
+        '4': Precise
+      raw:
+        DisplayName: Enemy Accuracy Level
+        Category: Abiotic Factor:stadia_controller
+        Subcategory: Sandbox:joystick:2
+        Description: Determines how accurate enemies are, on average
+        Keywords: enemy,accuracy,aim,EnemyAccuracy
+        FieldName: EnemyAccuracy
+        InputType: enum
+        ParamFieldName: SandboxSettings.EnemyAccuracy
+        DefaultValue: '2'
+        EnumValues:
+          '0': Pathetic
+          '1': Low
+          '2': Default
+          '3': High
+          '4': Precise
+    - key: InstallUE4SS
+      label: Install UE Scripting System
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the action to take when the server is updated. If the installation option is selected, the latest build of
+        the [igromanru experimental Unreal Engine 4/5 Scripting System](https://github.com/igromanru/AF-UE4SS) will be
+        installed, allowing the server to be modded
+      keywords: install,ue4ss,unreal,engine,scripting,system,igromanru,modding
+      input_type: enum
+      param_field_name: InstallUE4SS
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Do nothing (default)
+        'false': Remove UE4SS files
+        'true': Install latest igromanru build
+      raw:
+        DisplayName: Install UE Scripting System
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the action to take when the server is updated. If the installation option is selected, the latest build
+          of the [igromanru experimental Unreal Engine 4/5 Scripting System](https://github.com/igromanru/AF-UE4SS) will
+          be installed, allowing the server to be modded
+        Keywords: install,ue4ss,unreal,engine,scripting,system,igromanru,modding
+        FieldName: InstallUE4SS
+        InputType: enum
+        ParamFieldName: InstallUE4SS
+        DefaultValue: ''
+        EnumValues:
+          '': Do nothing (default)
+          'false': Remove UE4SS files
+          'true': Install latest igromanru build
+  files:
+    - path: AbioticFactor/Saved/Config/WindowsServer/SandboxSettings.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: AbioticFactor/Saved/Config/WindowsServer/SandboxSettings.ini
+        AutoMap: true
+        Importable: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
+    - path: AbioticFactor/Binaries/Win64/ue4ss/UE4SS-settings.ini
+      type: ini
+      format: '{0} = {1}'
+      subsections: []
+      raw:
+        ConfigFile: AbioticFactor/Binaries/Win64/ue4ss/UE4SS-settings.ini
+        ConfigType: ini
+        AutoMap: true
+        ConfigFormat: '{0} = {1}'
+        ConfigFormatRegex: ^(?<key>.+?)\s*=\s*(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: Debug.ConsoleEnabled
+    label: Disable UE4SS Console
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GuiConsoleEnabled
+    label: Disable UE4SS GUI Console
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered Abiotic Factor Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WorldSaveName
+    label: World Save Name
+    default: Cascade
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: ServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: AdminPassword
+    label: Admin Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PlatformLimited
+    label: Crossplay Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: useperfthreads
+    label: Use CPU Performance Threads
+    default: '-useperfthreads '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: useallavailablecores
+    label: Use All Available Cores
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NoAsyncLoadingThread
+    label: Pause To Load Assets
+    default: '-NoAsyncLoadingThread '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LANOnly
+    label: LAN Only
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseLocalIPs
+    label: Use Local IPs
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bUseUObjectArrayCache
+    label: Enable UE4SS UObject Listeners
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Additional Command Line Arguments
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GameDifficulty
+    label: Difficulty Level
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HardcoreMode
+    label: Enable Hardcore Mode
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LootRespawnEnabled
+    label: Enable Loot Respawn
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PowerSocketsOffAtNight
+    label: Shut Off Power Sockets At Night
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DayNightCycleState
+    label: Day-Night Cycle State
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DayNightCycleSpeedMultiplier
+    label: Day-Night Cycle Speed Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WeatherFrequency
+    label: Weather Frequency
+    default: '3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SinkRefillRate
+    label: Sink Refill Rate
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FoodSpoilSpeedMultiplier
+    label: Food Spoil Speed Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RefrigerationEffectivenessMultiplier
+    label: Refrigeration Effectiveness Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnemySpawnRate
+    label: Enemy Spawn Rate
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnemyHealthMultiplier
+    label: Enemy Health Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnemyPlayerDamageMultiplier
+    label: Enemy Player Damage Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnemyDeployableDamageMultiplier
+    label: Enemy Deployable Damage Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DamageToAlliesMultiplier
+    label: Damage To Allies Multiplier
+    default: '0.5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HungerSpeedMultiplier
+    label: Hunger Speed Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ThirstSpeedMultiplier
+    label: Thirst Speed Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FatigueSpeedMultiplier
+    label: Fatigue Speed Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ContinenceSpeedMultiplier
+    label: Continence Speed Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DetectionSpeedMultiplier
+    label: Detection Speed Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BonusPerkPoints
+    label: Bonus Perk Points
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerXPGainMultiplier
+    label: Player XP Gain Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ItemStackSizeMultiplier
+    label: Item Stack Size Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ItemWeightMultiplier
+    label: Item Weight Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ItemDurabilityMultiplier
+    label: Item Durability Multiplier
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DurabilityLossOnDeathMultiplier
+    label: Durability Loss On Death Multiplier
+    default: '0.1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ShowDeathMessages
+    label: Show Death Messages
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowRecipeSharing
+    label: Allow Recipe Sharing
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowPagers
+    label: Allow Pagers
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowTransmog
+    label: Allow Transmog
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DisableResearchMinigame
+    label: Disable Research Minigames
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DeathPenalties
+    label: Death Penalties
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FirstTimeStartingWeapon
+    label: First Time Starting Weapon
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HostAccessPlayerCorpses
+    label: Allow Death Bag Inventory Access
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: StorageByTag
+    label: Restrict Containers
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: StructuralSupportLimit
+    label: Structural Support Limit
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowCharacterReset
+    label: Allow Character Reset
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BridgeSupports
+    label: Bridge Supports Level
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HomeWorlds
+    label: Allow Home Worlds
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InvisibleRadiation
+    label: Enable Invisible Radiation
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BaseInventorySize
+    label: Base Inventory Size
+    default: '12'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TaintedSinkWater
+    label: Enable Tainted Sink Water
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RadiationDealsDamage
+    label: Radiation Deals Damage
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerFurnitureDestruction
+    label: Enable Player Furniture Destruction
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowIronMode
+    label: Allow Iron Mode
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnemyAccuracy
+    label: Enemy Accuracy Level
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InstallUE4SS
+    label: Install UE Scripting System
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '427410'
+  collection_support: true
 backup:
   include:
     - /data

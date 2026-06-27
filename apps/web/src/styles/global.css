@@ -666,6 +666,85 @@ body::after {
   background: white;
 }
 
+.config-group {
+  border-radius: 1.5rem;
+  border: 1px solid rgba(34, 211, 238, 0.16);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.14), transparent 16rem),
+    rgba(15, 23, 42, 0.45);
+  padding: 1rem;
+}
+
+.setting-card {
+  display: block;
+  min-width: 0;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(2, 6, 23, 0.42);
+  padding: 1rem;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+.setting-card:hover {
+  border-color: rgba(34, 211, 238, 0.38);
+  background: rgba(14, 165, 233, 0.08);
+  transform: translateY(-1px);
+}
+
+.toggle-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.9);
+  padding: 0.82rem 0.9rem;
+  color: #cbd5e1;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.toggle-row.active {
+  border-color: rgba(34, 211, 238, 0.55);
+  background: rgba(8, 145, 178, 0.18);
+  color: #f8fafc;
+}
+
+.toggle-row:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.toggle-dot {
+  position: relative;
+  height: 1.35rem;
+  width: 2.45rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: rgba(71, 85, 105, 0.75);
+}
+
+.toggle-dot::after {
+  position: absolute;
+  left: 0.2rem;
+  top: 0.2rem;
+  height: 0.95rem;
+  width: 0.95rem;
+  border-radius: 999px;
+  background: white;
+  content: "";
+  transition: transform 160ms ease;
+}
+
+.toggle-row.active .toggle-dot {
+  background: linear-gradient(135deg, #22d3ee, #8b5cf6);
+}
+
+.toggle-row.active .toggle-dot::after {
+  transform: translateX(1.1rem);
+}
+
 .empty-state {
   border: 1px dashed rgba(34, 211, 238, 0.28);
   border-radius: 2rem;

@@ -5,13 +5,16 @@ category: Imported
 summary: Craftopia Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1670340'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1670340/Craftopia.x86_64
+  startup: 1670340/Craftopia.x86_64 -batchmode -showlogs
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,1059 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: applicationport1
     name: Game Port
-    default: 27015
+    default: 6587
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: ServerSetting.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: name
+      label: World Name
+      category: Craftopia
+      subcategory: Server
+      description: World name
+      keywords: world name
+      input_type: text
+      param_field_name: GameWorld.name
+      default: AMP World
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Name
+        Description: World name
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: world name
+        FieldName: name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: GameWorld.name
+        IncludeInCommandLine: false
+        DefaultValue: AMP World
+        EnumValues: {}
+    - key: difficulty
+      label: Difficulty
+      category: Craftopia
+      subcategory: Server
+      description: Difficulty
+      keywords: Difficulty
+      input_type: enum
+      param_field_name: GameWorld.difficulty
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Easy
+        '1': Normal
+        '2': Hard
+        '3': Very Hard
+      raw:
+        DisplayName: Difficulty
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Difficulty
+        Keywords: Difficulty
+        FieldName: difficulty
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameWorld.difficulty
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '0': Easy
+          '1': Normal
+          '2': Hard
+          '3': Very Hard
+    - key: gameMode
+      label: Game Mode
+      category: Craftopia
+      subcategory: Server
+      description: Game mode
+      keywords: gameMode
+      input_type: enum
+      param_field_name: GameWorld.gameMode
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': Normal World
+        '2': Creative World - Build
+        '3': Creative World - Play
+      raw:
+        DisplayName: Game Mode
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Game mode
+        Keywords: gameMode
+        FieldName: gameMode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: GameWorld.gameMode
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          '1': Normal World
+          '2': Creative World - Build
+          '3': Creative World - Play
+    - key: $ApplicationPort1
+      label: Port
+      category: Craftopia
+      subcategory: Server
+      description: This setting is managed under the Edit Ports button in ADS.
+      keywords: port
+      input_type: number
+      param_field_name: Host.port
+      default: '6587'
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Port
+        Description: This setting is managed under the Edit Ports button in ADS.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: port
+        FieldName: $ApplicationPort1
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: Host.port
+        IncludeInCommandLine: true
+        DefaultValue: '6587'
+        EnumValues: {}
+        Hidden: true
+    - key: $MaxUsers
+      label: Max Players
+      category: Craftopia
+      subcategory: Server
+      description: Maximum number of player can join into the server. (1-127)
+      keywords: max players
+      input_type: number
+      param_field_name: Host.maxPlayerNumber
+      default: '7'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      max: 127
+      enum_values: {}
+      raw:
+        DisplayName: Max Players
+        Description: Maximum number of player can join into the server. (1-127)
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: max players
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: Host.maxPlayerNumber
+        IncludeInCommandLine: true
+        DefaultValue: '7'
+        EnumValues: {}
+        suffix: players
+        MinValue: '1'
+        MaxValue: '127'
+    - key: usePassword
+      label: Enable Password
+      category: Craftopia
+      subcategory: Server
+      description: Enable the server password.
+      keywords: enable password
+      input_type: checkbox
+      param_field_name: Host.usePassword
+      default: '0'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Enable Password
+        Description: Enable the server password.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: enable password
+        FieldName: usePassword
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: Host.usePassword
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: serverPassword
+      label: Server Password
+      category: Craftopia
+      subcategory: Server
+      description: Set the server password, up to 8 digit number pin.
+      keywords: server password
+      input_type: password
+      param_field_name: Host.serverPassword
+      default: '00000000'
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set the server password, up to 8 digit number pin.
+        Keywords: server password
+        FieldName: serverPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: Host.serverPassword
+        IncludeInCommandLine: false
+        DefaultValue: '00000000'
+        EnumValues: {}
+    - key: autoSaveSec
+      label: Auto Save Interval
+      category: Craftopia
+      subcategory: Server
+      description: Seconds between each save. Set to -1 to disable.
+      keywords: auto save interval
+      input_type: number
+      param_field_name: Save.autoSaveSec
+      default: '300'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Auto Save Interval
+        Description: Seconds between each save. Set to -1 to disable.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: auto save interval
+        FieldName: autoSaveSec
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: Save.autoSaveSec
+        IncludeInCommandLine: false
+        DefaultValue: '300'
+        EnumValues: {}
+        suffix: sec
+    - key: autoSavePerHour
+      label: Auto Save Per Hour
+      category: Craftopia
+      subcategory: Server
+      description: Auto save every hour.
+      keywords: auto save per hour
+      input_type: checkbox
+      param_field_name: Save.autoSavePerHour
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Auto Save Per Hour
+        Description: Auto save every hour.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: auto save per hour
+        FieldName: autoSavePerHour
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: Save.autoSavePerHour
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: savePath
+      label: Save Path
+      category: Craftopia
+      subcategory: Server
+      description: Path to save the server in.
+      keywords: save Path
+      input_type: text
+      param_field_name: Save.savePath
+      default: DedicatedServerSave/
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Save Path
+        Description: Path to save the server in.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: save Path
+        FieldName: savePath
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: Save.savePath
+        IncludeInCommandLine: false
+        DefaultValue: DedicatedServerSave/
+        EnumValues: {}
+    - key: quickCraft
+      label: Quick Craft
+      category: Craftopia
+      subcategory: Server
+      description: Crafting without checking item cost.
+      keywords: quick craft
+      input_type: checkbox
+      param_field_name: quickCraft
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Quick Craft
+        Description: Crafting without checking item cost.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: quick craft
+        FieldName: quickCraft
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: quickCraft
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: ageLevel
+      label: Age Level
+      category: Craftopia
+      subcategory: Server
+      description: Age Level of the game world, effects crafting recipes.
+      keywords: age level
+      input_type: number
+      param_field_name: CreativeModeSetting.ageLevel
+      default: '7'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Age Level
+        Description: Age Level of the game world, effects crafting recipes.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: age level
+        FieldName: ageLevel
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: CreativeModeSetting.ageLevel
+        IncludeInCommandLine: false
+        DefaultValue: '7'
+        EnumValues: {}
+    - key: islandLevel
+      label: Island Level
+      category: Craftopia
+      subcategory: Server
+      description: Island level override, effects monster and dungeon levels. Set to -1 to disable override.
+      keywords: island level
+      input_type: number
+      param_field_name: CreativeModeSetting.islandLevel
+      default: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Island Level
+        Description: Island level override, effects monster and dungeon levels. Set to -1 to disable override.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: island level
+        FieldName: islandLevel
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: CreativeModeSetting.islandLevel
+        IncludeInCommandLine: false
+        DefaultValue: '-1'
+        EnumValues: {}
+    - key: noDeath
+      label: No Death
+      category: Craftopia
+      subcategory: Server
+      description: Player character would not die.
+      keywords: no death
+      input_type: checkbox
+      param_field_name: CreativeModeSetting.noDeath
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: No Death
+        Description: Player character would not die.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: no death
+        FieldName: noDeath
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: CreativeModeSetting.noDeath
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: noDamage
+      label: No Damage
+      category: Craftopia
+      subcategory: Server
+      description: Player character would not take damage.
+      keywords: no Damage
+      input_type: checkbox
+      param_field_name: CreativeModeSetting.noDamage
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: No Damage
+        Description: Player character would not take damage.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: no Damage
+        FieldName: noDamage
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: CreativeModeSetting.noDamage
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: noHunger
+      label: No Hunger
+      category: Craftopia
+      subcategory: Server
+      description: Player character would not be hungry.
+      keywords: no Hunger
+      input_type: checkbox
+      param_field_name: CreativeModeSetting.noHunger
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: No Hunger
+        Description: Player character would not be hungry.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: no Hunger
+        FieldName: noHunger
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: CreativeModeSetting.noHunger
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: infinitStamina
+      label: Infinite Stamina
+      category: Craftopia
+      subcategory: Server
+      description: Player character has infinite stamina.
+      keywords: infinite stamina
+      input_type: checkbox
+      param_field_name: CreativeModeSetting.infinitStamina
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Infinite Stamina
+        Description: Player character has infinite stamina.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: infinite stamina
+        FieldName: infinitStamina
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: CreativeModeSetting.infinitStamina
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: forceDayTime
+      label: Force Day Time
+      category: Craftopia
+      subcategory: Server
+      description: Game world day time override, 0 to 24, set to -1 to disable.
+      keywords: force Day Time
+      input_type: number
+      param_field_name: CreativeModeSetting.forceDayTime
+      default: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Force Day Time
+        Description: Game world day time override, 0 to 24, set to -1 to disable.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: force Day Time
+        FieldName: forceDayTime
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: CreativeModeSetting.forceDayTime
+        IncludeInCommandLine: false
+        DefaultValue: '-1'
+        EnumValues: {}
+    - key: buildingIgnoreDamage
+      label: Building Ignore Damage
+      category: Craftopia
+      subcategory: Server
+      description: Building would not take damage.
+      keywords: building Ignore Damage
+      input_type: checkbox
+      param_field_name: CreativeModeSetting.buildingIgnoreDamage
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: Building Ignore Damage
+        Description: Building would not take damage.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: building Ignore Damage
+        FieldName: buildingIgnoreDamage
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: CreativeModeSetting.buildingIgnoreDamage
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: noBuild
+      label: No Build
+      category: Craftopia
+      subcategory: Server
+      description: Player can not place new building.
+      keywords: no Build
+      input_type: checkbox
+      param_field_name: CreativeModeSetting.noBuild
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': '1'
+        'False': '0'
+      raw:
+        DisplayName: No Build
+        Description: Player can not place new building.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: no Build
+        FieldName: noBuild
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: CreativeModeSetting.noBuild
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues:
+          'True': '1'
+          'False': '0'
+    - key: Level
+      label: Level
+      category: Craftopia
+      subcategory: Server
+      description: Override character level, set to 0 to disable.
+      keywords: Level
+      input_type: number
+      param_field_name: CreativeModePlStatus.Level
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Level
+        Description: Override character level, set to 0 to disable.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: Level
+        FieldName: Level
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: CreativeModePlStatus.Level
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: Health
+      label: Health
+      category: Craftopia
+      subcategory: Server
+      description: Override character health, set to 0 to disable.
+      keywords: Health
+      input_type: number
+      param_field_name: CreativeModePlStatus.Health
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Health
+        Description: Override character health, set to 0 to disable.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: Health
+        FieldName: Health
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: CreativeModePlStatus.Health
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: Mana
+      label: Mana
+      category: Craftopia
+      subcategory: Server
+      description: Override character mana, set to 0 to disable.
+      keywords: Mana
+      input_type: number
+      param_field_name: CreativeModePlStatus.Mana
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Mana
+        Description: Override character mana, set to 0 to disable.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: Mana
+        FieldName: Mana
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: CreativeModePlStatus.Mana
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: Stamina
+      label: Stamina
+      category: Craftopia
+      subcategory: Server
+      description: Override character stamia, set to 0 to disable.
+      keywords: Stamina
+      input_type: number
+      param_field_name: CreativeModePlStatus.Stamina
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Stamina
+        Description: Override character stamia, set to 0 to disable.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: Stamina
+        FieldName: Stamina
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: CreativeModePlStatus.Stamina
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: Money
+      label: Money
+      category: Craftopia
+      subcategory: Server
+      description: Override character money.
+      keywords: Money
+      input_type: number
+      param_field_name: CreativeModePlStatus.Money
+      default: '1000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Money
+        Description: Override character money.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: Money
+        FieldName: Money
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: CreativeModePlStatus.Money
+        IncludeInCommandLine: false
+        DefaultValue: '1000'
+        EnumValues: {}
+    - key: SkillPoint
+      label: Skill Point
+      category: Craftopia
+      subcategory: Server
+      description: Override character skill point.
+      keywords: SkillPoint
+      input_type: number
+      param_field_name: CreativeModePlStatus.SkillPoint
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Skill Point
+        Description: Override character skill point.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: SkillPoint
+        FieldName: SkillPoint
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: CreativeModePlStatus.SkillPoint
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: EnchantPoint
+      label: Enchant Point
+      category: Craftopia
+      subcategory: Server
+      description: Override character enchant point.
+      keywords: EnchantPoint
+      input_type: number
+      param_field_name: CreativeModePlStatus.EnchantPoint
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Enchant Point
+        Description: Override character enchant point.
+        Category: Craftopia:stadia_controller
+        Subcategory: Server:dns:1
+        Keywords: EnchantPoint
+        FieldName: EnchantPoint
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: CreativeModePlStatus.EnchantPoint
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        EnumValues: {}
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: 'Sets the server branch to install. NOTE: Update the server after switching branches!'
+      keywords: server,branch,public,beta,alpha,unstable
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        alpha-unstable: Alpha unstable
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: 'Sets the server branch to install. NOTE: Update the server after switching branches!'
+        Keywords: server,branch,public,beta,alpha,unstable
+        FieldName: ServerBranch
+        InputType: enum
+        ParamFieldName: ServerBranch
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          alpha-unstable: Alpha unstable
+  files:
+    - path: ServerSetting.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: ServerSetting.ini
+        AutoMap: true
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: name
+    label: World Name
+    default: AMP World
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: difficulty
+    label: Difficulty
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: gameMode
+    label: Game Mode
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: usePassword
+    label: Enable Password
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: serverPassword
+    label: Server Password
+    default: '00000000'
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: autoSaveSec
+    label: Auto Save Interval
+    default: '300'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: autoSavePerHour
+    label: Auto Save Per Hour
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: savePath
+    label: Save Path
+    default: DedicatedServerSave/
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: quickCraft
+    label: Quick Craft
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ageLevel
+    label: Age Level
+    default: '7'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: islandLevel
+    label: Island Level
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: noDeath
+    label: No Death
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: noDamage
+    label: No Damage
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: noHunger
+    label: No Hunger
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: infinitStamina
+    label: Infinite Stamina
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: forceDayTime
+    label: Force Day Time
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: buildingIgnoreDamage
+    label: Building Ignore Damage
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: noBuild
+    label: No Build
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Level
+    label: Level
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Health
+    label: Health
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Mana
+    label: Mana
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Stamina
+    label: Stamina
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Money
+    label: Money
+    default: '1000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SkillPoint
+    label: Skill Point
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnchantPoint
+    label: Enchant Point
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1307550'
+  collection_support: true
 backup:
   include:
     - /data

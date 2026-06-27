@@ -100,6 +100,44 @@ export const configFileSchema = z.object({
 });
 export type ConfigFile = z.infer<typeof configFileSchema>;
 
+export const configFieldSchema = z.object({
+  key: z.string().min(1),
+  label: z.string().min(1),
+  category: z.string().default("General"),
+  subcategory: z.string().default("General"),
+  description: z.string().default(""),
+  keywords: z.string().default(""),
+  input_type: z.string().default("text"),
+  param_field_name: z.string().optional(),
+  default: z.string().default(""),
+  placeholder: z.string().optional(),
+  required: z.boolean().default(false),
+  sensitive: z.boolean().default(false),
+  hidden: z.boolean().default(false),
+  customer_editable: z.boolean().default(true),
+  include_in_command_line: z.boolean().default(false),
+  skip_if_empty: z.boolean().default(false),
+  min: z.number().optional(),
+  max: z.number().optional(),
+  suffix: z.string().optional(),
+  enum_values: z.record(z.string(), z.string()).default({}),
+  special: z.string().optional(),
+  raw: z.record(z.string(), z.unknown()).default({}),
+});
+export type ConfigField = z.infer<typeof configFieldSchema>;
+
+export const managedConfigFileSchema = z.object({
+  path: z.string().min(1),
+  type: z.string().default("text"),
+  format: z.string().optional(),
+  subsections: z.array(z.object({
+    heading: z.string().default(""),
+    setting_mappings: z.record(z.string(), z.string()).default({}),
+  })).default([]),
+  raw: z.record(z.string(), z.unknown()).default({}),
+});
+export type ManagedConfigFile = z.infer<typeof managedConfigFileSchema>;
+
 export const workshopAdapterSchema = z.enum(["steam", "nexusmods", "modio", "thunderstore", "curseforge", "github", "direct_url", "manual"]);
 export type WorkshopAdapter = z.infer<typeof workshopAdapterSchema>;
 
@@ -136,6 +174,10 @@ export const gameTemplateSchema = z.object({
   }),
   ports: z.array(templatePortSchema).min(1),
   config_files: z.array(configFileSchema).default([]),
+  config_schema: z.object({
+    fields: z.array(configFieldSchema).default([]),
+    files: z.array(managedConfigFileSchema).default([]),
+  }).default({ fields: [], files: [] }),
   environment: z.record(z.string(), z.string()).default({}),
   startup_variables: z.array(z.object({
     key: z.string().min(1),

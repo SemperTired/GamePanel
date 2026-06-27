@@ -4,14 +4,18 @@ name: FiveM - Grand Theft Auto V Server
 category: Imported
 summary: FiveM Multiplayer Mod for Grand Theft Auto V
 install:
-  method: steamcmd
-  app_id: 'True'
+  method: fivem
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/alpine/opt/cfx-server/ld-musl-x86_64.so.1
+  startup: >-
+    server/alpine/opt/cfx-server/ld-musl-x86_64.so.1 {PlatformArgs} {CustomArgs} +set gamename gta5 +set rcon_password
+    {RemoteAdminPassword} +set serverProfile default {FormattedArgs} +exec server.cfg
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +23,1318 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 30120
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: server-data/server.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Server Port
+      category: FiveM
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: ServerPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: ServerPort
+        EnumValues: {}
+    - key: sv_licenseKey
+      label: Cfx.re Server Registration Key
+      category: FiveM
+      subcategory: Server
+      description: >-
+        Sets the [Cfx.re server registration key](https://portal.cfx.re/servers/registration-keys) required to run the
+        server
+      keywords: licence,license,registration,key,keymaster,sv_licenseKey
+      input_type: password
+      param_field_name: sv_licenseKey
+      default: ''
+      required: true
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Cfx.re Server Registration Key
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [Cfx.re server registration key](https://portal.cfx.re/servers/registration-keys) required to run the
+          server
+        Keywords: licence,license,registration,key,keymaster,sv_licenseKey
+        FieldName: sv_licenseKey
+        InputType: password
+        ParamFieldName: sv_licenseKey
+        DefaultValue: ''
+        Required: true
+        EnumValues: {}
+    - key: steam_webApiKey
+      label: Steam Web API Key
+      category: FiveM
+      subcategory: Server
+      description: >-
+        Sets the [Steam Web API key](https://steamcommunity.com/login/home/?goto=%2Fdev%2Fapikey) required to allow for
+        Steam identifiers to be returned by the server
+      keywords: steam,web,api,key,steam_webApiKey
+      input_type: password
+      param_field_name: steam_webApiKey
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Steam Web API Key
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [Steam Web API key](https://steamcommunity.com/login/home/?goto=%2Fdev%2Fapikey) required to allow
+          for Steam identifiers to be returned by the server
+        Keywords: steam,web,api,key,steam_webApiKey
+        FieldName: steam_webApiKey
+        InputType: password
+        ParamFieldName: steam_webApiKey
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_hostname
+      label: Server Name
+      category: FiveM
+      subcategory: Server
+      description: Sets the name that shows when selecting the server in the server browser
+      keywords: server,name,hostname
+      input_type: text
+      param_field_name: sv_hostname
+      default: AMP Powered FiveM Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name that shows when selecting the server in the server browser
+        Keywords: server,name,hostname
+        FieldName: sv_hostname
+        InputType: text
+        ParamFieldName: sv_hostname
+        DefaultValue: AMP Powered FiveM Server
+        EnumValues: {}
+    - key: sv_projectName
+      label: Project Name
+      category: FiveM
+      subcategory: Server
+      description: >-
+        Sets the name that shows in the server browser. It should not be a list or contain tags. Any non-compliant name
+        will be cut off in the server list
+      keywords: project,name,sv_projectName
+      input_type: text
+      param_field_name: sv_projectName
+      default: AMP Powered FiveM Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Project Name
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name that shows in the server browser. It should not be a list or contain tags. Any non-compliant
+          name will be cut off in the server list
+        Keywords: project,name,sv_projectName
+        FieldName: sv_projectName
+        InputType: text
+        ParamFieldName: sv_projectName
+        DefaultValue: AMP Powered FiveM Server
+        EnumValues: {}
+    - key: sv_projectDesc
+      label: Project Description
+      category: FiveM
+      subcategory: Server
+      description: Sets the description that shows in the server browser
+      keywords: project,description,sv_projectDesc
+      input_type: text
+      param_field_name: sv_projectDesc
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Project Description
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the description that shows in the server browser
+        Keywords: project,description,sv_projectDesc
+        FieldName: sv_projectDesc
+        InputType: text
+        ParamFieldName: sv_projectDesc
+        DefaultValue: ''
+        EnumValues: {}
+    - key: tags
+      label: Server Tags
+      category: FiveM
+      subcategory: Server
+      description: >-
+        Sets a comma-separated list of server tags that give additional information about the server in the server
+        browser
+      keywords: tags
+      input_type: text
+      param_field_name: tags
+      default: default
+      placeholder: default
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Tags
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a comma-separated list of server tags that give additional information about the server in the server
+          browser
+        Keywords: tags
+        FieldName: tags
+        InputType: text
+        ParamFieldName: tags
+        DefaultValue: default
+        Placeholder: default
+        EnumValues: {}
+    - key: locale
+      label: Server Locale
+      category: FiveM
+      subcategory: Server
+      description: >-
+        Sets the locale identifier for the server's primary language. The locale code must follow the [ISO 639-1
+        standard](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes), and the country code must follow the [ISO
+        3166-1 alpha-2 standard](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+      keywords: locale,language,country
+      input_type: text
+      param_field_name: locale
+      default: en-US
+      placeholder: en-US
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Locale
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the locale identifier for the server's primary language. The locale code must follow the [ISO 639-1
+          standard](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes), and the country code must follow the [ISO
+          3166-1 alpha-2 standard](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+        Keywords: locale,language,country
+        FieldName: locale
+        InputType: text
+        ParamFieldName: locale
+        DefaultValue: en-US
+        Placeholder: en-US
+        EnumValues: {}
+    - key: load_server_icon
+      label: Server Icon
+      category: FiveM
+      subcategory: Server
+      description: Sets the filename of an icon to load as the server icon. The icon needs to be a 96x96 PNG file
+      keywords: server,icon,load_server_icon
+      input_type: text
+      param_field_name: load_server_icon
+      default: ''
+      placeholder: myLogo.png
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Icon
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the filename of an icon to load as the server icon. The icon needs to be a 96x96 PNG file
+        Keywords: server,icon,load_server_icon
+        FieldName: load_server_icon
+        InputType: text
+        ParamFieldName: load_server_icon
+        DefaultValue: ''
+        Placeholder: myLogo.png
+        EnumValues: {}
+    - key: banner_detail
+      label: Server Detail Banner Image URL
+      category: FiveM
+      subcategory: Server
+      description: >-
+        Sets the URL for a server banner image. The image should be in PNG or GIF format, with the optimal size being
+        1865x250
+      keywords: banner,detail,image,url,banner_detail
+      input_type: text
+      param_field_name: banner_detail
+      default: ''
+      placeholder: https://url.to/image.png
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Detail Banner Image URL
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the URL for a server banner image. The image should be in PNG or GIF format, with the optimal size being
+          1865x250
+        Keywords: banner,detail,image,url,banner_detail
+        FieldName: banner_detail
+        InputType: text
+        ParamFieldName: banner_detail
+        DefaultValue: ''
+        Placeholder: https://url.to/image.png
+        EnumValues: {}
+    - key: banner_connecting
+      label: Connecting Banner Image URL
+      category: FiveM
+      subcategory: Server
+      description: Sets the URL for a connecting banner image. The image should be in PNG or GIF format
+      keywords: banner,connecting,image,url,banner_connecting
+      input_type: text
+      param_field_name: banner_connecting
+      default: ''
+      placeholder: https://url.to/image.png
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Connecting Banner Image URL
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the URL for a connecting banner image. The image should be in PNG or GIF format
+        Keywords: banner,connecting,image,url,banner_connecting
+        FieldName: banner_connecting
+        InputType: text
+        ParamFieldName: banner_connecting
+        DefaultValue: ''
+        Placeholder: https://url.to/image.png
+        EnumValues: {}
+    - key: sv_master1
+      label: Mark Server Private
+      category: FiveM
+      subcategory: Server
+      description: >-
+        If set, the server will be set as "private", making it not possible to join by using the server browser UI (the
+        server connect button will be disabled). The server will not be de-listed from the master list
+      keywords: private,server,list,sv_master1
+      input_type: checkbox
+      param_field_name: sv_master1
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': 'sv_master1 "" '
+      raw:
+        DisplayName: Mark Server Private
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server will be set as "private", making it not possible to join by using the server browser UI
+          (the server connect button will be disabled). The server will not be de-listed from the master list
+        Keywords: private,server,list,sv_master1
+        FieldName: sv_master1
+        InputType: checkbox
+        ParamFieldName: sv_master1
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': 'sv_master1 "" '
+    - key: ensure
+      label: Starting Resources
+      category: FiveM
+      subcategory: Server
+      description: 'Sets the resources to load on server start. One entry per line in the format: ensure <resourcename>'
+      keywords: ensure,resources
+      input_type: Textarea
+      param_field_name: ensure
+      default: |-
+        ensure mapmanager
+        ensure chat
+        ensure spawnmanager
+        ensure sessionmanager
+        ensure basic-gamemode
+        ensure hardcap
+        ensure rconlog
+      placeholder: |-
+        ensure mapmanager
+        ensure chat
+        ensure spawnmanager
+        ensure sessionmanager
+        ensure basic-gamemode
+        ensure hardcap
+        ensure rconlog
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Starting Resources
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Sets the resources to load on server start. One entry per line in the format: ensure <resourcename>'
+        Keywords: ensure,resources
+        FieldName: ensure
+        InputType: Textarea
+        ParamFieldName: ensure
+        DefaultValue: |-
+          ensure mapmanager
+          ensure chat
+          ensure spawnmanager
+          ensure sessionmanager
+          ensure basic-gamemode
+          ensure hardcap
+          ensure rconlog
+        Placeholder: |-
+          ensure mapmanager
+          ensure chat
+          ensure spawnmanager
+          ensure sessionmanager
+          ensure basic-gamemode
+          ensure hardcap
+          ensure rconlog
+        EnumValues: {}
+    - key: sv_endpointPrivacy
+      label: Enable Endpoint Privacy
+      category: FiveM
+      subcategory: Server
+      description: If set, player IP addresses will be hidden from public reports that the server outputs
+      keywords: endpoint,privacy,hide,hidden,addresses,sv_endpointPrivacy
+      input_type: checkbox
+      param_field_name: sv_endpointPrivacy
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Endpoint Privacy
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, player IP addresses will be hidden from public reports that the server outputs
+        Keywords: endpoint,privacy,hide,hidden,addresses,sv_endpointPrivacy
+        FieldName: sv_endpointPrivacy
+        InputType: checkbox
+        ParamFieldName: sv_endpointPrivacy
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: sv_enforceGameBuild
+      label: Enforce Game Build
+      category: FiveM
+      subcategory: Server
+      description: Sets the game build for clients to use. This can only be specified at startup, and cannot be changed at runtime
+      keywords: enforce,game,build,sv_enforceGameBuild
+      input_type: enum
+      param_field_name: sv_enforceGameBuild
+      default: '1604'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1': 1 (Base game without any DLCs)
+        '1604': 1604 (Arena War)
+        '2060': 2060 (Los Santos Summer Special)
+        '2189': 2189 (Cayo Perico Heist)
+        '2372': 2372 (Los Santos Tuners)
+        '2545': 2545 (The Contract)
+        '2612': 2612 (mpg9ec)
+        '2699': 2699 (The Criminal Enterprises)
+        '2802': 2802 (Los Santos Drug Wars)
+        '2944': 2944 (San Andreas Mercenaries)
+        '3095': 3095 (The Chop Shop)
+        '3258': 3258 (Bottom Dollar Bounties)
+        '3407': 3407 (Agents of Sabotage)
+        '3570': 3570 (Money Fronts)
+      raw:
+        DisplayName: Enforce Game Build
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the game build for clients to use. This can only be specified at startup, and cannot be changed at
+          runtime
+        Keywords: enforce,game,build,sv_enforceGameBuild
+        FieldName: sv_enforceGameBuild
+        InputType: enum
+        ParamFieldName: sv_enforceGameBuild
+        DefaultValue: '1604'
+        EnumValues:
+          '1': 1 (Base game without any DLCs)
+          '1604': 1604 (Arena War)
+          '2060': 2060 (Los Santos Summer Special)
+          '2189': 2189 (Cayo Perico Heist)
+          '2372': 2372 (Los Santos Tuners)
+          '2545': 2545 (The Contract)
+          '2612': 2612 (mpg9ec)
+          '2699': 2699 (The Criminal Enterprises)
+          '2802': 2802 (Los Santos Drug Wars)
+          '2944': 2944 (San Andreas Mercenaries)
+          '3095': 3095 (The Chop Shop)
+          '3258': 3258 (Bottom Dollar Bounties)
+          '3407': 3407 (Agents of Sabotage)
+          '3570': 3570 (Money Fronts)
+    - key: $MaxUsers
+      label: Player Limit
+      category: FiveM
+      subcategory: Server
+      description: >-
+        Sets the maximum number of players that may connect to the server at one time. Values starting at 32 require
+        OneSync to be "On" or "Legacy", and values above 64 require OneSync to be "On"
+      keywords: maximum,players,clients,limit,maxClients
+      input_type: number
+      param_field_name: sv_maxClients
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 2048
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of players that may connect to the server at one time. Values starting at 32 require
+          OneSync to be "On" or "Legacy", and values above 64 require OneSync to be "On"
+        Keywords: maximum,players,clients,limit,maxClients
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '2048'
+        ParamFieldName: sv_maxClients
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: players
+        EnumValues: {}
+    - key: onesync
+      label: OneSync Mode
+      category: FiveM
+      subcategory: Server
+      description: >-
+        Sets whether to use the [OneSync](https://docs.fivem.net/docs/scripting-reference/onesync/) state awareness
+        system. OneSync is free up to 48 players. "Legacy" mode is not recommended
+      keywords: onesync,state,awareness,system
+      input_type: enum
+      param_field_name: onesync
+      default: 'on'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'off': 'Off'
+        'on': On (default)
+        legacy: Legacy compatibility mode
+      raw:
+        DisplayName: OneSync Mode
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether to use the [OneSync](https://docs.fivem.net/docs/scripting-reference/onesync/) state awareness
+          system. OneSync is free up to 48 players. "Legacy" mode is not recommended
+        Keywords: onesync,state,awareness,system
+        FieldName: onesync
+        InputType: enum
+        ParamFieldName: onesync
+        DefaultValue: 'on'
+        EnumValues:
+          'off': 'Off'
+          'on': On (default)
+          legacy: Legacy compatibility mode
+    - key: onesync_population
+      label: Enable OneSync Population
+      category: FiveM
+      subcategory: Server
+      description: If enabled, NPCs and vehicles will be spawned on the server. Requires OneSync to be "On"
+      keywords: onesync,population,npcs,vehicles,onesync_population
+      input_type: checkbox
+      param_field_name: onesync_population
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable OneSync Population
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, NPCs and vehicles will be spawned on the server. Requires OneSync to be "On"
+        Keywords: onesync,population,npcs,vehicles,onesync_population
+        FieldName: onesync_population
+        InputType: checkbox
+        ParamFieldName: onesync_population
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: onesync_distanceCullVehicles
+      label: Enable OneSync Vehicle Distance Culling
+      category: FiveM
+      subcategory: Server
+      description: If enabled, player-occupied vehicles will be subject to distance culling. Requires OneSync to be "On"
+      keywords: onesync,vehicles,distance,cull,culling,onesync_distanceCullVehicles
+      input_type: checkbox
+      param_field_name: onesync_distanceCullVehicles
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable OneSync Vehicle Distance Culling
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, player-occupied vehicles will be subject to distance culling. Requires OneSync to be "On"
+        Keywords: onesync,vehicles,distance,cull,culling,onesync_distanceCullVehicles
+        FieldName: onesync_distanceCullVehicles
+        InputType: checkbox
+        ParamFieldName: onesync_distanceCullVehicles
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: onesync_forceMigration
+      label: Enable OneSync Forced Migration
+      category: FiveM
+      subcategory: Server
+      description: >-
+        If set, any entity that has not received any clone sync updates for over a certain period will be migrated to
+        any other nearby player. Requires OneSync to be "On"
+      keywords: onesync,force,migration,onesync_forceMigration
+      input_type: checkbox
+      param_field_name: onesync_forceMigration
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable OneSync Forced Migration
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, any entity that has not received any clone sync updates for over a certain period will be migrated to
+          any other nearby player. Requires OneSync to be "On"
+        Keywords: onesync,force,migration,onesync_forceMigration
+        FieldName: onesync_forceMigration
+        InputType: checkbox
+        ParamFieldName: onesync_forceMigration
+        DefaultValue: 'true'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: onesync_workaround763185
+      label: Enable OneSync Workaround
+      category: FiveM
+      subcategory: Server
+      description: >-
+        If set, most cars will be stopped from duplicating and cars will be prevented from having a ram war. Requires
+        OneSync to be "On"
+      keywords: onesync,workaround,onesync_workaround763185
+      input_type: checkbox
+      param_field_name: onesync_workaround763185
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable OneSync Workaround
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, most cars will be stopped from duplicating and cars will be prevented from having a ram war. Requires
+          OneSync to be "On"
+        Keywords: onesync,workaround,onesync_workaround763185
+        FieldName: onesync_workaround763185
+        InputType: checkbox
+        ParamFieldName: onesync_workaround763185
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: sv_scriptHookAllowed
+      label: Allow Scripthook Plugins
+      category: FiveM
+      subcategory: Server
+      description: >-
+        If set, players can use scripthook-based plugins such as the legacy Lambda Menu. This does not guarantee players
+        won't be able to use external plugins
+      keywords: scripthook,plugins,sv_scriptHookAllowed
+      input_type: checkbox
+      param_field_name: sv_scriptHookAllowed
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Scripthook Plugins
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, players can use scripthook-based plugins such as the legacy Lambda Menu. This does not guarantee
+          players won't be able to use external plugins
+        Keywords: scripthook,plugins,sv_scriptHookAllowed
+        FieldName: sv_scriptHookAllowed
+        InputType: checkbox
+        ParamFieldName: sv_scriptHookAllowed
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: sv_pureLevel
+      label: Block Modified Client Files
+      category: FiveM
+      subcategory: Server
+      description: Sets whether players will be prevented from using modified client files
+      keywords: modified,client,files,sv_pureLevel
+      input_type: enum
+      param_field_name: sv_pureLevel
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': No block
+        sv_pureLevel 1: Block all except audio files and known graphics mods
+        sv_pureLevel 2: Block all
+      raw:
+        DisplayName: Block Modified Client Files
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether players will be prevented from using modified client files
+        Keywords: modified,client,files,sv_pureLevel
+        FieldName: sv_pureLevel
+        InputType: enum
+        ParamFieldName: sv_pureLevel
+        DefaultValue: ''
+        EnumValues:
+          '': No block
+          sv_pureLevel 1: Block all except audio files and known graphics mods
+          sv_pureLevel 2: Block all
+    - key: AccessControlCommands
+      label: Access Control Commands
+      category: FiveM
+      subcategory: Server
+      description: >-
+        Specifies [access control
+        commands](https://docs.fivem.net/docs/server-manual/server-commands/#access-control-commands) to include in
+        "server.cfg". This can be used to add system admins
+      keywords: admin,access,control
+      input_type: Textarea
+      param_field_name: AccessControlCommands
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Access Control Commands
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies [access control
+          commands](https://docs.fivem.net/docs/server-manual/server-commands/#access-control-commands) to include in
+          "server.cfg". This can be used to add system admins
+        Keywords: admin,access,control
+        FieldName: AccessControlCommands
+        InputType: Textarea
+        ParamFieldName: AccessControlCommands
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_requestParanoia
+      label: Enable HTTP Flood Protection
+      category: FiveM
+      subcategory: Server
+      description: >-
+        Sets whether to implement measures to counter proxy-based HTTP floods. If set to Level 2 or 3, all requests made
+        to info.json, dynamic.json and players.json related endpoints will return "Nope"
+      keywords: http,flood,protection,sv_requestParanoia
+      input_type: enum
+      param_field_name: sv_requestParanoia
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Off (default)
+        '1': 'Level 1: Blocks IPs with ''Via'' header requests'
+        '2': 'Level 2: Previous + blocks IPs with ''Upgrade-Insecure-Requests'' header requests'
+        '3': 'Level 3: Previous + closes socket on which requests submitted'
+      raw:
+        DisplayName: Enable HTTP Flood Protection
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether to implement measures to counter proxy-based HTTP floods. If set to Level 2 or 3, all requests
+          made to info.json, dynamic.json and players.json related endpoints will return "Nope"
+        Keywords: http,flood,protection,sv_requestParanoia
+        FieldName: sv_requestParanoia
+        InputType: enum
+        ParamFieldName: sv_requestParanoia
+        DefaultValue: '0'
+        EnumValues:
+          '0': Off (default)
+          '1': 'Level 1: Blocks IPs with ''Via'' header requests'
+          '2': 'Level 2: Previous + blocks IPs with ''Upgrade-Insecure-Requests'' header requests'
+          '3': 'Level 3: Previous + closes socket on which requests submitted'
+    - key: $ApplicationIPBinding
+      label: Server/RCON IP Binding
+      category: FiveM
+      subcategory: Server
+      description: >-
+        If required, you can change the binding of the server and RCON by changing the 'Server IP Address' setting under
+        Security and Privacy. NOTE: The IP must be reachable by AMP, otherwise AMP's console won't work
+      keywords: ip,binding,endpoint,endpoint_add_udp,endpoint_add_tcp
+      input_type: hidden
+      param_field_name: ApplicationIPBinding
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server/RCON IP Binding
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If required, you can change the binding of the server and RCON by changing the 'Server IP Address' setting
+          under Security and Privacy. NOTE: The IP must be reachable by AMP, otherwise AMP's console won't work
+        Keywords: ip,binding,endpoint,endpoint_add_udp,endpoint_add_tcp
+        FieldName: $ApplicationIPBinding
+        InputType: hidden
+        ParamFieldName: ApplicationIPBinding
+        EnumValues: {}
+    - key: CustomArgs
+      label: Additional Command Line Parameters
+      category: FiveM
+      subcategory: Server
+      description: >-
+        Specifies additional command line parameters that are not otherwise set by AMP. ONE LINE ONLY! Use with care.
+        Alternatively, specify the equivalent under "Additional Server Settings"
+      keywords: custom,server,arguments,variables,parameters
+      input_type: Textarea
+      param_field_name: CustomArgs
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Parameters
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line parameters that are not otherwise set by AMP. ONE LINE ONLY! Use with care.
+          Alternatively, specify the equivalent under "Additional Server Settings"
+        Keywords: custom,server,arguments,variables,parameters
+        FieldName: CustomArgs
+        InputType: Textarea
+        ParamFieldName: CustomArgs
+        DefaultValue: ''
+        EnumValues: {}
+    - key: UserSettings
+      label: Additional Server Settings
+      category: FiveM
+      subcategory: Server
+      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per line
+      keywords: additional,settings,custom
+      input_type: Textarea
+      param_field_name: UserSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Settings
+        Category: FiveM:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per
+          line
+        Keywords: additional,settings,custom
+        FieldName: UserSettings
+        InputType: Textarea
+        ParamFieldName: UserSettings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerBuild
+      label: Server Build
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the server build to install. If "Specific version" is selected, the download URL for the relevant build
+        must be set under Specific Build Version Download URL. Update the server after changing this setting
+      keywords: server,build,artifact,recommended,latest,optional,critical,specific
+      input_type: enum
+      param_field_name: ServerBuild
+      default: recommended_download
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        recommended_download: Recommended (default)
+        optional_download: Optional
+        latest_download: Latest
+        critical_download: Critical
+        SpecificVersion: Specific version
+      raw:
+        DisplayName: Server Build
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the server build to install. If "Specific version" is selected, the download URL for the relevant build
+          must be set under Specific Build Version Download URL. Update the server after changing this setting
+        Keywords: server,build,artifact,recommended,latest,optional,critical,specific
+        FieldName: ServerBuild
+        InputType: enum
+        ParamFieldName: ServerBuild
+        DefaultValue: recommended_download
+        EnumValues:
+          recommended_download: Recommended (default)
+          optional_download: Optional
+          latest_download: Latest
+          critical_download: Critical
+          SpecificVersion: Specific version
+    - key: SpecificBuildVersionURL
+      label: Specific Build Version Download URL
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the download URL for a specific server build to install, if "Specific version" is selected under Server
+        Build. Select the relevant URL from the [Windows build
+        list](https://runtime.fivem.net/artifacts/fivem/build_server_windows/master/) or [Linux build
+        list](https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/). The Windows URL should end in .zip
+        rather than .7z
+      keywords: server,build,artifact,specific,version
+      input_type: url
+      param_field_name: SpecificBuildVersionURL
+      default: ''
+      placeholder: >-
+        https://runtime.fivem.net/artifacts/fivem/build_server_windows/master/6593-7672c8c849165dad70a1e82f89e31059d8fcf20d/server.zip
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Specific Build Version Download URL
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the download URL for a specific server build to install, if "Specific version" is selected under Server
+          Build. Select the relevant URL from the [Windows build
+          list](https://runtime.fivem.net/artifacts/fivem/build_server_windows/master/) or [Linux build
+          list](https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/). The Windows URL should end in .zip
+          rather than .7z
+        Keywords: server,build,artifact,specific,version
+        FieldName: SpecificBuildVersionURL
+        InputType: url
+        ParamFieldName: SpecificBuildVersionURL
+        DefaultValue: ''
+        Placeholder: >-
+          https://runtime.fivem.net/artifacts/fivem/build_server_windows/master/6593-7672c8c849165dad70a1e82f89e31059d8fcf20d/server.zip
+        EnumValues: {}
+    - key: ResourceRepo
+      label: Resource GitHub Repo
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the GitHub repo from which to clone resources. If "Custom repo" is selected, the relevant repo URL must be
+        set under Custom Repo URL. Delete the server-data directory and update the server after changing this setting
+      keywords: resource,repo,repository,github
+      input_type: enum
+      param_field_name: ResourceRepo
+      default: https://github.com/citizenfx/cfx-server-data.git
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        https://github.com/citizenfx/cfx-server-data.git: Cfx.re standard repo (default)
+        '{{CustomRepo}}': Custom repo
+      raw:
+        DisplayName: Resource GitHub Repo
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the GitHub repo from which to clone resources. If "Custom repo" is selected, the relevant repo URL must
+          be set under Custom Repo URL. Delete the server-data directory and update the server after changing this
+          setting
+        Keywords: resource,repo,repository,github
+        FieldName: ResourceRepo
+        InputType: enum
+        ParamFieldName: ResourceRepo
+        DefaultValue: https://github.com/citizenfx/cfx-server-data.git
+        EnumValues:
+          https://github.com/citizenfx/cfx-server-data.git: Cfx.re standard repo (default)
+          '{{CustomRepo}}': Custom repo
+    - key: CustomRepo
+      label: Custom Repo URL
+      category: Updates
+      subcategory: Server Updates
+      description: >-
+        Sets the URL for a custom repo from which to clone resources, if "Custom repo" is selected under Resource GitHub
+        Repo. The URL must end in .git. The repo must be public and on the main/master branch
+      keywords: resource,custom,repo,repository,github,url
+      input_type: url
+      param_field_name: CustomRepo
+      default: ''
+      placeholder: https://github.com/username/reponame.git
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Repo URL
+        Category: Updates
+        Subcategory: Server Updates:build:-1
+        Description: >-
+          Sets the URL for a custom repo from which to clone resources, if "Custom repo" is selected under Resource
+          GitHub Repo. The URL must end in .git. The repo must be public and on the main/master branch
+        Keywords: resource,custom,repo,repository,github,url
+        FieldName: CustomRepo
+        InputType: url
+        ParamFieldName: CustomRepo
+        DefaultValue: ''
+        Placeholder: https://github.com/username/reponame.git
+        EnumValues: {}
+  files:
+    - path: server-data/server.cfg
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: server-data/server.cfg
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: ./AMP_server.cfg
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: sv_licenseKey
+    label: Cfx.re Server Registration Key
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: steam_webApiKey
+    label: Steam Web API Key
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: sv_hostname
+    label: Server Name
+    default: AMP Powered FiveM Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_projectName
+    label: Project Name
+    default: AMP Powered FiveM Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_projectDesc
+    label: Project Description
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tags
+    label: Server Tags
+    default: default
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: locale
+    label: Server Locale
+    default: en-US
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: load_server_icon
+    label: Server Icon
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: banner_detail
+    label: Server Detail Banner Image URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: banner_connecting
+    label: Connecting Banner Image URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_master1
+    label: Mark Server Private
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ensure
+    label: Starting Resources
+    default: |-
+      ensure mapmanager
+      ensure chat
+      ensure spawnmanager
+      ensure sessionmanager
+      ensure basic-gamemode
+      ensure hardcap
+      ensure rconlog
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_endpointPrivacy
+    label: Enable Endpoint Privacy
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_enforceGameBuild
+    label: Enforce Game Build
+    default: '1604'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: onesync
+    label: OneSync Mode
+    default: 'on'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: onesync_population
+    label: Enable OneSync Population
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: onesync_distanceCullVehicles
+    label: Enable OneSync Vehicle Distance Culling
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: onesync_forceMigration
+    label: Enable OneSync Forced Migration
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: onesync_workaround763185
+    label: Enable OneSync Workaround
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_scriptHookAllowed
+    label: Allow Scripthook Plugins
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_pureLevel
+    label: Block Modified Client Files
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AccessControlCommands
+    label: Access Control Commands
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_requestParanoia
+    label: Enable HTTP Flood Protection
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomArgs
+    label: Additional Command Line Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UserSettings
+    label: Additional Server Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBuild
+    label: Server Build
+    default: recommended_download
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SpecificBuildVersionURL
+    label: Specific Build Version Download URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ResourceRepo
+    label: Resource GitHub Repo
+    default: https://github.com/citizenfx/cfx-server-data.git
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomRepo
+    label: Custom Repo URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '271590'
+  collection_support: true
 backup:
   include:
     - /data

@@ -5,13 +5,20 @@ category: Imported
 summary: 'Counter-Strike: Global Offensive Dedicated Server'
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '740'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 740/srcds_linux
+  startup: >-
+    740/srcds_linux {PlatformArgs} -game {mod} -console -usercon -nobreakpad -port {ServerPort} -ip
+    {ApplicationIPBinding} -maxplayers_override {MaxUsers} -authkey "{authkey}" -tickrate {tickrate}
+    {insecure}{nohltv}{CustomParameters} {CustomConVars} +tv_port {SourceTVPort} +sv_logfile 1 {FormattedArgs} +exec
+    server.cfg +map {map} {gamemode} +sv_game_mode_flags {sv_game_mode_flags} +sv_skirmish_id {sv_skirmish_id} +log on
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +26,2512 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: serverport
+    name: Game and RCON Port
     default: 27015
+    protocol: both
+    required: true
+  - key: sourcetvport
+    name: SourceTV Port
+    default: 27020
     protocol: udp
     required: true
-config_files: []
+  - key: clientport
+    name: Client Port
+    default: 27005
+    protocol: udp
+    required: true
+config_files:
+  - path: csgo/cfg/server.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: CSGO
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: rcon_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RemoteAdminPassword
+        InputType: text
+        Hidden: true
+        ParamFieldName: rcon_password
+        EnumValues: {}
+    - key: hostname
+      label: Server Name
+      category: CSGO
+      subcategory: Server
+      description: Sets the name of the server that appears in the server list
+      keywords: server,name,hostname
+      input_type: text
+      param_field_name: hostname
+      default: 'AMP Powered Counter-Strike: Global Offensive Server'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that appears in the server list
+        Keywords: server,name,hostname
+        FieldName: hostname
+        InputType: text
+        ParamFieldName: hostname
+        DefaultValue: 'AMP Powered Counter-Strike: Global Offensive Server'
+        EnumValues: {}
+    - key: mod
+      label: Server Mod Name
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets the name of the mod directory to load, allowing the use of third-party CS:GO mods. Don't change this from
+        the default 'csgo' unless you know what you are doing!
+      keywords: server,mod,directory,game
+      input_type: text
+      param_field_name: mod
+      default: csgo
+      placeholder: csgo
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Mod Name
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the mod directory to load, allowing the use of third-party CS:GO mods. Don't change this from
+          the default 'csgo' unless you know what you are doing!
+        Keywords: server,mod,directory,game
+        FieldName: mod
+        InputType: text
+        ParamFieldName: mod
+        DefaultValue: csgo
+        Placeholder: csgo
+        EnumValues: {}
+    - key: sv_steamgroup
+      label: Server Steam Group
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets the ID of the steam group that the server belongs to. You can find your group's ID on the admin profile
+        page in the steam community
+      keywords: steam,group,id,sv_steamgroup
+      input_type: text
+      param_field_name: sv_steamgroup
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Steam Group
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the ID of the steam group that the server belongs to. You can find your group's ID on the admin profile
+          page in the steam community
+        Keywords: steam,group,id,sv_steamgroup
+        FieldName: sv_steamgroup
+        InputType: text
+        ParamFieldName: sv_steamgroup
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_lan
+      label: LAN Server
+      category: CSGO
+      subcategory: Server
+      description: >-
+        If enabled, the server will operate as a LAN server: no heartbeat, no authentication, and no non-class C
+        addresses
+      keywords: lan,local,sv_lan
+      input_type: checkbox
+      param_field_name: sv_lan
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: LAN Server
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will operate as a LAN server: no heartbeat, no authentication, and no non-class C
+          addresses
+        Keywords: lan,local,sv_lan
+        FieldName: sv_lan
+        InputType: checkbox
+        ParamFieldName: sv_lan
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_setsteamaccount
+      label: Game Server Login Token (GSLT)
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets the [Steam Game Server Login Token](https://steamcommunity.com/dev/managegameservers) for the server, to
+        allow it to be listed in the server browser. Use app ID 4465480 when generating the token
+      keywords: steam,server,login,token,gslt,sv_setsteamaccount
+      input_type: password
+      param_field_name: sv_setsteamaccount
+      default: ''
+      placeholder: 6544F7E034119F113526E96474F559AH
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Game Server Login Token (GSLT)
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [Steam Game Server Login Token](https://steamcommunity.com/dev/managegameservers) for the server, to
+          allow it to be listed in the server browser. Use app ID 4465480 when generating the token
+        Keywords: steam,server,login,token,gslt,sv_setsteamaccount
+        FieldName: sv_setsteamaccount
+        InputType: password
+        ParamFieldName: sv_setsteamaccount
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: 6544F7E034119F113526E96474F559AH
+        EnumValues: {}
+    - key: sv_password
+      label: Server Password
+      category: CSGO
+      subcategory: Server
+      description: Sets the password required to connect to the server. Default is no password
+      keywords: server,password,sv_password
+      input_type: password
+      param_field_name: sv_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server. Default is no password
+        Keywords: server,password,sv_password
+        FieldName: sv_password
+        InputType: password
+        ParamFieldName: sv_password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: gamemode
+      label: Initial Game Mode
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets the game mode (game_type and game_mode) to start the server with. Set a Game Mode Flag or Skirmish ID
+        separately to modify the game mode, if required
+      keywords: game,mode,gamemode,game_mode,game_type
+      input_type: enum
+      param_field_name: gamemode
+      default: +game_type 0 +game_mode 0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        +game_type 0 +game_mode 0: Casual (default)
+        +game_type 0 +game_mode 1: Competitive
+        +game_type 0 +game_mode 2: Wingman (Competitive 2x2)
+        +game_type 0 +game_mode 3: Weapons Expert
+        +game_type 1 +game_mode 0: Arms Race
+        +game_type 1 +game_mode 1: Demolition
+        +game_type 1 +game_mode 2: Deathmatch
+        +game_type 2 +game_mode 0: Training
+        +game_type 3 +game_mode 0: Custom
+        +game_type 4 +game_mode 0: Guardian (Co-operative)
+        +game_type 4 +game_mode 1: Co-op Strike (Co-op Mission)
+        +game_type 5 +game_mode 0: War Games
+        +game_type 6 +game_mode 0: Danger Zone
+      raw:
+        DisplayName: Initial Game Mode
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the game mode (game_type and game_mode) to start the server with. Set a Game Mode Flag or Skirmish ID
+          separately to modify the game mode, if required
+        Keywords: game,mode,gamemode,game_mode,game_type
+        FieldName: gamemode
+        InputType: enum
+        ParamFieldName: gamemode
+        DefaultValue: +game_type 0 +game_mode 0
+        EnumValues:
+          +game_type 0 +game_mode 0: Casual (default)
+          +game_type 0 +game_mode 1: Competitive
+          +game_type 0 +game_mode 2: Wingman (Competitive 2x2)
+          +game_type 0 +game_mode 3: Weapons Expert
+          +game_type 1 +game_mode 0: Arms Race
+          +game_type 1 +game_mode 1: Demolition
+          +game_type 1 +game_mode 2: Deathmatch
+          +game_type 2 +game_mode 0: Training
+          +game_type 3 +game_mode 0: Custom
+          +game_type 4 +game_mode 0: Guardian (Co-operative)
+          +game_type 4 +game_mode 1: Co-op Strike (Co-op Mission)
+          +game_type 5 +game_mode 0: War Games
+          +game_type 6 +game_mode 0: Danger Zone
+    - key: sv_game_mode_flags
+      label: Game Mode Flag
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets a [game mode
+        flag](https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive/Game_Modes#Game_Mode_Flags) to
+        modify the selected Initial Game Mode
+      keywords: game,mode,flag,sv_game_mode_flags
+      input_type: enum
+      param_field_name: sv_game_mode_flags
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None (default)
+        '4': 4 (tmm)
+        '32': 32 (short)
+        '36': 36 (tmm + short)
+      raw:
+        DisplayName: Game Mode Flag
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a [game mode
+          flag](https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive/Game_Modes#Game_Mode_Flags) to
+          modify the selected Initial Game Mode
+        Keywords: game,mode,flag,sv_game_mode_flags
+        FieldName: sv_game_mode_flags
+        InputType: enum
+        ParamFieldName: sv_game_mode_flags
+        DefaultValue: '0'
+        EnumValues:
+          '0': None (default)
+          '4': 4 (tmm)
+          '32': 32 (short)
+          '36': 36 (tmm + short)
+    - key: sv_skirmish_id
+      label: Skirmish ID
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets a [skirmish
+        ID](https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive/Game_Modes#Skirmish_Modes) to
+        modify the selected Initial Game Mode
+      keywords: game,mode,skirmish,sv_skirmish_id
+      input_type: enum
+      param_field_name: sv_skirmish_id
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': None (default)
+        '1': Stab Stab Zap
+        '2': Free For All
+        '3': Flying Scoutsman
+        '4': Trigger Discipline
+        '6': Boom! Headshot!
+        '7': Hunter-Gatherers
+        '10': Arms Race
+        '11': Demolition
+        '12': Retakes
+      raw:
+        DisplayName: Skirmish ID
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a [skirmish
+          ID](https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive/Game_Modes#Skirmish_Modes) to
+          modify the selected Initial Game Mode
+        Keywords: game,mode,skirmish,sv_skirmish_id
+        FieldName: sv_skirmish_id
+        InputType: enum
+        ParamFieldName: sv_skirmish_id
+        DefaultValue: '0'
+        EnumValues:
+          '0': None (default)
+          '1': Stab Stab Zap
+          '2': Free For All
+          '3': Flying Scoutsman
+          '4': Trigger Discipline
+          '6': Boom! Headshot!
+          '7': Hunter-Gatherers
+          '10': Arms Race
+          '11': Demolition
+          '12': Retakes
+    - key: map
+      label: Initial Map
+      category: CSGO
+      subcategory: Server
+      description: Sets the map to start the server with. If "Custom" is selected, Custom Initial Map must also be specified
+      keywords: map
+      input_type: enum
+      param_field_name: map
+      default: de_dust2
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        cs_agency: Agency
+        de_ancient: Ancient
+        de_anubis: Anubis
+        cs_assault: Assault
+        ar_baggage: Baggage
+        de_bank: Bank
+        dz_blacksite: Blacksite
+        de_boyard: Boyard
+        de_cache: Cache
+        de_canals: Canals
+        de_cbble: Cobblestone
+        gd_cbble: Cobblestone (Guardian)
+        de_chalice: Chalice
+        ar_dizzy: Dizzy
+        de_dust2: Dust II (default)
+        dz_ember: Ember
+        de_inferno: Inferno
+        cs_italy: Italy
+        de_lake: Lake
+        ar_lunacy: Lunacy
+        ar_monastery: Monastery
+        cs_militia: Militia
+        de_mirage: Mirage
+        de_nuke: Nuke
+        cs_office: Office
+        de_overpass: Overpass
+        de_safehouse: Safehouse
+        ar_shoots: Shoots
+        de_shortdust: Shortdust
+        de_shortnuke: Shortnuke
+        dz_sirocco: Sirocco
+        de_stmarc: St. Marc
+        de_sugarcane: Sugarcane
+        de_train: Train
+        de_tuscan: Tuscan
+        de_vertigo: Vertigo
+        dz_vineyard: Vineyard
+        '{{CustomMap}}': '--Custom--'
+      raw:
+        DisplayName: Initial Map
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map to start the server with. If "Custom" is selected, Custom Initial Map must also be specified
+        Keywords: map
+        FieldName: map
+        InputType: enum
+        ParamFieldName: map
+        DefaultValue: de_dust2
+        EnumValues:
+          cs_agency: Agency
+          de_ancient: Ancient
+          de_anubis: Anubis
+          cs_assault: Assault
+          ar_baggage: Baggage
+          de_bank: Bank
+          dz_blacksite: Blacksite
+          de_boyard: Boyard
+          de_cache: Cache
+          de_canals: Canals
+          de_cbble: Cobblestone
+          gd_cbble: Cobblestone (Guardian)
+          de_chalice: Chalice
+          ar_dizzy: Dizzy
+          de_dust2: Dust II (default)
+          dz_ember: Ember
+          de_inferno: Inferno
+          cs_italy: Italy
+          de_lake: Lake
+          ar_lunacy: Lunacy
+          ar_monastery: Monastery
+          cs_militia: Militia
+          de_mirage: Mirage
+          de_nuke: Nuke
+          cs_office: Office
+          de_overpass: Overpass
+          de_safehouse: Safehouse
+          ar_shoots: Shoots
+          de_shortdust: Shortdust
+          de_shortnuke: Shortnuke
+          dz_sirocco: Sirocco
+          de_stmarc: St. Marc
+          de_sugarcane: Sugarcane
+          de_train: Train
+          de_tuscan: Tuscan
+          de_vertigo: Vertigo
+          dz_vineyard: Vineyard
+          '{{CustomMap}}': '--Custom--'
+    - key: CustomMap
+      label: Custom Initial Map
+      category: CSGO
+      subcategory: Server
+      description: Sets a custom map to use for the Initial Map, if "Custom" is selected
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Initial Map
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom map to use for the Initial Map, if "Custom" is selected
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        ParamFieldName: CustomMap
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_region
+      label: Server Region
+      category: CSGO
+      subcategory: Server
+      description: Sets the server region shown in the server list
+      keywords: server,region,sv_region
+      input_type: enum
+      param_field_name: sv_region
+      default: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': East Coast US
+        '1': West Coast US
+        '2': South America
+        '3': Europe
+        '4': Asia
+        '5': Australia
+        '6': Middle East
+        '7': Africa
+        '255': World
+        '-1': No region
+      raw:
+        DisplayName: Server Region
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server region shown in the server list
+        Keywords: server,region,sv_region
+        FieldName: sv_region
+        InputType: enum
+        ParamFieldName: sv_region
+        DefaultValue: '-1'
+        EnumValues:
+          '0': East Coast US
+          '1': West Coast US
+          '2': South America
+          '3': Europe
+          '4': Asia
+          '5': Australia
+          '6': Middle East
+          '7': Africa
+          '255': World
+          '-1': No region
+    - key: mapgroup
+      label: Map Group
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets the map group to load to enable map rotation. Alternatively specify a Workshop Collection ID which includes
+        the maps required for rotation
+      keywords: map,group,mapgroup
+      input_type: text
+      param_field_name: mapgroup
+      default: ''
+      placeholder: mg_allclassic
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Map Group
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the map group to load to enable map rotation. Alternatively specify a Workshop Collection ID which
+          includes the maps required for rotation
+        Keywords: map,group,mapgroup
+        FieldName: mapgroup
+        InputType: text
+        ParamFieldName: mapgroup
+        DefaultValue: ''
+        Placeholder: mg_allclassic
+        EnumValues: {}
+    - key: host_workshop_map
+      label: Workshop Map ID
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets the ID of a [Steam workshop
+        map](https://steamcommunity.com/workshop/browse/?appid=730&browsesort=trend&section=readytouseitems) to download
+        and load on the server. Must be compatible with CS:GO. This will override the Initial Map setting
+      keywords: workshop,map,host_workshop_map
+      input_type: number
+      param_field_name: host_workshop_map
+      default: ''
+      placeholder: '419404847'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Workshop Map ID
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the ID of a [Steam workshop
+          map](https://steamcommunity.com/workshop/browse/?appid=730&browsesort=trend&section=readytouseitems) to
+          download and load on the server. Must be compatible with CS:GO. This will override the Initial Map setting
+        Keywords: workshop,map,host_workshop_map
+        FieldName: host_workshop_map
+        InputType: number
+        ParamFieldName: host_workshop_map
+        DefaultValue: ''
+        Placeholder: '419404847'
+        EnumValues: {}
+    - key: host_workshop_collection
+      label: Workshop Collection ID
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets the ID of a [Steam workshop
+        collection](https://steamcommunity.com/workshop/browse/?appid=730&browsesort=trend&section=collections) to
+        download and load on the server. Must be compatible with CS:GO. This will override the Initial Map setting
+      keywords: workshop,collection,host_workshop_collection
+      input_type: number
+      param_field_name: host_workshop_collection
+      default: ''
+      placeholder: '1990403587'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Workshop Collection ID
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the ID of a [Steam workshop
+          collection](https://steamcommunity.com/workshop/browse/?appid=730&browsesort=trend&section=collections) to
+          download and load on the server. Must be compatible with CS:GO. This will override the Initial Map setting
+        Keywords: workshop,collection,host_workshop_collection
+        FieldName: host_workshop_collection
+        InputType: number
+        ParamFieldName: host_workshop_collection
+        DefaultValue: ''
+        Placeholder: '1990403587'
+        EnumValues: {}
+    - key: authkey
+      label: Steam Web API Key
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets the [Steam Web API key](https://steamcommunity.com/dev/apikey) for the server, to enable the use of a
+        workshop collection
+      keywords: steam,api,key,auth,authkey
+      input_type: password
+      param_field_name: authkey
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Steam Web API Key
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [Steam Web API key](https://steamcommunity.com/dev/apikey) for the server, to enable the use of a
+          workshop collection
+        Keywords: steam,api,key,auth,authkey
+        FieldName: authkey
+        InputType: password
+        ParamFieldName: authkey
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_workshop_allow_other_maps
+      label: Allow Other Map By Players
+      category: CSGO
+      subcategory: Server
+      description: >-
+        If set, and when the server is hosting a workshop collection, players will be able to play another workshop map
+        on the server when it is empty and then rotate their map cycle into the server collection
+      keywords: workshop,map,allow,other,sv_workshop_allow_other_maps
+      input_type: checkbox
+      param_field_name: sv_workshop_allow_other_maps
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Other Map By Players
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, and when the server is hosting a workshop collection, players will be able to play another workshop
+          map on the server when it is empty and then rotate their map cycle into the server collection
+        Keywords: workshop,map,allow,other,sv_workshop_allow_other_maps
+        FieldName: sv_workshop_allow_other_maps
+        InputType: checkbox
+        ParamFieldName: sv_workshop_allow_other_maps
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: $MaxUsers
+      label: Player Limit
+      category: CSGO
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,limit,maxplayers
+      input_type: number
+      param_field_name: sv_maxplayers
+      default: '8'
+      placeholder: '8'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 128
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '128'
+        ParamFieldName: sv_maxplayers
+        DefaultValue: '8'
+        Placeholder: '8'
+        Suffix: players
+        EnumValues: {}
+    - key: sv_visiblemaxplayers
+      label: Visible Player Limit
+      category: CSGO
+      subcategory: Server
+      description: Sets the maximum players reported to prospective clients, regardless of the Player Limit. -1 = disabled
+      keywords: visible,max,players,sv_visiblemaxplayers
+      input_type: number
+      param_field_name: sv_visiblemaxplayers
+      default: '-1'
+      placeholder: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      max: 100
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Visible Player Limit
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum players reported to prospective clients, regardless of the Player Limit. -1 = disabled
+        Keywords: visible,max,players,sv_visiblemaxplayers
+        FieldName: sv_visiblemaxplayers
+        InputType: number
+        MinValue: '-1'
+        MaxValue: '100'
+        ParamFieldName: sv_visiblemaxplayers
+        DefaultValue: '-1'
+        Placeholder: '-1'
+        Suffix: players
+        EnumValues: {}
+    - key: sv_pure
+      label: Pure Server Mode
+      category: CSGO
+      subcategory: Server
+      description: Sets whether clients are only allowed to use certain files
+      keywords: pure,server,cheat,hack,integrity,sv_pure
+      input_type: enum
+      param_field_name: sv_pure
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '0': Client files not restricted
+        '1': All client files except those listed in pure_server_whitelist.txt must match the server
+      raw:
+        DisplayName: Pure Server Mode
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether clients are only allowed to use certain files
+        Keywords: pure,server,cheat,hack,integrity,sv_pure
+        FieldName: sv_pure
+        InputType: enum
+        ParamFieldName: sv_pure
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          '0': Client files not restricted
+          '1': All client files except those listed in pure_server_whitelist.txt must match the server
+    - key: sv_pure_kick_clients
+      label: Kick Clients On Pure Server
+      category: CSGO
+      subcategory: Server
+      description: >-
+        If enabled, the server will kick clients with mismatching files. Otherwise, it will issue a warning to the
+        clients
+      keywords: pure,server,cheat,hack,integrity,sv_pure_kick_clients
+      input_type: checkbox
+      param_field_name: sv_pure_kick_clients
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Kick Clients On Pure Server
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will kick clients with mismatching files. Otherwise, it will issue a warning to the
+          clients
+        Keywords: pure,server,cheat,hack,integrity,sv_pure_kick_clients
+        FieldName: sv_pure_kick_clients
+        InputType: checkbox
+        ParamFieldName: sv_pure_kick_clients
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_consistency
+      label: Require File Consistency
+      category: CSGO
+      subcategory: Server
+      description: If set, the server will enforce file consistency for critical files
+      keywords: consistency,files,sv_consistency
+      input_type: checkbox
+      param_field_name: sv_consistency
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Require File Consistency
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will enforce file consistency for critical files
+        Keywords: consistency,files,sv_consistency
+        FieldName: sv_consistency
+        InputType: checkbox
+        ParamFieldName: sv_consistency
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_forcepreload
+      label: Force Preload
+      category: CSGO
+      subcategory: Server
+      description: If set, server side preloading will be forced
+      keywords: force,preload,sv_forcepreload
+      input_type: checkbox
+      param_field_name: sv_forcepreload
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Force Preload
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, server side preloading will be forced
+        Keywords: force,preload,sv_forcepreload
+        FieldName: sv_forcepreload
+        InputType: checkbox
+        ParamFieldName: sv_forcepreload
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_cheats
+      label: Enable Cheats
+      category: CSGO
+      subcategory: Server
+      description: If set, cheat convars will be allowed to be used on the server
+      keywords: allow,cheat,hack,integrity,sv_cheats
+      input_type: checkbox
+      param_field_name: sv_cheats
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Cheats
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, cheat convars will be allowed to be used on the server
+        Keywords: allow,cheat,hack,integrity,sv_cheats
+        FieldName: sv_cheats
+        InputType: checkbox
+        ParamFieldName: sv_cheats
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: insecure
+      label: Disable Valve Anti-Cheat
+      category: CSGO
+      subcategory: Server
+      description: If set, Valve Anti-Cheat (VAC) will be disabled
+      keywords: valve,anti,cheat,vac,insecure
+      input_type: checkbox
+      param_field_name: insecure
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-insecure '
+      raw:
+        DisplayName: Disable Valve Anti-Cheat
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, Valve Anti-Cheat (VAC) will be disabled
+        Keywords: valve,anti,cheat,vac,insecure
+        FieldName: insecure
+        InputType: checkbox
+        ParamFieldName: insecure
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-insecure '
+    - key: tickrate
+      label: Server Tickrate
+      category: CSGO
+      subcategory: Server
+      description: Sets the server tickrate
+      keywords: tick,rate,tickrate
+      input_type: number
+      param_field_name: tickrate
+      default: '64'
+      placeholder: '64'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 128
+      suffix: tps
+      enum_values: {}
+      raw:
+        DisplayName: Server Tickrate
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server tickrate
+        Keywords: tick,rate,tickrate
+        FieldName: tickrate
+        InputType: number
+        MinValue: '1'
+        MaxValue: '128'
+        ParamFieldName: tickrate
+        DefaultValue: '64'
+        Placeholder: '64'
+        Suffix: tps
+        EnumValues: {}
+    - key: sv_allowdownload
+      label: Allow Download From Server
+      category: CSGO
+      subcategory: Server
+      description: If set, clients will be allowed to download content from the server (maps, sprays and related)
+      keywords: allow,download,content,maps,sv_allowdownload
+      input_type: checkbox
+      param_field_name: sv_allowdownload
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Download From Server
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be allowed to download content from the server (maps, sprays and related)
+        Keywords: allow,download,content,maps,sv_allowdownload
+        FieldName: sv_allowdownload
+        InputType: checkbox
+        ParamFieldName: sv_allowdownload
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_downloadurl
+      label: Fast Download URL
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets the URL for clients to download custom content from, instead of sourcing the content from the server. This
+        allows for faster downloads
+      keywords: fastdl,download,url,sv_downloadurl
+      input_type: text
+      param_field_name: sv_downloadurl
+      default: ''
+      placeholder: http://example.com
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Fast Download URL
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the URL for clients to download custom content from, instead of sourcing the content from the server.
+          This allows for faster downloads
+        Keywords: fastdl,download,url,sv_downloadurl
+        FieldName: sv_downloadurl
+        InputType: text
+        ParamFieldName: sv_downloadurl
+        DefaultValue: ''
+        Placeholder: http://example.com
+        EnumValues: {}
+    - key: sv_allowupload
+      label: Allow Upload To Server
+      category: CSGO
+      subcategory: Server
+      description: If set, clients will be allowed to upload customisation files to the server
+      keywords: allow,upload,customisation,files,sv_allowupload
+      input_type: checkbox
+      param_field_name: sv_allowupload
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Upload To Server
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be allowed to upload customisation files to the server
+        Keywords: allow,upload,customisation,files,sv_allowupload
+        FieldName: sv_allowupload
+        InputType: checkbox
+        ParamFieldName: sv_allowupload
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_minrate
+      label: Minimum Client Rate
+      category: CSGO
+      subcategory: Server
+      description: Sets the minimum allowable bandwidth rate a client may have set when connected to the server. 0 = no minimum
+      keywords: minimum,bandwidth,rate,sv_minrate
+      input_type: number
+      param_field_name: sv_minrate
+      default: '16000'
+      placeholder: '16000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: bytes/second
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Client Rate
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum allowable bandwidth rate a client may have set when connected to the server. 0 = no minimum
+        Keywords: minimum,bandwidth,rate,sv_minrate
+        FieldName: sv_minrate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_minrate
+        DefaultValue: '16000'
+        Placeholder: '16000'
+        Suffix: bytes/second
+        EnumValues: {}
+    - key: sv_maxrate
+      label: Maximum Client Rate
+      category: CSGO
+      subcategory: Server
+      description: Sets the maximum allowable bandwidth rate a client may have set when connected to the server. 0 = no limit
+      keywords: maximum,bandwidth,rate,sv_maxrate
+      input_type: number
+      param_field_name: sv_maxrate
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: bytes/second
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Client Rate
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum allowable bandwidth rate a client may have set when connected to the server. 0 = no limit
+        Keywords: maximum,bandwidth,rate,sv_maxrate
+        FieldName: sv_maxrate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_maxrate
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: bytes/second
+        EnumValues: {}
+    - key: sv_minupdaterate
+      label: Minimum Server Update Rate
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets the minimum number of updates per second of the positions of the server's models (players, guns, etc) that
+        server sends to clients
+      keywords: minimum,update,rate,sv_minupdaterate
+      input_type: number
+      param_field_name: sv_minupdaterate
+      default: '64'
+      placeholder: '64'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Server Update Rate
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the minimum number of updates per second of the positions of the server's models (players, guns, etc)
+          that server sends to clients
+        Keywords: minimum,update,rate,sv_minupdaterate
+        FieldName: sv_minupdaterate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_minupdaterate
+        DefaultValue: '64'
+        Placeholder: '64'
+        EnumValues: {}
+    - key: sv_maxupdaterate
+      label: Maximum Server Update Rate
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Sets the maximum number of updates per second of the positions of the server's models (players, guns, etc) that
+        server sends to clients
+      keywords: maximum,update,rate,sv_maxupdaterate
+      input_type: number
+      param_field_name: sv_maxupdaterate
+      default: '64'
+      placeholder: '64'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Server Update Rate
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of updates per second of the positions of the server's models (players, guns, etc)
+          that server sends to clients
+        Keywords: maximum,update,rate,sv_maxupdaterate
+        FieldName: sv_maxupdaterate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_maxupdaterate
+        DefaultValue: '64'
+        Placeholder: '64'
+        EnumValues: {}
+    - key: pingboost
+      label: Ping Boost
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Selects between optimised network code stack. Setting at 2 usually reduces latency toward 1ms without loss of
+        activity input packets
+      keywords: ping,boost,latency,network,pingboost
+      input_type: enum
+      param_field_name: pingboost
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': None
+        '-pingboost 1 ': '1'
+        '-pingboost 2 ': '2'
+        '-pingboost 3 ': '3'
+      raw:
+        DisplayName: Ping Boost
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Selects between optimised network code stack. Setting at 2 usually reduces latency toward 1ms without loss of
+          activity input packets
+        Keywords: ping,boost,latency,network,pingboost
+        FieldName: pingboost
+        InputType: enum
+        ParamFieldName: pingboost
+        DefaultValue: ''
+        EnumValues:
+          '': None
+          '-pingboost 1 ': '1'
+          '-pingboost 2 ': '2'
+          '-pingboost 3 ': '3'
+    - key: ip
+      label: Server/RCON IPv4 IP Binding
+      category: CSGO
+      subcategory: Server
+      description: >-
+        If required, you can change the IPv4 IP binding of the server and RCON by changing the Application IP Binding
+        for this instance. NOTE: AMP requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
+        server to log to AMP's console. The IP must also be reachable by AMP
+      keywords: ip,binding
+      input_type: hidden
+      param_field_name: ip
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server/RCON IPv4 IP Binding
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If required, you can change the IPv4 IP binding of the server and RCON by changing the Application IP Binding
+          for this instance. NOTE: AMP requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
+          server to log to AMP's console. The IP must also be reachable by AMP
+        Keywords: ip,binding
+        FieldName: ip
+        InputType: hidden
+        ParamFieldName: ip
+        EnumValues: {}
+    - key: CustomParameters
+      label: Additional Command Line Parameters
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Specifies additional [command line
+        parameters](https://developer.valvesoftware.com/wiki/Command_line_options#Command-Line_Parameters_6) (anything
+        that begins with a -) that are not otherwise set by AMP. Use with care
+      keywords: custom,server,arguments,variables,cvars,convars,parameters
+      input_type: text
+      param_field_name: CustomParameters
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Parameters
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional [command line
+          parameters](https://developer.valvesoftware.com/wiki/Command_line_options#Command-Line_Parameters_6) (anything
+          that begins with a -) that are not otherwise set by AMP. Use with care
+        Keywords: custom,server,arguments,variables,cvars,convars,parameters
+        FieldName: CustomParameters
+        InputType: text
+        ParamFieldName: CustomParameters
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomConVars
+      label: Additional Console Variables
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Specifies additional [console variables](https://developer.valvesoftware.com/wiki/List_of_CSGO_Cvars) (anything
+        that begins with a +) that are not otherwise set by AMP. Use with care. Preferably, specify the equivalent under
+        "Additional Server Settings"
+      keywords: custom,server,arguments,variables,cvars,convars,parameters
+      input_type: text
+      param_field_name: CustomConVars
+      default: ''
+      placeholder: +sv_gravity "500"
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Console Variables
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional [console variables](https://developer.valvesoftware.com/wiki/List_of_CSGO_Cvars)
+          (anything that begins with a +) that are not otherwise set by AMP. Use with care. Preferably, specify the
+          equivalent under "Additional Server Settings"
+        Keywords: custom,server,arguments,variables,cvars,convars,parameters
+        FieldName: CustomConVars
+        InputType: text
+        ParamFieldName: CustomConVars
+        DefaultValue: ''
+        Placeholder: +sv_gravity "500"
+        EnumValues: {}
+    - key: UserSettings
+      label: Additional Server Settings
+      category: CSGO
+      subcategory: Server
+      description: >-
+        Specifies additional
+        [settings](https://developer.valvesoftware.com/wiki/List_of_Counter-Strike:_Global_Offensive_console_commands_and_variables)
+        to include in 'server.cfg' that are not otherwise set by AMP. One setting per line
+      keywords: additional,settings,custom
+      input_type: Textarea
+      param_field_name: UserSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Settings
+        Category: CSGO:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional
+          [settings](https://developer.valvesoftware.com/wiki/List_of_Counter-Strike:_Global_Offensive_console_commands_and_variables)
+          to include in 'server.cfg' that are not otherwise set by AMP. One setting per line
+        Keywords: additional,settings,custom
+        FieldName: UserSettings
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: UserSettings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: mp_friendlyfire
+      label: Enable Friendly Fire
+      category: CSGO
+      subcategory: Gameplay
+      description: If set, friendly fire will be enabled (teammates can cause damage to other teammates)
+      keywords: friendly,fire,mp_friendlyfire
+      input_type: checkbox
+      param_field_name: mp_friendlyfire
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Friendly Fire
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, friendly fire will be enabled (teammates can cause damage to other teammates)
+        Keywords: friendly,fire,mp_friendlyfire
+        FieldName: mp_friendlyfire
+        InputType: checkbox
+        ParamFieldName: mp_friendlyfire
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_footsteps_serverside
+      label: Enable Footsteps
+      category: CSGO
+      subcategory: Gameplay
+      description: If set, the server will always play footstep sounds
+      keywords: footstep,sounds,mp_footsteps_serverside
+      input_type: checkbox
+      param_field_name: mp_footsteps_serverside
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Footsteps
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the server will always play footstep sounds
+        Keywords: footstep,sounds,mp_footsteps_serverside
+        FieldName: mp_footsteps_serverside
+        InputType: checkbox
+        ParamFieldName: mp_footsteps_serverside
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_pausable
+      label: Allow Players To Pause Server
+      category: CSGO
+      subcategory: Gameplay
+      description: If set, players will be able to pause the server. Not recommended
+      keywords: pause,pausable,sv_pausable
+      input_type: checkbox
+      param_field_name: sv_pausable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Players To Pause Server
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will be able to pause the server. Not recommended
+        Keywords: pause,pausable,sv_pausable
+        FieldName: sv_pausable
+        InputType: checkbox
+        ParamFieldName: sv_pausable
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_allow_wait_command
+      label: Allow Wait Command
+      category: CSGO
+      subcategory: Gameplay
+      description: >-
+        If enabled, the wait command will be allowed on clients connected to the server. Recommended to keep disabled to
+        prevent server crash exploits
+      keywords: wait,command,sv_allow_wait_command
+      input_type: checkbox
+      param_field_name: sv_allow_wait_command
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Wait Command
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, the wait command will be allowed on clients connected to the server. Recommended to keep disabled
+          to prevent server crash exploits
+        Keywords: wait,command,sv_allow_wait_command
+        FieldName: sv_allow_wait_command
+        InputType: checkbox
+        ParamFieldName: sv_allow_wait_command
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_voiceenable
+      label: Enable Voice Communication
+      category: CSGO
+      subcategory: Gameplay
+      description: If set, voice communication will be enabled on the server
+      keywords: voice,communication,sv_voiceenable
+      input_type: checkbox
+      param_field_name: sv_voiceenable
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Voice Communication
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, voice communication will be enabled on the server
+        Keywords: voice,communication,sv_voiceenable
+        FieldName: sv_voiceenable
+        InputType: checkbox
+        ParamFieldName: sv_voiceenable
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_talk_enemy_living
+      label: Allow Living Talk
+      category: CSGO
+      subcategory: Gameplay
+      description: If enabled, living players can hear all living enemy communications (voice, chat)
+      keywords: living,talk,sv_talk_enemy_living
+      input_type: checkbox
+      param_field_name: sv_talk_enemy_living
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Living Talk
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, living players can hear all living enemy communications (voice, chat)
+        Keywords: living,talk,sv_talk_enemy_living
+        FieldName: sv_talk_enemy_living
+        InputType: checkbox
+        ParamFieldName: sv_talk_enemy_living
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_talk_enemy_dead
+      label: Allow Dead Talk
+      category: CSGO
+      subcategory: Gameplay
+      description: If enabled, dead players can hear all dead enemy communications (voice, chat)
+      keywords: dead,talk,sv_talk_enemy_dead
+      input_type: checkbox
+      param_field_name: sv_talk_enemy_dead
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Dead Talk
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, dead players can hear all dead enemy communications (voice, chat)
+        Keywords: dead,talk,sv_talk_enemy_dead
+        FieldName: sv_talk_enemy_dead
+        InputType: checkbox
+        ParamFieldName: sv_talk_enemy_dead
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_autoteambalance
+      label: Enable Automatic Team Balancing
+      category: CSGO
+      subcategory: Gameplay
+      description: If set, the automatic team balancing feature will be disabled
+      keywords: team,automatic,balance,balancing,mp_autoteambalance
+      input_type: checkbox
+      param_field_name: mp_autoteambalance
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Automatic Team Balancing
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the automatic team balancing feature will be disabled
+        Keywords: team,automatic,balance,balancing,mp_autoteambalance
+        FieldName: mp_autoteambalance
+        InputType: checkbox
+        ParamFieldName: mp_autoteambalance
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_timelimit
+      label: Map Rotation Time Limit
+      category: CSGO
+      subcategory: Gameplay
+      description: Sets the game time per map. 0 = disabled
+      keywords: time,limit,rotation,mp_timelimit
+      input_type: number
+      param_field_name: mp_timelimit
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Map Rotation Time Limit
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the game time per map. 0 = disabled
+        Keywords: time,limit,rotation,mp_timelimit
+        FieldName: mp_timelimit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: mp_timelimit
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: minutes
+        EnumValues: {}
+    - key: mp_maxrounds
+      label: Map Rotation Round Limit
+      category: CSGO
+      subcategory: Gameplay
+      description: Sets the maximum number of rounds to play before the map rotates. 0 = disabled
+      keywords: round,limit,rotation,mp_maxrounds
+      input_type: number
+      param_field_name: mp_maxrounds
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: rounds
+      enum_values: {}
+      raw:
+        DisplayName: Map Rotation Round Limit
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum number of rounds to play before the map rotates. 0 = disabled
+        Keywords: round,limit,rotation,mp_maxrounds
+        FieldName: mp_maxrounds
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: mp_maxrounds
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: rounds
+        EnumValues: {}
+    - key: mp_forcecamera
+      label: Spectator Mode
+      category: CSGO
+      subcategory: Gameplay
+      description: Sets the spectator mode for dead players
+      keywords: spectator,camera,first,person,mp_forcecamera
+      input_type: enum
+      param_field_name: mp_forcecamera
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Any team
+        '1': Only own team
+        '2': No one; fade to black on death
+      raw:
+        DisplayName: Spectator Mode
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the spectator mode for dead players
+        Keywords: spectator,camera,first,person,mp_forcecamera
+        FieldName: mp_forcecamera
+        InputType: enum
+        ParamFieldName: mp_forcecamera
+        DefaultValue: '0'
+        EnumValues:
+          '0': Any team
+          '1': Only own team
+          '2': No one; fade to black on death
+    - key: mp_disable_autokick
+      label: Disable Autokick
+      category: CSGO
+      subcategory: Gameplay
+      description: If set, players will not be auto-kicked
+      keywords: disable,autokick,mp_disable_autokick
+      input_type: checkbox
+      param_field_name: mp_disable_autokick
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Disable Autokick
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will not be auto-kicked
+        Keywords: disable,autokick,mp_disable_autokick
+        FieldName: mp_disable_autokick
+        InputType: checkbox
+        ParamFieldName: mp_disable_autokick
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_alternateticks
+      label: Alternate Ticks
+      category: CSGO
+      subcategory: Gameplay
+      description: If set, the server only simulates entities on even numbered ticks
+      keywords: alternate,ticks,sv_alternateticks
+      input_type: checkbox
+      param_field_name: sv_alternateticks
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Alternate Ticks
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the server only simulates entities on even numbered ticks
+        Keywords: alternate,ticks,sv_alternateticks
+        FieldName: sv_alternateticks
+        InputType: checkbox
+        ParamFieldName: sv_alternateticks
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_clearhinthistory
+      label: Clear Hint History
+      category: CSGO
+      subcategory: Gameplay
+      description: If set, memory of server side hints displayed to a player is cleared
+      keywords: clear,hint,history,sv_clearhinthistory
+      input_type: checkbox
+      param_field_name: sv_clearhinthistory
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Clear Hint History
+        Category: CSGO:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, memory of server side hints displayed to a player is cleared
+        Keywords: clear,hint,history,sv_clearhinthistory
+        FieldName: sv_clearhinthistory
+        InputType: checkbox
+        ParamFieldName: sv_clearhinthistory
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: nohltv
+      label: Disable SourceTV
+      category: CSGO
+      subcategory: SourceTV
+      description: If set, SourceTV will be disabled on the server
+      keywords: sourcetv,source,nohltv
+      input_type: checkbox
+      param_field_name: nohltv
+      default: '-nohltv '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-nohltv '
+      raw:
+        DisplayName: Disable SourceTV
+        Category: CSGO:stadia_controller
+        Subcategory: SourceTV:tv:3
+        Description: If set, SourceTV will be disabled on the server
+        Keywords: sourcetv,source,nohltv
+        FieldName: nohltv
+        InputType: checkbox
+        ParamFieldName: nohltv
+        DefaultValue: '-nohltv '
+        EnumValues:
+          'False': ''
+          'True': '-nohltv '
+    - key: tv_autorecord
+      label: Enable Automatic Demo Recording
+      category: CSGO
+      subcategory: SourceTV
+      description: If set, all games will be recorded as SourceTV demos
+      keywords: sourcetv,tv,tv_autorecord
+      input_type: checkbox
+      param_field_name: tv_autorecord
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Automatic Demo Recording
+        Category: CSGO:stadia_controller
+        Subcategory: SourceTV:tv:3
+        Description: If set, all games will be recorded as SourceTV demos
+        Keywords: sourcetv,tv,tv_autorecord
+        FieldName: tv_autorecord
+        InputType: checkbox
+        ParamFieldName: tv_autorecord
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: tv_maxclients
+      label: SourceTV Viewer Limit
+      category: CSGO
+      subcategory: SourceTV
+      description: >-
+        Sets the maximum number of clients allowed to connect to the server's SourceTV. 0 = no SourceTV viewers are
+        allowed, the game will only be recorded locally
+      keywords: max,spectators,clients,viewers,sourcetv,tv,tv_maxclients
+      input_type: number
+      param_field_name: tv_maxclients
+      default: '128'
+      placeholder: '128'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 255
+      suffix: viewers
+      enum_values: {}
+      raw:
+        DisplayName: SourceTV Viewer Limit
+        Category: CSGO:stadia_controller
+        Subcategory: SourceTV:tv:3
+        Description: >-
+          Sets the maximum number of clients allowed to connect to the server's SourceTV. 0 = no SourceTV viewers are
+          allowed, the game will only be recorded locally
+        Keywords: max,spectators,clients,viewers,sourcetv,tv,tv_maxclients
+        FieldName: tv_maxclients
+        InputType: number
+        MinValue: '0'
+        MaxValue: '255'
+        ParamFieldName: tv_maxclients
+        DefaultValue: '128'
+        Placeholder: '128'
+        Suffix: viewers
+        EnumValues: {}
+    - key: tv_maxrate
+      label: Maximum SourceTV Bandwidth
+      category: CSGO
+      subcategory: SourceTV
+      description: Sets the maximum SourceTV spectator bandwidth rate allowed. 0 = unlimited
+      keywords: maximum,bandwidth,rate,sourcetv,tv,tv_maxrate
+      input_type: number
+      param_field_name: tv_maxrate
+      default: '196608'
+      placeholder: '196608'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum SourceTV Bandwidth
+        Category: CSGO:stadia_controller
+        Subcategory: SourceTV:tv:3
+        Description: Sets the maximum SourceTV spectator bandwidth rate allowed. 0 = unlimited
+        Keywords: maximum,bandwidth,rate,sourcetv,tv,tv_maxrate
+        FieldName: tv_maxrate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: tv_maxrate
+        DefaultValue: '196608'
+        Placeholder: '196608'
+        EnumValues: {}
+    - key: ModBranch
+      label: Metamod Branch
+      category: Updates
+      subcategory: Metamod and SourceMod
+      description: Specifies the [Metamod](https://www.metamodsource.net/downloads.php) branch to install
+      keywords: metamod,branch
+      input_type: enum
+      param_field_name: ModBranch
+      default: '1.12'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1.11': Old stable (1.11)
+        '1.12': Stable (1.12) (default)
+        '2.0': Development (2.0)
+      raw:
+        DisplayName: Metamod Branch
+        Category: Updates
+        Subcategory: Metamod and SourceMod:build:3
+        Description: Specifies the [Metamod](https://www.metamodsource.net/downloads.php) branch to install
+        Keywords: metamod,branch
+        FieldName: ModBranch
+        InputType: enum
+        ParamFieldName: ModBranch
+        DefaultValue: '1.12'
+        EnumValues:
+          '1.11': Old stable (1.11)
+          '1.12': Stable (1.12) (default)
+          '2.0': Development (2.0)
+    - key: MetamodBuild
+      label: Metamod Build Version
+      category: Updates
+      subcategory: Metamod and SourceMod
+      description: >-
+        Specifies the [Metamod build version](https://www.metamodsource.net/downloads.php) to install. Empty = latest
+        build for the branch specified under Metamod Branch
+      keywords: metamod,build,version
+      input_type: number
+      param_field_name: MetamodBuild
+      default: ''
+      placeholder: '1219'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Metamod Build Version
+        Category: Updates
+        Subcategory: Metamod and SourceMod:build:3
+        Description: >-
+          Specifies the [Metamod build version](https://www.metamodsource.net/downloads.php) to install. Empty = latest
+          build for the branch specified under Metamod Branch
+        Keywords: metamod,build,version
+        FieldName: MetamodBuild
+        InputType: number
+        ParamFieldName: MetamodBuild
+        DefaultValue: ''
+        Placeholder: '1219'
+        EnumValues: {}
+    - key: SourceModBranch
+      label: SourceMod Branch
+      category: Updates
+      subcategory: Metamod and SourceMod
+      description: Specifies the [SourceMod](https://www.sourcemod.net/downloads.php) branch to install
+      keywords: sourcemod,branch
+      input_type: enum
+      param_field_name: SourceModBranch
+      default: '1.13'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1.11': Old stable (1.11)
+        '1.12': Stable (1.12)
+        '1.13': Development (1.13) (default)
+      raw:
+        DisplayName: SourceMod Branch
+        Category: Updates
+        Subcategory: Metamod and SourceMod:build:3
+        Description: Specifies the [SourceMod](https://www.sourcemod.net/downloads.php) branch to install
+        Keywords: sourcemod,branch
+        FieldName: SourceModBranch
+        InputType: enum
+        ParamFieldName: SourceModBranch
+        DefaultValue: '1.13'
+        EnumValues:
+          '1.11': Old stable (1.11)
+          '1.12': Stable (1.12)
+          '1.13': Development (1.13) (default)
+    - key: SourceModVersion
+      label: SourceMod Build Version
+      category: Updates
+      subcategory: Metamod and SourceMod
+      description: >-
+        Specifies the [SourceMod build version](https://www.sourcemod.net/downloads.php) to install. Empty = latest
+        build for the branch specified under SourceMod Branch
+      keywords: sourcemod,build,version
+      input_type: number
+      param_field_name: SourceModVersion
+      default: ''
+      placeholder: '7199'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: SourceMod Build Version
+        Category: Updates
+        Subcategory: Metamod and SourceMod:build:3
+        Description: >-
+          Specifies the [SourceMod build version](https://www.sourcemod.net/downloads.php) to install. Empty = latest
+          build for the branch specified under SourceMod Branch
+        Keywords: sourcemod,build,version
+        FieldName: SourceModVersion
+        InputType: number
+        ParamFieldName: SourceModVersion
+        DefaultValue: ''
+        Placeholder: '7199'
+        EnumValues: {}
+  files:
+    - path: csgo/cfg/server.cfg
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: csgo/cfg/server.cfg
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: csgo/AMP_server.cfg
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: hostname
+    label: Server Name
+    default: 'AMP Powered Counter-Strike: Global Offensive Server'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mod
+    label: Server Mod Name
+    default: csgo
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_steamgroup
+    label: Server Steam Group
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_lan
+    label: LAN Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_setsteamaccount
+    label: Game Server Login Token (GSLT)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: sv_password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: gamemode
+    label: Initial Game Mode
+    default: +game_type 0 +game_mode 0
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_game_mode_flags
+    label: Game Mode Flag
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_skirmish_id
+    label: Skirmish ID
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map
+    label: Initial Map
+    default: de_dust2
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Initial Map
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_region
+    label: Server Region
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mapgroup
+    label: Map Group
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: host_workshop_map
+    label: Workshop Map ID
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: host_workshop_collection
+    label: Workshop Collection ID
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: authkey
+    label: Steam Web API Key
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: sv_workshop_allow_other_maps
+    label: Allow Other Map By Players
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_visiblemaxplayers
+    label: Visible Player Limit
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_pure
+    label: Pure Server Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_pure_kick_clients
+    label: Kick Clients On Pure Server
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_consistency
+    label: Require File Consistency
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_forcepreload
+    label: Force Preload
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_cheats
+    label: Enable Cheats
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: insecure
+    label: Disable Valve Anti-Cheat
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tickrate
+    label: Server Tickrate
+    default: '64'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowdownload
+    label: Allow Download From Server
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_downloadurl
+    label: Fast Download URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowupload
+    label: Allow Upload To Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_minrate
+    label: Minimum Client Rate
+    default: '16000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maxrate
+    label: Maximum Client Rate
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_minupdaterate
+    label: Minimum Server Update Rate
+    default: '64'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maxupdaterate
+    label: Maximum Server Update Rate
+    default: '64'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pingboost
+    label: Ping Boost
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomParameters
+    label: Additional Command Line Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomConVars
+    label: Additional Console Variables
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UserSettings
+    label: Additional Server Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_friendlyfire
+    label: Enable Friendly Fire
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_footsteps_serverside
+    label: Enable Footsteps
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_pausable
+    label: Allow Players To Pause Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allow_wait_command
+    label: Allow Wait Command
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_voiceenable
+    label: Enable Voice Communication
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_talk_enemy_living
+    label: Allow Living Talk
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_talk_enemy_dead
+    label: Allow Dead Talk
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_autoteambalance
+    label: Enable Automatic Team Balancing
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_timelimit
+    label: Map Rotation Time Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_maxrounds
+    label: Map Rotation Round Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_forcecamera
+    label: Spectator Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_disable_autokick
+    label: Disable Autokick
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_alternateticks
+    label: Alternate Ticks
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_clearhinthistory
+    label: Clear Hint History
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: nohltv
+    label: Disable SourceTV
+    default: '-nohltv '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tv_autorecord
+    label: Enable Automatic Demo Recording
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tv_maxclients
+    label: SourceTV Viewer Limit
+    default: '128'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tv_maxrate
+    label: Maximum SourceTV Bandwidth
+    default: '196608'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ModBranch
+    label: Metamod Branch
+    default: '1.12'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MetamodBuild
+    label: Metamod Build Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SourceModBranch
+    label: SourceMod Branch
+    default: '1.13'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SourceModVersion
+    label: SourceMod Build Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '4465480'
+  collection_support: true
 backup:
   include:
     - /data

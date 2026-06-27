@@ -4,14 +4,17 @@ name: Windward
 category: Imported
 summary: Windward Dedicated Server
 install:
-  method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  method: direct_archive
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  installer_url: http://www.tasharen.com/windward/WWServer.zip
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/mono
+  startup: /usr/bin/mono {PlatformArgs} -tcp {GamePort} -http -localPath {FormattedArgs} {public}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,181 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
-    protocol: udp
+    default: 5127
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: windwardconfig.json
+    type: json
+    editable: true
+  - path: windwardmetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: name
+      label: Server Name
+      category: Windward
+      subcategory: Server
+      description: Server name as shown in the in-game browser
+      keywords: server,name
+      input_type: text
+      param_field_name: name
+      default: AMP Powered Windward Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Windward:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Server name as shown in the in-game browser
+        Keywords: server,name
+        FieldName: name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: name
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: AMP Powered Windward Server
+        EnumValues: {}
+    - key: public
+      label: Make Server Public
+      category: Windward
+      subcategory: Server
+      description: If enabled, the server will be registered to the public lobby and be publicly visible in the in-game browser
+      keywords: public
+      input_type: checkbox
+      param_field_name: public
+      default: '-public'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-public'
+      raw:
+        DisplayName: Make Server Public
+        Category: Windward:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, the server will be registered to the public lobby and be publicly visible in the in-game browser
+        Keywords: public
+        FieldName: public
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: public
+        IncludeInCommandLine: false
+        DefaultValue: '-public'
+        EnumValues:
+          'False': ''
+          'True': '-public'
+    - key: world
+      label: World Name
+      category: Windward
+      subcategory: Server
+      description: >-
+        Sets the name of the world to load (if it already exists) or to create. If the world does not already exist in
+        the Worlds directory, an admin must create it in-game after connecting to the server
+      keywords: world,name
+      input_type: text
+      param_field_name: world
+      default: World
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: World Name
+        Category: Windward:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the world to load (if it already exists) or to create. If the world does not already exist in
+          the Worlds directory, an admin must create it in-game after connecting to the server
+        Keywords: world,name
+        FieldName: world
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: world
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: World
+        EnumValues: {}
+    - key: admins
+      label: Server Admins
+      category: Windward
+      subcategory: Server
+      description: List of Steam64 IDs for server admins. [Find Steam64 IDs](https://steamid.io/)
+      keywords: admins
+      input_type: list
+      param_field_name: admins
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      special: listfile:./windward/server/ServerConfig/admin.txt
+      raw:
+        DisplayName: Server Admins
+        Category: Windward:stadia_controller
+        Subcategory: Server:dns:1
+        Description: List of Steam64 IDs for server admins. [Find Steam64 IDs](https://steamid.io/)
+        Keywords: admins
+        FieldName: admins
+        InputType: list
+        IsFlagArgument: false
+        ParamFieldName: admins
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        Special: listfile:./windward/server/ServerConfig/admin.txt
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: name
+    label: Server Name
+    default: AMP Powered Windward Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: public
+    label: Make Server Public
+    default: '-public'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: world
+    label: World Name
+    default: World
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: admins
+    label: Server Admins
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '326410'
+  collection_support: true
 backup:
   include:
     - /data

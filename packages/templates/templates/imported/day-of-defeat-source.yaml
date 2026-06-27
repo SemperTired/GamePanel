@@ -5,13 +5,19 @@ category: Imported
 summary: 'Day of Defeat: Source Dedicated Server'
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '232290'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 232290/srcds_linux
+  startup: >-
+    232290/srcds_linux {PlatformArgs} -game dod -console -usercon -nobreakpad -port {ServerPort} -ip
+    {ApplicationIPBinding} -maxplayers {MaxUsers} {insecure}{nohltv}{CustomParameters} {CustomConVars} +tv_port
+    {SourceTVPort} +clientport {ClientPort} +sv_logfile 1 {FormattedArgs} +exec server.cfg +map {map} +log on
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +25,2251 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: serverport
+    name: Game and RCON Port
     default: 27015
+    protocol: both
+    required: true
+  - key: sourcetvport
+    name: SourceTV Port
+    default: 27020
     protocol: udp
     required: true
-config_files: []
+  - key: clientport
+    name: Client Port
+    default: 27005
+    protocol: udp
+    required: true
+config_files:
+  - path: dod/cfg/server.cfg
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Day of Defeat Source
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: rcon_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $RemoteAdminPassword
+        InputType: text
+        Hidden: true
+        ParamFieldName: rcon_password
+        EnumValues: {}
+    - key: hostname
+      label: Server Name
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Sets the name of the server that appears in the server list
+      keywords: server,name,hostname
+      input_type: text
+      param_field_name: hostname
+      default: 'AMP Powered Day of Defeat: Source Server'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that appears in the server list
+        Keywords: server,name,hostname
+        FieldName: hostname
+        InputType: text
+        ParamFieldName: hostname
+        DefaultValue: 'AMP Powered Day of Defeat: Source Server'
+        EnumValues: {}
+    - key: sv_tags
+      label: Server Tags
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Comma-separated list of server tags that give additional information about the server in the server browser
+      keywords: tags,sv_tags
+      input_type: text
+      param_field_name: sv_tags
+      default: ''
+      placeholder: increased_maxplayers
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Tags
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Comma-separated list of server tags that give additional information about the server in the server browser
+        Keywords: tags,sv_tags
+        FieldName: sv_tags
+        InputType: text
+        ParamFieldName: sv_tags
+        DefaultValue: ''
+        Placeholder: increased_maxplayers
+        EnumValues: {}
+    - key: sv_steamgroup
+      label: Server Steam Group
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        Sets the ID of the steam group that the server belongs to. You can find your group's ID on the admin profile
+        page in the steam community
+      keywords: steam,group,id,sv_steamgroup
+      input_type: text
+      param_field_name: sv_steamgroup
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Steam Group
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the ID of the steam group that the server belongs to. You can find your group's ID on the admin profile
+          page in the steam community
+        Keywords: steam,group,id,sv_steamgroup
+        FieldName: sv_steamgroup
+        InputType: text
+        ParamFieldName: sv_steamgroup
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_lan
+      label: LAN Server
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        If enabled, the server will operate as a LAN server: no heartbeat, no authentication, and no non-class C
+        addresses
+      keywords: lan,local,sv_lan
+      input_type: checkbox
+      param_field_name: sv_lan
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: LAN Server
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will operate as a LAN server: no heartbeat, no authentication, and no non-class C
+          addresses
+        Keywords: lan,local,sv_lan
+        FieldName: sv_lan
+        InputType: checkbox
+        ParamFieldName: sv_lan
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_setsteamaccount
+      label: Game Server Login Token (GSLT)
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        Sets the [Steam Game Server Login Token](https://steamcommunity.com/dev/managegameservers) for the server, to
+        allow it to be listed in the server browser. Use app ID 300 when generating the token
+      keywords: steam,server,login,token,gslt,sv_setsteamaccount
+      input_type: password
+      param_field_name: sv_setsteamaccount
+      default: ''
+      placeholder: 6544F7E034119F113526E96474F559AH
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Game Server Login Token (GSLT)
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [Steam Game Server Login Token](https://steamcommunity.com/dev/managegameservers) for the server, to
+          allow it to be listed in the server browser. Use app ID 300 when generating the token
+        Keywords: steam,server,login,token,gslt,sv_setsteamaccount
+        FieldName: sv_setsteamaccount
+        InputType: password
+        ParamFieldName: sv_setsteamaccount
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: 6544F7E034119F113526E96474F559AH
+        EnumValues: {}
+    - key: sv_password
+      label: Server Password
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Sets the password required to connect to the server. Default is no password
+      keywords: server,password,sv_password
+      input_type: password
+      param_field_name: sv_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server. Default is no password
+        Keywords: server,password,sv_password
+        FieldName: sv_password
+        InputType: password
+        ParamFieldName: sv_password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: map
+      label: Initial Map
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Sets the map to start the server with. If "Custom" is selected, Custom Initial Map must also be specified
+      keywords: map
+      input_type: enum
+      param_field_name: map
+      default: dod_anzio
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        dod_anzio: Anzio
+        dod_argentan: Argentan
+        dod_avalanche: Avalanche
+        dod_colmar: Colmar
+        dod_donner: Donner
+        dod_flash: Flash
+        dod_jagd: Jagd
+        dod_kalt: Kalt
+        dod_palermo: Palermo
+        '{{CustomMap}}': '--Custom--'
+      raw:
+        DisplayName: Initial Map
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map to start the server with. If "Custom" is selected, Custom Initial Map must also be specified
+        Keywords: map
+        FieldName: map
+        InputType: enum
+        ParamFieldName: map
+        DefaultValue: dod_anzio
+        EnumValues:
+          dod_anzio: Anzio
+          dod_argentan: Argentan
+          dod_avalanche: Avalanche
+          dod_colmar: Colmar
+          dod_donner: Donner
+          dod_flash: Flash
+          dod_jagd: Jagd
+          dod_kalt: Kalt
+          dod_palermo: Palermo
+          '{{CustomMap}}': '--Custom--'
+    - key: CustomMap
+      label: Custom Initial Map
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Sets a custom map to use for the Initial Map, if "Custom" is selected
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Initial Map
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets a custom map to use for the Initial Map, if "Custom" is selected
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        ParamFieldName: CustomMap
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_region
+      label: Server Region
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Sets the server region shown in the server browser
+      keywords: server,region,sv_region
+      input_type: enum
+      param_field_name: sv_region
+      default: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': East Coast US
+        '1': West Coast US
+        '2': South America
+        '3': Europe
+        '4': Asia
+        '5': Australia
+        '6': Middle East
+        '7': Africa
+        '255': World
+        '-1': No region
+      raw:
+        DisplayName: Server Region
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the server region shown in the server browser
+        Keywords: server,region,sv_region
+        FieldName: sv_region
+        InputType: enum
+        ParamFieldName: sv_region
+        DefaultValue: '-1'
+        EnumValues:
+          '0': East Coast US
+          '1': West Coast US
+          '2': South America
+          '3': Europe
+          '4': Asia
+          '5': Australia
+          '6': Middle East
+          '7': Africa
+          '255': World
+          '-1': No region
+    - key: $MaxUsers
+      label: Player Limit
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        Sets the maximum number of players allowed on the server at one time. For more than 32 players, a suitable
+        SourceMod plugin is required
+      keywords: max,players,limit,maxplayers
+      input_type: number
+      param_field_name: maxplayers
+      default: '24'
+      placeholder: '24'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of players allowed on the server at one time. For more than 32 players, a suitable
+          SourceMod plugin is required
+        Keywords: max,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: maxplayers
+        DefaultValue: '24'
+        Placeholder: '24'
+        Suffix: players
+        EnumValues: {}
+    - key: sv_visiblemaxplayers
+      label: Visible Player Limit
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Sets the maximum players reported to prospective clients, regardless of the Player Limit. -1 = do not override
+      keywords: visible,max,players,sv_visiblemaxplayers
+      input_type: number
+      param_field_name: sv_visiblemaxplayers
+      default: '-1'
+      placeholder: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Visible Player Limit
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum players reported to prospective clients, regardless of the Player Limit. -1 = do not override
+        Keywords: visible,max,players,sv_visiblemaxplayers
+        FieldName: sv_visiblemaxplayers
+        InputType: number
+        MinValue: '-1'
+        ParamFieldName: sv_visiblemaxplayers
+        DefaultValue: '-1'
+        Placeholder: '-1'
+        Suffix: players
+        EnumValues: {}
+    - key: mp_allowspectators
+      label: Allow Spectators
+      category: Day of Defeat Source
+      subcategory: Server
+      description: If set, spectator mode will be enabled
+      keywords: allow,spectators,mp_allowspectators
+      input_type: checkbox
+      param_field_name: mp_allowspectators
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Spectators
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, spectator mode will be enabled
+        Keywords: allow,spectators,mp_allowspectators
+        FieldName: mp_allowspectators
+        InputType: checkbox
+        ParamFieldName: mp_allowspectators
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_pure
+      label: Pure Server Mode
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Sets whether clients are only allowed to use certain files
+      keywords: pure,server,cheat,hack,integrity,sv_pure
+      input_type: enum
+      param_field_name: sv_pure
+      default: '-1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': Apply rules in 'pure_server_minimal.txt' only
+        '1': Apply rules in 'pure_server_full.txt' and then 'pure_server_whitelist.txt'
+        '2': Apply rules in 'pure_server_full.txt'
+        '-1': Do not restrict client files
+      raw:
+        DisplayName: Pure Server Mode
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether clients are only allowed to use certain files
+        Keywords: pure,server,cheat,hack,integrity,sv_pure
+        FieldName: sv_pure
+        InputType: enum
+        ParamFieldName: sv_pure
+        DefaultValue: '-1'
+        EnumValues:
+          '0': Apply rules in 'pure_server_minimal.txt' only
+          '1': Apply rules in 'pure_server_full.txt' and then 'pure_server_whitelist.txt'
+          '2': Apply rules in 'pure_server_full.txt'
+          '-1': Do not restrict client files
+    - key: sv_pure_kick_clients
+      label: Kick Clients On Pure Server
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        If enabled, the server will kick clients with mismatching files. Otherwise, it will issue a warning to the
+        clients
+      keywords: pure,server,cheat,hack,integrity,sv_pure_kick_clients
+      input_type: checkbox
+      param_field_name: sv_pure_kick_clients
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Kick Clients On Pure Server
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will kick clients with mismatching files. Otherwise, it will issue a warning to the
+          clients
+        Keywords: pure,server,cheat,hack,integrity,sv_pure_kick_clients
+        FieldName: sv_pure_kick_clients
+        InputType: checkbox
+        ParamFieldName: sv_pure_kick_clients
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_cheats
+      label: Enable Cheats
+      category: Day of Defeat Source
+      subcategory: Server
+      description: If set, cheat convars will be allowed to be used on the server
+      keywords: allow,cheat,hack,integrity,sv_cheats
+      input_type: checkbox
+      param_field_name: sv_cheats
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Cheats
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, cheat convars will be allowed to be used on the server
+        Keywords: allow,cheat,hack,integrity,sv_cheats
+        FieldName: sv_cheats
+        InputType: checkbox
+        ParamFieldName: sv_cheats
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: insecure
+      label: Disable Valve Anti-Cheat
+      category: Day of Defeat Source
+      subcategory: Server
+      description: If set, Valve Anti-Cheat (VAC) will be disabled
+      keywords: valve,anti,cheat,vac,insecure
+      input_type: checkbox
+      param_field_name: insecure
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-insecure '
+      raw:
+        DisplayName: Disable Valve Anti-Cheat
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, Valve Anti-Cheat (VAC) will be disabled
+        Keywords: valve,anti,cheat,vac,insecure
+        FieldName: insecure
+        InputType: checkbox
+        ParamFieldName: insecure
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-insecure '
+    - key: sv_filterban
+      label: Enable IP Packet Filter
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        If set, enables packet filtering by IP mode. If disabled, everyone will treated as IP-banned, but their IP won't
+        be added to the banlist
+      keywords: ip,ban,banning,sv_filterban
+      input_type: checkbox
+      param_field_name: sv_filterban
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable IP Packet Filter
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, enables packet filtering by IP mode. If disabled, everyone will treated as IP-banned, but their IP
+          won't be added to the banlist
+        Keywords: ip,ban,banning,sv_filterban
+        FieldName: sv_filterban
+        InputType: checkbox
+        ParamFieldName: sv_filterban
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_allowdownload
+      label: Allow Download From Server
+      category: Day of Defeat Source
+      subcategory: Server
+      description: If set, clients will be allowed to download content from the server (maps, sprays and related)
+      keywords: allow,download,content,maps,sv_allowdownload
+      input_type: checkbox
+      param_field_name: sv_allowdownload
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Download From Server
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be allowed to download content from the server (maps, sprays and related)
+        Keywords: allow,download,content,maps,sv_allowdownload
+        FieldName: sv_allowdownload
+        InputType: checkbox
+        ParamFieldName: sv_allowdownload
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_downloadurl
+      label: Fast Download URL
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        Sets the URL for clients to download custom content from, instead of sourcing the content from the server. This
+        allows for faster downloads
+      keywords: fastdl,download,url,sv_downloadurl
+      input_type: text
+      param_field_name: sv_downloadurl
+      default: ''
+      placeholder: http://example.com
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Fast Download URL
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the URL for clients to download custom content from, instead of sourcing the content from the server.
+          This allows for faster downloads
+        Keywords: fastdl,download,url,sv_downloadurl
+        FieldName: sv_downloadurl
+        InputType: text
+        ParamFieldName: sv_downloadurl
+        DefaultValue: ''
+        Placeholder: http://example.com
+        EnumValues: {}
+    - key: sv_allowupload
+      label: Allow Upload To Server
+      category: Day of Defeat Source
+      subcategory: Server
+      description: If set, clients will be allowed to upload customisation files to the server
+      keywords: allow,upload,customisation,files,sv_allowupload
+      input_type: checkbox
+      param_field_name: sv_allowupload
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Upload To Server
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, clients will be allowed to upload customisation files to the server
+        Keywords: allow,upload,customisation,files,sv_allowupload
+        FieldName: sv_allowupload
+        InputType: checkbox
+        ParamFieldName: sv_allowupload
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: net_maxfilesize
+      label: Maximum File Size
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Sets the maximum allowed file size for uploading to the server
+      keywords: maximum,upload,file,size,net_maxfilesize
+      input_type: number
+      param_field_name: net_maxfilesize
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 64
+      suffix: MB
+      enum_values: {}
+      raw:
+        DisplayName: Maximum File Size
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum allowed file size for uploading to the server
+        Keywords: maximum,upload,file,size,net_maxfilesize
+        FieldName: net_maxfilesize
+        InputType: number
+        MinValue: '0'
+        MaxValue: '64'
+        ParamFieldName: net_maxfilesize
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: MB
+        EnumValues: {}
+    - key: sv_minrate
+      label: Minimum Client Rate
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Sets the minimum allowable bandwidth rate a client may have set when connected to the server. 0 = no minimum
+      keywords: minimum,bandwidth,rate,sv_minrate
+      input_type: number
+      param_field_name: sv_minrate
+      default: '5000'
+      placeholder: '5000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 30000
+      suffix: bytes/second
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Client Rate
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum allowable bandwidth rate a client may have set when connected to the server. 0 = no minimum
+        Keywords: minimum,bandwidth,rate,sv_minrate
+        FieldName: sv_minrate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '30000'
+        ParamFieldName: sv_minrate
+        DefaultValue: '5000'
+        Placeholder: '5000'
+        Suffix: bytes/second
+        EnumValues: {}
+    - key: sv_maxrate
+      label: Maximum Client Rate
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Sets the maximum allowable bandwidth rate a client may have set when connected to the server. 0 = no limit
+      keywords: maximum,bandwidth,rate,sv_maxrate
+      input_type: number
+      param_field_name: sv_maxrate
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 30000
+      suffix: bytes/second
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Client Rate
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum allowable bandwidth rate a client may have set when connected to the server. 0 = no limit
+        Keywords: maximum,bandwidth,rate,sv_maxrate
+        FieldName: sv_maxrate
+        InputType: number
+        MinValue: '0'
+        MaxValue: '30000'
+        ParamFieldName: sv_maxrate
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: bytes/second
+        EnumValues: {}
+    - key: sv_minupdaterate
+      label: Minimum Server Update Rate
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        Sets the minimum number of updates per second of the positions of the server's models (players, guns, etc) that
+        server sends to clients
+      keywords: minimum,update,rate,sv_minupdaterate
+      input_type: number
+      param_field_name: sv_minupdaterate
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Minimum Server Update Rate
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the minimum number of updates per second of the positions of the server's models (players, guns, etc)
+          that server sends to clients
+        Keywords: minimum,update,rate,sv_minupdaterate
+        FieldName: sv_minupdaterate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_minupdaterate
+        DefaultValue: '10'
+        Placeholder: '10'
+        EnumValues: {}
+    - key: sv_maxupdaterate
+      label: Maximum Server Update Rate
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        Sets the maximum number of updates per second of the positions of the server's models (players, guns, etc) that
+        server sends to clients
+      keywords: maximum,update,rate,sv_maxupdaterate
+      input_type: number
+      param_field_name: sv_maxupdaterate
+      default: '60'
+      placeholder: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Server Update Rate
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the maximum number of updates per second of the positions of the server's models (players, guns, etc)
+          that server sends to clients
+        Keywords: maximum,update,rate,sv_maxupdaterate
+        FieldName: sv_maxupdaterate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: sv_maxupdaterate
+        DefaultValue: '60'
+        Placeholder: '60'
+        EnumValues: {}
+    - key: decalfrequency
+      label: Decal Frequency
+      category: Day of Defeat Source
+      subcategory: Server
+      description: Sets the time between decal sprays
+      keywords: decalfrequency
+      input_type: number
+      param_field_name: decalfrequency
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Decal Frequency
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time between decal sprays
+        Keywords: decalfrequency
+        FieldName: decalfrequency
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: decalfrequency
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: seconds
+        EnumValues: {}
+    - key: sv_forcepreload
+      label: Force Preload
+      category: Day of Defeat Source
+      subcategory: Server
+      description: If set, server side preloading will be forced
+      keywords: force,preload,sv_forcepreload
+      input_type: checkbox
+      param_field_name: sv_forcepreload
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Force Preload
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, server side preloading will be forced
+        Keywords: force,preload,sv_forcepreload
+        FieldName: sv_forcepreload
+        InputType: checkbox
+        ParamFieldName: sv_forcepreload
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: pingboost
+      label: Ping Boost
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        Selects between optimised network code stack. Setting at 2 usually reduces latency toward 1ms without loss of
+        activity input packets
+      keywords: ping,boost,latency,network,pingboost
+      input_type: enum
+      param_field_name: pingboost
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': None
+        '-pingboost 1 ': '1'
+        '-pingboost 2 ': '2'
+        '-pingboost 3 ': '3'
+      raw:
+        DisplayName: Ping Boost
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Selects between optimised network code stack. Setting at 2 usually reduces latency toward 1ms without loss of
+          activity input packets
+        Keywords: ping,boost,latency,network,pingboost
+        FieldName: pingboost
+        InputType: enum
+        ParamFieldName: pingboost
+        DefaultValue: ''
+        EnumValues:
+          '': None
+          '-pingboost 1 ': '1'
+          '-pingboost 2 ': '2'
+          '-pingboost 3 ': '3'
+    - key: sv_stats
+      label: Enable CPU Stats Collection
+      category: Day of Defeat Source
+      subcategory: Server
+      description: If set, CPU stats will be collected
+      keywords: cpu,stats,sv_stats
+      input_type: checkbox
+      param_field_name: sv_stats
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable CPU Stats Collection
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, CPU stats will be collected
+        Keywords: cpu,stats,sv_stats
+        FieldName: sv_stats
+        InputType: checkbox
+        ParamFieldName: sv_stats
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: ip
+      label: Server/RCON IPv4 IP Binding
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        If required, you can change the IPv4 IP binding of the server and RCON by changing the Application IP Binding
+        for this instance. NOTE: AMP requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
+        server to log to AMP's console. The IP must also be reachable by AMP
+      keywords: ip,binding
+      input_type: hidden
+      param_field_name: ip
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server/RCON IPv4 IP Binding
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If required, you can change the IPv4 IP binding of the server and RCON by changing the Application IP Binding
+          for this instance. NOTE: AMP requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
+          server to log to AMP's console. The IP must also be reachable by AMP
+        Keywords: ip,binding
+        FieldName: ip
+        InputType: hidden
+        ParamFieldName: ip
+        EnumValues: {}
+    - key: CustomParameters
+      label: Additional Command Line Parameters
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        Specifies additional [command line
+        parameters](https://developer.valvesoftware.com/wiki/Command_line_options#Command-Line_Parameters_6) (anything
+        that begins with a -) that are not otherwise set by AMP. Use with care
+      keywords: custom,server,arguments,parameters
+      input_type: text
+      param_field_name: CustomParameters
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Parameters
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional [command line
+          parameters](https://developer.valvesoftware.com/wiki/Command_line_options#Command-Line_Parameters_6) (anything
+          that begins with a -) that are not otherwise set by AMP. Use with care
+        Keywords: custom,server,arguments,parameters
+        FieldName: CustomParameters
+        InputType: text
+        ParamFieldName: CustomParameters
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomConVars
+      label: Additional Console Variables
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        Specifies additional [console variables](https://www.gamerconfig.eu/commands/day-of-defeat-source/) (anything
+        that begins with a +) that are not otherwise set by AMP. Use with care. Preferably, specify the equivalent under
+        "Additional Server Settings"
+      keywords: custom,server,arguments,variables,cvars,convars
+      input_type: text
+      param_field_name: CustomConVars
+      default: ''
+      placeholder: +sv_gravity "500"
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Console Variables
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional [console variables](https://www.gamerconfig.eu/commands/day-of-defeat-source/) (anything
+          that begins with a +) that are not otherwise set by AMP. Use with care. Preferably, specify the equivalent
+          under "Additional Server Settings"
+        Keywords: custom,server,arguments,variables,cvars,convars
+        FieldName: CustomConVars
+        InputType: text
+        ParamFieldName: CustomConVars
+        DefaultValue: ''
+        Placeholder: +sv_gravity "500"
+        EnumValues: {}
+    - key: UserSettings
+      label: Additional Server Settings
+      category: Day of Defeat Source
+      subcategory: Server
+      description: >-
+        Specifies additional [settings](https://www.gamerconfig.eu/commands/day-of-defeat-source/) to include in
+        'server.cfg' that are not otherwise set by AMP. Example: sv_maxcmdrate 66. One setting per line
+      keywords: additional,settings,custom
+      input_type: Textarea
+      param_field_name: UserSettings
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Server Settings
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional [settings](https://www.gamerconfig.eu/commands/day-of-defeat-source/) to include in
+          'server.cfg' that are not otherwise set by AMP. Example: sv_maxcmdrate 66. One setting per line
+        Keywords: additional,settings,custom
+        FieldName: UserSettings
+        InputType: Textarea
+        IsFlagArgument: false
+        ParamFieldName: UserSettings
+        DefaultValue: ''
+        EnumValues: {}
+    - key: mp_friendlyfire
+      label: Enable Friendly Fire
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: If set, friendly fire will be enabled (teammates can cause damage to other teammates)
+      keywords: friendly,fire,mp_friendlyfire
+      input_type: checkbox
+      param_field_name: mp_friendlyfire
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Friendly Fire
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, friendly fire will be enabled (teammates can cause damage to other teammates)
+        Keywords: friendly,fire,mp_friendlyfire
+        FieldName: mp_friendlyfire
+        InputType: checkbox
+        ParamFieldName: mp_friendlyfire
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_flashlight
+      label: Enable Flashlight
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: If sets, allows the use of the flashlight by pressing the F button
+      keywords: flashlight,mp_flashlight
+      input_type: checkbox
+      param_field_name: mp_flashlight
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Flashlight
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If sets, allows the use of the flashlight by pressing the F button
+        Keywords: flashlight,mp_flashlight
+        FieldName: mp_flashlight
+        InputType: checkbox
+        ParamFieldName: mp_flashlight
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_footsteps
+      label: Enable Footsteps
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: If set, footstep sounds will be enabled
+      keywords: footstep,sounds,mp_footsteps
+      input_type: checkbox
+      param_field_name: mp_footsteps
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Footsteps
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, footstep sounds will be enabled
+        Keywords: footstep,sounds,mp_footsteps
+        FieldName: mp_footsteps
+        InputType: checkbox
+        ParamFieldName: mp_footsteps
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_autocrosshair
+      label: Enable Auto Crosshair
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: If set, the auto crosshair will be enabled
+      keywords: auto,crosshair,mp_autocrosshair
+      input_type: checkbox
+      param_field_name: mp_autocrosshair
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Auto Crosshair
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the auto crosshair will be enabled
+        Keywords: auto,crosshair,mp_autocrosshair
+        FieldName: mp_autocrosshair
+        InputType: checkbox
+        ParamFieldName: mp_autocrosshair
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_pausable
+      label: Allow Players To Pause Server
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: If set, players will be able to pause the server. Not recommended
+      keywords: pause,pausable,sv_pausable
+      input_type: checkbox
+      param_field_name: sv_pausable
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Players To Pause Server
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, players will be able to pause the server. Not recommended
+        Keywords: pause,pausable,sv_pausable
+        FieldName: sv_pausable
+        InputType: checkbox
+        ParamFieldName: sv_pausable
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_allow_wait_command
+      label: Allow Wait Command
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: >-
+        If enabled, the wait command will be allowed on clients connected to the server. Recommended to keep disabled to
+        prevent server crash exploits
+      keywords: wait,command,sv_allow_wait_command
+      input_type: checkbox
+      param_field_name: sv_allow_wait_command
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow Wait Command
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, the wait command will be allowed on clients connected to the server. Recommended to keep disabled
+          to prevent server crash exploits
+        Keywords: wait,command,sv_allow_wait_command
+        FieldName: sv_allow_wait_command
+        InputType: checkbox
+        ParamFieldName: sv_allow_wait_command
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_voiceenable
+      label: Enable Voice Communication
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: If set, voice communication will be enabled on the server
+      keywords: voice,communication,sv_voiceenable
+      input_type: checkbox
+      param_field_name: sv_voiceenable
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Voice Communication
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, voice communication will be enabled on the server
+        Keywords: voice,communication,sv_voiceenable
+        FieldName: sv_voiceenable
+        InputType: checkbox
+        ParamFieldName: sv_voiceenable
+        DefaultValue: '1'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_alltalk
+      label: Allow All Talk
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: If enabled, players can communicate with all other players, with no team restrictions
+      keywords: all,talk,sv_alltalk
+      input_type: checkbox
+      param_field_name: sv_alltalk
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Allow All Talk
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If enabled, players can communicate with all other players, with no team restrictions
+        Keywords: all,talk,sv_alltalk
+        FieldName: sv_alltalk
+        InputType: checkbox
+        ParamFieldName: sv_alltalk
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_fadetoblack
+      label: Enable Fade To Black
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: >-
+        If enabled, a player's screen fades to black for the remainder of the round after death (HUD and chat still
+        works)
+      keywords: fade,black,spectator,death,mp_fadetoblack
+      input_type: checkbox
+      param_field_name: mp_fadetoblack
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Fade To Black
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: >-
+          If enabled, a player's screen fades to black for the remainder of the round after death (HUD and chat still
+          works)
+        Keywords: fade,black,spectator,death,mp_fadetoblack
+        FieldName: mp_fadetoblack
+        InputType: checkbox
+        ParamFieldName: mp_fadetoblack
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: mp_timelimit
+      label: Map Rotation Time Limit
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: Sets the game time per map. 0 = disabled
+      keywords: time,limit,rotation,mp_timelimit
+      input_type: number
+      param_field_name: mp_timelimit
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Map Rotation Time Limit
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the game time per map. 0 = disabled
+        Keywords: time,limit,rotation,mp_timelimit
+        FieldName: mp_timelimit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: mp_timelimit
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: minutes
+        EnumValues: {}
+    - key: mp_winlimit
+      label: Map Rotation Win Limit
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: Sets the maximum score one team can reach before the map rotates. 0 = disabled
+      keywords: win,limit,rotation,mp_winlimit
+      input_type: number
+      param_field_name: mp_winlimit
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Map Rotation Win Limit
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum score one team can reach before the map rotates. 0 = disabled
+        Keywords: win,limit,rotation,mp_winlimit
+        FieldName: mp_winlimit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: mp_winlimit
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: mp_fraglimit
+      label: Round Kill Limit
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: Sets the number of kills at which the map ends. 0 = disabled
+      keywords: kill,frag,limit,rotation,mp_fraglimit
+      input_type: number
+      param_field_name: mp_fraglimit
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: kills
+      enum_values: {}
+      raw:
+        DisplayName: Round Kill Limit
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the number of kills at which the map ends. 0 = disabled
+        Keywords: kill,frag,limit,rotation,mp_fraglimit
+        FieldName: mp_fraglimit
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: mp_fraglimit
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: kills
+        EnumValues: {}
+    - key: mp_forcecamera
+      label: Restrict Spectator Mode
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: If set, the spectator mode for dead players will be restricted
+      keywords: spectator,camera,first,person,mp_forcecamera
+      input_type: checkbox
+      param_field_name: mp_forcecamera
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Restrict Spectator Mode
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the spectator mode for dead players will be restricted
+        Keywords: spectator,camera,first,person,mp_forcecamera
+        FieldName: mp_forcecamera
+        InputType: checkbox
+        ParamFieldName: mp_forcecamera
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: sv_alternateticks
+      label: Alternate Ticks
+      category: Day of Defeat Source
+      subcategory: Gameplay
+      description: If set, the server only simulates entities on even numbered ticks
+      keywords: alternate,ticks,sv_alternateticks
+      input_type: checkbox
+      param_field_name: sv_alternateticks
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Alternate Ticks
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: If set, the server only simulates entities on even numbered ticks
+        Keywords: alternate,ticks,sv_alternateticks
+        FieldName: sv_alternateticks
+        InputType: checkbox
+        ParamFieldName: sv_alternateticks
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: nohltv
+      label: Disable SourceTV
+      category: Day of Defeat Source
+      subcategory: SourceTV
+      description: If set, SourceTV will be disabled on the server
+      keywords: sourcetv,source,nohltv
+      input_type: checkbox
+      param_field_name: nohltv
+      default: '-nohltv '
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-nohltv '
+      raw:
+        DisplayName: Disable SourceTV
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: SourceTV:tv:3
+        Description: If set, SourceTV will be disabled on the server
+        Keywords: sourcetv,source,nohltv
+        FieldName: nohltv
+        InputType: checkbox
+        ParamFieldName: nohltv
+        DefaultValue: '-nohltv '
+        EnumValues:
+          'False': ''
+          'True': '-nohltv '
+    - key: tv_autorecord
+      label: Enable Automatic Demo Recording
+      category: Day of Defeat Source
+      subcategory: SourceTV
+      description: If set, all games will be recorded as SourceTV demos
+      keywords: sourcetv,tv,tv_autorecord
+      input_type: checkbox
+      param_field_name: tv_autorecord
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': '0'
+        'True': '1'
+      raw:
+        DisplayName: Enable Automatic Demo Recording
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: SourceTV:tv:3
+        Description: If set, all games will be recorded as SourceTV demos
+        Keywords: sourcetv,tv,tv_autorecord
+        FieldName: tv_autorecord
+        InputType: checkbox
+        ParamFieldName: tv_autorecord
+        DefaultValue: '0'
+        EnumValues:
+          'False': '0'
+          'True': '1'
+    - key: tv_maxclients
+      label: SourceTV Viewer Limit
+      category: Day of Defeat Source
+      subcategory: SourceTV
+      description: >-
+        Sets the maximum number of clients allowed to connect to the server's SourceTV. 0 = no SourceTV viewers are
+        allowed, the game will only be recorded locally
+      keywords: max,spectators,clients,viewers,sourcetv,tv,tv_maxclients
+      input_type: number
+      param_field_name: tv_maxclients
+      default: '128'
+      placeholder: '128'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 255
+      suffix: viewers
+      enum_values: {}
+      raw:
+        DisplayName: SourceTV Viewer Limit
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: SourceTV:tv:3
+        Description: >-
+          Sets the maximum number of clients allowed to connect to the server's SourceTV. 0 = no SourceTV viewers are
+          allowed, the game will only be recorded locally
+        Keywords: max,spectators,clients,viewers,sourcetv,tv,tv_maxclients
+        FieldName: tv_maxclients
+        InputType: number
+        MinValue: '0'
+        MaxValue: '255'
+        ParamFieldName: tv_maxclients
+        DefaultValue: '128'
+        Placeholder: '128'
+        Suffix: viewers
+        EnumValues: {}
+    - key: tv_maxrate
+      label: Maximum SourceTV Bandwidth
+      category: Day of Defeat Source
+      subcategory: SourceTV
+      description: Sets the maximum SourceTV spectator bandwidth rate allowed. 0 = unlimited
+      keywords: maximum,bandwidth,rate,sourcetv,tv,tv_maxrate
+      input_type: number
+      param_field_name: tv_maxrate
+      default: '8000'
+      placeholder: '8000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      enum_values: {}
+      raw:
+        DisplayName: Maximum SourceTV Bandwidth
+        Category: Day of Defeat Source:stadia_controller
+        Subcategory: SourceTV:tv:3
+        Description: Sets the maximum SourceTV spectator bandwidth rate allowed. 0 = unlimited
+        Keywords: maximum,bandwidth,rate,sourcetv,tv,tv_maxrate
+        FieldName: tv_maxrate
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: tv_maxrate
+        DefaultValue: '8000'
+        Placeholder: '8000'
+        EnumValues: {}
+    - key: InstallMod
+      label: Metamod and SourceMod Management
+      category: Updates
+      subcategory: Metamod and SourceMod
+      description: >-
+        Sets how to manage Metamod and SourceMod on the server. Branch and Build Versions must be set accordingly for
+        installation. Update the server after changing this setting (unless "Do nothing" is selected)
+      keywords: install,metamod,sourcemod
+      input_type: enum
+      param_field_name: InstallMod
+      default: none
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        none: Do nothing (default)
+        'false': Deactivate mods
+        'true': Install and activate mods
+      raw:
+        DisplayName: Metamod and SourceMod Management
+        Category: Updates
+        Subcategory: Metamod and SourceMod:build:3
+        Description: >-
+          Sets how to manage Metamod and SourceMod on the server. Branch and Build Versions must be set accordingly for
+          installation. Update the server after changing this setting (unless "Do nothing" is selected)
+        Keywords: install,metamod,sourcemod
+        FieldName: InstallMod
+        InputType: enum
+        ParamFieldName: InstallMod
+        DefaultValue: none
+        EnumValues:
+          none: Do nothing (default)
+          'false': Deactivate mods
+          'true': Install and activate mods
+    - key: MetamodBranch
+      label: Metamod Branch
+      category: Updates
+      subcategory: Metamod and SourceMod
+      description: Specifies the [Metamod](https://www.metamodsource.net/downloads.php) branch to install
+      keywords: metamod,branch
+      input_type: enum
+      param_field_name: MetamodBranch
+      default: '1.12'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1.11': Old stable (1.11)
+        '1.12': Stable (1.12) (default)
+        '2.0': Development (2.0)
+      raw:
+        DisplayName: Metamod Branch
+        Category: Updates
+        Subcategory: Metamod and SourceMod:build:3
+        Description: Specifies the [Metamod](https://www.metamodsource.net/downloads.php) branch to install
+        Keywords: metamod,branch
+        FieldName: MetamodBranch
+        InputType: enum
+        ParamFieldName: MetamodBranch
+        DefaultValue: '1.12'
+        EnumValues:
+          '1.11': Old stable (1.11)
+          '1.12': Stable (1.12) (default)
+          '2.0': Development (2.0)
+    - key: MetamodBuild
+      label: Metamod Build Version
+      category: Updates
+      subcategory: Metamod and SourceMod
+      description: >-
+        Specifies the [Metamod build version](https://www.metamodsource.net/downloads.php) to install. Empty = latest
+        build for the branch specified under Metamod Branch
+      keywords: metamod,build,version
+      input_type: number
+      param_field_name: MetamodBuild
+      default: ''
+      placeholder: '1219'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Metamod Build Version
+        Category: Updates
+        Subcategory: Metamod and SourceMod:build:3
+        Description: >-
+          Specifies the [Metamod build version](https://www.metamodsource.net/downloads.php) to install. Empty = latest
+          build for the branch specified under Metamod Branch
+        Keywords: metamod,build,version
+        FieldName: MetamodBuild
+        InputType: number
+        ParamFieldName: MetamodBuild
+        DefaultValue: ''
+        Placeholder: '1219'
+        EnumValues: {}
+    - key: SourceModBranch
+      label: SourceMod Branch
+      category: Updates
+      subcategory: Metamod and SourceMod
+      description: Specifies the [SourceMod](https://www.sourcemod.net/downloads.php) branch to install
+      keywords: sourcemod,branch
+      input_type: enum
+      param_field_name: SourceModBranch
+      default: '1.12'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '1.11': Old stable (1.11)
+        '1.12': Stable (1.12) (default)
+        '1.13': Development (1.13)
+      raw:
+        DisplayName: SourceMod Branch
+        Category: Updates
+        Subcategory: Metamod and SourceMod:build:3
+        Description: Specifies the [SourceMod](https://www.sourcemod.net/downloads.php) branch to install
+        Keywords: sourcemod,branch
+        FieldName: SourceModBranch
+        InputType: enum
+        ParamFieldName: SourceModBranch
+        DefaultValue: '1.12'
+        EnumValues:
+          '1.11': Old stable (1.11)
+          '1.12': Stable (1.12) (default)
+          '1.13': Development (1.13)
+    - key: SourceModBuild
+      label: SourceMod Build Version
+      category: Updates
+      subcategory: Metamod and SourceMod
+      description: >-
+        Specifies the [SourceMod build version](https://www.sourcemod.net/downloads.php) to install. Empty = latest
+        build for the branch specified under SourceMod Branch
+      keywords: sourcemod,build,version
+      input_type: number
+      param_field_name: SourceModBuild
+      default: ''
+      placeholder: '7176'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: SourceMod Build Version
+        Category: Updates
+        Subcategory: Metamod and SourceMod:build:3
+        Description: >-
+          Specifies the [SourceMod build version](https://www.sourcemod.net/downloads.php) to install. Empty = latest
+          build for the branch specified under SourceMod Branch
+        Keywords: sourcemod,build,version
+        FieldName: SourceModBuild
+        InputType: number
+        ParamFieldName: SourceModBuild
+        DefaultValue: ''
+        Placeholder: '7176'
+        EnumValues: {}
+  files:
+    - path: dod/cfg/server.cfg
+      type: template
+      subsections: []
+      raw:
+        ConfigFile: dod/cfg/server.cfg
+        AutoMap: true
+        ConfigType: template
+        ConfigFileTemplate: dods/AMP_server.cfg
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: hostname
+    label: Server Name
+    default: 'AMP Powered Day of Defeat: Source Server'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_tags
+    label: Server Tags
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_steamgroup
+    label: Server Steam Group
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_lan
+    label: LAN Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_setsteamaccount
+    label: Game Server Login Token (GSLT)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: sv_password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: map
+    label: Initial Map
+    default: dod_anzio
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Initial Map
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_region
+    label: Server Region
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_visiblemaxplayers
+    label: Visible Player Limit
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_allowspectators
+    label: Allow Spectators
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_pure
+    label: Pure Server Mode
+    default: '-1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_pure_kick_clients
+    label: Kick Clients On Pure Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_cheats
+    label: Enable Cheats
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: insecure
+    label: Disable Valve Anti-Cheat
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_filterban
+    label: Enable IP Packet Filter
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowdownload
+    label: Allow Download From Server
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_downloadurl
+    label: Fast Download URL
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allowupload
+    label: Allow Upload To Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: net_maxfilesize
+    label: Maximum File Size
+    default: '16'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_minrate
+    label: Minimum Client Rate
+    default: '5000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maxrate
+    label: Maximum Client Rate
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_minupdaterate
+    label: Minimum Server Update Rate
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_maxupdaterate
+    label: Maximum Server Update Rate
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: decalfrequency
+    label: Decal Frequency
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_forcepreload
+    label: Force Preload
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pingboost
+    label: Ping Boost
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_stats
+    label: Enable CPU Stats Collection
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomParameters
+    label: Additional Command Line Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomConVars
+    label: Additional Console Variables
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UserSettings
+    label: Additional Server Settings
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_friendlyfire
+    label: Enable Friendly Fire
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_flashlight
+    label: Enable Flashlight
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_footsteps
+    label: Enable Footsteps
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_autocrosshair
+    label: Enable Auto Crosshair
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_pausable
+    label: Allow Players To Pause Server
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_allow_wait_command
+    label: Allow Wait Command
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_voiceenable
+    label: Enable Voice Communication
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_alltalk
+    label: Allow All Talk
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_fadetoblack
+    label: Enable Fade To Black
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_timelimit
+    label: Map Rotation Time Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_winlimit
+    label: Map Rotation Win Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_fraglimit
+    label: Round Kill Limit
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mp_forcecamera
+    label: Restrict Spectator Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_alternateticks
+    label: Alternate Ticks
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: nohltv
+    label: Disable SourceTV
+    default: '-nohltv '
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tv_autorecord
+    label: Enable Automatic Demo Recording
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tv_maxclients
+    label: SourceTV Viewer Limit
+    default: '128'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: tv_maxrate
+    label: Maximum SourceTV Bandwidth
+    default: '8000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InstallMod
+    label: Metamod and SourceMod Management
+    default: none
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MetamodBranch
+    label: Metamod Branch
+    default: '1.12'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MetamodBuild
+    label: Metamod Build Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SourceModBranch
+    label: SourceMod Branch
+    default: '1.12'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SourceModBuild
+    label: SourceMod Build Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '300'
+  collection_support: true
 backup:
   include:
     - /data

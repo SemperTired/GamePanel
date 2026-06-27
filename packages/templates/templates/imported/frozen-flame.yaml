@@ -5,13 +5,19 @@ category: Imported
 summary: Frozen Flame Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '1348640'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 1348640/FrozenFlame/Binaries/Linux/FrozenFlameServer-Linux-Shipping
+  startup: >-
+    1348640/FrozenFlame/Binaries/Linux/FrozenFlameServer-Linux-Shipping {PlatformArgs} -Port={GamePort}
+    -QueryPort={QueryPort} -RconPort={RCONPort} -RconPassword={RemoteAdminPassword} -ip={PublicIP}
+    {noeac}{PublicServer}{FormattedArgs} -LOCALLOGTIMES
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +25,1682 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 7777
+    protocol: both
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+  - key: rconport
+    name: RCON Port
+    default: 25575
+    protocol: tcp
+    required: true
+config_files:
+  - path: FrozenFlame/Saved/Config/WindowsServer/Game.ini
+    type: ini
+    editable: true
+  - path: FrozenFlame/Saved/Config/LinuxServer/Game.ini
+    type: ini
+    editable: true
+  - path: FrozenFlame/Saved/Config/WindowsServer/GameModeSurvive.ini
+    type: ini
+    editable: true
+  - path: FrozenFlame/Saved/Config/LinuxServer/GameModeSurvive.ini
+    type: ini
+    editable: true
+  - path: FrozenFlame/Saved/Config/WindowsServer/HeavenNormal.ini
+    type: ini
+    editable: true
+  - path: FrozenFlame/Saved/Config/LinuxServer/HeavenNormal.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: ServerName
+      label: Server Name
+      category: Frozen Flame
+      subcategory: Server
+      description: The name of the server as it appears publicly
+      keywords: name,servername
+      input_type: text
+      param_field_name: MetaGameServerName
+      default: AMP Powered Frozen Flame Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The name of the server as it appears publicly
+        Keywords: name,servername
+        FieldName: ServerName
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: MetaGameServerName
+        IncludeInCommandLine: true
+        DefaultValue: AMP Powered Frozen Flame Server
+        EnumValues: {}
+    - key: ServerPassword
+      label: Server Password
+      category: Frozen Flame
+      subcategory: Server
+      description: Password to connect to the server
+      keywords: server,password,serverpassword
+      input_type: password
+      param_field_name: /Script/FrozenFlame.FGameSession.ServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Password to connect to the server
+        Keywords: server,password,serverpassword
+        FieldName: ServerPassword
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.FGameSession.ServerPassword
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerDefaultMap
+      label: Game Mode
+      category: Frozen Flame
+      subcategory: Server
+      description: Sets the game mode (default map)
+      keywords: game,mode,gamemodesurvive,heavennormal,survival,cataclysm,campaign,heaven,serverdefaultmap
+      input_type: enum
+      param_field_name: ini:Engine:[/Script/EngineSettings.GameMapsSettings]:ServerDefaultMap
+      default: /Game/FrozenFlame/Maps/Heaven/Heaven.Heaven
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        /Game/FrozenFlame/Maps/Heaven/Heaven.Heaven: Heaven/Campaign mode (default)
+        /Game/GameModeSurvive/Maps/Survive/Survive.Survive: Cataclysm/Survival mode
+      raw:
+        DisplayName: Game Mode
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the game mode (default map)
+        Keywords: game,mode,gamemodesurvive,heavennormal,survival,cataclysm,campaign,heaven,serverdefaultmap
+        FieldName: ServerDefaultMap
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: ini:Engine:[/Script/EngineSettings.GameMapsSettings]:ServerDefaultMap
+        IncludeInCommandLine: true
+        DefaultValue: /Game/FrozenFlame/Maps/Heaven/Heaven.Heaven
+        EnumValues:
+          /Game/FrozenFlame/Maps/Heaven/Heaven.Heaven: Heaven/Campaign mode (default)
+          /Game/GameModeSurvive/Maps/Survive/Survive.Survive: Cataclysm/Survival mode
+    - key: PublicServer
+      label: Make Server Public
+      category: Frozen Flame
+      subcategory: Server
+      description: >-
+        If enabled, the server will be made publicly visible by setting the required meta server URL and meta server
+        secret
+      keywords: meta,server,url,public,metaserverurl,metaserversecret
+      input_type: checkbox
+      param_field_name: PublicServer
+      default: >-
+        -ini:Engine:[URL]:MetaServerUrl=meta.frozen-flame.xyz
+        -ini:Engine:[URL]:MetaServerSecret=TEuj7URa2horRuENjjpm3d1rqBPtHOz4 
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': >-
+          -ini:Engine:[URL]:MetaServerUrl=meta.frozen-flame.xyz
+          -ini:Engine:[URL]:MetaServerSecret=TEuj7URa2horRuENjjpm3d1rqBPtHOz4 
+      raw:
+        DisplayName: Make Server Public
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will be made publicly visible by setting the required meta server URL and meta server
+          secret
+        Keywords: meta,server,url,public,metaserverurl,metaserversecret
+        FieldName: PublicServer
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: PublicServer
+        IncludeInCommandLine: false
+        DefaultValue: >-
+          -ini:Engine:[URL]:MetaServerUrl=meta.frozen-flame.xyz
+          -ini:Engine:[URL]:MetaServerSecret=TEuj7URa2horRuENjjpm3d1rqBPtHOz4 
+        EnumValues:
+          'False': ''
+          'True': >-
+            -ini:Engine:[URL]:MetaServerUrl=meta.frozen-flame.xyz
+            -ini:Engine:[URL]:MetaServerSecret=TEuj7URa2horRuENjjpm3d1rqBPtHOz4 
+    - key: PublicIP
+      label: Public IP Selection Mode
+      category: Frozen Flame
+      subcategory: Server
+      description: >-
+        Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+        the IP set under Server Public IP
+      keywords: public,ip,publicip
+      input_type: enum
+      param_field_name: PublicIP
+      default: '{{$ExternalIP}}'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '{{$ExternalIP}}': Automatic (default)
+        '{{ManualPublicIP}}': Manual
+      raw:
+        DisplayName: Public IP Selection Mode
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+          the IP set under Server Public IP
+        Keywords: public,ip,publicip
+        FieldName: PublicIP
+        InputType: enum
+        ParamFieldName: PublicIP
+        DefaultValue: '{{$ExternalIP}}'
+        EnumValues:
+          '{{$ExternalIP}}': Automatic (default)
+          '{{ManualPublicIP}}': Manual
+    - key: ManualPublicIP
+      label: Server Public IP
+      category: Frozen Flame
+      subcategory: Server
+      description: >-
+        Sets the public IP advertised for the server, if "Manual" is selected as the Public IP Selection Mode. Useful if
+        the host network has multiple public IPs, or the server is behind a public proxy
+      keywords: manual,public,ip,publicip
+      input_type: text
+      param_field_name: ManualPublicIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Public IP
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public IP advertised for the server, if "Manual" is selected as the Public IP Selection Mode. Useful
+          if the host network has multiple public IPs, or the server is behind a public proxy
+        Keywords: manual,public,ip,publicip
+        FieldName: ManualPublicIP
+        InputType: text
+        ParamFieldName: ManualPublicIP
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Frozen Flame
+      subcategory: Server
+      description: Maximum number of players that may connect to the server
+      keywords: players,limit,maxplayers
+      input_type: number
+      param_field_name: /Script/Engine.GameSession.MaxPlayers
+      default: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Maximum number of players that may connect to the server
+        Keywords: players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/Engine.GameSession.MaxPlayers
+        IncludeInCommandLine: false
+        DefaultValue: '10'
+        Suffix: players
+        EnumValues: {}
+        MinValue: '1'
+    - key: noeac
+      label: Disable EasyAntiCheat
+      category: Frozen Flame
+      subcategory: Server
+      description: If set, the server will be started without EasyAntiCheat (EAC). Clients should also be started without it
+      keywords: easy,anti,cheat,eac,noeac
+      input_type: checkbox
+      param_field_name: noeac
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-noeac '
+      raw:
+        DisplayName: Disable EasyAntiCheat
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be started without EasyAntiCheat (EAC). Clients should also be started without it
+        Keywords: easy,anti,cheat,eac,noeac
+        FieldName: noeac
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: noeac
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-noeac '
+    - key: bSkipTutorial
+      label: Skip Tutorial
+      category: Frozen Flame
+      subcategory: Server
+      description: If set, the tutorial will be skipped
+      keywords: skip,tutorial,bskiptutorial
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bSkipTutorial
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Skip Tutorial
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the tutorial will be skipped
+        Keywords: skip,tutorial,bskiptutorial
+        FieldName: bSkipTutorial
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bSkipTutorial
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bFreePVP
+      label: Enable PvP
+      category: Frozen Flame
+      subcategory: Server
+      description: If set, PvP for non-friends will be enabled
+      keywords: pvp,bfreepvp
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bFreePVP
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable PvP
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, PvP for non-friends will be enabled
+        Keywords: pvp,bfreepvp
+        FieldName: bFreePVP
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bFreePVP
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: DurationOfDay
+      label: Day Length
+      category: Frozen Flame
+      subcategory: Server
+      description: Sets how long a day lasts on the server
+      keywords: day,duration,length,durationofday
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.DurationOfDay
+      default: '3600'
+      placeholder: '3600'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Day Length
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how long a day lasts on the server
+        Keywords: day,duration,length,durationofday
+        FieldName: DurationOfDay
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.DurationOfDay
+        IncludeInCommandLine: false
+        DefaultValue: '3600'
+        Suffix: seconds
+        Placeholder: '3600'
+        EnumValues: {}
+    - key: HealthRateAfterRespawn
+      label: Health Rate After Respawn
+      category: Frozen Flame
+      subcategory: Server
+      description: Sets the health rate after death/upon respawn
+      keywords: health,rate,respawn,healthrateafterrespawn
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.HealthRateAfterRespawn
+      default: '0.5'
+      placeholder: '0.5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Health Rate After Respawn
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the health rate after death/upon respawn
+        Keywords: health,rate,respawn,healthrateafterrespawn
+        FieldName: HealthRateAfterRespawn
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.HealthRateAfterRespawn
+        IncludeInCommandLine: false
+        DefaultValue: '0.5'
+        Placeholder: '0.5'
+        EnumValues: {}
+    - key: bRestoreHealthOnLevelUp
+      label: Restore Health On Level Up
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, health will be restored on level up
+      keywords: health,restore,level,brestorehealthonlevelup
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bRestoreHealthOnLevelUp
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Restore Health On Level Up
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, health will be restored on level up
+        Keywords: health,restore,level,brestorehealthonlevelup
+        FieldName: bRestoreHealthOnLevelUp
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bRestoreHealthOnLevelUp
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: JumpStaminaCost
+      label: Jump Stamina Cost
+      category: Frozen Flame
+      subcategory: Server
+      description: Sets the stamina cost of jumping
+      keywords: stamina,cost,jumping,jumpstaminacost
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.JumpStaminaCost
+      default: '6'
+      placeholder: '6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Jump Stamina Cost
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the stamina cost of jumping
+        Keywords: stamina,cost,jumping,jumpstaminacost
+        FieldName: JumpStaminaCost
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.JumpStaminaCost
+        IncludeInCommandLine: false
+        DefaultValue: '6'
+        Placeholder: '6'
+        EnumValues: {}
+    - key: SprintStaminaCost
+      label: Sprint Stamina Cost
+      category: Frozen Flame
+      subcategory: Server
+      description: Sets the stamina cost of sprinting
+      keywords: stamina,cost,sprinting,sprintstaminacost
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.SprintStaminaCost
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Sprint Stamina Cost
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the stamina cost of sprinting
+        Keywords: stamina,cost,sprinting,sprintstaminacost
+        FieldName: SprintStaminaCost
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.SprintStaminaCost
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: ArmorDurabilityReducementAfterDeath
+      label: Armour Durability Reduction On Death
+      category: Frozen Flame
+      subcategory: Server
+      description: 'Sets the amount of armour durability lost after death. Defaults: 5 (Campaign), 25 (Survival)'
+      keywords: armour,durability,loss,reduction,armordurabilityreducementafterdeath
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.ArmorDurabilityReducementAfterDeath
+      default: '5'
+      placeholder: '5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Armour Durability Reduction On Death
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Sets the amount of armour durability lost after death. Defaults: 5 (Campaign), 25 (Survival)'
+        Keywords: armour,durability,loss,reduction,armordurabilityreducementafterdeath
+        FieldName: ArmorDurabilityReducementAfterDeath
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.ArmorDurabilityReducementAfterDeath
+        IncludeInCommandLine: false
+        DefaultValue: '5'
+        Placeholder: '5'
+        EnumValues: {}
+    - key: DefaultWeaponDurabilityCost
+      label: Default Weapon Durability Cost
+      category: Frozen Flame
+      subcategory: Server
+      description: 'Sets the default weapon durability loss speed. Defaults: 0.3 (Campaign), 0.5 (Survival)'
+      keywords: weapon,durability,cost,speed,defaultweapondurabilitycost
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.DefaultWeaponDurabilityCost
+      default: '0.3'
+      placeholder: '0.3'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Default Weapon Durability Cost
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Sets the default weapon durability loss speed. Defaults: 0.3 (Campaign), 0.5 (Survival)'
+        Keywords: weapon,durability,cost,speed,defaultweapondurabilitycost
+        FieldName: DefaultWeaponDurabilityCost
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.DefaultWeaponDurabilityCost
+        IncludeInCommandLine: false
+        DefaultValue: '0.3'
+        Placeholder: '0.3'
+        EnumValues: {}
+    - key: bDisableOverweight
+      label: Disable Overweight System
+      category: Frozen Flame
+      subcategory: Server
+      description: If set, disables the server's overweight system
+      keywords: disable,overweight,system,bdisableoverweight
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.DefaultsOverTimeEffect.bDisableOverweight
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Disable Overweight System
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, disables the server's overweight system
+        Keywords: disable,overweight,system,bdisableoverweight
+        FieldName: bDisableOverweight
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.DefaultsOverTimeEffect.bDisableOverweight
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: HalfSlowdownOverweightRatio
+      label: Half Slowdown Overweight Ratio
+      category: Frozen Flame
+      subcategory: Server
+      description: >-
+        If the overweight system is enabled, disables sprint for a player after the relevant ratio is reached. 1 = 100%
+        (default)
+      keywords: half,slowdown,overweight,ratio,halfslowdownoverweightratio
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.HalfSlowdownOverweightRatio
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Half Slowdown Overweight Ratio
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If the overweight system is enabled, disables sprint for a player after the relevant ratio is reached. 1 =
+          100% (default)
+        Keywords: half,slowdown,overweight,ratio,halfslowdownoverweightratio
+        FieldName: HalfSlowdownOverweightRatio
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.HalfSlowdownOverweightRatio
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: FullSlowdownOverweightRatio
+      label: Full Slowdown Overweight Ratio
+      category: Frozen Flame
+      subcategory: Server
+      description: >-
+        If the overweight system is enabled, disables run and getting new items after the relevant ratio is reached. 1.5
+        = 150% (default)
+      keywords: full,slowdown,overweight,ratio,fullslowdownoverweightratio
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.FullSlowdownOverweightRatio
+      default: '1.5'
+      placeholder: '1.5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Full Slowdown Overweight Ratio
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If the overweight system is enabled, disables run and getting new items after the relevant ratio is reached.
+          1.5 = 150% (default)
+        Keywords: full,slowdown,overweight,ratio,fullslowdownoverweightratio
+        FieldName: FullSlowdownOverweightRatio
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.FullSlowdownOverweightRatio
+        IncludeInCommandLine: false
+        DefaultValue: '1.5'
+        Placeholder: '1.5'
+        EnumValues: {}
+    - key: bIsAllowedToTeleportWithOverweight
+      label: Allow Teleport With Overweight
+      category: Frozen Flame
+      subcategory: Server
+      description: If set, teleport is allowed when the overweight system is enabled
+      keywords: teleport,overweight,bisallowedtoteleportwithoverweight
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bIsAllowedToTeleportWithOverweight
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Teleport With Overweight
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, teleport is allowed when the overweight system is enabled
+        Keywords: teleport,overweight,bisallowedtoteleportwithoverweight
+        FieldName: bIsAllowedToTeleportWithOverweight
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bIsAllowedToTeleportWithOverweight
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bIsAllowedToGlideWithOverweight
+      label: Allow Flying With Overweight
+      category: Frozen Flame
+      subcategory: Server
+      description: If set, flying is allowed when the overweight system is enabled
+      keywords: flying,glide,overweight,bisallowedtoglidewithoverweight
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bIsAllowedToGlideWithOverweight
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Flying With Overweight
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, flying is allowed when the overweight system is enabled
+        Keywords: flying,glide,overweight,bisallowedtoglidewithoverweight
+        FieldName: bIsAllowedToGlideWithOverweight
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bIsAllowedToGlideWithOverweight
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: MinimalLevelToDropItemAfterDeath
+      label: Minimal Level To Drop Item After Death
+      category: Frozen Flame
+      subcategory: Server
+      description: Sets the minimum player level for dropping items after death (assuming the relevant drop settings are enabled)
+      keywords: minimum,level,drop,items,death,minimalleveltodropitemafterdeath
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.MinimalLevelToDropItemAfterDeath
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Minimal Level To Drop Item After Death
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the minimum player level for dropping items after death (assuming the relevant drop settings are enabled)
+        Keywords: minimum,level,drop,items,death,minimalleveltodropitemafterdeath
+        FieldName: MinimalLevelToDropItemAfterDeath
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.MinimalLevelToDropItemAfterDeath
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: bDropEquippedItems
+      label: Drop Equipped Items
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, equipped items will be dropped after death (assuming the minimum player level is reached)
+      keywords: drop,equipped,items,bdropequippeditems
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bDropEquippedItems
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Drop Equipped Items
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, equipped items will be dropped after death (assuming the minimum player level is reached)
+        Keywords: drop,equipped,items,bdropequippeditems
+        FieldName: bDropEquippedItems
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bDropEquippedItems
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bDropEquipableItems
+      label: Drop Equipable Items
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, equipable items will be dropped after death (assuming the minimum player level is reached)
+      keywords: drop,equipable,items,bdropequipableitems
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bDropEquipableItems
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Drop Equipable Items
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, equipable items will be dropped after death (assuming the minimum player level is reached)
+        Keywords: drop,equipable,items,bdropequipableitems
+        FieldName: bDropEquipableItems
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bDropEquipableItems
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bDropFoodItems
+      label: Drop Food Items
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, food items will be dropped after death (assuming the minimum player level is reached)
+      keywords: drop,food,items,bdropfooditems
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bDropFoodItems
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Drop Food Items
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, food items will be dropped after death (assuming the minimum player level is reached)
+        Keywords: drop,food,items,bdropfooditems
+        FieldName: bDropFoodItems
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bDropFoodItems
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: LevelUpFlameRate
+      label: Level Up Flame Rate
+      category: Frozen Flame
+      subcategory: Server
+      description: Sets the flame rate required for the level up multiplier
+      keywords: level,up,flame,rate,levelupflamerate
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.LevelUpFlameRate
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Level Up Flame Rate
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the flame rate required for the level up multiplier
+        Keywords: level,up,flame,rate,levelupflamerate
+        FieldName: LevelUpFlameRate
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.LevelUpFlameRate
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: MonstersHealthMultiplier
+      label: Monsters Health Multiplier
+      category: Frozen Flame
+      subcategory: Server
+      description: Sets the monsters health multiplier
+      keywords: monsters,health,multiplier,monstershealthmultiplier
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.MonstersHealthMultiplier
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Monsters Health Multiplier
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the monsters health multiplier
+        Keywords: monsters,health,multiplier,monstershealthmultiplier
+        FieldName: MonstersHealthMultiplier
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.MonstersHealthMultiplier
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: MonstersDamageMultiplier
+      label: Monsters Damage Multiplier
+      category: Frozen Flame
+      subcategory: Server
+      description: Sets the monsters damage multiplier
+      keywords: monsters,damage,multiplier,monstersdamagemultiplier
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.MonstersDamageMultiplier
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Monsters Damage Multiplier
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the monsters damage multiplier
+        Keywords: monsters,damage,multiplier,monstersdamagemultiplier
+        FieldName: MonstersDamageMultiplier
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.MonstersDamageMultiplier
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: bNoModuleCost
+      label: Disable Module Cost
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, building will be allowed without material costs
+      keywords: disable,module,building,cost,bnomodulecost
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bNoModuleCost
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Disable Module Cost
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, building will be allowed without material costs
+        Keywords: disable,module,building,cost,bnomodulecost
+        FieldName: bNoModuleCost
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bNoModuleCost
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bLimitlessSupport
+      label: Enable Limitless Support
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, building will be allowed without restrictions
+      keywords: building,module,limitless,restrictions,blimitlesssupport
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bLimitlessSupport
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Limitless Support
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, building will be allowed without restrictions
+        Keywords: building,module,limitless,restrictions,blimitlesssupport
+        FieldName: bLimitlessSupport
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bLimitlessSupport
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bInvulnerableModules
+      label: Enable Invulnerable Modules
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, buildings will not decay
+      keywords: building,module,decay,invulnerable,binvulnerablemodules
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bInvulnerableModules
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Enable Invulnerable Modules
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, buildings will not decay
+        Keywords: building,module,decay,invulnerable,binvulnerablemodules
+        FieldName: bInvulnerableModules
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bInvulnerableModules
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bDemolishResourceDropMultiplier
+      label: Demolish Resource Drop Multiplier
+      category: Frozen Flame
+      subcategory: Server
+      description: Sets how many resources to return after modules/buildings are destroyed
+      keywords: building,module,drop,resource,bdemolishresourcedropmultiplier
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.bDemolishResourceDropMultiplier
+      default: '0.5'
+      placeholder: '0.5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Demolish Resource Drop Multiplier
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets how many resources to return after modules/buildings are destroyed
+        Keywords: building,module,drop,resource,bdemolishresourcedropmultiplier
+        FieldName: bDemolishResourceDropMultiplier
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bDemolishResourceDropMultiplier
+        IncludeInCommandLine: false
+        DefaultValue: '0.5'
+        Placeholder: '0.5'
+        EnumValues: {}
+    - key: bIgnoreDifficulty
+      label: Ignore Difficulty
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, difficulty settings will be ignored (for local coop only)
+      keywords: ignore,difficulty,local,coop,bignoredifficulty
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bIgnoreDifficulty
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Ignore Difficulty
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, difficulty settings will be ignored (for local coop only)
+        Keywords: ignore,difficulty,local,coop,bignoredifficulty
+        FieldName: bIgnoreDifficulty
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bIgnoreDifficulty
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: DecayThreshold
+      label: Decay Threshold
+      category: Frozen Flame
+      subcategory: Server
+      description: 'Sets a minimum durability that keeps after weather decay system damage. Defaults: 0.5 (Campaign), 0 (Survival)'
+      keywords: decay,threshold,minimum,durability,decaythreshold
+      input_type: number
+      param_field_name: /Script/FrozenFlame.GameBalance.DecayThreshold
+      default: '0.5'
+      placeholder: '0.5'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Decay Threshold
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Sets a minimum durability that keeps after weather decay system damage. Defaults: 0.5 (Campaign), 0 (Survival)'
+        Keywords: decay,threshold,minimum,durability,decaythreshold
+        FieldName: DecayThreshold
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.DecayThreshold
+        IncludeInCommandLine: false
+        DefaultValue: '0.5'
+        Placeholder: '0.5'
+        EnumValues: {}
+    - key: bOnlyOneSentinelAllowed
+      label: Allow Only One Sentinel
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, only a single sentinel can be built
+      keywords: single,one,sentinel,allowed,bonlyonesentinelallowed
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bOnlyOneSentinelAllowed
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Only One Sentinel
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, only a single sentinel can be built
+        Keywords: single,one,sentinel,allowed,bonlyonesentinelallowed
+        FieldName: bOnlyOneSentinelAllowed
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bOnlyOneSentinelAllowed
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bRequireActiveSentinelForBuildingMode
+      label: Allow Building Only In Active Sentinel Radius
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, only building inside an active sentinel radius will be allowed
+      keywords: build,active,sentinel,radius,brequireactivesentinelforbuildingmode
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bRequireActiveSentinelForBuildingMode
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Building Only In Active Sentinel Radius
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, only building inside an active sentinel radius will be allowed
+        Keywords: build,active,sentinel,radius,brequireactivesentinelforbuildingmode
+        FieldName: bRequireActiveSentinelForBuildingMode
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bRequireActiveSentinelForBuildingMode
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bDisallowToDestroyModulesWithoutOwnership
+      label: Disable Destruction Hammer Tool
+      category: Frozen Flame
+      subcategory: Server
+      description: If set, the destruction hammer tool will be disabled
+      keywords: disable,destruction,hammer,tool,bdisallowtodestroymoduleswithoutownership
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bDisallowToDestroyModulesWithoutOwnership
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Disable Destruction Hammer Tool
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the destruction hammer tool will be disabled
+        Keywords: disable,destruction,hammer,tool,bdisallowtodestroymoduleswithoutownership
+        FieldName: bDisallowToDestroyModulesWithoutOwnership
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bDisallowToDestroyModulesWithoutOwnership
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bAllowCreaturesToDamageBuildings
+      label: Allow Creatures To Damage Buildings
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, creatures will be able to damage buildings
+      keywords: allow,creatures,damage,buildings,ballowcreaturestodamagebuildings
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bAllowCreaturesToDamageBuildings
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Creatures To Damage Buildings
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, creatures will be able to damage buildings
+        Keywords: allow,creatures,damage,buildings,ballowcreaturestodamagebuildings
+        FieldName: bAllowCreaturesToDamageBuildings
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bAllowCreaturesToDamageBuildings
+        IncludeInCommandLine: false
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bAllowPlayersToDamageBuildings
+      label: Allow Players To Damage Buildings
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, players will be able to damage buildings
+      keywords: allow,players,damage,buildings,ballowplayerstodamagebuildings
+      input_type: checkbox
+      param_field_name: /Script/FrozenFlame.GameBalance.bAllowPlayersToDamageBuildings
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Allow Players To Damage Buildings
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, players will be able to damage buildings
+        Keywords: allow,players,damage,buildings,ballowplayerstodamagebuildings
+        FieldName: bAllowPlayersToDamageBuildings
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: /Script/FrozenFlame.GameBalance.bAllowPlayersToDamageBuildings
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: bApplyRestrictionsInsideEnergyBarriers
+      label: Apply Restrictions Inside Energy Barriers
+      category: Frozen Flame
+      subcategory: Server
+      description: If enabled, sets flying and some buildings restrictions inside energy barriers
+      keywords: restrictions,energy,barriers,bapplyrestrictionsinsideenergybarriers
+      input_type: checkbox
+      param_field_name: >-
+        /Game/FrozenFlame/DataTables/Variables/BP_GameBalance_Base.BP_GameBalance_Base_C.bApplyRestrictionsInsideEnergyBarriers
+      default: 'True'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Apply Restrictions Inside Energy Barriers
+        Category: Frozen Flame:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, sets flying and some buildings restrictions inside energy barriers
+        Keywords: restrictions,energy,barriers,bapplyrestrictionsinsideenergybarriers
+        FieldName: bApplyRestrictionsInsideEnergyBarriers
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: >-
+          /Game/FrozenFlame/DataTables/Variables/BP_GameBalance_Base.BP_GameBalance_Base_C.bApplyRestrictionsInsideEnergyBarriers
+        IncludeInCommandLine: false
+        DefaultValue: 'True'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+  files:
+    - path: FrozenFlame/Saved/Config/WindowsServer/Game.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: FrozenFlame/Saved/Config/WindowsServer/Game.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: FrozenFlame/Saved/Config/LinuxServer/Game.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: FrozenFlame/Saved/Config/LinuxServer/Game.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: FrozenFlame/Saved/Config/WindowsServer/GameModeSurvive.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: FrozenFlame/Saved/Config/WindowsServer/GameModeSurvive.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: FrozenFlame/Saved/Config/LinuxServer/GameModeSurvive.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: FrozenFlame/Saved/Config/LinuxServer/GameModeSurvive.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: FrozenFlame/Saved/Config/WindowsServer/HeavenNormal.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: FrozenFlame/Saved/Config/WindowsServer/HeavenNormal.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: FrozenFlame/Saved/Config/LinuxServer/HeavenNormal.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: FrozenFlame/Saved/Config/LinuxServer/HeavenNormal.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered Frozen Flame Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: ServerDefaultMap
+    label: Game Mode
+    default: /Game/FrozenFlame/Maps/Heaven/Heaven.Heaven
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PublicServer
+    label: Make Server Public
+    default: >-
+      -ini:Engine:[URL]:MetaServerUrl=meta.frozen-flame.xyz
+      -ini:Engine:[URL]:MetaServerSecret=TEuj7URa2horRuENjjpm3d1rqBPtHOz4 
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PublicIP
+    label: Public IP Selection Mode
+    default: '{{$ExternalIP}}'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualPublicIP
+    label: Server Public IP
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: noeac
+    label: Disable EasyAntiCheat
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bSkipTutorial
+    label: Skip Tutorial
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bFreePVP
+    label: Enable PvP
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DurationOfDay
+    label: Day Length
+    default: '3600'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HealthRateAfterRespawn
+    label: Health Rate After Respawn
+    default: '0.5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bRestoreHealthOnLevelUp
+    label: Restore Health On Level Up
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: JumpStaminaCost
+    label: Jump Stamina Cost
+    default: '6'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SprintStaminaCost
+    label: Sprint Stamina Cost
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ArmorDurabilityReducementAfterDeath
+    label: Armour Durability Reduction On Death
+    default: '5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DefaultWeaponDurabilityCost
+    label: Default Weapon Durability Cost
+    default: '0.3'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bDisableOverweight
+    label: Disable Overweight System
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: HalfSlowdownOverweightRatio
+    label: Half Slowdown Overweight Ratio
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FullSlowdownOverweightRatio
+    label: Full Slowdown Overweight Ratio
+    default: '1.5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bIsAllowedToTeleportWithOverweight
+    label: Allow Teleport With Overweight
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bIsAllowedToGlideWithOverweight
+    label: Allow Flying With Overweight
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MinimalLevelToDropItemAfterDeath
+    label: Minimal Level To Drop Item After Death
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bDropEquippedItems
+    label: Drop Equipped Items
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bDropEquipableItems
+    label: Drop Equipable Items
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bDropFoodItems
+    label: Drop Food Items
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: LevelUpFlameRate
+    label: Level Up Flame Rate
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MonstersHealthMultiplier
+    label: Monsters Health Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MonstersDamageMultiplier
+    label: Monsters Damage Multiplier
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bNoModuleCost
+    label: Disable Module Cost
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bLimitlessSupport
+    label: Enable Limitless Support
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bInvulnerableModules
+    label: Enable Invulnerable Modules
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bDemolishResourceDropMultiplier
+    label: Demolish Resource Drop Multiplier
+    default: '0.5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bIgnoreDifficulty
+    label: Ignore Difficulty
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DecayThreshold
+    label: Decay Threshold
+    default: '0.5'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bOnlyOneSentinelAllowed
+    label: Allow Only One Sentinel
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bRequireActiveSentinelForBuildingMode
+    label: Allow Building Only In Active Sentinel Radius
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bDisallowToDestroyModulesWithoutOwnership
+    label: Disable Destruction Hammer Tool
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowCreaturesToDamageBuildings
+    label: Allow Creatures To Damage Buildings
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bAllowPlayersToDamageBuildings
+    label: Allow Players To Damage Buildings
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: bApplyRestrictionsInsideEnergyBarriers
+    label: Apply Restrictions Inside Energy Barriers
+    default: 'True'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '715400'
+  collection_support: true
 backup:
   include:
     - /data

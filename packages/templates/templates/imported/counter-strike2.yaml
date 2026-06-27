@@ -5,13 +5,19 @@ category: Imported
 summary: Counter-Strike 2 Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '730'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 730/game/bin/linuxsteamrt64/cs2
+  startup: >-
+    730/game/bin/linuxsteamrt64/cs2 {PlatformArgs} -dedicated -usercon -serverlogging -nobreakpad -port {ServerPort} -ip
+    {ApplicationIPBinding} -maxplayers {MaxUsers} {insecure}{CustomParameters} {CustomConVars} +sv_logfile 1 {gamemode}
+    +rcon_password "{RemoteAdminPassword}" {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +25,1059 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
+  - key: serverport
+    name: Game and RCON Port
     default: 27015
-    protocol: udp
+    protocol: both
     required: true
-config_files: []
+config_files:
+  - path: counter-strike2config.json
+    type: json
+    editable: true
+  - path: counter-strike2metaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: hostname
+      label: Server Name
+      category: Counter-Strike 2
+      subcategory: Server
+      description: Sets the name of the server that appears in the server list
+      keywords: server,name,hostname
+      input_type: text
+      param_field_name: hostname
+      default: AMP Powered Counter-Strike 2 Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that appears in the server list
+        Keywords: server,name,hostname
+        FieldName: hostname
+        InputType: text
+        ParamFieldName: hostname
+        IncludeInCommandLine: true
+        DefaultValue: AMP Powered Counter-Strike 2 Server
+        EnumValues: {}
+    - key: sv_tags
+      label: Server Tags
+      category: Counter-Strike 2
+      subcategory: Server
+      description: Comma-separated list of server tags that give additional information about the server in the server browser
+      keywords: tags,sv_tags
+      input_type: text
+      param_field_name: sv_tags
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Tags
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Comma-separated list of server tags that give additional information about the server in the server browser
+        Keywords: tags,sv_tags
+        FieldName: sv_tags
+        InputType: text
+        ParamFieldName: sv_tags
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: sv_lan
+      label: LAN Server
+      category: Counter-Strike 2
+      subcategory: Server
+      description: >-
+        If enabled, the server will operate as a LAN server: no heartbeat, no authentication, and no non-class C
+        addresses
+      keywords: lan,local,sv_lan
+      input_type: checkbox
+      param_field_name: sv_lan
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: LAN Server
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server will operate as a LAN server: no heartbeat, no authentication, and no non-class C
+          addresses
+        Keywords: lan,local,sv_lan
+        FieldName: sv_lan
+        InputType: checkbox
+        ParamFieldName: sv_lan
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: sv_setsteamaccount
+      label: Game Server Login Token (GSLT)
+      category: Counter-Strike 2
+      subcategory: Server
+      description: >-
+        Sets the [Steam Game Server Login Token](https://steamcommunity.com/dev/managegameservers) for the server, to
+        allow it to be listed in the server browser. Use app ID 730 when generating the token
+      keywords: steam,server,login,token,gslt,sv_setsteamaccount
+      input_type: password
+      param_field_name: sv_setsteamaccount
+      default: ''
+      placeholder: 6544F7E034119F113526E96474F559AH
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Game Server Login Token (GSLT)
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [Steam Game Server Login Token](https://steamcommunity.com/dev/managegameservers) for the server, to
+          allow it to be listed in the server browser. Use app ID 730 when generating the token
+        Keywords: steam,server,login,token,gslt,sv_setsteamaccount
+        FieldName: sv_setsteamaccount
+        InputType: password
+        ParamFieldName: sv_setsteamaccount
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: 6544F7E034119F113526E96474F559AH
+        EnumValues: {}
+    - key: sv_password
+      label: Server Password
+      category: Counter-Strike 2
+      subcategory: Server
+      description: Sets the password required to connect to the server. Default is no password
+      keywords: server,password,sv_password
+      input_type: password
+      param_field_name: sv_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server. Default is no password
+        Keywords: server,password,sv_password
+        FieldName: sv_password
+        InputType: password
+        ParamFieldName: sv_password
+        IncludeInCommandLine: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $RemoteAdminPassword
+      label: RCON Password
+      category: Counter-Strike 2
+      subcategory: Server
+      description: See the Security and Privacy menu for configurable options for the server's RCON
+      keywords: rcon,password,rcon_password
+      input_type: hidden
+      param_field_name: rcon_password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: RCON Password
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: See the Security and Privacy menu for configurable options for the server's RCON
+        Keywords: rcon,password,rcon_password
+        FieldName: $RemoteAdminPassword
+        InputType: hidden
+        IsFlagArgument: false
+        ParamFieldName: rcon_password
+        EnumValues: {}
+    - key: gamemode
+      label: Initial Game Mode
+      category: Counter-Strike 2
+      subcategory: Server
+      description: Sets the game mode (game_type, game_mode) to start the server with
+      keywords: game,mode,gamemode,game_mode,game_type
+      input_type: enum
+      param_field_name: gamemode
+      default: +game_type 0 +game_mode 0
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        +game_type 0 +game_mode 0: Casual (default)
+        +game_type 0 +game_mode 1: Competitive
+        +game_type 0 +game_mode 2: Wingman (Competitive 2v2)
+        +game_type 1 +game_mode 0: Arms Race
+        +game_type 1 +game_mode 2: Deathmatch
+        +game_type 2 +game_mode 0: Training
+        +game_type 3 +game_mode 0: Custom
+        +game_type 4 +game_mode 0: Guardian (Co-operative)
+        +game_type 4 +game_mode 1: Co-op Strike (Co-op Mission)
+        +game_type 0 +game_mode 0 +sv_skirmish_id 12: Retakes
+      raw:
+        DisplayName: Initial Game Mode
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the game mode (game_type, game_mode) to start the server with
+        Keywords: game,mode,gamemode,game_mode,game_type
+        FieldName: gamemode
+        InputType: enum
+        ParamFieldName: gamemode
+        DefaultValue: +game_type 0 +game_mode 0
+        EnumValues:
+          +game_type 0 +game_mode 0: Casual (default)
+          +game_type 0 +game_mode 1: Competitive
+          +game_type 0 +game_mode 2: Wingman (Competitive 2v2)
+          +game_type 1 +game_mode 0: Arms Race
+          +game_type 1 +game_mode 2: Deathmatch
+          +game_type 2 +game_mode 0: Training
+          +game_type 3 +game_mode 0: Custom
+          +game_type 4 +game_mode 0: Guardian (Co-operative)
+          +game_type 4 +game_mode 1: Co-op Strike (Co-op Mission)
+          +game_type 0 +game_mode 0 +sv_skirmish_id 12: Retakes
+    - key: map
+      label: Initial Map
+      category: Counter-Strike 2
+      subcategory: Server
+      description: Sets the map to start the server with. If "Custom" is selected, Custom Initial Map must also be specified
+      keywords: map
+      input_type: enum
+      param_field_name: map
+      default: de_dust2
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        de_ancient: Ancient
+        de_anubis: Anubis
+        de_dust2: Dust II (default)
+        de_inferno: Inferno
+        cs_italy: Italy
+        de_mirage: Mirage
+        de_nuke: Nuke
+        cs_office: Office
+        de_overpass: Overpass
+        de_vertigo: Vertigo
+        '{{CustomMap}}': '--Custom--'
+      raw:
+        DisplayName: Initial Map
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map to start the server with. If "Custom" is selected, Custom Initial Map must also be specified
+        Keywords: map
+        FieldName: map
+        InputType: enum
+        ParamFieldName: map
+        IncludeInCommandLine: true
+        DefaultValue: de_dust2
+        EnumValues:
+          de_ancient: Ancient
+          de_anubis: Anubis
+          de_dust2: Dust II (default)
+          de_inferno: Inferno
+          cs_italy: Italy
+          de_mirage: Mirage
+          de_nuke: Nuke
+          cs_office: Office
+          de_overpass: Overpass
+          de_vertigo: Vertigo
+          '{{CustomMap}}': '--Custom--'
+    - key: CustomMap
+      label: Custom Initial Map
+      category: Counter-Strike 2
+      subcategory: Server
+      description: >-
+        Sets a custom map to use for the Initial Map, if "Custom" is selected. The map file must be in the
+        'game/csgo/maps' directory
+      keywords: custom,map
+      input_type: text
+      param_field_name: CustomMap
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Initial Map
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets a custom map to use for the Initial Map, if "Custom" is selected. The map file must be in the
+          'game/csgo/maps' directory
+        Keywords: custom,map
+        FieldName: CustomMap
+        InputType: text
+        ParamFieldName: CustomMap
+        DefaultValue: ''
+        EnumValues: {}
+    - key: mapgroup
+      label: Map Group
+      category: Counter-Strike 2
+      subcategory: Server
+      description: >-
+        Sets the map group to load to enable map rotation. The map group must be defined in
+        'game/csgo/gamemodes_server.txt'. See
+        [example](https://github.com/kus/cs2-modded-server/blob/master/game/csgo/gamemodes_server.txt). Alternatively
+        specify a Workshop Collection ID which includes the maps required for rotation, and use a plugin to load them
+      keywords: map,group,mapgroup
+      input_type: text
+      param_field_name: mapgroup
+      default: ''
+      placeholder: mg_cs2
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Map Group
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the map group to load to enable map rotation. The map group must be defined in
+          'game/csgo/gamemodes_server.txt'. See
+          [example](https://github.com/kus/cs2-modded-server/blob/master/game/csgo/gamemodes_server.txt). Alternatively
+          specify a Workshop Collection ID which includes the maps required for rotation, and use a plugin to load them
+        Keywords: map,group,mapgroup
+        FieldName: mapgroup
+        InputType: text
+        ParamFieldName: mapgroup
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: mg_cs2
+        EnumValues: {}
+    - key: host_workshop_map
+      label: Workshop Map ID
+      category: Counter-Strike 2
+      subcategory: Server
+      description: >-
+        Sets the ID of a [Steam workshop
+        map](https://steamcommunity.com/workshop/browse/?appid=730&browsesort=trend&section=readytouseitems) to download
+        and load on the server. This will override the Initial Map setting (however the Initial Map setting must still
+        be set to a valid map for the server to start)
+      keywords: workshop,map,host_workshop_map
+      input_type: number
+      param_field_name: host_workshop_map
+      default: ''
+      placeholder: '3070217773'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Workshop Map ID
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the ID of a [Steam workshop
+          map](https://steamcommunity.com/workshop/browse/?appid=730&browsesort=trend&section=readytouseitems) to
+          download and load on the server. This will override the Initial Map setting (however the Initial Map setting
+          must still be set to a valid map for the server to start)
+        Keywords: workshop,map,host_workshop_map
+        FieldName: host_workshop_map
+        InputType: number
+        ParamFieldName: host_workshop_map
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: '3070217773'
+        EnumValues: {}
+    - key: host_workshop_collection
+      label: Workshop Collection ID
+      category: Counter-Strike 2
+      subcategory: Server
+      description: >-
+        Sets the ID of a [Steam workshop
+        collection](https://steamcommunity.com/workshop/browse/?appid=730&browsesort=trend&section=collections) to
+        download and load on the server. After starting the server on a valid Initial Map, switch to a collection map
+        manually by using the command 'ds_workshop_changelevel', or automatically by using a plugin. List the collection
+        maps with 'ds_workshop_listmaps'
+      keywords: workshop,collection,host_workshop_collection
+      input_type: number
+      param_field_name: host_workshop_collection
+      default: ''
+      placeholder: '3065925629'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Workshop Collection ID
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the ID of a [Steam workshop
+          collection](https://steamcommunity.com/workshop/browse/?appid=730&browsesort=trend&section=collections) to
+          download and load on the server. After starting the server on a valid Initial Map, switch to a collection map
+          manually by using the command 'ds_workshop_changelevel', or automatically by using a plugin. List the
+          collection maps with 'ds_workshop_listmaps'
+        Keywords: workshop,collection,host_workshop_collection
+        FieldName: host_workshop_collection
+        InputType: number
+        ParamFieldName: host_workshop_collection
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        Placeholder: '3065925629'
+        EnumValues: {}
+    - key: sv_workshop_allow_other_maps
+      label: Allow Other Map By Players
+      category: Counter-Strike 2
+      subcategory: Server
+      description: >-
+        If set, and when the server is hosting a workshop collection, players will be able to play another workshop map
+        on the server when it is empty and then rotate their map cycle into the server collection
+      keywords: workshop,map,allow,other,sv_workshop_allow_other_maps
+      input_type: checkbox
+      param_field_name: sv_workshop_allow_other_maps
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Other Map By Players
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, and when the server is hosting a workshop collection, players will be able to play another workshop
+          map on the server when it is empty and then rotate their map cycle into the server collection
+        Keywords: workshop,map,allow,other,sv_workshop_allow_other_maps
+        FieldName: sv_workshop_allow_other_maps
+        InputType: checkbox
+        ParamFieldName: sv_workshop_allow_other_maps
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: $MaxUsers
+      label: Player Limit
+      category: Counter-Strike 2
+      subcategory: Server
+      description: Sets the maximum number of players allowed on the server at one time
+      keywords: max,players,limit,maxplayers
+      input_type: number
+      param_field_name: maxplayers
+      default: '32'
+      placeholder: '32'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 64
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players allowed on the server at one time
+        Keywords: max,players,limit,maxplayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '64'
+        ParamFieldName: maxplayers
+        DefaultValue: '32'
+        Placeholder: '32'
+        Suffix: players
+        EnumValues: {}
+    - key: sv_pure
+      label: Pure Server Mode
+      category: Counter-Strike 2
+      subcategory: Server
+      description: Sets whether clients are only allowed to use certain files
+      keywords: pure,server,cheat,hack,integrity,sv_pure
+      input_type: enum
+      param_field_name: sv_pure
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '0': Client files not restricted
+        '1': All client files except those listed in pure_server_whitelist.txt must match the server
+        '2': All client files must come from Steam
+      raw:
+        DisplayName: Pure Server Mode
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets whether clients are only allowed to use certain files
+        Keywords: pure,server,cheat,hack,integrity,sv_pure
+        FieldName: sv_pure
+        InputType: enum
+        ParamFieldName: sv_pure
+        IncludeInCommandLine: true
+        DefaultValue: '0'
+        EnumValues:
+          '0': Client files not restricted
+          '1': All client files except those listed in pure_server_whitelist.txt must match the server
+          '2': All client files must come from Steam
+    - key: sv_cheats
+      label: Enable Cheats
+      category: Counter-Strike 2
+      subcategory: Server
+      description: If set, cheat convars will be allowed to be used on the server
+      keywords: allow,cheat,hack,integrity,sv_cheats
+      input_type: checkbox
+      param_field_name: sv_cheats
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Cheats
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, cheat convars will be allowed to be used on the server
+        Keywords: allow,cheat,hack,integrity,sv_cheats
+        FieldName: sv_cheats
+        InputType: checkbox
+        ParamFieldName: sv_cheats
+        IncludeInCommandLine: true
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: insecure
+      label: Disable Valve Anti-Cheat
+      category: Counter-Strike 2
+      subcategory: Server
+      description: If set, Valve Anti-Cheat (VAC) will be disabled
+      keywords: valve,anti,cheat,vac,insecure
+      input_type: checkbox
+      param_field_name: insecure
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-insecure '
+      raw:
+        DisplayName: Disable Valve Anti-Cheat
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, Valve Anti-Cheat (VAC) will be disabled
+        Keywords: valve,anti,cheat,vac,insecure
+        FieldName: insecure
+        InputType: checkbox
+        ParamFieldName: insecure
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-insecure '
+    - key: ip
+      label: Server/RCON IPv4 IP Binding
+      category: Counter-Strike 2
+      subcategory: Server
+      description: >-
+        If required, you can change the binding of the server and Source RCON by changing the Application IP Binding for
+        this instance. NOTE: The IP must be reachable by AMP, otherwise AMP's console won't work
+      keywords: ip,binding
+      input_type: hidden
+      param_field_name: ip
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server/RCON IPv4 IP Binding
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If required, you can change the binding of the server and Source RCON by changing the Application IP Binding
+          for this instance. NOTE: The IP must be reachable by AMP, otherwise AMP's console won't work
+        Keywords: ip,binding
+        FieldName: ip
+        InputType: hidden
+        ParamFieldName: ip
+        EnumValues: {}
+    - key: CustomParameters
+      label: Additional Command Line Parameters
+      category: Counter-Strike 2
+      subcategory: Server
+      description: >-
+        Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by AMP.
+        Use with care
+      keywords: custom,server,arguments,variables,cvars,convars,parameters
+      input_type: text
+      param_field_name: CustomParameters
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Command Line Parameters
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by
+          AMP. Use with care
+        Keywords: custom,server,arguments,variables,cvars,convars,parameters
+        FieldName: CustomParameters
+        InputType: text
+        ParamFieldName: CustomParameters
+        DefaultValue: ''
+        Placeholder: ''
+        EnumValues: {}
+    - key: CustomConVars
+      label: Additional Console Variables
+      category: Counter-Strike 2
+      subcategory: Server
+      description: >-
+        Specifies additional console variables (anything that begins with a +) that are not otherwise set by AMP. Use
+        with care
+      keywords: custom,server,arguments,variables,cvars,convars,parameters
+      input_type: text
+      param_field_name: CustomConVars
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Additional Console Variables
+        Category: Counter-Strike 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Specifies additional console variables (anything that begins with a +) that are not otherwise set by AMP. Use
+          with care
+        Keywords: custom,server,arguments,variables,cvars,convars,parameters
+        FieldName: CustomConVars
+        InputType: text
+        ParamFieldName: CustomConVars
+        DefaultValue: ''
+        Placeholder: ''
+        EnumValues: {}
+    - key: EnableBeta
+      label: Enable Beta Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: >-
+        If enabled, allows beta branches (branches other than "public") to be installed. Specify the branch under
+        "Selected Beta Branch". Update the server after switching branches
+      keywords: enable,beta,branch
+      input_type: checkbox
+      param_field_name: EnableBeta
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Beta Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: >-
+          If enabled, allows beta branches (branches other than "public") to be installed. Specify the branch under
+          "Selected Beta Branch". Update the server after switching branches
+        Keywords: enable,beta,branch
+        FieldName: EnableBeta
+        InputType: checkbox
+        ParamFieldName: EnableBeta
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: BetaBranch
+      label: Selected Beta Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: >-
+        Sets the [beta branch](https://steamdb.info/app/730/depots/) to install. Requires "Enable Beta Branch" to be
+        enabled. Set any required password under "Beta Password". Update the server after switching branches
+      keywords: beta,branch
+      input_type: text
+      param_field_name: BetaBranch
+      default: ''
+      placeholder: animgraph_2_beta
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Selected Beta Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: >-
+          Sets the [beta branch](https://steamdb.info/app/730/depots/) to install. Requires "Enable Beta Branch" to be
+          enabled. Set any required password under "Beta Password". Update the server after switching branches
+        Keywords: beta,branch
+        FieldName: BetaBranch
+        InputType: text
+        ParamFieldName: BetaBranch
+        DefaultValue: ''
+        Placeholder: animgraph_2_beta
+        EnumValues: {}
+    - key: InstallMetamod
+      label: Install Metamod
+      category: Updates
+      subcategory: Metamod and CSSharp
+      description: >-
+        If set, Metamod will be installed and activated when the server is updated. Metamod Branch and Metamod Build
+        Version must be set accordingly
+      keywords: install,metamod
+      input_type: checkbox
+      param_field_name: InstallMetamod
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Install Metamod
+        Category: Updates
+        Subcategory: Metamod and CSSharp:build:3
+        Description: >-
+          If set, Metamod will be installed and activated when the server is updated. Metamod Branch and Metamod Build
+          Version must be set accordingly
+        Keywords: install,metamod
+        FieldName: InstallMetamod
+        InputType: checkbox
+        ParamFieldName: InstallMetamod
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: MetamodBranch
+      label: Metamod Branch
+      category: Updates
+      subcategory: Metamod and CSSharp
+      description: Specifies the [Metamod branch](https://www.metamodsource.net/downloads.php?branch=master&all=1) to install
+      keywords: metamod,branch
+      input_type: enum
+      param_field_name: MetamodBranch
+      default: '2.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '2.0': Development (2.0) (default)
+      raw:
+        DisplayName: Metamod Branch
+        Category: Updates
+        Subcategory: Metamod and CSSharp:build:3
+        Description: Specifies the [Metamod branch](https://www.metamodsource.net/downloads.php?branch=master&all=1) to install
+        Keywords: metamod,branch
+        FieldName: MetamodBranch
+        InputType: enum
+        ParamFieldName: MetamodBranch
+        DefaultValue: '2.0'
+        EnumValues:
+          '2.0': Development (2.0) (default)
+    - key: MetamodBuild
+      label: Metamod Build Version
+      category: Updates
+      subcategory: Metamod and CSSharp
+      description: >-
+        Specifies the [Metamod build version](https://www.metamodsource.net/downloads.php?branch=master&all=1) to
+        install. Empty = latest build for the branch specified under Metamod Branch
+      keywords: metamod,build,version
+      input_type: number
+      param_field_name: MetamodBuild
+      default: ''
+      placeholder: '1315'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Metamod Build Version
+        Category: Updates
+        Subcategory: Metamod and CSSharp:build:3
+        Description: >-
+          Specifies the [Metamod build version](https://www.metamodsource.net/downloads.php?branch=master&all=1) to
+          install. Empty = latest build for the branch specified under Metamod Branch
+        Keywords: metamod,build,version
+        FieldName: MetamodBuild
+        InputType: number
+        ParamFieldName: MetamodBuild
+        DefaultValue: ''
+        Placeholder: '1315'
+        EnumValues: {}
+    - key: InstallCSSharp
+      label: Install CounterStrikeSharp
+      category: Updates
+      subcategory: Metamod and CSSharp
+      description: >-
+        If set, the latest version of [CounterStrikeSharp](https://docs.cssharp.dev/index.html) will be installed when
+        the server is updated. Requires Metamod to be installed and activated
+      keywords: install,cssharp,counterstrikesharp
+      input_type: checkbox
+      param_field_name: InstallCSSharp
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Install CounterStrikeSharp
+        Category: Updates
+        Subcategory: Metamod and CSSharp:build:3
+        Description: >-
+          If set, the latest version of [CounterStrikeSharp](https://docs.cssharp.dev/index.html) will be installed when
+          the server is updated. Requires Metamod to be installed and activated
+        Keywords: install,cssharp,counterstrikesharp
+        FieldName: InstallCSSharp
+        InputType: checkbox
+        ParamFieldName: InstallCSSharp
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: hostname
+    label: Server Name
+    default: AMP Powered Counter-Strike 2 Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_tags
+    label: Server Tags
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_lan
+    label: LAN Server
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_setsteamaccount
+    label: Game Server Login Token (GSLT)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: sv_password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: gamemode
+    label: Initial Game Mode
+    default: +game_type 0 +game_mode 0
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: map
+    label: Initial Map
+    default: de_dust2
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomMap
+    label: Custom Initial Map
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mapgroup
+    label: Map Group
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: host_workshop_map
+    label: Workshop Map ID
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: host_workshop_collection
+    label: Workshop Collection ID
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_workshop_allow_other_maps
+    label: Allow Other Map By Players
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_pure
+    label: Pure Server Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: sv_cheats
+    label: Enable Cheats
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: insecure
+    label: Disable Valve Anti-Cheat
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomParameters
+    label: Additional Command Line Parameters
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomConVars
+    label: Additional Console Variables
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnableBeta
+    label: Enable Beta Branch
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BetaBranch
+    label: Selected Beta Branch
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InstallMetamod
+    label: Install Metamod
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MetamodBranch
+    label: Metamod Branch
+    default: '2.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MetamodBuild
+    label: Metamod Build Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InstallCSSharp
+    label: Install CounterStrikeSharp
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '730'
+  collection_support: true
 backup:
   include:
     - /data

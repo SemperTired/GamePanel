@@ -4,14 +4,16 @@ name: Open World - RimWorld Server
 category: Imported
 summary: Open World - a free multiplayer mod for RimWorld
 install:
-  method: steamcmd
-  app_id: 'False'
-  anonymous: true
+  method: direct_archive
+  anonymous: false
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: server/OpenWorldServer
+  startup: server/OpenWorldServer {PlatformArgs} {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +21,2611 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
-    protocol: udp
+  - key: serverport
+    name: Server Port
+    default: 25555
+    protocol: tcp
     required: true
-config_files: []
+config_files:
+  - path: Data/Config.json
+    type: json
+    editable: true
+  - path: Data/Deep Config.json
+    type: json
+    editable: true
+  - path: Data/Values.json
+    type: json
+    editable: true
+  - path: Data/Difficulty.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $ServerPort
+      label: Server Port
+      category: Open World
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $.ServerPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Port
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ServerPort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $.ServerPort
+        EnumValues: {}
+    - key: $ApplicationIPBinding
+      label: Server IP Binding
+      category: Open World
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: text
+      param_field_name: $.LocalAddress
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server IP Binding
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $ApplicationIPBinding
+        InputType: text
+        Hidden: true
+        ParamFieldName: $.LocalAddress
+        IncludeInCommandLine: false
+        EnumValues: {}
+    - key: World
+      label: World Generation
+      category: Open World
+      subcategory: Server
+      description: >-
+        Follow [these instructions](https://openworldhelp.fandom.com/wiki/Creating_a_server#Generating_the_world) to
+        generate a world for the server after it is first run
+      keywords: world,generate,generation
+      input_type: hidden
+      param_field_name: World
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Generation
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Follow [these instructions](https://openworldhelp.fandom.com/wiki/Creating_a_server#Generating_the_world) to
+          generate a world for the server after it is first run
+        Keywords: world,generate,generation
+        FieldName: World
+        InputType: hidden
+        ParamFieldName: World
+        EnumValues: {}
+    - key: ServerPassword
+      label: Server Password
+      category: Open World
+      subcategory: Server
+      description: Sets the password for players to join the server. Default is no password
+      keywords: server,password,ServerPassword
+      input_type: password
+      param_field_name: $.ServerPassword
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for players to join the server. Default is no password
+        Keywords: server,password,ServerPassword
+        FieldName: ServerPassword
+        InputType: password
+        ParamFieldName: $.ServerPassword
+        DefaultValue: ''
+        EnumValues: {}
+    - key: PlayerVersion
+      label: Player Version
+      category: Open World
+      subcategory: Server
+      description: >-
+        Sets the mod version players will use. Find this in the Open World [discord
+        channel](https://discord.com/channels/992806266109964319/992881103071354890)
+      keywords: player,version,mod,PlayerVersion
+      input_type: number
+      param_field_name: $.PlayerVersion
+      default: '1.3'
+      placeholder: '1.3'
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Player Version
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the mod version players will use. Find this in the Open World [discord
+          channel](https://discord.com/channels/992806266109964319/992881103071354890)
+        Keywords: player,version,mod,PlayerVersion
+        FieldName: PlayerVersion
+        InputType: number
+        ParamFieldName: $.PlayerVersion
+        DefaultValue: '1.3'
+        Placeholder: '1.3'
+        Required: true
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Open World
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,max,players,limit,MaxPlayers
+      input_type: number
+      param_field_name: $.MaxPlayers
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,max,players,limit,MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        ParamFieldName: $.MaxPlayers
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: players
+        EnumValues: {}
+    - key: UseWhitelist
+      label: Enable Whitelist
+      category: Open World
+      subcategory: Server
+      description: If enabled, allows only the usernames listed in Data/Whitelist.json to join the server
+      keywords: whitelist,players,UseWhitelist
+      input_type: checkbox
+      param_field_name: $.UseWhitelist
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Whitelist
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, allows only the usernames listed in Data/Whitelist.json to join the server
+        Keywords: whitelist,players,UseWhitelist
+        FieldName: UseWhitelist
+        InputType: checkbox
+        ParamFieldName: $.UseWhitelist
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: EnforceMods
+      label: Enforce Mods
+      category: Open World
+      subcategory: Server
+      description: >-
+        If enabled, players will be forced to use the mods that have their DLLs in the "Mods enforced" directory.
+        Otherwise, players can join with any mods they like
+      keywords: enforce,mods,EnforceMods
+      input_type: checkbox
+      param_field_name: $.EnforceMods
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enforce Mods
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, players will be forced to use the mods that have their DLLs in the "Mods enforced" directory.
+          Otherwise, players can join with any mods they like
+        Keywords: enforce,mods,EnforceMods
+        FieldName: EnforceMods
+        InputType: checkbox
+        ParamFieldName: $.EnforceMods
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: UseModBlacklist
+      label: Use Mod Blacklist
+      category: Open World
+      subcategory: Server
+      description: >-
+        If enabled, mods that have their DLLs in the "Mods blacklisted" directory cannot be used. This setting is
+        usually used when Enforce Mods is disabled
+      keywords: mods,blacklist,UseModBlacklist
+      input_type: checkbox
+      param_field_name: $.UseModBlacklist
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use Mod Blacklist
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, mods that have their DLLs in the "Mods blacklisted" directory cannot be used. This setting is
+          usually used when Enforce Mods is disabled
+        Keywords: mods,blacklist,UseModBlacklist
+        FieldName: UseModBlacklist
+        InputType: checkbox
+        ParamFieldName: $.UseModBlacklist
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowCustomScenarios
+      label: Allow Custom Scenarios
+      category: Open World
+      subcategory: Server
+      description: If enabled, players will be allowed to create custom scenarios when creating their save on the server
+      keywords: custom,scenarios,AllowCustomScenarios
+      input_type: checkbox
+      param_field_name: $.AllowCustomScenarios
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Custom Scenarios
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If enabled, players will be allowed to create custom scenarios when creating their save on the server
+        Keywords: custom,scenarios,AllowCustomScenarios
+        FieldName: AllowCustomScenarios
+        InputType: checkbox
+        ParamFieldName: $.AllowCustomScenarios
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: BackUpIntervalInHours
+      label: Backup Interval
+      category: Open World
+      subcategory: Server
+      description: Sets the time period between automatic backups
+      keywords: backup,interval,BackUpIntervalInHours
+      input_type: number
+      param_field_name: $.BackUpIntervalInHours
+      default: '6.0'
+      placeholder: '6.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: hours
+      enum_values: {}
+      raw:
+        DisplayName: Backup Interval
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the time period between automatic backups
+        Keywords: backup,interval,BackUpIntervalInHours
+        FieldName: BackUpIntervalInHours
+        InputType: number
+        ParamFieldName: $.BackUpIntervalInHours
+        DefaultValue: '6.0'
+        Placeholder: '6.0'
+        Suffix: hours
+        EnumValues: {}
+    - key: DevConsole
+      label: Enable Extra Console Logging
+      category: Open World
+      subcategory: Server
+      description: >-
+        If enabled, the server console will include additional logging output for developer or debugging purposes. Not
+        recommended for normal use
+      keywords: dev,console,DevConsole
+      input_type: checkbox
+      param_field_name: $.DevConsole
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Extra Console Logging
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If enabled, the server console will include additional logging output for developer or debugging purposes. Not
+          recommended for normal use
+        Keywords: dev,console,DevConsole
+        FieldName: DevConsole
+        InputType: checkbox
+        ParamFieldName: $.DevConsole
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ReleaseVersion
+      label: Server Release Version
+      category: Open World
+      subcategory: Server
+      description: >-
+        Sets the [server release version] (https://github.com/D12-Dev/OpenWorld/releases) to install. Empty = latest.
+        Back up configuration and update the server!
+      keywords: server,release,version
+      input_type: text
+      param_field_name: ReleaseVersion
+      default: ''
+      placeholder: v1.0.4
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Release Version
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [server release version] (https://github.com/D12-Dev/OpenWorld/releases) to install. Empty = latest.
+          Back up configuration and update the server!
+        Keywords: server,release,version
+        FieldName: ReleaseVersion
+        InputType: text
+        ParamFieldName: ReleaseVersion
+        DefaultValue: ''
+        Placeholder: v1.0.4
+        EnumValues: {}
+    - key: DotnetVersion
+      label: Dotnet Version
+      category: Open World
+      subcategory: Server
+      description: >-
+        Sets the [ASP.NET Core Runtime 3.1 version](https://dotnet.microsoft.com/en-us/download/dotnet/3.1) to install.
+        Empty = latest. Update the server after changing this setting
+      keywords: dotnet,version
+      input_type: text
+      param_field_name: DotnetVersion
+      default: ''
+      placeholder: 3.1.32
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Dotnet Version
+        Category: Open World:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the [ASP.NET Core Runtime 3.1 version](https://dotnet.microsoft.com/en-us/download/dotnet/3.1) to
+          install. Empty = latest. Update the server after changing this setting
+        Keywords: dotnet,version
+        FieldName: DotnetVersion
+        InputType: text
+        ParamFieldName: DotnetVersion
+        DefaultValue: ''
+        Placeholder: 3.1.32
+        EnumValues: {}
+    - key: BankCashPerTick
+      label: Bank Cash Per Tick
+      category: Open World
+      subcategory: Gameplay
+      description: Sets how much banks make every tick (banks tick every 10 minutes)
+      keywords: bank,cash,tick,BankCashPerTick
+      input_type: number
+      param_field_name: $.BankCashPerTick
+      default: '50'
+      placeholder: '50'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Bank Cash Per Tick
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets how much banks make every tick (banks tick every 10 minutes)
+        Keywords: bank,cash,tick,BankCashPerTick
+        FieldName: BankCashPerTick
+        InputType: number
+        ParamFieldName: $.BankCashPerTick
+        DefaultValue: '50'
+        Placeholder: '50'
+        EnumValues: {}
+    - key: MaximumCashInBankForTick
+      label: Maximum Cash In Bank For Tick
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the maximum amount of money that can be in the bank
+      keywords: maximum,cash,bank,tick,MaximumCashInBankForTick
+      input_type: number
+      param_field_name: $.MaximumCashInBankForTick
+      default: '10000'
+      placeholder: '10000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Maximum Cash In Bank For Tick
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the maximum amount of money that can be in the bank
+        Keywords: maximum,cash,bank,tick,MaximumCashInBankForTick
+        FieldName: MaximumCashInBankForTick
+        InputType: number
+        ParamFieldName: $.MaximumCashInBankForTick
+        DefaultValue: '10000'
+        Placeholder: '10000'
+        EnumValues: {}
+    - key: RaidCost
+      label: Raid Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of initiating a raid event
+      keywords: raid,cost,raidcost
+      input_type: number
+      param_field_name: $.RaidCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Raid Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of initiating a raid event
+        Keywords: raid,cost,raidcost
+        FieldName: RaidCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.RaidCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: InfestationCost
+      label: Infestation Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of triggering an infestation event
+      keywords: infestation,cost,infestationcost
+      input_type: number
+      param_field_name: $.InfestationCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Infestation Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of triggering an infestation event
+        Keywords: infestation,cost,infestationcost
+        FieldName: InfestationCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.InfestationCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: MechClusterCost
+      label: Mech Cluster Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of spawning a mech cluster
+      keywords: mech,cluster,cost,mechclustercost
+      input_type: number
+      param_field_name: $.MechClusterCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Mech Cluster Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of spawning a mech cluster
+        Keywords: mech,cluster,cost,mechclustercost
+        FieldName: MechClusterCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.MechClusterCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: ToxicFalloutCost
+      label: Toxic Fallout Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of initiating a toxic fallout event
+      keywords: toxic,fallout,cost,toxicfalloutcost
+      input_type: number
+      param_field_name: $.ToxicFalloutCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Toxic Fallout Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of initiating a toxic fallout event
+        Keywords: toxic,fallout,cost,toxicfalloutcost
+        FieldName: ToxicFalloutCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.ToxicFalloutCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: ManhunterCost
+      label: Manhunter Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of triggering a manhunter pack event
+      keywords: manhunter,cost,manhuntercost
+      input_type: number
+      param_field_name: $.ManhunterCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Manhunter Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of triggering a manhunter pack event
+        Keywords: manhunter,cost,manhuntercost
+        FieldName: ManhunterCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.ManhunterCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: WandererCost
+      label: Wanderer Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of welcoming a wanderer
+      keywords: wanderer,cost,wanderercost
+      input_type: number
+      param_field_name: $.WandererCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Wanderer Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of welcoming a wanderer
+        Keywords: wanderer,cost,wanderercost
+        FieldName: WandererCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.WandererCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: FarmAnimalsCost
+      label: Farm Animals Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of receiving farm animals
+      keywords: farm,animals,cost,farmanimalscost
+      input_type: number
+      param_field_name: $.FarmAnimalsCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Farm Animals Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of receiving farm animals
+        Keywords: farm,animals,cost,farmanimalscost
+        FieldName: FarmAnimalsCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.FarmAnimalsCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: ShipChunkCost
+      label: Ship Chunk Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of sending a ship chunk
+      keywords: ship,chunk,cost,shipchunkcost
+      input_type: number
+      param_field_name: $.ShipChunkCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Ship Chunk Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of sending a ship chunk
+        Keywords: ship,chunk,cost,shipchunkcost
+        FieldName: ShipChunkCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.ShipChunkCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: GiveQuestCost
+      label: Give Quest Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of giving a quest
+      keywords: give,quest,cost,givequestcost
+      input_type: number
+      param_field_name: $.GiveQuestCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Give Quest Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of giving a quest
+        Keywords: give,quest,cost,givequestcost
+        FieldName: GiveQuestCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.GiveQuestCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: TraderCaravanCost
+      label: Trader Caravan Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of sending a trader caravan
+      keywords: trader,caravan,cost,tradercaravancost
+      input_type: number
+      param_field_name: $.TraderCaravanCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Trader Caravan Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of sending a trader caravan
+        Keywords: trader,caravan,cost,tradercaravancost
+        FieldName: TraderCaravanCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.TraderCaravanCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: SiloCost
+      label: Silo Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of building a silo
+      keywords: silo,cost,silocost
+      input_type: number
+      param_field_name: $.SiloCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Silo Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of building a silo
+        Keywords: silo,cost,silocost
+        FieldName: SiloCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.SiloCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: MarketplaceCost
+      label: Marketplace Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of establishing a marketplace
+      keywords: market,place,marketplace,cost,marketplacecost
+      input_type: number
+      param_field_name: $.MarketplaceCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Marketplace Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of establishing a marketplace
+        Keywords: market,place,marketplace,cost,marketplacecost
+        FieldName: MarketplaceCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.MarketplaceCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: ProductionSiteCost
+      label: Production Site Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of setting up a production site
+      keywords: production,site,cost,productionsitecost
+      input_type: number
+      param_field_name: $.ProductionSiteCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Production Site Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of setting up a production site
+        Keywords: production,site,cost,productionsitecost
+        FieldName: ProductionSiteCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.ProductionSiteCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: WonderCost
+      label: Wonder Structure Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of constructing a wonder
+      keywords: wonder,structure,cost,wondercost
+      input_type: number
+      param_field_name: $.WonderCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Wonder Structure Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of constructing a wonder
+        Keywords: wonder,structure,cost,wondercost
+        FieldName: WonderCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.WonderCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: BankCost
+      label: Bank Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of building a bank
+      keywords: bank,cost,bankcost
+      input_type: number
+      param_field_name: $.BankCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Bank Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of building a bank
+        Keywords: bank,cost,bankcost
+        FieldName: BankCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.BankCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: AeroportCost
+      label: Airport Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of constructing an airport
+      keywords: aeroport,airport,cost,aeroportcost
+      input_type: number
+      param_field_name: $.AeroportCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Airport Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of constructing an airport
+        Keywords: aeroport,airport,cost,aeroportcost
+        FieldName: AeroportCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.AeroportCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: AeroportUsageCost
+      label: Airport Usage Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of using an airport
+      keywords: aeroport,airport,usage,cost,aeroportusagecost
+      input_type: number
+      param_field_name: $.AeroportUsageCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Airport Usage Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of using an airport
+        Keywords: aeroport,airport,usage,cost,aeroportusagecost
+        FieldName: AeroportUsageCost
+        InputType: number
+        ParamFieldName: $.AeroportUsageCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: CourierCost
+      label: Courier Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of establishing a courier station
+      keywords: courier,cost,couriercost
+      input_type: number
+      param_field_name: $.CourierCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Courier Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of establishing a courier station
+        Keywords: courier,cost,couriercost
+        FieldName: CourierCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.CourierCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: CourierUsageCost
+      label: Courier Usage Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of using a courier service
+      keywords: courier,usage,cost,courierusagecost
+      input_type: number
+      param_field_name: $.CourierUsageCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Courier Usage Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of using a courier service
+        Keywords: courier,usage,cost,courierusagecost
+        FieldName: CourierUsageCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.CourierUsageCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: AidUsageCost
+      label: Aid Usage Cost
+      category: Open World
+      subcategory: Gameplay
+      description: Sets the cost of using aid
+      keywords: aid,usage,cost,aidusagecost
+      input_type: number
+      param_field_name: $.AidUsageCost
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      suffix: silver
+      enum_values: {}
+      raw:
+        DisplayName: Aid Usage Cost
+        Category: Open World:stadia_controller
+        Subcategory: Gameplay:joystick:2
+        Description: Sets the cost of using aid
+        Keywords: aid,usage,cost,aidusagecost
+        FieldName: AidUsageCost
+        InputType: number
+        MinValue: '0'
+        ParamFieldName: $.AidUsageCost
+        DefaultValue: '0'
+        Placeholder: '0'
+        Suffix: silver
+    - key: UseCustomDifficulty
+      label: Use Custom Difficulty
+      category: Open World
+      subcategory: Difficulty
+      description: >-
+        If enabled, all players will be forced to use the following difficulty settings. Make sure you give a value to
+        every setting, or it will be at 0%
+      keywords: custom,difficulty,UseCustomDifficulty
+      input_type: checkbox
+      param_field_name: $.UseCustomDifficulty
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Use Custom Difficulty
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: >-
+          If enabled, all players will be forced to use the following difficulty settings. Make sure you give a value to
+          every setting, or it will be at 0%
+        Keywords: custom,difficulty,UseCustomDifficulty
+        FieldName: UseCustomDifficulty
+        InputType: checkbox
+        ParamFieldName: $.UseCustomDifficulty
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: ThreatScale
+      label: Threat Scale
+      category: Open World
+      subcategory: Difficulty
+      description: Adjusts the size of threats like raids and infestations, and the difficulty of quests
+      keywords: threats,raids,infestations,quests,difficulty,scale,ThreatScale
+      input_type: number
+      param_field_name: $.ThreatScale
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Threat Scale
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjusts the size of threats like raids and infestations, and the difficulty of quests
+        Keywords: threats,raids,infestations,quests,difficulty,scale,ThreatScale
+        FieldName: ThreatScale
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.ThreatScale
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: AllowBigThreats
+      label: Allow Major Threats
+      category: Open World
+      subcategory: Difficulty
+      description: If set, allows major threats such as raids, infestations, manhunter packs, crashed mechanoid ships and more
+      keywords: major,threats,raids,infestations,manhunter,mechanoids,AllowBigThreats
+      input_type: checkbox
+      param_field_name: $.AllowBigThreats
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Major Threats
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: If set, allows major threats such as raids, infestations, manhunter packs, crashed mechanoid ships and more
+        Keywords: major,threats,raids,infestations,manhunter,mechanoids,AllowBigThreats
+        FieldName: AllowBigThreats
+        InputType: checkbox
+        ParamFieldName: $.AllowBigThreats
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowViolentQuests
+      label: Allow Quest Threats
+      category: Open World
+      subcategory: Difficulty
+      description: If set, allows quests to present with violent threats and challenges. Otherwise quests will be non-violent
+      keywords: quests,threats,violent,challenges,AllowViolentQuests
+      input_type: checkbox
+      param_field_name: $.AllowViolentQuests
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Quest Threats
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: If set, allows quests to present with violent threats and challenges. Otherwise quests will be non-violent
+        Keywords: quests,threats,violent,challenges,AllowViolentQuests
+        FieldName: AllowViolentQuests
+        InputType: checkbox
+        ParamFieldName: $.AllowViolentQuests
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowIntroThreats
+      label: Enable Intro Threats
+      category: Open World
+      subcategory: Difficulty
+      description: If set, enables the fixed intro threats that appear near game start
+      keywords: intro,threats,game,start,AllowIntroThreats
+      input_type: checkbox
+      param_field_name: $.AllowIntroThreats
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Enable Intro Threats
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: If set, enables the fixed intro threats that appear near game start
+        Keywords: intro,threats,game,start,AllowIntroThreats
+        FieldName: AllowIntroThreats
+        InputType: checkbox
+        ParamFieldName: $.AllowIntroThreats
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: PredatorsHuntHumanlikes
+      label: Allow Predators To Hunt Humans
+      category: Open World
+      subcategory: Difficulty
+      description: If set, allows wild predators to hunt humans
+      keywords: predators,hunt,humans,PredatorsHuntHumanlikes
+      input_type: checkbox
+      param_field_name: $.PredatorsHuntHumanlikes
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Predators To Hunt Humans
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: If set, allows wild predators to hunt humans
+        Keywords: predators,hunt,humans,PredatorsHuntHumanlikes
+        FieldName: PredatorsHuntHumanlikes
+        InputType: checkbox
+        ParamFieldName: $.PredatorsHuntHumanlikes
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowExtremeWeatherIncidents
+      label: Allow Extreme Weather Incidents
+      category: Open World
+      subcategory: Difficulty
+      description: If set, allows extreme weather incidents, such as toxic fallout, volcanic winters and flashstorms
+      keywords: extreme,weather,incidents,AllowExtremeWeatherIncidents
+      input_type: checkbox
+      param_field_name: $.AllowExtremeWeatherIncidents
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Extreme Weather Incidents
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: If set, allows extreme weather incidents, such as toxic fallout, volcanic winters and flashstorms
+        Keywords: extreme,weather,incidents,AllowExtremeWeatherIncidents
+        FieldName: AllowExtremeWeatherIncidents
+        InputType: checkbox
+        ParamFieldName: $.AllowExtremeWeatherIncidents
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: CropYieldFactor
+      label: Harvest Yield Factor
+      category: Open World
+      subcategory: Difficulty
+      description: Adjusts the amount of materials produced when harvesting plants and crops, including cutting trees
+      keywords: harvest,yield,plants,crops,materials,CropYieldFactor
+      input_type: number
+      param_field_name: $.CropYieldFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Harvest Yield Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjusts the amount of materials produced when harvesting plants and crops, including cutting trees
+        Keywords: harvest,yield,plants,crops,materials,CropYieldFactor
+        FieldName: CropYieldFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.CropYieldFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: MineYieldFactor
+      label: Mining Yield Factor
+      category: Open World
+      subcategory: Difficulty
+      description: Adjusts the amount of materials produced when mining
+      keywords: mining,yield,materials,MineYieldFactor
+      input_type: number
+      param_field_name: $.MineYieldFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Mining Yield Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjusts the amount of materials produced when mining
+        Keywords: mining,yield,materials,MineYieldFactor
+        FieldName: MineYieldFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.MineYieldFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: ButcherYieldFactor
+      label: Butchering Yield Factor
+      category: Open World
+      subcategory: Difficulty
+      description: >-
+        Adjusts the amount of materials produced when butchering, including meat, leather, and yield from shredding
+        mechanoids
+      keywords: butchering,yield,materials,ButcherYieldFactor
+      input_type: number
+      param_field_name: $.ButcherYieldFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Butchering Yield Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: >-
+          Adjusts the amount of materials produced when butchering, including meat, leather, and yield from shredding
+          mechanoids
+        Keywords: butchering,yield,materials,ButcherYieldFactor
+        FieldName: ButcherYieldFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.ButcherYieldFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: ResearchSpeedFactor
+      label: Research Speed Factor
+      category: Open World
+      subcategory: Difficulty
+      description: Adjusts the speed of research
+      keywords: research,speed,adjustment,ResearchSpeedFactor
+      input_type: number
+      param_field_name: $.ResearchSpeedFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Research Speed Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjusts the speed of research
+        Keywords: research,speed,adjustment,ResearchSpeedFactor
+        FieldName: ResearchSpeedFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.ResearchSpeedFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: QuestRewardValueFactor
+      label: Quest Reward Factor
+      category: Open World
+      subcategory: Difficulty
+      description: >-
+        Adjusts the value of rewards given for quests. Note that the quest reward value is also automatically scaled to
+        compensate for the threat scale, and so this setting adds an additional multiplier
+      keywords: quest,rewards,value,QuestRewardValueFactor
+      input_type: number
+      param_field_name: $.QuestRewardValueFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Quest Reward Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: >-
+          Adjusts the value of rewards given for quests. Note that the quest reward value is also automatically scaled
+          to compensate for the threat scale, and so this setting adds an additional multiplier
+        Keywords: quest,rewards,value,QuestRewardValueFactor
+        FieldName: QuestRewardValueFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.QuestRewardValueFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: RaidLootPointsFactor
+      label: Raid Loot Points Factor
+      category: Open World
+      subcategory: Difficulty
+      description: >-
+        Adjusts the value of loot carried by raiders. Note that the raid loot value is also automatically scaled to
+        compensate for the threat scale, and so this setting adds an additional multiplier
+      keywords: raid,loot,points,value,RaidLootPointsFactor
+      input_type: number
+      param_field_name: $.RaidLootPointsFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Raid Loot Points Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: >-
+          Adjusts the value of loot carried by raiders. Note that the raid loot value is also automatically scaled to
+          compensate for the threat scale, and so this setting adds an additional multiplier
+        Keywords: raid,loot,points,value,RaidLootPointsFactor
+        FieldName: RaidLootPointsFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.RaidLootPointsFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: TradePriceFactorLoss
+      label: Trade Price Factor Loss
+      category: Open World
+      subcategory: Difficulty
+      description: When trading, buy prices are increased by this amount while sell prices are reduced by this amount. Maximum 0.5
+      keywords: trade,price,disadvantage,buying,selling,TradePriceFactorLoss
+      input_type: number
+      param_field_name: $.TradePriceFactorLoss
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Trade Price Factor Loss
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: >-
+          When trading, buy prices are increased by this amount while sell prices are reduced by this amount. Maximum
+          0.5
+        Keywords: trade,price,disadvantage,buying,selling,TradePriceFactorLoss
+        FieldName: TradePriceFactorLoss
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: $.TradePriceFactorLoss
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: MaintenanceCostFactor
+      label: Maintenance Cost Factor
+      category: Open World
+      subcategory: Difficulty
+      description: Adjusts the cost of rearming turrets. Minimum 0.01
+      keywords: maintenance,cost,factor,MaintenanceCostFactor
+      input_type: number
+      param_field_name: $.MaintenanceCostFactor
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Maintenance Cost Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjusts the cost of rearming turrets. Minimum 0.01
+        Keywords: maintenance,cost,factor,MaintenanceCostFactor
+        FieldName: MaintenanceCostFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: $.MaintenanceCostFactor
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: ScariaRotChance
+      label: Scaria Rot Chance
+      category: Open World
+      subcategory: Difficulty
+      description: Sets the probability that a corpse will rot upon death, if the creature has the scaria disease
+      keywords: scaria,rot,chance,corpse,disease,ScariaRotChance
+      input_type: number
+      param_field_name: $.ScariaRotChance
+      default: '0.6'
+      placeholder: '0.6'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Scaria Rot Chance
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Sets the probability that a corpse will rot upon death, if the creature has the scaria disease
+        Keywords: scaria,rot,chance,corpse,disease,ScariaRotChance
+        FieldName: ScariaRotChance
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: $.ScariaRotChance
+        DefaultValue: '0.6'
+        Placeholder: '0.6'
+        EnumValues: {}
+    - key: EnemyDeathOnDownedChanceFactor
+      label: Enemy Death On Downed Chance
+      category: Open World
+      subcategory: Difficulty
+      description: >-
+        Adjusts the extra chance that an enemy will immediately die when downed. This affects the chances to take
+        prisoners, and thus colony population growth rates
+      keywords: enemy,death,downed,chance,EnemyDeathOnDownedChanceFactor
+      input_type: number
+      param_field_name: $.EnemyDeathOnDownedChanceFactor
+      default: '1.0'
+      placeholder: '1.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Enemy Death On Downed Chance
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: >-
+          Adjusts the extra chance that an enemy will immediately die when downed. This affects the chances to take
+          prisoners, and thus colony population growth rates
+        Keywords: enemy,death,downed,chance,EnemyDeathOnDownedChanceFactor
+        FieldName: EnemyDeathOnDownedChanceFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: $.EnemyDeathOnDownedChanceFactor
+        DefaultValue: '1.0'
+        Placeholder: '1.0'
+        EnumValues: {}
+    - key: ColonistMoodOffset
+      label: Colonist Mood Offset
+      category: Open World
+      subcategory: Difficulty
+      description: Sets a permanent mood offset applied to every colonist and prisoner. Colonists have a base mood of 50%
+      keywords: colonist,mood,offset,prisoner,ColonistMoodOffset
+      input_type: number
+      param_field_name: $.ColonistMoodOffset
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: -20
+      max: 20
+      enum_values: {}
+      raw:
+        DisplayName: Colonist Mood Offset
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Sets a permanent mood offset applied to every colonist and prisoner. Colonists have a base mood of 50%
+        Keywords: colonist,mood,offset,prisoner,ColonistMoodOffset
+        FieldName: ColonistMoodOffset
+        InputType: number
+        MinValue: '-20'
+        MaxValue: '20'
+        ParamFieldName: $.ColonistMoodOffset
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: FoodPoisonChanceFactor
+      label: Food Poison Chance Factor
+      category: Open World
+      subcategory: Difficulty
+      description: Adjusts the chance that a person will get food poisoning from eating a potentially-poisoned meal
+      keywords: food,poison,chance,meals,FoodPoisonChanceFactor
+      input_type: number
+      param_field_name: $.FoodPoisonChanceFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Food Poison Chance Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjusts the chance that a person will get food poisoning from eating a potentially-poisoned meal
+        Keywords: food,poison,chance,meals,FoodPoisonChanceFactor
+        FieldName: FoodPoisonChanceFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.FoodPoisonChanceFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: ManhunterChanceOnDamageFactor
+      label: Manhunter Chance On Damage Factor
+      category: Open World
+      subcategory: Difficulty
+      description: Adjusts the chance that injuring a wild animal will cause it to attack
+      keywords: manhunter,chance,damage,wild,animal,attack,ManhunterChanceOnDamageFactor
+      input_type: number
+      param_field_name: $.ManhunterChanceOnDamageFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Manhunter Chance On Damage Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjusts the chance that injuring a wild animal will cause it to attack
+        Keywords: manhunter,chance,damage,wild,animal,attack,ManhunterChanceOnDamageFactor
+        FieldName: ManhunterChanceOnDamageFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.ManhunterChanceOnDamageFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: PlayerPawnInfectionChanceFactor
+      label: Player Pawn Infection Chance Factor
+      category: Open World
+      subcategory: Difficulty
+      description: Adjusts the chance that a wound will become infected
+      keywords: infection,chance,wound,player,pawn,PlayerPawnInfectionChanceFactor
+      input_type: number
+      param_field_name: $.PlayerPawnInfectionChanceFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Player Pawn Infection Chance Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjusts the chance that a wound will become infected
+        Keywords: infection,chance,wound,player,pawn,PlayerPawnInfectionChanceFactor
+        FieldName: PlayerPawnInfectionChanceFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.PlayerPawnInfectionChanceFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: DiseaseIntervalFactor
+      label: Disease Interval Factor
+      category: Open World
+      subcategory: Difficulty
+      description: Adjust the frequency of random disease events
+      keywords: disease,interval,frequency,events,DiseaseIntervalFactor
+      input_type: number
+      param_field_name: $.DiseaseIntervalFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Disease Interval Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjust the frequency of random disease events
+        Keywords: disease,interval,frequency,events,DiseaseIntervalFactor
+        FieldName: DiseaseIntervalFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.DiseaseIntervalFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: DeepDrillInfestationChanceFactor
+      label: Deep Drill Infestation Chance Factor
+      category: Open World
+      subcategory: Difficulty
+      description: Adjust the chance of triggering an infestation when deep drilling
+      keywords: deep,drill,infestation,chance,trigger,DeepDrillInfestationChanceFactor
+      input_type: number
+      param_field_name: $.DeepDrillInfestationChanceFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 5
+      enum_values: {}
+      raw:
+        DisplayName: Deep Drill Infestation Chance Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjust the chance of triggering an infestation when deep drilling
+        Keywords: deep,drill,infestation,chance,trigger,DeepDrillInfestationChanceFactor
+        FieldName: DeepDrillInfestationChanceFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '5'
+        ParamFieldName: $.DeepDrillInfestationChanceFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: FriendlyFireChanceFactor
+      label: Friendly Fire Chance Factor
+      category: Open World
+      subcategory: Difficulty
+      description: Adjusts the chance of friendly fire. Only affects direct shots that were going to hit their target
+      keywords: friendly,fire,chance,combat,FriendlyFireChanceFactor
+      input_type: number
+      param_field_name: $.FriendlyFireChanceFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Friendly Fire Chance Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjusts the chance of friendly fire. Only affects direct shots that were going to hit their target
+        Keywords: friendly,fire,chance,combat,FriendlyFireChanceFactor
+        FieldName: FriendlyFireChanceFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: $.FriendlyFireChanceFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: AllowInstantKillChance
+      label: Allow Instant Kill Chance
+      category: Open World
+      subcategory: Difficulty
+      description: >-
+        Adjusts the chance that a colonist can die instantly due to an attack, with the colonist being downed instead.
+        Only prevents some kinds of instant kills
+      keywords: instant,kill,chance,colonist,attack,AllowInstantKillChance
+      input_type: number
+      param_field_name: $.AllowInstantKillChance
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Allow Instant Kill Chance
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: >-
+          Adjusts the chance that a colonist can die instantly due to an attack, with the colonist being downed instead.
+          Only prevents some kinds of instant kills
+        Keywords: instant,kill,chance,colonist,attack,AllowInstantKillChance
+        FieldName: AllowInstantKillChance
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: $.AllowInstantKillChance
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: AllowTraps
+      label: Allow Traps
+      category: Open World
+      subcategory: Difficulty
+      description: If set, players can build traps like spike traps and IED traps
+      keywords: traps,spike,ied,build,AllowTraps
+      input_type: checkbox
+      param_field_name: $.AllowTraps
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Traps
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: If set, players can build traps like spike traps and IED traps
+        Keywords: traps,spike,ied,build,AllowTraps
+        FieldName: AllowTraps
+        InputType: checkbox
+        ParamFieldName: $.AllowTraps
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowTurrets
+      label: Allow Turrets
+      category: Open World
+      subcategory: Difficulty
+      description: If set, players can build static turrets like mini-turrets, autocannon turrets, and uranium slug turrets
+      keywords: turrets,static,build,mini-turrets,autocannon,uranium,slug,AllowTurrets
+      input_type: checkbox
+      param_field_name: $.AllowTurrets
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Turrets
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: If set, players can build static turrets like mini-turrets, autocannon turrets, and uranium slug turrets
+        Keywords: turrets,static,build,mini-turrets,autocannon,uranium,slug,AllowTurrets
+        FieldName: AllowTurrets
+        InputType: checkbox
+        ParamFieldName: $.AllowTurrets
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AllowMortars
+      label: Allow Mortars
+      category: Open World
+      subcategory: Difficulty
+      description: If set, players can build mortars
+      keywords: mortars,build,AllowMortars
+      input_type: checkbox
+      param_field_name: $.AllowMortars
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Allow Mortars
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: If set, players can build mortars
+        Keywords: mortars,build,AllowMortars
+        FieldName: AllowMortars
+        InputType: checkbox
+        ParamFieldName: $.AllowMortars
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+    - key: AdaptationEffectFactor
+      label: Adaptation Effect Factor
+      category: Open World
+      subcategory: Difficulty
+      description: Adjusts how much the adaptation score affects difficulty
+      keywords: adaptation,effect,difficulty,score,AdaptationEffectFactor
+      input_type: number
+      param_field_name: $.AdaptationEffectFactor
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Adaptation Effect Factor
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjusts how much the adaptation score affects difficulty
+        Keywords: adaptation,effect,difficulty,score,AdaptationEffectFactor
+        FieldName: AdaptationEffectFactor
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: $.AdaptationEffectFactor
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: AdaptationGrowthRateFactorOverZero
+      label: Adaptation Growth Rate Over Zero
+      category: Open World
+      subcategory: Difficulty
+      description: Adjusts how fast the adaptation score grows over time
+      keywords: adaptation,growth,rate,time,AdaptationGrowthRateFactorOverZero
+      input_type: number
+      param_field_name: $.AdaptationGrowthRateFactorOverZero
+      default: '0.0'
+      placeholder: '0.0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 0
+      max: 1
+      enum_values: {}
+      raw:
+        DisplayName: Adaptation Growth Rate Over Zero
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: Adjusts how fast the adaptation score grows over time
+        Keywords: adaptation,growth,rate,time,AdaptationGrowthRateFactorOverZero
+        FieldName: AdaptationGrowthRateFactorOverZero
+        InputType: number
+        MinValue: '0'
+        MaxValue: '1'
+        ParamFieldName: $.AdaptationGrowthRateFactorOverZero
+        DefaultValue: '0.0'
+        Placeholder: '0.0'
+        EnumValues: {}
+    - key: FixedWealthMode
+      label: Fixed Wealth Mode
+      category: Open World
+      subcategory: Difficulty
+      description: >-
+        If set, the server will operate in a wealth-independent progress mode, replacing the wealth factor with a fixed
+        progress curve based on time
+      keywords: wealth,independent,progress,mode,fixed,curve,time,FixedWealthMode
+      input_type: checkbox
+      param_field_name: $.FixedWealthMode
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'false'
+        'True': 'true'
+      raw:
+        DisplayName: Fixed Wealth Mode
+        Category: Open World:stadia_controller
+        Subcategory: Difficulty:tune:3
+        Description: >-
+          If set, the server will operate in a wealth-independent progress mode, replacing the wealth factor with a
+          fixed progress curve based on time
+        Keywords: wealth,independent,progress,mode,fixed,curve,time,FixedWealthMode
+        FieldName: FixedWealthMode
+        InputType: checkbox
+        ParamFieldName: $.FixedWealthMode
+        DefaultValue: 'false'
+        EnumValues:
+          'False': 'false'
+          'True': 'true'
+  files:
+    - path: Data/Config.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Data/Config.json
+        AutoMap: true
+        ConfigType: json
+    - path: Data/Deep Config.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Data/Deep Config.json
+        AutoMap: true
+        ConfigType: json
+    - path: Data/Values.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Data/Values.json
+        AutoMap: true
+        ConfigType: json
+    - path: Data/Difficulty.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: Data/Difficulty.json
+        AutoMap: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerPassword
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PlayerVersion
+    label: Player Version
+    default: '1.3'
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: UseWhitelist
+    label: Enable Whitelist
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnforceMods
+    label: Enforce Mods
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseModBlacklist
+    label: Use Mod Blacklist
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowCustomScenarios
+    label: Allow Custom Scenarios
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BackUpIntervalInHours
+    label: Backup Interval
+    default: '6.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DevConsole
+    label: Enable Extra Console Logging
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ReleaseVersion
+    label: Server Release Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DotnetVersion
+    label: Dotnet Version
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BankCashPerTick
+    label: Bank Cash Per Tick
+    default: '50'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaximumCashInBankForTick
+    label: Maximum Cash In Bank For Tick
+    default: '10000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RaidCost
+    label: Raid Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: InfestationCost
+    label: Infestation Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MechClusterCost
+    label: Mech Cluster Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ToxicFalloutCost
+    label: Toxic Fallout Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManhunterCost
+    label: Manhunter Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WandererCost
+    label: Wanderer Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FarmAnimalsCost
+    label: Farm Animals Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ShipChunkCost
+    label: Ship Chunk Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: GiveQuestCost
+    label: Give Quest Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TraderCaravanCost
+    label: Trader Caravan Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: SiloCost
+    label: Silo Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MarketplaceCost
+    label: Marketplace Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ProductionSiteCost
+    label: Production Site Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: WonderCost
+    label: Wonder Structure Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: BankCost
+    label: Bank Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AeroportCost
+    label: Airport Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AeroportUsageCost
+    label: Airport Usage Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CourierCost
+    label: Courier Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CourierUsageCost
+    label: Courier Usage Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AidUsageCost
+    label: Aid Usage Cost
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: UseCustomDifficulty
+    label: Use Custom Difficulty
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ThreatScale
+    label: Threat Scale
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowBigThreats
+    label: Allow Major Threats
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowViolentQuests
+    label: Allow Quest Threats
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowIntroThreats
+    label: Enable Intro Threats
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PredatorsHuntHumanlikes
+    label: Allow Predators To Hunt Humans
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowExtremeWeatherIncidents
+    label: Allow Extreme Weather Incidents
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CropYieldFactor
+    label: Harvest Yield Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MineYieldFactor
+    label: Mining Yield Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ButcherYieldFactor
+    label: Butchering Yield Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ResearchSpeedFactor
+    label: Research Speed Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: QuestRewardValueFactor
+    label: Quest Reward Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: RaidLootPointsFactor
+    label: Raid Loot Points Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TradePriceFactorLoss
+    label: Trade Price Factor Loss
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: MaintenanceCostFactor
+    label: Maintenance Cost Factor
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ScariaRotChance
+    label: Scaria Rot Chance
+    default: '0.6'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EnemyDeathOnDownedChanceFactor
+    label: Enemy Death On Downed Chance
+    default: '1.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ColonistMoodOffset
+    label: Colonist Mood Offset
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FoodPoisonChanceFactor
+    label: Food Poison Chance Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManhunterChanceOnDamageFactor
+    label: Manhunter Chance On Damage Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PlayerPawnInfectionChanceFactor
+    label: Player Pawn Infection Chance Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DiseaseIntervalFactor
+    label: Disease Interval Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DeepDrillInfestationChanceFactor
+    label: Deep Drill Infestation Chance Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FriendlyFireChanceFactor
+    label: Friendly Fire Chance Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowInstantKillChance
+    label: Allow Instant Kill Chance
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowTraps
+    label: Allow Traps
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowTurrets
+    label: Allow Turrets
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AllowMortars
+    label: Allow Mortars
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AdaptationEffectFactor
+    label: Adaptation Effect Factor
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: AdaptationGrowthRateFactorOverZero
+    label: Adaptation Growth Rate Over Zero
+    default: '0.0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FixedWealthMode
+    label: Fixed Wealth Mode
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '294100'
+  collection_support: true
 backup:
   include:
     - /data

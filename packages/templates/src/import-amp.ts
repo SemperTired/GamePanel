@@ -24,12 +24,18 @@ for (const file of files) {
     if (!name) return undefined;
     const target = path.join(input, name);
     if (!fs.existsSync(target)) return undefined;
-    return JSON.parse(fs.readFileSync(target, "utf8"));
+    const raw = fs.readFileSync(target, "utf8");
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return JSON.parse(raw.replace(/^\uFEFF/, "").replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "").replace(/,\s*([}\]])/g, "$1"));
+    }
   };
   const includeName = (value?: string) => value?.match(/@IncludeJson\[([^\]]+)\]/)?.[1];
   const template = convertAmpKvp(file, kvp, {
     updates: readJson(includeName(kvp["App.UpdateSources"])),
     config: readJson(kvp["Meta.ConfigManifest"]),
+    metaConfig: readJson(kvp["Meta.MetaConfigManifest"]),
     ports: readJson(includeName(kvp["App.Ports"])),
   });
   let id = template.id;

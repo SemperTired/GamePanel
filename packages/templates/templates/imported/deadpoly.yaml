@@ -5,13 +5,16 @@ category: Imported
 summary: DeadPoly Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2208380'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: /usr/bin/wine {PlatformArgs} DeadPoly -Port={GamePort} {FormattedArgs} -stdout -FullStdOutLogOutput -nosteam
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,311 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 7777
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: DeadPoly/Saved/Config/WindowsServer/Game.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: ServerName
+      label: Server Name
+      category: DeadPoly
+      subcategory: Server
+      description: >-
+        Sets the name of the server as it appears publicly. Do not use any special characters, or the server may not
+        show up in the server list
+      keywords: name,servername
+      input_type: text
+      param_field_name: /Game/DeadPoly/BP_Game.BP_Game_C.ServerName
+      default: AMP Powered DeadPoly Server
+      placeholder: AMP Powered DeadPoly Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: DeadPoly:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the server as it appears publicly. Do not use any special characters, or the server may not
+          show up in the server list
+        Keywords: name,servername
+        FieldName: ServerName
+        InputType: text
+        ParamFieldName: /Game/DeadPoly/BP_Game.BP_Game_C.ServerName
+        DefaultValue: AMP Powered DeadPoly Server
+        Placeholder: AMP Powered DeadPoly Server
+        EnumValues: {}
+    - key: Mode
+      label: Game Mode
+      category: DeadPoly
+      subcategory: Server
+      description: Sets the game mode
+      keywords: mode,pve,pvp,noraid
+      input_type: enum
+      param_field_name: /Game/DeadPoly/BP_Game.BP_Game_C.Mode
+      default: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '0': PvP
+        '1': PvE
+        '2': No Raid PvP
+      raw:
+        DisplayName: Game Mode
+        Category: DeadPoly:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the game mode
+        Keywords: mode,pve,pvp,noraid
+        FieldName: Mode
+        InputType: enum
+        ParamFieldName: /Game/DeadPoly/BP_Game.BP_Game_C.Mode
+        DefaultValue: '0'
+        EnumValues:
+          '0': PvP
+          '1': PvE
+          '2': No Raid PvP
+    - key: Private
+      label: Make Server Private
+      category: DeadPoly
+      subcategory: Server
+      description: >-
+        If set, the server will be made private, requiring players to use the direct connect option in-game to join via
+        IP and port. Players will also need to be whitelisted in Game.ini
+      keywords: whitelist,private,allowed
+      input_type: checkbox
+      param_field_name: /Game/DeadPoly/BP_Game.BP_Game_C.Private
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Make Server Private
+        Category: DeadPoly:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, the server will be made private, requiring players to use the direct connect option in-game to join
+          via IP and port. Players will also need to be whitelisted in Game.ini
+        Keywords: whitelist,private,allowed
+        FieldName: Private
+        InputType: checkbox
+        ParamFieldName: /Game/DeadPoly/BP_Game.BP_Game_C.Private
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: TravelOff
+      label: Disable Server Travel
+      category: DeadPoly
+      subcategory: Server
+      description: >-
+        If set, no one can join or exit the server with gear. Note that this cannot be changed for a save after it is
+        created
+      keywords: travel,disable,gear,traveloff
+      input_type: checkbox
+      param_field_name: /Game/DeadPoly/BP_Game.BP_Game_C.TravelOff
+      default: 'False'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': 'False'
+        'True': 'True'
+      raw:
+        DisplayName: Disable Server Travel
+        Category: DeadPoly:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          If set, no one can join or exit the server with gear. Note that this cannot be changed for a save after it is
+          created
+        Keywords: travel,disable,gear,traveloff
+        FieldName: TravelOff
+        InputType: checkbox
+        ParamFieldName: /Game/DeadPoly/BP_Game.BP_Game_C.TravelOff
+        DefaultValue: 'False'
+        EnumValues:
+          'False': 'False'
+          'True': 'True'
+    - key: AdminsList
+      label: Admins
+      category: DeadPoly
+      subcategory: Server
+      description: 'Server admins can be specified in Game.ini. Format (one line per admin): Admins=\"<Trust ID>\"'
+      keywords: admins
+      input_type: hidden
+      param_field_name: AdminsList
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Admins
+        Category: DeadPoly:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Server admins can be specified in Game.ini. Format (one line per admin): Admins=\"<Trust ID>\"'
+        Keywords: admins
+        FieldName: AdminsList
+        InputType: hidden
+        ParamFieldName: AdminsList
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: DeadPoly
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: players,limit,max,maximum,playerslots
+      input_type: number
+      param_field_name: /Game/DeadPoly/BP_Game.BP_Game_C.PlayerSlots
+      default: '20'
+      placeholder: '20'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      max: 50
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: DeadPoly:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: players,limit,max,maximum,playerslots
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '50'
+        ParamFieldName: /Game/DeadPoly/BP_Game.BP_Game_C.PlayerSlots
+        DefaultValue: '20'
+        Placeholder: '20'
+        Suffix: players
+        EnumValues: {}
+    - key: AllowedList
+      label: Whitelist
+      category: DeadPoly
+      subcategory: Server
+      description: >-
+        Players can be whitelisted to join the server in Game.ini. Required if Make Server Private is enabled. Format
+        (one line per player): Allowed=\"<Trust ID>\"
+      keywords: whitelist,allowed
+      input_type: hidden
+      param_field_name: AllowedList
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Whitelist
+        Category: DeadPoly:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Players can be whitelisted to join the server in Game.ini. Required if Make Server Private is enabled. Format
+          (one line per player): Allowed=\"<Trust ID>\"
+        Keywords: whitelist,allowed
+        FieldName: AllowedList
+        InputType: hidden
+        ParamFieldName: AllowedList
+        EnumValues: {}
+    - key: BannedList
+      label: Banlist
+      category: DeadPoly
+      subcategory: Server
+      description: 'Players can be banned from joining the server in Game.ini. Format (one line per player): Banned=\"<Trust ID>\"'
+      keywords: banlist,banned
+      input_type: hidden
+      param_field_name: BannedList
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: false
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Banlist
+        Category: DeadPoly:stadia_controller
+        Subcategory: Server:dns:1
+        Description: 'Players can be banned from joining the server in Game.ini. Format (one line per player): Banned=\"<Trust ID>\"'
+        Keywords: banlist,banned
+        FieldName: BannedList
+        InputType: hidden
+        ParamFieldName: BannedList
+        EnumValues: {}
+  files:
+    - path: DeadPoly/Saved/Config/WindowsServer/Game.ini
+      type: ini
+      subsections: []
+      raw:
+        ConfigFile: DeadPoly/Saved/Config/WindowsServer/Game.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: ServerName
+    label: Server Name
+    default: AMP Powered DeadPoly Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Mode
+    label: Game Mode
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: Private
+    label: Make Server Private
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TravelOff
+    label: Disable Server Travel
+    default: 'False'
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1621070'
+  collection_support: true
 backup:
   include:
     - /data

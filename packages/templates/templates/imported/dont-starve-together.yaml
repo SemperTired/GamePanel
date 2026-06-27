@@ -5,13 +5,18 @@ category: Imported
 summary: Don't Starve Together Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '343050'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 343050/bin{{ServerExecutable}}/dontstarve_dedicated_server_nullrenderer
+  startup: >-
+    343050/bin{ServerExecutable}/dontstarve_dedicated_server_nullrenderer -persistent_storage_root "../dstserver"
+    -conf_dir "dstserver_config" -shard shard {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,1179 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: applicationport1
+    name: Server Port
+    default: 10999
     protocol: udp
     required: true
-config_files: []
+  - key: applicationport2
+    name: Auth Port
+    default: 8766
+    protocol: udp
+    required: true
+  - key: applicationport3
+    name: Query Port
+    default: 27016
+    protocol: udp
+    required: true
+  - key: remoteadminport
+    name: Master Port
+    default: 10889
+    protocol: udp
+    required: true
+config_files:
+  - path: dstserver/dstserver_config/Cluster_1/shard/server.ini
+    type: ini
+    editable: true
+  - path: dstserver/dstserver_config/Cluster_1/cluster.ini
+    type: ini
+    editable: true
+  - path: dstserver/dstserver_config/Cluster_1/cluster_token.txt
+    type: text
+    editable: true
+config_schema:
+  fields:
+    - key: $MaxUsers
+      label: Max Players
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: Maximum number of players in the server
+      keywords: max players
+      input_type: number
+      param_field_name: max_players
+      default: '64'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      enum_values: {}
+      raw:
+        DisplayName: Max Players
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: Maximum number of players in the server
+        Keywords: max players
+        FieldName: $MaxUsers
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: max_players
+        IncludeInCommandLine: false
+        DefaultValue: '64'
+        EnumValues: {}
+        MinValue: '1'
+    - key: tickrate
+      label: Tick Rate
+      category: Don't Starve Together
+      subcategory: Server
+      description: Force the server to run at a specific tick rate, higher is better performing but requires more bandwidth and CPU
+      keywords: tick rate
+      input_type: enum
+      param_field_name: tickrate
+      default: '60'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '10': '10'
+        '15': '15'
+        '30': '30'
+        '60': '60'
+      raw:
+        DisplayName: Tick Rate
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Force the server to run at a specific tick rate, higher is better performing but requires more bandwidth and
+          CPU
+        Keywords: tick rate
+        FieldName: tickrate
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: tickrate
+        IncludeInCommandLine: true
+        DefaultValue: '60'
+        EnumValues:
+          '10': '10'
+          '15': '15'
+          '30': '30'
+          '60': '60'
+    - key: dedicated_lan_server
+      label: Lan Only
+      category: Don't Starve Together
+      subcategory: Server
+      description: Set the server to LAN only mode
+      keywords: LAN only
+      input_type: checkbox
+      param_field_name: dedicated_lan_server
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Lan Only
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Set the server to LAN only mode
+        Keywords: LAN only
+        FieldName: dedicated_lan_server
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: dedicated_lan_server
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: is_master
+      label: Master Server
+      category: Don't Starve Together
+      subcategory: Server
+      description: Enable only on the master server
+      keywords: master server
+      input_type: checkbox
+      param_field_name: is_master
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Master Server
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Enable only on the master server
+        Keywords: master server
+        FieldName: is_master
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: is_master
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: shard_name
+      label: Shard Name
+      category: Don't Starve Together
+      subcategory: Server
+      description: The name for the server
+      keywords: server description
+      input_type: text
+      param_field_name: shard_name
+      default: Master
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Shard Name
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The name for the server
+        Keywords: server description
+        FieldName: shard_name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: shard_name
+        IncludeInCommandLine: false
+        DefaultValue: Master
+        EnumValues: {}
+    - key: id
+      label: Shard ID
+      category: Don't Starve Together
+      subcategory: Server
+      description: A unique number to identify the shard in a cluster
+      keywords: shard id
+      input_type: number
+      param_field_name: id
+      default: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Shard ID
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: A unique number to identify the shard in a cluster
+        Keywords: shard id
+        FieldName: id
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: id
+        IncludeInCommandLine: false
+        DefaultValue: '1'
+        EnumValues: {}
+    - key: default_server_description
+      label: Server Description
+      category: Don't Starve Together
+      subcategory: Server
+      description: The description for the server
+      keywords: server description
+      input_type: text
+      param_field_name: default_server_description
+      default: AMP Powered Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Description
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: The description for the server
+        Keywords: server description
+        FieldName: default_server_description
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: default_server_description
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Server
+        EnumValues: {}
+    - key: pvp
+      label: Enable PVP
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: Enable/Disable player-vs-player
+      keywords: pvp player vs
+      input_type: checkbox
+      param_field_name: pvp
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable PVP
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: Enable/Disable player-vs-player
+        Keywords: pvp player vs
+        FieldName: pvp
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: pvp
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: game_mode
+      label: Game Mode
+      category: Don't Starve Together
+      subcategory: Server
+      description: Game mode selection
+      keywords: game mode
+      input_type: enum
+      param_field_name: game_mode
+      default: survival
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        endless: Endless
+        survival: Survival
+        wilderness: Wilderness
+      raw:
+        DisplayName: Game Mode
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Game mode selection
+        Keywords: game mode
+        FieldName: game_mode
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: game_mode
+        IncludeInCommandLine: false
+        DefaultValue: survival
+        EnumValues:
+          endless: Endless
+          survival: Survival
+          wilderness: Wilderness
+    - key: cluster_intention
+      label: Cluster Intention
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: Cluster play style
+      keywords: cluster intention play style
+      input_type: enum
+      param_field_name: cluster_intention
+      default: cooperative
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        competitive: Competitive
+        cooperative: Cooperative
+        madness: Madness
+        social: Social
+      raw:
+        DisplayName: Cluster Intention
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: Cluster play style
+        Keywords: cluster intention play style
+        FieldName: cluster_intention
+        InputType: enum
+        IsFlagArgument: false
+        ParamFieldName: cluster_intention
+        IncludeInCommandLine: false
+        DefaultValue: cooperative
+        EnumValues:
+          competitive: Competitive
+          cooperative: Cooperative
+          madness: Madness
+          social: Social
+    - key: enable_snapshots
+      label: Enable Snapshots
+      category: Don't Starve Together
+      subcategory: Server
+      description: Enable/Disable Snapshots
+      keywords: enable snapshots
+      input_type: checkbox
+      param_field_name: enable_snapshots
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable Snapshots
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Enable/Disable Snapshots
+        Keywords: enable snapshots
+        FieldName: enable_snapshots
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: enable_snapshots
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: enable_autosaver
+      label: Enable Autosaver
+      category: Don't Starve Together
+      subcategory: Server
+      description: Enable/Disable Autosaving at the begining of each day in-game
+      keywords: enable autosaver
+      input_type: checkbox
+      param_field_name: enable_autosaver
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable Autosaver
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Enable/Disable Autosaving at the begining of each day in-game
+        Keywords: enable autosaver
+        FieldName: enable_autosaver
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: enable_autosaver
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: shard_enabled
+      label: Enable Shards
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: Enable/Disable shards (Must be enabled for clusters)
+      keywords: enable shards
+      input_type: checkbox
+      param_field_name: shard_enabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable Shards
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: Enable/Disable shards (Must be enabled for clusters)
+        Keywords: enable shards
+        FieldName: shard_enabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: shard_enabled
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: connection_timeout
+      label: Connection Timeout (ms)
+      category: Don't Starve Together
+      subcategory: Server
+      description: Time in milliseconds before server drops an idle player
+      keywords: connection timeout
+      input_type: number
+      param_field_name: connection_timeout
+      default: '8000'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Connection Timeout (ms)
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Time in milliseconds before server drops an idle player
+        Keywords: connection timeout
+        FieldName: connection_timeout
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: connection_timeout
+        IncludeInCommandLine: false
+        DefaultValue: '8000'
+        EnumValues: {}
+    - key: vote_kick_enabled
+      label: Enable Vote to Kick
+      category: Don't Starve Together
+      subcategory: Server
+      description: Allow players to vote to kick other players
+      keywords: vote to kick enabled
+      input_type: checkbox
+      param_field_name: vote_kick_enabled
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable Vote to Kick
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Allow players to vote to kick other players
+        Keywords: vote to kick enabled
+        FieldName: vote_kick_enabled
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: vote_kick_enabled
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: pause_when_empty
+      label: Pause When Empty
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: Pause the game when no players in session
+      keywords: pause when empty
+      input_type: checkbox
+      param_field_name: pause_when_empty
+      default: 'true'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Pause When Empty
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: Pause the game when no players in session
+        Keywords: pause when empty
+        FieldName: pause_when_empty
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: pause_when_empty
+        IncludeInCommandLine: false
+        DefaultValue: 'true'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: cluster_description
+      label: Cluster Description
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: Description for this server cluster
+      keywords: cluster description
+      input_type: text
+      param_field_name: cluster_description
+      default: AMP Powered Cluster
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Cluster Description
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: Description for this server cluster
+        Keywords: cluster description
+        FieldName: cluster_description
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: cluster_description
+        IncludeInCommandLine: false
+        DefaultValue: AMP Powered Cluster
+        EnumValues: {}
+    - key: cluster_name
+      label: Cluster Name
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: Name for this cluster
+      keywords: cluster name
+      input_type: text
+      param_field_name: cluster_name
+      default: AMP Cluster
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Cluster Name
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: Name for this cluster
+        Keywords: cluster name
+        FieldName: cluster_name
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: cluster_name
+        IncludeInCommandLine: false
+        DefaultValue: AMP Cluster
+        EnumValues: {}
+    - key: cluster_password
+      label: Cluster Password
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: Password required for a shard server to join the cluster
+      keywords: shard cluster password
+      input_type: password
+      param_field_name: cluster_password
+      default: Password123
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Cluster Password
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: Password required for a shard server to join the cluster
+        Keywords: shard cluster password
+        FieldName: cluster_password
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: cluster_password
+        IncludeInCommandLine: false
+        DefaultValue: Password123
+        EnumValues: {}
+    - key: master_ip
+      label: Master IP
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: The IP of the master server (127.0.0.1 if same machine)
+      keywords: master ip address
+      input_type: text
+      param_field_name: master_ip
+      default: 127.0.0.1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Master IP
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: The IP of the master server (127.0.0.1 if same machine)
+        Keywords: master ip address
+        FieldName: master_ip
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: master_ip
+        IncludeInCommandLine: false
+        DefaultValue: 127.0.0.1
+        EnumValues: {}
+    - key: master_port
+      label: Master Port
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: Port of the master server (Remote Admin Port of the Master in AMP)
+      keywords: master server port
+      input_type: text
+      param_field_name: master_port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Master Port
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: Port of the master server (Remote Admin Port of the Master in AMP)
+        Keywords: master server port
+        FieldName: master_port
+        InputType: text
+        IsFlagArgument: false
+        ParamFieldName: master_port
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: cluster_key
+      label: Cluster Key
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: Private key to allow cluster shards to communicate
+      keywords: cluster key password
+      input_type: password
+      param_field_name: cluster_key
+      default: Password123
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Cluster Key
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: Private key to allow cluster shards to communicate
+        Keywords: cluster key password
+        FieldName: cluster_key
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: cluster_key
+        IncludeInCommandLine: false
+        DefaultValue: Password123
+        EnumValues: {}
+    - key: steam_group_only
+      label: Enable Steam Group Only
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: >-
+        If enabled, the server will only allow connections from players belonging to the Steam group listed in Steam
+        Group ID
+      keywords: steam,group,only,steam_group_only
+      input_type: checkbox
+      param_field_name: steam_group_only
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Enable Steam Group Only
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: >-
+          If enabled, the server will only allow connections from players belonging to the Steam group listed in Steam
+          Group ID
+        Keywords: steam,group,only,steam_group_only
+        FieldName: steam_group_only
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: steam_group_only
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: steam_group_id
+      label: Steam Group ID
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: >-
+        Sets a [Steam group
+        ID](https://forums.kleientertainment.com/topic/55994-server-admin-associate-your-server-with-a-steam-group/) for
+        the Enable Steam Group Only and Steam Group Admins settings
+      keywords: steam,group,id,steam_group_id
+      input_type: number
+      param_field_name: steam_group_id
+      default: '0'
+      placeholder: '0'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Steam Group ID
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: >-
+          Sets a [Steam group
+          ID](https://forums.kleientertainment.com/topic/55994-server-admin-associate-your-server-with-a-steam-group/)
+          for the Enable Steam Group Only and Steam Group Admins settings
+        Keywords: steam,group,id,steam_group_id
+        FieldName: steam_group_id
+        InputType: number
+        IsFlagArgument: false
+        ParamFieldName: steam_group_id
+        IncludeInCommandLine: false
+        DefaultValue: '0'
+        Placeholder: '0'
+        EnumValues: {}
+    - key: steam_group_admins
+      label: Steam Group Admins
+      category: Don't Starve Together
+      subcategory: Clusters
+      description: If enabled, admins of the steam group specified in Steam Group ID will also have admin status on the server
+      keywords: steam,group,admins,steam_group_admins
+      input_type: checkbox
+      param_field_name: steam_group_admins
+      default: 'false'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'True': 'true'
+        'False': 'false'
+      raw:
+        DisplayName: Steam Group Admins
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Clusters:share:2
+        Description: If enabled, admins of the steam group specified in Steam Group ID will also have admin status on the server
+        Keywords: steam,group,admins,steam_group_admins
+        FieldName: steam_group_admins
+        InputType: checkbox
+        IsFlagArgument: false
+        ParamFieldName: steam_group_admins
+        IncludeInCommandLine: false
+        DefaultValue: 'false'
+        EnumValues:
+          'True': 'true'
+          'False': 'false'
+    - key: cluster_token
+      label: Server Cluster Token (Required)
+      category: Don't Starve Together
+      subcategory: Server
+      description: Obtained from [Klei's Site](https://accounts.klei.com/account/game/servers?game=DontStarveTogether)
+      keywords: cluster server token
+      input_type: password
+      param_field_name: cluster_token
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Cluster Token (Required)
+        Category: Don't Starve Together:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Obtained from [Klei's Site](https://accounts.klei.com/account/game/servers?game=DontStarveTogether)
+        Keywords: cluster server token
+        FieldName: cluster_token
+        InputType: password
+        IsFlagArgument: false
+        ParamFieldName: cluster_token
+        IncludeInCommandLine: false
+        DefaultValue: ''
+        EnumValues: {}
+    - key: ServerExecutable
+      label: Server Executable
+      category: Updates
+      subcategory: Runtime Configuration
+      description: Sets whether to run the 64 bit or 32 bit version of the server executable
+      keywords: server,executable,32bit,64bit
+      input_type: enum
+      param_field_name: ServerExecutable
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '64': 64 bit
+        '': 32 bit (default)
+      raw:
+        DisplayName: Server Executable
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: Sets whether to run the 64 bit or 32 bit version of the server executable
+        Keywords: server,executable,32bit,64bit
+        FieldName: ServerExecutable
+        InputType: enum
+        ParamFieldName: ServerExecutable
+        DefaultValue: ''
+        EnumValues:
+          '64': 64 bit
+          '': 32 bit (default)
+  files:
+    - path: dstserver/dstserver_config/Cluster_1/shard/server.ini
+      type: ini
+      subsections:
+        - heading: NETWORK
+          setting_mappings:
+            server_port: $ApplicationPort1
+        - heading: SHARD
+          setting_mappings:
+            is_master: is_master
+            name: shard_name
+            id: id
+        - heading: STEAM
+          setting_mappings:
+            master_server_port: $ApplicationPort3
+            authentication_port: $ApplicationPort2
+        - heading: ACCOUNT
+          setting_mappings:
+            dedicated_lan_server: dedicated_lan_server
+            encode_user_path: 'true'
+      raw:
+        ConfigFile: dstserver/dstserver_config/Cluster_1/shard/server.ini
+        Subsections:
+          - Heading: NETWORK
+            SettingMappings:
+              server_port: $ApplicationPort1
+          - Heading: SHARD
+            SettingMappings:
+              is_master: is_master
+              name: shard_name
+              id: id
+          - Heading: STEAM
+            SettingMappings:
+              master_server_port: $ApplicationPort3
+              authentication_port: $ApplicationPort2
+          - Heading: ACCOUNT
+            SettingMappings:
+              dedicated_lan_server: dedicated_lan_server
+              encode_user_path: 'true'
+    - path: dstserver/dstserver_config/Cluster_1/cluster.ini
+      type: ini
+      subsections:
+        - heading: GAMEPLAY
+          setting_mappings:
+            game_mode: game_mode
+            max_players: $MaxUsers
+            pvp: pvp
+            pause_when_empty: pause_when_empty
+        - heading: NETWORK
+          setting_mappings:
+            cluster_description: cluster_description
+            cluster_name: cluster_name
+            cluster_intention: cluster_intention
+            cluster_password: cluster_password
+        - heading: MISC
+          setting_mappings:
+            console_enabled: 'true'
+        - heading: SHARD
+          setting_mappings:
+            shard_enabled: shard_enabled
+            bind_ip: $ApplicationIPBinding
+            master_ip: master_ip
+            master_port: master_port
+            cluster_key: cluster_key
+        - heading: STEAM
+          setting_mappings:
+            steam_group_only: steam_group_only
+            steam_group_id: steam_group_id
+            steam_group_admins: steam_group_admins
+      raw:
+        ConfigFile: dstserver/dstserver_config/Cluster_1/cluster.ini
+        Subsections:
+          - Heading: GAMEPLAY
+            SettingMappings:
+              game_mode: game_mode
+              max_players: $MaxUsers
+              pvp: pvp
+              pause_when_empty: pause_when_empty
+          - Heading: NETWORK
+            SettingMappings:
+              cluster_description: cluster_description
+              cluster_name: cluster_name
+              cluster_intention: cluster_intention
+              cluster_password: cluster_password
+          - Heading: MISC
+            SettingMappings:
+              console_enabled: 'true'
+          - Heading: SHARD
+            SettingMappings:
+              shard_enabled: shard_enabled
+              bind_ip: $ApplicationIPBinding
+              master_ip: master_ip
+              master_port: master_port
+              cluster_key: cluster_key
+          - Heading: STEAM
+            SettingMappings:
+              steam_group_only: steam_group_only
+              steam_group_id: steam_group_id
+              steam_group_admins: steam_group_admins
+    - path: dstserver/dstserver_config/Cluster_1/cluster_token.txt
+      type: kvp
+      format: '{0}{1}'
+      subsections:
+        - heading: $root
+          setting_mappings:
+            '': cluster_token
+      raw:
+        ConfigFile: dstserver/dstserver_config/Cluster_1/cluster_token.txt
+        ConfigType: kvp
+        ConfigFormat: '{0}{1}'
+        Subsections:
+          - Heading: $root
+            SettingMappings:
+              '': cluster_token
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: tickrate
+    label: Tick Rate
+    default: '60'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: dedicated_lan_server
+    label: Lan Only
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: is_master
+    label: Master Server
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: shard_name
+    label: Shard Name
+    default: Master
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: id
+    label: Shard ID
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: default_server_description
+    label: Server Description
+    default: AMP Powered Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pvp
+    label: Enable PVP
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: game_mode
+    label: Game Mode
+    default: survival
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: cluster_intention
+    label: Cluster Intention
+    default: cooperative
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enable_snapshots
+    label: Enable Snapshots
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: enable_autosaver
+    label: Enable Autosaver
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: shard_enabled
+    label: Enable Shards
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: connection_timeout
+    label: Connection Timeout (ms)
+    default: '8000'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: vote_kick_enabled
+    label: Enable Vote to Kick
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: pause_when_empty
+    label: Pause When Empty
+    default: 'true'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: cluster_description
+    label: Cluster Description
+    default: AMP Powered Cluster
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: cluster_name
+    label: Cluster Name
+    default: AMP Cluster
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: cluster_password
+    label: Cluster Password
+    default: Password123
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: master_ip
+    label: Master IP
+    default: 127.0.0.1
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: master_port
+    label: Master Port
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: cluster_key
+    label: Cluster Key
+    default: Password123
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: steam_group_only
+    label: Enable Steam Group Only
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: steam_group_id
+    label: Steam Group ID
+    default: '0'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: steam_group_admins
+    label: Steam Group Admins
+    default: 'false'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: cluster_token
+    label: Server Cluster Token (Required)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: ServerExecutable
+    label: Server Executable
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '322330'
+  collection_support: true
 backup:
   include:
     - /data

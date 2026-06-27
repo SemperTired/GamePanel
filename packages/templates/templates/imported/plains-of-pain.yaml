@@ -5,13 +5,18 @@ category: Imported
 summary: Plains of Pain Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2227360'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 2227360/PlainsOfPain.x86_64
+  startup: >-
+    2227360/PlainsOfPain.x86_64 -nographics -batchmode -ignorecompilererrors -port {ServerPort} -queryPort {QueryPort}
+    -userdir ./PlainsOfPain -namespace "main" -serverName "{serverName}" {cc}{FormattedArgs} -ttr 0 {PlatformArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +24,393 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 7777
     protocol: udp
     required: true
-config_files: []
+  - key: queryport
+    name: Query Port
+    default: 27016
+    protocol: udp
+    required: true
+config_files:
+  - path: configs/default.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: serverName
+      label: Server Name
+      category: Plains of Pain
+      subcategory: Server
+      description: Sets the name of the server that will appear in the server list
+      keywords: server,name,serverName
+      input_type: text
+      param_field_name: serverName
+      default: AMP Powered Plains of Pain Server
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Plains of Pain:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that will appear in the server list
+        Keywords: server,name,serverName
+        FieldName: serverName
+        InputType: text
+        ParamFieldName: serverName
+        DefaultValue: AMP Powered Plains of Pain Server
+        Required: true
+        EnumValues: {}
+    - key: worldId
+      label: World ID
+      category: Plains of Pain
+      subcategory: Server
+      description: Sets the world ID to load or create
+      keywords: world,id,worldId
+      input_type: number
+      param_field_name: worldId
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World ID
+        Category: Plains of Pain:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the world ID to load or create
+        Keywords: world,id,worldId
+        FieldName: worldId
+        InputType: number
+        ParamFieldName: worldId
+        IncludeInCommandLine: true
+        DefaultValue: '1'
+        Placeholder: '1'
+        EnumValues: {}
+    - key: seed
+      label: World Seed
+      category: Plains of Pain
+      subcategory: Server
+      description: Sets the seed for the world generator
+      keywords: seed,world,generator
+      input_type: number
+      param_field_name: seed
+      default: '40377'
+      placeholder: '40377'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Seed
+        Category: Plains of Pain:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the seed for the world generator
+        Keywords: seed,world,generator
+        FieldName: seed
+        InputType: number
+        ParamFieldName: seed
+        IncludeInCommandLine: true
+        DefaultValue: '40377'
+        Placeholder: '40377'
+        EnumValues: {}
+    - key: worldSize
+      label: World Size
+      category: Plains of Pain
+      subcategory: Server
+      description: Sets the world size
+      keywords: world,size,worldSize
+      input_type: enum
+      param_field_name: worldSize
+      default: '11'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '11': Small (default)
+        '21': Medium
+        '31': Large
+        '41': Extra large
+        '51': Extra extra large
+      raw:
+        DisplayName: World Size
+        Category: Plains of Pain:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the world size
+        Keywords: world,size,worldSize
+        FieldName: worldSize
+        InputType: enum
+        ParamFieldName: worldSize
+        IncludeInCommandLine: true
+        DefaultValue: '11'
+        EnumValues:
+          '11': Small (default)
+          '21': Medium
+          '31': Large
+          '41': Extra large
+          '51': Extra extra large
+    - key: mapId
+      label: Map ID
+      category: Plains of Pain
+      subcategory: Server
+      description: Sets the map ID
+      keywords: map,id,mapId
+      input_type: enum
+      param_field_name: mapId
+      default: '768'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '0': Wasteland v0.6
+        '1': Dunes v0.4
+        '2': Dunes v0.5
+        '256': Wasteland v0.6.x latest
+        '512': Wasteland v0.7.x latest
+        '768': Wasteland v0.8.x latest (default)
+      raw:
+        DisplayName: Map ID
+        Category: Plains of Pain:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the map ID
+        Keywords: map,id,mapId
+        FieldName: mapId
+        InputType: enum
+        ParamFieldName: mapId
+        IncludeInCommandLine: true
+        DefaultValue: '768'
+        EnumValues:
+          '0': Wasteland v0.6
+          '1': Dunes v0.4
+          '2': Dunes v0.5
+          '256': Wasteland v0.6.x latest
+          '512': Wasteland v0.7.x latest
+          '768': Wasteland v0.8.x latest (default)
+    - key: password
+      label: Server Password
+      category: Plains of Pain
+      subcategory: Server
+      description: Sets the password required for players to join the server. Default is no password
+      keywords: server,password
+      input_type: password
+      param_field_name: password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Plains of Pain:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required for players to join the server. Default is no password
+        Keywords: server,password
+        FieldName: password
+        InputType: password
+        ParamFieldName: password
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: maxPlayers
+      label: Player Limit
+      category: Plains of Pain
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: max,maximum,players,limit
+      input_type: number
+      param_field_name: maxPlayers
+      default: '10'
+      placeholder: '10'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 1
+      max: 200
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Plains of Pain:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: max,maximum,players,limit
+        FieldName: maxPlayers
+        InputType: number
+        MinValue: '1'
+        MaxValue: '200'
+        ParamFieldName: maxPlayers
+        IncludeInCommandLine: true
+        DefaultValue: '10'
+        Placeholder: '10'
+        Suffix: players
+        EnumValues: {}
+    - key: difficulty
+      label: Difficulty Level
+      category: Plains of Pain
+      subcategory: Server
+      description: Sets the difficulty level
+      keywords: difficulty
+      input_type: enum
+      param_field_name: difficulty
+      default: '2'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values:
+        '0': Tourist
+        '1': Rookies
+        '2': True Wastelander (default)
+        '3': Veteran
+        '4': Overlord
+      raw:
+        DisplayName: Difficulty Level
+        Category: Plains of Pain:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the difficulty level
+        Keywords: difficulty
+        FieldName: difficulty
+        InputType: enum
+        ParamFieldName: difficulty
+        IncludeInCommandLine: true
+        DefaultValue: '2'
+        EnumValues:
+          '0': Tourist
+          '1': Rookies
+          '2': True Wastelander (default)
+          '3': Veteran
+          '4': Overlord
+    - key: cc
+      label: Enable Console Commands
+      category: Plains of Pain
+      subcategory: Server
+      description: If set, enables console commands
+      keywords: console,commands,cc
+      input_type: checkbox
+      param_field_name: cc
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '-cc '
+      raw:
+        DisplayName: Enable Console Commands
+        Category: Plains of Pain:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, enables console commands
+        Keywords: console,commands,cc
+        FieldName: cc
+        InputType: checkbox
+        ParamFieldName: cc
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '-cc '
+  files:
+    - path: configs/default.json
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: configs/default.json
+        AutoMap: true
+        Importable: true
+        ConfigType: json
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: serverName
+    label: Server Name
+    default: AMP Powered Plains of Pain Server
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: worldId
+    label: World ID
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: seed
+    label: World Seed
+    default: '40377'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: worldSize
+    label: World Size
+    default: '11'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: mapId
+    label: Map ID
+    default: '768'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: maxPlayers
+    label: Player Limit
+    default: '10'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: difficulty
+    label: Difficulty Level
+    default: '2'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: cc
+    label: Enable Console Commands
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '2218970'
+  collection_support: true
 backup:
   include:
     - /data

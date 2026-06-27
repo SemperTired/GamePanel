@@ -5,13 +5,16 @@ category: Imported
 summary: Wreckfest 2 Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '3519390'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: .proton/proton
+  startup: .proton/proton {PlatformArgs} --server --save-dir=.\server_data {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,199 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
-    default: 27015
+    default: 30100
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: server_data/server_config.scnf
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Wreckfest 2
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: $['net server config'][0]['game port']
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Wreckfest 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        ParamFieldName: $['net server config'][0]['game port']
+        EnumValues: {}
+    - key: net_server_config.name
+      label: Server Name
+      category: Wreckfest 2
+      subcategory: Server
+      description: Sets the name of the server displayed in the server list
+      keywords: server,name
+      input_type: text
+      param_field_name: $['net server config'][0]['name']
+      default: AMP Powered Wreckfest 2 Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Wreckfest 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server displayed in the server list
+        Keywords: server,name
+        FieldName: net_server_config.name
+        InputType: text
+        ParamFieldName: $['net server config'][0]['name']
+        DefaultValue: AMP Powered Wreckfest 2 Server
+        EnumValues: {}
+    - key: net_server_config.description
+      label: Server Description
+      category: Wreckfest 2
+      subcategory: Server
+      description: Sets the description of the server displayed in the server list
+      keywords: server,description
+      input_type: text
+      param_field_name: $['net server config'][0]['description']
+      default: Welcome to my server!
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Description
+        Category: Wreckfest 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the description of the server displayed in the server list
+        Keywords: server,description
+        FieldName: net_server_config.description
+        InputType: text
+        ParamFieldName: $['net server config'][0]['description']
+        DefaultValue: Welcome to my server!
+        EnumValues: {}
+    - key: net_server_config.password
+      label: Server Password
+      category: Wreckfest 2
+      subcategory: Server
+      description: Sets the password required to join the server. Default is no password
+      keywords: server,password
+      input_type: password
+      param_field_name: $['net server config'][0]['password']
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Wreckfest 2:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to join the server. Default is no password
+        Keywords: server,password
+        FieldName: net_server_config.password
+        InputType: password
+        ParamFieldName: $['net server config'][0]['password']
+        DefaultValue: ''
+        EnumValues: {}
+    - key: SpecificReleaseVersion
+      label: Proton GE Release Version (Linux)
+      category: Updates
+      subcategory: Runtime Configuration
+      description: >-
+        Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+        Empty = latest. Example: GE-Proton9-1
+      keywords: proton,release,version
+      input_type: text
+      param_field_name: SpecificReleaseVersion
+      default: ''
+      placeholder: GE-Proton9-1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Proton GE Release Version (Linux)
+        Category: Updates
+        Subcategory: Runtime Configuration:build:3
+        Description: >-
+          Sets the Proton GE [release version](https://github.com/GloriousEggroll/proton-ge-custom/releases) to install.
+          Empty = latest. Example: GE-Proton9-1
+        Keywords: proton,release,version
+        FieldName: SpecificReleaseVersion
+        InputType: text
+        ParamFieldName: SpecificReleaseVersion
+        DefaultValue: ''
+        Placeholder: GE-Proton9-1
+        EnumValues: {}
+  files:
+    - path: server_data/server_config.scnf
+      type: json
+      subsections: []
+      raw:
+        ConfigFile: server_data/server_config.scnf
+        ConfigType: json
+        AutoMap: true
+        Importable: true
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: net_server_config.name
+    label: Server Name
+    default: AMP Powered Wreckfest 2 Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: net_server_config.description
+    label: Server Description
+    default: Welcome to my server!
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: net_server_config.password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: SpecificReleaseVersion
+    label: Proton GE Release Version (Linux)
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '1203190'
+  collection_support: true
 backup:
   include:
     - /data

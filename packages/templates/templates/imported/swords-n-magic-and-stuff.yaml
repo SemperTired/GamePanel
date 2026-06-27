@@ -5,13 +5,16 @@ category: Imported
 summary: Swords 'n Magic and Stuff Dedicated Server
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '2058450'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: /usr/bin/wine
+  startup: /usr/bin/wine {PlatformArgs} SNM2020 -Port={GamePort} -QueryPort={QueryPort} -stdout -FullStdOutLogOutput
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +22,413 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
+  - key: gameport
     name: Game Port
+    default: 7777
+    protocol: udp
+    required: true
+  - key: queryport
+    name: Query Port
     default: 27015
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: SNM2020/Saved/Config/WindowsServer/Game.ini
+    type: ini
+    editable: true
+  - path: SNM2020/Saved/Config/WindowsServer/Engine.ini
+    type: ini
+    editable: true
+config_schema:
+  fields:
+    - key: $GamePort
+      label: Game Port
+      category: Swords 'n Magic and Stuff
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: URL.Port
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Game Port
+        Category: Swords 'n Magic and Stuff:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $GamePort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: URL.Port
+        EnumValues: {}
+    - key: $QueryPort
+      label: Query Port
+      category: Swords 'n Magic and Stuff
+      subcategory: Server
+      description: ''
+      keywords: ''
+      input_type: number
+      param_field_name: OnlineSubsystemSteam.GameServerQueryPort
+      default: ''
+      required: false
+      sensitive: false
+      hidden: true
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Query Port
+        Category: Swords 'n Magic and Stuff:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: ''
+        FieldName: $QueryPort
+        InputType: number
+        Hidden: true
+        IsFlagArgument: false
+        ParamFieldName: OnlineSubsystemSteam.GameServerQueryPort
+        EnumValues: {}
+    - key: DedSrv_OwnerSteamID
+      label: Server Owner/Admin
+      category: Swords 'n Magic and Stuff
+      subcategory: Server
+      description: Sets the [Steam64 ID](https://steamid.io/) of the server owner/admin
+      keywords: owner,steamid,DedSrv_OwnerSteamID
+      input_type: text
+      param_field_name: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_OwnerSteamID
+      default: ''
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Owner/Admin
+        Category: Swords 'n Magic and Stuff:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the [Steam64 ID](https://steamid.io/) of the server owner/admin
+        Keywords: owner,steamid,DedSrv_OwnerSteamID
+        FieldName: DedSrv_OwnerSteamID
+        InputType: text
+        ParamFieldName: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_OwnerSteamID
+        DefaultValue: ''
+        Required: true
+        EnumValues: {}
+    - key: DedSrv_Name
+      label: Server Name
+      category: Swords 'n Magic and Stuff
+      subcategory: Server
+      description: >-
+        Sets the name of the server. Must be between 2 and 5 UNIQUE words (no duplicates, case insensitive). See
+        'SNM2020/Saved/Logs/Allowed-Words.txt' for approved words. Empty = random name on each start
+      keywords: name,DedSrv_Name
+      input_type: text
+      param_field_name: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_Name
+      default: Swords 'n Magic Server
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Swords 'n Magic and Stuff:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the name of the server. Must be between 2 and 5 UNIQUE words (no duplicates, case insensitive). See
+          'SNM2020/Saved/Logs/Allowed-Words.txt' for approved words. Empty = random name on each start
+        Keywords: name,DedSrv_Name
+        FieldName: DedSrv_Name
+        InputType: text
+        ParamFieldName: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_Name
+        DefaultValue: Swords 'n Magic Server
+        EnumValues: {}
+    - key: DedSrv_Password
+      label: Server Password
+      category: Swords 'n Magic and Stuff
+      subcategory: Server
+      description: Sets the password for players to join the server. Default is no password
+      keywords: server,password,DedSrv_Password
+      input_type: password
+      param_field_name: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_Password
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Swords 'n Magic and Stuff:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password for players to join the server. Default is no password
+        Keywords: server,password,DedSrv_Password
+        FieldName: DedSrv_Password
+        InputType: password
+        ParamFieldName: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_Password
+        DefaultValue: ''
+        EnumValues: {}
+    - key: $MaxUsers
+      label: Player Limit
+      category: Swords 'n Magic and Stuff
+      subcategory: Server
+      description: Sets the maximum number of players that may connect to the server at one time
+      keywords: maximum,players,limit,DedSrv_MaxPlayers
+      input_type: number
+      param_field_name: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_MaxPlayers
+      default: '16'
+      placeholder: '16'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: players
+      enum_values: {}
+      raw:
+        DisplayName: Player Limit
+        Category: Swords 'n Magic and Stuff:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the maximum number of players that may connect to the server at one time
+        Keywords: maximum,players,limit,DedSrv_MaxPlayers
+        FieldName: $MaxUsers
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_MaxPlayers
+        DefaultValue: '16'
+        Placeholder: '16'
+        Suffix: players
+        EnumValues: {}
+    - key: DedSrv_DaysUntilReset
+      label: Days Until Reset
+      category: Swords 'n Magic and Stuff
+      subcategory: Server
+      description: >-
+        Sets the number of days between resets. 1 = HIGHLY recommended (otherwise strange errors may occur). If 1, and
+        the server is started less than 3 hours before the Reset Time Of Day, it will reset on the next day (ie up to 27
+        hours later)
+      keywords: days,period,reset,DedSrv_DaysUntilReset
+      input_type: number
+      param_field_name: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_DaysUntilReset
+      default: '1'
+      placeholder: '1'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      min: 1
+      suffix: days
+      enum_values: {}
+      raw:
+        DisplayName: Days Until Reset
+        Category: Swords 'n Magic and Stuff:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the number of days between resets. 1 = HIGHLY recommended (otherwise strange errors may occur). If 1, and
+          the server is started less than 3 hours before the Reset Time Of Day, it will reset on the next day (ie up to
+          27 hours later)
+        Keywords: days,period,reset,DedSrv_DaysUntilReset
+        FieldName: DedSrv_DaysUntilReset
+        InputType: number
+        MinValue: '1'
+        ParamFieldName: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_DaysUntilReset
+        DefaultValue: '1'
+        Placeholder: '1'
+        Suffix: days
+        EnumValues: {}
+    - key: DedSrv_ResetTimeOfDay
+      label: Reset Time Of Day
+      category: Swords 'n Magic and Stuff
+      subcategory: Server
+      description: >-
+        Sets the local time of day when the server will reset. Format: HH:MM (in 24 hours format). Example: midnight =
+        00:00
+      keywords: reset,time,day,DedSrv_ResetTimeOfDay
+      input_type: text
+      param_field_name: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_ResetTimeOfDay
+      default: '00:00'
+      placeholder: '00:00'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Reset Time Of Day
+        Category: Swords 'n Magic and Stuff:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the local time of day when the server will reset. Format: HH:MM (in 24 hours format). Example: midnight =
+          00:00
+        Keywords: reset,time,day,DedSrv_ResetTimeOfDay
+        FieldName: DedSrv_ResetTimeOfDay
+        InputType: text
+        ParamFieldName: /Game/Blueprints/GameModes/BP_GameInstance.BP_GameInstance_C.DedSrv_ResetTimeOfDay
+        DefaultValue: '00:00'
+        Placeholder: '00:00'
+        EnumValues: {}
+    - key: DedSrv_ResetWarningsInMinutes
+      label: Reset Warnings
+      category: Swords 'n Magic and Stuff
+      subcategory: Server
+      description: >-
+        Sets an array of when the server will warn players before reset. The array must be in descending order. Example:
+        60,30,5,1 (will give warnings 60, 30, 5 and 1 minutes before reset). Empty = default
+      keywords: warnings,reset,DedSrv_ResetWarningsInMinutes
+      input_type: text
+      param_field_name: DedSrv_ResetWarningsInMinutes
+      default: 60,30,5,1
+      placeholder: 60,30,5,1
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      suffix: minutes
+      enum_values: {}
+      raw:
+        DisplayName: Reset Warnings
+        Category: Swords 'n Magic and Stuff:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets an array of when the server will warn players before reset. The array must be in descending order.
+          Example: 60,30,5,1 (will give warnings 60, 30, 5 and 1 minutes before reset). Empty = default
+        Keywords: warnings,reset,DedSrv_ResetWarningsInMinutes
+        FieldName: DedSrv_ResetWarningsInMinutes
+        InputType: text
+        ParamFieldName: DedSrv_ResetWarningsInMinutes
+        DefaultValue: 60,30,5,1
+        Placeholder: 60,30,5,1
+        Suffix: minutes
+        EnumValues: {}
+    - key: ServerBranch
+      label: Server Branch
+      category: Updates
+      subcategory: Steam Downloads
+      description: >-
+        Sets the server branch to install. Set any required password under "Beta Password". Update the server after
+        switching branches
+      keywords: server,branch,public,press
+      input_type: enum
+      param_field_name: ServerBranch
+      default: public
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        public: Public (default)
+        press: Press
+      raw:
+        DisplayName: Server Branch
+        Category: Updates
+        Subcategory: Steam Downloads:download
+        Description: >-
+          Sets the server branch to install. Set any required password under "Beta Password". Update the server after
+          switching branches
+        Keywords: server,branch,public,press
+        FieldName: ServerBranch
+        InputType: enum
+        ParamFieldName: ServerBranch
+        DefaultValue: public
+        EnumValues:
+          public: Public (default)
+          press: Press
+  files:
+    - path: SNM2020/Saved/Config/WindowsServer/Game.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: SNM2020/Saved/Config/WindowsServer/Game.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
+    - path: SNM2020/Saved/Config/WindowsServer/Engine.ini
+      type: ini
+      format: '{0}={1}'
+      subsections: []
+      raw:
+        ConfigFile: SNM2020/Saved/Config/WindowsServer/Engine.ini
+        AutoMap: true
+        ConfigType: ini
+        ConfigFormat: '{0}={1}'
+        ConfigFormatRegex: ^(?<key>.+?)=(?<value>.*?)$
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: DedSrv_OwnerSteamID
+    label: Server Owner/Admin
+    default: ''
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: DedSrv_Name
+    label: Server Name
+    default: Swords 'n Magic Server
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DedSrv_Password
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: DedSrv_DaysUntilReset
+    label: Days Until Reset
+    default: '1'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DedSrv_ResetTimeOfDay
+    label: Reset Time Of Day
+    default: '00:00'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: DedSrv_ResetWarningsInMinutes
+    label: Reset Warnings
+    default: 60,30,5,1
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ServerBranch
+    label: Server Branch
+    default: public
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '810040'
+  collection_support: true
 backup:
   include:
     - /data

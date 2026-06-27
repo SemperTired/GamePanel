@@ -5,13 +5,22 @@ category: Imported
 summary: 'Smalland: Survive the Wilds Dedicated Server'
 install:
   method: steamcmd
-  app_id: 'True'
+  app_id: '808040'
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
 runtime:
   working_dir: /data
-  startup: 808040/SMALLAND/Binaries/Linux/SMALLANDServer-Linux-Shipping
+  startup: >-
+    808040/SMALLAND/Binaries/Linux/SMALLANDServer-Linux-Shipping {PlatformArgs} SMALLAND
+    /Game/Maps/WorldGame/WorldGame_Smalland{FRIENDLYFIRE}{PEACEFULMODE}{KEEPINVENTORY}{NODETERIORATION}{PRIVATE}{TAMEDCREATURESIMMORTAL}{CROSSPLAY}?{FormattedArgs}{CustomOptions}?SESSIONPLATFORM=pc
+    -ini:Engine:[EpicOnlineServices]:DeploymentId=50f2b148496e4cbbbdeefbecc2ccd6a3
+    -ini:Engine:[EpicOnlineServices]:DedicatedServerClientId=xyza78918KT08TkA6emolUay8yhvAAy2
+    -ini:Engine:[EpicOnlineServices]:DedicatedServerClientSecret=aN2GtVw7aHb6hx66HwohNM+qktFaO3vtrLSbGdTzZWk
+    -Port={ServerPort} -NOSTEAM -stdout -FullStdOutLogOutput
   console: true
 resources:
   min_ram_mb: 2048
@@ -19,18 +28,988 @@ resources:
   min_disk_gb: 20
   cpu: 2 shared vCPU
 ports:
-  - key: game
-    name: Game Port
-    default: 27015
+  - key: serverport
+    name: Server Port
+    default: 7777
     protocol: udp
     required: true
-config_files: []
+config_files:
+  - path: smallandconfig.json
+    type: json
+    editable: true
+  - path: smallandmetaconfig.json
+    type: json
+    editable: true
+config_schema:
+  fields:
+    - key: SERVERNAME
+      label: Server Name
+      category: Smalland
+      subcategory: Server
+      description: Sets the name of the server that appears in the server browser
+      keywords: server,name,servername
+      input_type: text
+      param_field_name: SERVERNAME
+      default: 'AMP Powered Smalland: Survive the Wilds Server'
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Name
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the name of the server that appears in the server browser
+        Keywords: server,name,servername
+        FieldName: SERVERNAME
+        InputType: text
+        ParamFieldName: SERVERNAME
+        IncludeInCommandLine: true
+        DefaultValue: 'AMP Powered Smalland: Survive the Wilds Server'
+        Required: true
+        EnumValues: {}
+    - key: WORLDNAME
+      label: World Name
+      category: Smalland
+      subcategory: Server
+      description: Sets the world name, which corresponds to the save file name
+      keywords: world,name,worldname
+      input_type: text
+      param_field_name: WORLDNAME
+      default: World
+      placeholder: World
+      required: true
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: World Name
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the world name, which corresponds to the save file name
+        Keywords: world,name,worldname
+        FieldName: WORLDNAME
+        InputType: text
+        ParamFieldName: WORLDNAME
+        IncludeInCommandLine: true
+        DefaultValue: World
+        Placeholder: World
+        Required: true
+        EnumValues: {}
+    - key: PASSWORD
+      label: Server Password
+      category: Smalland
+      subcategory: Server
+      description: Sets the password required to connect to the server. Default is no password
+      keywords: server,password
+      input_type: password
+      param_field_name: PASSWORD
+      default: ''
+      required: false
+      sensitive: true
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: true
+      enum_values: {}
+      raw:
+        DisplayName: Server Password
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: Sets the password required to connect to the server. Default is no password
+        Keywords: server,password
+        FieldName: PASSWORD
+        InputType: password
+        ParamFieldName: PASSWORD
+        IncludeInCommandLine: true
+        SkipIfEmpty: true
+        DefaultValue: ''
+        EnumValues: {}
+    - key: PRIVATE
+      label: Make Server Private
+      category: Smalland
+      subcategory: Server
+      description: If set, the server will be hidden in the server browser
+      keywords: private,hidden,server,browser
+      input_type: checkbox
+      param_field_name: PRIVATE
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '?PRIVATE'
+      raw:
+        DisplayName: Make Server Private
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be hidden in the server browser
+        Keywords: private,hidden,server,browser
+        FieldName: PRIVATE
+        InputType: checkbox
+        ParamFieldName: PRIVATE
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '?PRIVATE'
+    - key: FRIENDLYFIRE
+      label: Enable Friendly Fire
+      category: Smalland
+      subcategory: Server
+      description: If set, friendly fire will be enabled, making the server a PvP server
+      keywords: friendly,fire,pvp,friendlyfire
+      input_type: checkbox
+      param_field_name: FRIENDLYFIRE
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '?FRIENDLYFIRE'
+      raw:
+        DisplayName: Enable Friendly Fire
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, friendly fire will be enabled, making the server a PvP server
+        Keywords: friendly,fire,pvp,friendlyfire
+        FieldName: FRIENDLYFIRE
+        InputType: checkbox
+        ParamFieldName: FRIENDLYFIRE
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '?FRIENDLYFIRE'
+    - key: PEACEFULMODE
+      label: Enable Peaceful Mode
+      category: Smalland
+      subcategory: Server
+      description: If set, peaceful mode will be enabled
+      keywords: peaceful,mode,peacefulmode
+      input_type: checkbox
+      param_field_name: PEACEFULMODE
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '?PEACEFULMODE'
+      raw:
+        DisplayName: Enable Peaceful Mode
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, peaceful mode will be enabled
+        Keywords: peaceful,mode,peacefulmode
+        FieldName: PEACEFULMODE
+        InputType: checkbox
+        ParamFieldName: PEACEFULMODE
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '?PEACEFULMODE'
+    - key: KEEPINVENTORY
+      label: Keep Inventory On Death
+      category: Smalland
+      subcategory: Server
+      description: If set, players will keep inventory on death
+      keywords: inventory,death,keepinventory
+      input_type: checkbox
+      param_field_name: KEEPINVENTORY
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '?KEEPINVENTORY'
+      raw:
+        DisplayName: Keep Inventory On Death
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, players will keep inventory on death
+        Keywords: inventory,death,keepinventory
+        FieldName: KEEPINVENTORY
+        InputType: checkbox
+        ParamFieldName: KEEPINVENTORY
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '?KEEPINVENTORY'
+    - key: NODETERIORATION
+      label: Disable Building Weather Deterioration
+      category: Smalland
+      subcategory: Server
+      description: If set, building weather deterioration will be disabled
+      keywords: disable,building,weather,deterioration,nodeterioration
+      input_type: checkbox
+      param_field_name: NODETERIORATION
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '?NODETERIORATION'
+      raw:
+        DisplayName: Disable Building Weather Deterioration
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, building weather deterioration will be disabled
+        Keywords: disable,building,weather,deterioration,nodeterioration
+        FieldName: NODETERIORATION
+        InputType: checkbox
+        ParamFieldName: NODETERIORATION
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '?NODETERIORATION'
+    - key: TAMEDCREATURESIMMORTAL
+      label: Make Tamed Creatures Immortal
+      category: Smalland
+      subcategory: Server
+      description: If set, tamed creatures will not die
+      keywords: tamed,creatures,pets,immortal,die,death,tamedcreaturesimmortal
+      input_type: checkbox
+      param_field_name: TAMEDCREATURESIMMORTAL
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '?TAMEDCREATURESIMMORTAL'
+      raw:
+        DisplayName: Make Tamed Creatures Immortal
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, tamed creatures will not die
+        Keywords: tamed,creatures,pets,immortal,die,death,tamedcreaturesimmortal
+        FieldName: TAMEDCREATURESIMMORTAL
+        InputType: checkbox
+        ParamFieldName: TAMEDCREATURESIMMORTAL
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '?TAMEDCREATURESIMMORTAL'
+    - key: CROSSPLAY
+      label: Enable Crossplay
+      category: Smalland
+      subcategory: Server
+      description: If set, the server will be visible to other platforms
+      keywords: crossplay,platforms
+      input_type: checkbox
+      param_field_name: CROSSPLAY
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        'False': ''
+        'True': '?CROSSPLAY'
+      raw:
+        DisplayName: Enable Crossplay
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: If set, the server will be visible to other platforms
+        Keywords: crossplay,platforms
+        FieldName: CROSSPLAY
+        InputType: checkbox
+        ParamFieldName: CROSSPLAY
+        DefaultValue: ''
+        EnumValues:
+          'False': ''
+          'True': '?CROSSPLAY'
+    - key: lengthofdayseconds
+      label: Day Length
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: length,day,lengthofdayseconds
+      input_type: number
+      param_field_name: lengthofdayseconds
+      default: '1800'
+      placeholder: '1800'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Day Length
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: length,day,lengthofdayseconds
+        FieldName: lengthofdayseconds
+        InputType: number
+        ParamFieldName: lengthofdayseconds
+        IncludeInCommandLine: true
+        DefaultValue: '1800'
+        Placeholder: '1800'
+        Suffix: seconds
+        EnumValues: {}
+    - key: lengthofseasonseconds
+      label: Season Length
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: season,length,lengthofseasonseconds
+      input_type: number
+      param_field_name: lengthofseasonseconds
+      default: '10800'
+      placeholder: '10800'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      suffix: seconds
+      enum_values: {}
+      raw:
+        DisplayName: Season Length
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: season,length,lengthofseasonseconds
+        FieldName: lengthofseasonseconds
+        InputType: number
+        ParamFieldName: lengthofseasonseconds
+        IncludeInCommandLine: true
+        DefaultValue: '10800'
+        Placeholder: '10800'
+        Suffix: seconds
+        EnumValues: {}
+    - key: creaturehealthmodifier
+      label: Creature Health Modifier
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: creature,health,modifier,creaturehealthmodifier
+      input_type: number
+      param_field_name: creaturehealthmodifier
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 20
+      max: 300
+      enum_values: {}
+      raw:
+        DisplayName: Creature Health Modifier
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: creature,health,modifier,creaturehealthmodifier
+        FieldName: creaturehealthmodifier
+        InputType: number
+        MinValue: '20'
+        MaxValue: '300'
+        ParamFieldName: creaturehealthmodifier
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: creaturedamagemodifier
+      label: Creature Damage Modifier
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: creature,damage,modifier,creaturedamagemodifier
+      input_type: number
+      param_field_name: creaturedamagemodifier
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 20
+      max: 300
+      enum_values: {}
+      raw:
+        DisplayName: Creature Damage Modifier
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: creature,damage,modifier,creaturedamagemodifier
+        FieldName: creaturedamagemodifier
+        InputType: number
+        MinValue: '20'
+        MaxValue: '300'
+        ParamFieldName: creaturedamagemodifier
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: creaturerespawnratemodifier
+      label: Creature Respawn Rate Modifier
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: creature,respawn,rate,modifier
+      input_type: number
+      param_field_name: creaturerespawnratemodifier
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 10
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Creature Respawn Rate Modifier
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: creature,respawn,rate,modifier
+        FieldName: creaturerespawnratemodifier
+        InputType: number
+        MinValue: '10'
+        MaxValue: '1000'
+        ParamFieldName: creaturerespawnratemodifier
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: resourcerespawnratemodifier
+      label: Resource Respawn Rate Modifier
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: resource,respawn,rate,modifier,resourcerespawnratemodifier
+      input_type: number
+      param_field_name: resourcerespawnratemodifier
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 10
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Resource Respawn Rate Modifier
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: resource,respawn,rate,modifier,resourcerespawnratemodifier
+        FieldName: resourcerespawnratemodifier
+        InputType: number
+        MinValue: '10'
+        MaxValue: '1000'
+        ParamFieldName: resourcerespawnratemodifier
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: creaturespawnchancemodifier
+      label: Creature Spawn Chance Modifier
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: creature,spawn,chance,modifier,creaturespawnchancemodifier
+      input_type: number
+      param_field_name: creaturespawnchancemodifier
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 10
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Creature Spawn Chance Modifier
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: creature,spawn,chance,modifier,creaturespawnchancemodifier
+        FieldName: creaturespawnchancemodifier
+        InputType: number
+        MinValue: '10'
+        MaxValue: '1000'
+        ParamFieldName: creaturespawnchancemodifier
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: craftingtimemodifier
+      label: Crafting Time Modifier
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: craft,crafting,time,modifier,craftingtimemodifier
+      input_type: number
+      param_field_name: craftingtimemodifier
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 10
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Crafting Time Modifier
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: craft,crafting,time,modifier,craftingtimemodifier
+        FieldName: craftingtimemodifier
+        InputType: number
+        MinValue: '10'
+        MaxValue: '1000'
+        ParamFieldName: craftingtimemodifier
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: craftingfuelmodifier
+      label: Crafting Fuel Modifier
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: crafting,fuel,modifier,craftingfuelmodifier
+      input_type: number
+      param_field_name: craftingfuelmodifier
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 10
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Crafting Fuel Modifier
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: crafting,fuel,modifier,craftingfuelmodifier
+        FieldName: craftingfuelmodifier
+        InputType: number
+        MinValue: '10'
+        MaxValue: '1000'
+        ParamFieldName: craftingfuelmodifier
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: stormfrequencymodifier
+      label: Storm Frequency Modifier
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: storm,frequency,modifier,stormfrequencymodifier
+      input_type: number
+      param_field_name: stormfrequencymodifier
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 10
+      max: 1000
+      enum_values: {}
+      raw:
+        DisplayName: Storm Frequency Modifier
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: storm,frequency,modifier,stormfrequencymodifier
+        FieldName: stormfrequencymodifier
+        InputType: number
+        MinValue: '10'
+        MaxValue: '1000'
+        ParamFieldName: stormfrequencymodifier
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: nourishmentlossmodifier
+      label: Nourishment Loss Modifier
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: nourishment,loss,modifier,nourishmentlossmodifier
+      input_type: number
+      param_field_name: nourishmentlossmodifier
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 0
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Nourishment Loss Modifier
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: nourishment,loss,modifier,nourishmentlossmodifier
+        FieldName: nourishmentlossmodifier
+        InputType: number
+        MinValue: '0'
+        MaxValue: '100'
+        ParamFieldName: nourishmentlossmodifier
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: falldamagemodifier
+      label: Fall Damage Modifier
+      category: Smalland
+      subcategory: Server
+      description: ''
+      keywords: fall,damage,modifier,falldamagemodifier
+      input_type: number
+      param_field_name: falldamagemodifier
+      default: '100'
+      placeholder: '100'
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: true
+      skip_if_empty: false
+      min: 50
+      max: 100
+      enum_values: {}
+      raw:
+        DisplayName: Fall Damage Modifier
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: ''
+        Keywords: fall,damage,modifier,falldamagemodifier
+        FieldName: falldamagemodifier
+        InputType: number
+        MinValue: '50'
+        MaxValue: '100'
+        ParamFieldName: falldamagemodifier
+        IncludeInCommandLine: true
+        DefaultValue: '100'
+        Placeholder: '100'
+        EnumValues: {}
+    - key: EOS_OVERRIDE_HOST_IP
+      label: Public IP Selection Mode
+      category: Smalland
+      subcategory: Server
+      description: >-
+        Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+        it should use the IP set under Server Public IP
+      keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
+      input_type: enum
+      param_field_name: EOS_OVERRIDE_HOST_IP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values:
+        '': Server automatically selects (default)
+        '{{$ExternalIP}}': AMP automatically selects
+        '{{ManualPublicIP}}': Manual selection
+      raw:
+        DisplayName: Public IP Selection Mode
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+          it should use the IP set under Server Public IP
+        Keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
+        FieldName: EOS_OVERRIDE_HOST_IP
+        InputType: enum
+        ParamFieldName: EOS_OVERRIDE_HOST_IP
+        DefaultValue: ''
+        EnumValues:
+          '': Server automatically selects (default)
+          '{{$ExternalIP}}': AMP automatically selects
+          '{{ManualPublicIP}}': Manual selection
+    - key: ManualPublicIP
+      label: Server Public IP
+      category: Smalland
+      subcategory: Server
+      description: >-
+        Sets the public IP advertised for the server, if "Manual selection" is selected as the Public IP Selection Mode.
+        Useful if the host network has multiple public IPs, or the server is behind a public proxy or VPN
+      keywords: manual,public,ip,eos,override,host,EOS_OVERRIDE_HOST_IP
+      input_type: text
+      param_field_name: ManualPublicIP
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Server Public IP
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets the public IP advertised for the server, if "Manual selection" is selected as the Public IP Selection
+          Mode. Useful if the host network has multiple public IPs, or the server is behind a public proxy or VPN
+        Keywords: manual,public,ip,eos,override,host,EOS_OVERRIDE_HOST_IP
+        FieldName: ManualPublicIP
+        InputType: text
+        ParamFieldName: ManualPublicIP
+        DefaultValue: ''
+        EnumValues: {}
+    - key: CustomOptions
+      label: Custom Command Line Options
+      category: Smalland
+      subcategory: Server
+      description: >-
+        Sets custom command line options for the server (those that start with a ? (question mark)). Include the
+        question mark but do not separate with a space. Don't use options already in AMP's settings!
+      keywords: custom,command,line,options
+      input_type: text
+      param_field_name: CustomOptions
+      default: ''
+      required: false
+      sensitive: false
+      hidden: false
+      customer_editable: true
+      include_in_command_line: false
+      skip_if_empty: false
+      enum_values: {}
+      raw:
+        DisplayName: Custom Command Line Options
+        Category: Smalland:stadia_controller
+        Subcategory: Server:dns:1
+        Description: >-
+          Sets custom command line options for the server (those that start with a ? (question mark)). Include the
+          question mark but do not separate with a space. Don't use options already in AMP's settings!
+        Keywords: custom,command,line,options
+        FieldName: CustomOptions
+        InputType: text
+        ParamFieldName: CustomOptions
+        DefaultValue: ''
+        EnumValues: {}
+  files: []
 environment: {}
-startup_variables: []
+startup_variables:
+  - key: SERVERNAME
+    label: Server Name
+    default: 'AMP Powered Smalland: Survive the Wilds Server'
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: WORLDNAME
+    label: World Name
+    default: World
+    customer_editable: true
+    required: true
+    sensitive: false
+  - key: PASSWORD
+    label: Server Password
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: true
+  - key: PRIVATE
+    label: Make Server Private
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: FRIENDLYFIRE
+    label: Enable Friendly Fire
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: PEACEFULMODE
+    label: Enable Peaceful Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: KEEPINVENTORY
+    label: Keep Inventory On Death
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: NODETERIORATION
+    label: Disable Building Weather Deterioration
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: TAMEDCREATURESIMMORTAL
+    label: Make Tamed Creatures Immortal
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CROSSPLAY
+    label: Enable Crossplay
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lengthofdayseconds
+    label: Day Length
+    default: '1800'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: lengthofseasonseconds
+    label: Season Length
+    default: '10800'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: creaturehealthmodifier
+    label: Creature Health Modifier
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: creaturedamagemodifier
+    label: Creature Damage Modifier
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: creaturerespawnratemodifier
+    label: Creature Respawn Rate Modifier
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: resourcerespawnratemodifier
+    label: Resource Respawn Rate Modifier
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: creaturespawnchancemodifier
+    label: Creature Spawn Chance Modifier
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: craftingtimemodifier
+    label: Crafting Time Modifier
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: craftingfuelmodifier
+    label: Crafting Fuel Modifier
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: stormfrequencymodifier
+    label: Storm Frequency Modifier
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: nourishmentlossmodifier
+    label: Nourishment Loss Modifier
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: falldamagemodifier
+    label: Fall Damage Modifier
+    default: '100'
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: EOS_OVERRIDE_HOST_IP
+    label: Public IP Selection Mode
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: ManualPublicIP
+    label: Server Public IP
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
+  - key: CustomOptions
+    label: Custom Command Line Options
+    default: ''
+    customer_editable: true
+    required: false
+    sensitive: false
 workshop:
-  enabled: false
-  providers: []
-  collection_support: false
+  enabled: true
+  providers:
+    - steam
+  app_id: '768200'
+  collection_support: true
 backup:
   include:
     - /data
