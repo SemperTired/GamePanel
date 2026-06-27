@@ -142,6 +142,8 @@ export const gameTemplateSchema = z.object({
     label: z.string().min(1),
     default: z.string().default(""),
     customer_editable: z.boolean().default(true),
+    required: z.boolean().default(false),
+    sensitive: z.boolean().default(false),
   })).default([]),
   workshop: z.object({
     enabled: z.boolean().default(false),

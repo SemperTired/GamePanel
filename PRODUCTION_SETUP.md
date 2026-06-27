@@ -76,18 +76,18 @@ FiveM is a first-class installer method. To sell FiveM, provide:
 ```env
 FIVEM_LICENSE_KEY=your-cfx-license-key
 FIVEM_ARTIFACT_URL=https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/.../fx.tar.xz
-STEAM_WEB_API_KEY=optional-but-recommended
+STEAM_WEB_API_KEY=provider-steam-web-api-key
 ```
 
 The FiveM installer creates `/data/server`, `/data/server-data`, downloads the Linux artifact, clones `cfx-server-data`, and writes a starter `server.cfg`.
 
-Path of Titans/Alderon is a first-class installer method but requires operator-supplied Alderon credentials and a non-interactive install command on each target node:
+Path of Titans/Alderon is a first-class installer method that requires the customer to supply their Alderon hosting auth token at checkout/deploy. The installer downloads `AlderonGamesCmd-Linux-x64` and uses the customer's `AuthToken` to install the server.
 
 ```env
-ALDERON_EMAIL=provider-account@example.com
-ALDERON_PASSWORD=provider-password
-ALDERON_INSTALL_COMMAND='approved non-interactive Alderon install command'
+startup_variables.AuthToken=customer-alderon-hosting-token
 ```
+
+Steam Workshop search/install uses the provider platform key, not a customer key. Configure `STEAM_WEB_API_KEY` once on the API and worker. Do not commit this key to Git. Customers can browse Steam Workshop through AetherPanel without seeing or supplying the provider key.
 
 SteamCMD games that require authenticated app access need:
 
@@ -115,8 +115,8 @@ Use this release gate before taking payments:
 - Docker image titles: sell only after image pull, start, backup, restore, and delete are verified on the target.
 - Anonymous SteamCMD titles: sell after `AETHERPANEL_RUN_INSTALLERS=true` succeeds once and the cache is ready.
 - Authenticated SteamCMD titles: sell after Steam credentials are configured and the cache is ready.
-- FiveM: sell after `FIVEM_LICENSE_KEY` and `FIVEM_ARTIFACT_URL` are configured and one FXServer smoke instance starts.
-- Path of Titans: sell after `ALDERON_INSTALL_COMMAND`, `ALDERON_EMAIL`, and `ALDERON_PASSWORD` are configured and one smoke instance starts with a real server binary.
+- FiveM: collect the customer's `sv_licenseKey` at checkout/deploy. `FIVEM_ARTIFACT_URL` can be set to pin a build; otherwise the installer uses Cfx.re's recommended Linux artifact endpoint.
+- Path of Titans: collect the customer's Alderon `AuthToken` at checkout/deploy. Smoke test one instance with a real customer/test token before publishing the product.
 
 ## Ports And Network
 

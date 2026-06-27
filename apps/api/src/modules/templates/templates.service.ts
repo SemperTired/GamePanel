@@ -60,6 +60,7 @@ export class TemplatesService {
       readiness: {
         customer_ready: plan.readiness.customer_ready && missingEnv.length === 0,
         required_env: plan.readiness.required_env,
+        required_customer_variables: plan.readiness.required_customer_variables,
         missing_env: missingEnv,
         operator_actions: plan.readiness.operator_actions,
         warnings: plan.warnings,

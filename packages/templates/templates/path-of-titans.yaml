@@ -43,14 +43,30 @@ config_files:
 environment:
   AETHERPANEL_GAME: path-of-titans
 startup_variables:
+  - key: AuthToken
+    label: Alderon Hosting Auth Token
+    default: ""
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: BranchKey
+    label: Alderon Branch
+    default: production
+    customer_editable: false
+    required: false
+    sensitive: false
   - key: SERVER_NAME
     label: Server Name
     default: AetherNode Path of Titans
     customer_editable: true
+    required: false
+    sensitive: false
   - key: MAX_PLAYERS
     label: Max Players
     default: "100"
     customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: true
   providers: [modio, direct_url, manual]

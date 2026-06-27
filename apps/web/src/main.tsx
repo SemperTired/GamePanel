@@ -5,7 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import "./styles/global.css";
 import { api, login, logout, token } from "./lib/api";
 
-type Template = { id: string; name: string; category: string; summary: string; install?: { method: string; image?: string; app_id?: string; cache_key?: string; copy_strategy?: string }; runtime?: { startup: string; working_dir?: string; stop_command?: string }; resources: { recommended_ram_mb: number; min_ram_mb?: number; min_disk_gb: number; cpu: string }; workshop: { enabled: boolean; providers: string[] }; ports: Array<{ key: string; default: number; protocol: string }>; config_files?: Array<{ path: string; type: string; editable: boolean }>; source?: { needs_review?: boolean; type?: string }; readiness?: { customer_ready: boolean; required_env: string[]; missing_env: string[]; operator_actions: string[]; warnings: string[] } };
+type Template = { id: string; name: string; category: string; summary: string; install?: { method: string; image?: string; app_id?: string; cache_key?: string; copy_strategy?: string }; runtime?: { startup: string; working_dir?: string; stop_command?: string }; resources: { recommended_ram_mb: number; min_ram_mb?: number; min_disk_gb: number; cpu: string }; workshop: { enabled: boolean; providers: string[] }; ports: Array<{ key: string; default: number; protocol: string }>; config_files?: Array<{ path: string; type: string; editable: boolean }>; startup_variables?: Array<{ key: string; label: string; default: string; customer_editable: boolean; required?: boolean; sensitive?: boolean }>; source?: { needs_review?: boolean; type?: string }; readiness?: { customer_ready: boolean; required_env: string[]; required_customer_variables: string[]; missing_env: string[]; operator_actions: string[]; warnings: string[] } };
 type ModEntry = { id: string; provider: string; name?: string; summary?: string; thumbnail_url?: string; page_url?: string; enabled: boolean; order: number };
 type ServicePort = { key: string; host: number; container?: number; protocol: string; host_ip?: string };
 type NetworkMapping = { id?: string; name?: string; wan_ip?: string; external_port?: number; internal_ip?: string; internal_port?: number };
@@ -209,6 +209,7 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [editor, setEditor] = useState<any>({});
+  const [customerVariables, setCustomerVariables] = useState<Record<string, string>>({});
   const filtered = templates.filter((template) => `${template.name} ${template.category} ${template.id}`.toLowerCase().includes(q.toLowerCase()));
   const selected = templates.find((template) => template.id === selectedId) || templates.find((template) => template.id === "path-of-titans") || templates[0];
 
@@ -217,6 +218,7 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
     setServiceName((current) => current && current !== "AetherNode Path of Titans Test" ? current : `AetherNode ${selected.name} Test`);
     setMemoryMb(selected.resources.recommended_ram_mb);
     setDiskGb(selected.resources.min_disk_gb);
+    setCustomerVariables(Object.fromEntries((selected.startup_variables || []).map((variable) => [variable.key, variable.default || ""])));
     setEditor({
       name: selected.name,
       category: selected.category,
@@ -248,6 +250,7 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
           memory_mb: memoryMb,
           disk_gb: diskGb,
           cpu_limit: cpuLimit,
+          startup_variables: customerVariables,
           auto_start: false,
         }),
       });
@@ -348,6 +351,15 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
             <label className="setting-field"><span>Disk GB</span><input className="field" type="number" value={diskGb} onChange={(event) => setDiskGb(Number(event.target.value))} /></label>
             <label className="setting-field"><span>CPU</span><input className="field" type="number" value={cpuLimit} onChange={(event) => setCpuLimit(Number(event.target.value))} /></label>
           </div>
+          {(selected.startup_variables || []).filter((variable) => variable.customer_editable).length ? <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+            <div className="mb-3 font-semibold">Customer Required Fields</div>
+            <div className="space-y-3">
+              {(selected.startup_variables || []).filter((variable) => variable.customer_editable).map((variable) => <label key={variable.key} className="setting-field">
+                <span>{variable.label}{variable.required ? " *" : ""}</span>
+                <input className="field" type={variable.sensitive ? "password" : "text"} value={customerVariables[variable.key] || ""} onChange={(event) => setCustomerVariables({ ...customerVariables, [variable.key]: event.target.value })} />
+              </label>)}
+            </div>
+          </div> : null}
           <InfoBlock title="Ports" items={selected.ports.map((port) => [port.key, `${port.default}/${port.protocol}`])} />
           <InfoBlock title="Install" items={[["method", selected.id === "path-of-titans" ? "alderon" : selected.source?.type || "template"], ["mods", selected.workshop.enabled ? selected.workshop.providers.join(", ") : "none"]]} />
           <div className={`rounded-2xl border p-4 ${selected.readiness?.customer_ready ? "border-emerald-400/30 bg-emerald-500/10" : "border-amber-400/30 bg-amber-500/10"}`}>
@@ -357,6 +369,7 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
             </div>
             <div className="mt-3 space-y-2 text-sm text-slate-300">
               {(selected.readiness?.missing_env || []).map((item) => <div key={item}>Missing env: <span className="font-mono text-amber-100">{item}</span></div>)}
+              {(selected.readiness?.required_customer_variables || []).map((item) => <div key={item}>Customer must supply: <span className="font-mono text-cyan">{item}</span></div>)}
               {(selected.readiness?.operator_actions || []).map((item) => <div key={item}>{item}</div>)}
               {(selected.readiness?.warnings || []).slice(0, 2).map((item) => <div key={item} className="text-slate-400">{item}</div>)}
               {selected.readiness?.customer_ready && <div className="text-emerald-100">No blocking installer prerequisites detected on this API node.</div>}

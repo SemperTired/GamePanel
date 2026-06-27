@@ -17,7 +17,7 @@ async function pathExists(target: string): Promise<boolean> {
   }
 }
 
-export async function prepareServiceFiles(plan: InstallPlan, options: { runInstallers?: boolean } = {}) {
+export async function prepareServiceFiles(plan: InstallPlan, options: { runInstallers?: boolean; variables?: Record<string, string> } = {}) {
   await fs.mkdir(plan.cachePath, { recursive: true });
   await fs.mkdir(plan.servicePath, { recursive: true });
   const manifestPath = path.join(plan.cachePath, ".aetherpanel-cache.json");
@@ -32,7 +32,7 @@ export async function prepareServiceFiles(plan: InstallPlan, options: { runInsta
     await exec(plan.commands.join(" && "), {
       cwd: plan.cachePath,
       timeout: Number(process.env.AETHERPANEL_INSTALL_TIMEOUT_MS || 1800000),
-      env: { ...process.env, INSTALL_DIR: plan.cachePath },
+      env: { ...process.env, ...(options.variables || {}), INSTALL_DIR: plan.cachePath },
     });
     await fs.writeFile(readyPath, new Date().toISOString() + "\n");
   }

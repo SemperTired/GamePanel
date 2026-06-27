@@ -20,7 +20,18 @@ const files = fs.readdirSync(input, { recursive: true })
 const used = new Set<string>();
 for (const file of files) {
   const kvp = parseKvp(fs.readFileSync(path.join(input, file), "utf8"));
-  const template = convertAmpKvp(file, kvp);
+  const readJson = (name?: string) => {
+    if (!name) return undefined;
+    const target = path.join(input, name);
+    if (!fs.existsSync(target)) return undefined;
+    return JSON.parse(fs.readFileSync(target, "utf8"));
+  };
+  const includeName = (value?: string) => value?.match(/@IncludeJson\[([^\]]+)\]/)?.[1];
+  const template = convertAmpKvp(file, kvp, {
+    updates: readJson(includeName(kvp["App.UpdateSources"])),
+    config: readJson(kvp["Meta.ConfigManifest"]),
+    ports: readJson(includeName(kvp["App.Ports"])),
+  });
   let id = template.id;
   let suffix = 2;
   while (used.has(id)) id = `${template.id}-${suffix++}`;

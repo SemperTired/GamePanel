@@ -36,14 +36,30 @@ config_files:
 environment:
   AETHERPANEL_GAME: fivem
 startup_variables:
+  - key: sv_licenseKey
+    label: Cfx.re Server Registration Key
+    default: ""
+    customer_editable: true
+    required: true
+    sensitive: true
+  - key: steam_webApiKey
+    label: Steam Web API Key
+    default: ""
+    customer_editable: true
+    required: false
+    sensitive: true
   - key: SERVER_NAME
     label: Server Name
     default: AetherNode FiveM
     customer_editable: true
+    required: false
+    sensitive: false
   - key: MAX_PLAYERS
     label: Max Players
     default: "48"
     customer_editable: true
+    required: false
+    sensitive: false
 workshop:
   enabled: true
   providers: [github, direct_url, manual]
