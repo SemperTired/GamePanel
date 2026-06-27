@@ -52,12 +52,28 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
+  agent:
+    build:
+      context: .
+      dockerfile: deploy/agent.Dockerfile
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      AGENT_PORT: 4210
+      DOCKER_HOST: unix:///var/run/docker.sock
+    ports:
+      - "4210:4210"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${AETHERPANEL_DATA_ROOT:-./var/services}:${AETHERPANEL_DATA_ROOT:-/srv/aetherpanel/services}
+      - ${AETHERPANEL_CACHE_ROOT:-./var/cache}:${AETHERPANEL_CACHE_ROOT:-/srv/aetherpanel/cache}
+
   web:
     build:
       context: .
       dockerfile: deploy/web.Dockerfile
     ports:
-      - "4000:80"
+      - "${WEB_PORT:-4000}:80"
     depends_on:
       - api
 

@@ -166,6 +166,15 @@ importers:
         specifier: ^3.2.4
         version: 3.2.6(@types/node@24.13.2)(jiti@1.21.7)(tsx@4.22.4)
 
+  apps/agent:
+    dependencies:
+      '@aetherpanel/runtime-docker':
+        specifier: workspace:*
+        version: link:../../packages/runtime-docker
+      '@aetherpanel/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+
   apps/api:
     dependencies:
       '@aetherpanel/runtime-docker':

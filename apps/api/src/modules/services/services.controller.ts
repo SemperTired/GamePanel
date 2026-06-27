@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { AuthGuard, RequirePermission } from "../auth/auth.guard.js";
 import { ServicesService } from "./services.service.js";
@@ -32,6 +32,54 @@ export class ServicesController {
   @RequirePermission("services:write")
   provision(@Param("id") id: string) {
     return this.services.provision(id);
+  }
+
+  @Post(":id/reinstall")
+  @RequirePermission("services:write")
+  reinstall(@Param("id") id: string) {
+    return this.services.reinstall(id);
+  }
+
+  @Post(":id/refresh-cache")
+  @RequirePermission("services:write")
+  refreshCache(@Param("id") id: string) {
+    return this.services.refreshCache(id);
+  }
+
+  @Get(":id/backups")
+  @RequirePermission("services:read")
+  backups(@Param("id") id: string) {
+    return this.services.backups(id);
+  }
+
+  @Post(":id/backups")
+  @RequirePermission("services:write")
+  createBackup(@Param("id") id: string) {
+    return this.services.createBackup(id);
+  }
+
+  @Post(":id/backups/restore")
+  @RequirePermission("services:write")
+  restoreBackup(@Param("id") id: string, @Body() body: { name?: string }) {
+    return this.services.restoreBackup(id, body.name || "");
+  }
+
+  @Post(":id/suspend")
+  @RequirePermission("services:write")
+  suspend(@Param("id") id: string) {
+    return this.services.suspend(id);
+  }
+
+  @Post(":id/activate")
+  @RequirePermission("services:write")
+  activate(@Param("id") id: string) {
+    return this.services.activate(id);
+  }
+
+  @Delete(":id")
+  @RequirePermission("services:write")
+  delete(@Param("id") id: string) {
+    return this.services.delete(id);
   }
 
   @Post(":id/power/:action")

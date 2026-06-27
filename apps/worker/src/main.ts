@@ -2,7 +2,7 @@ import "dotenv/config";
 import { Worker } from "bullmq";
 import { Pool } from "pg";
 import { createDockerRuntime } from "@aetherpanel/runtime-docker";
-import { RuntimePortBinding } from "@aetherpanel/shared";
+import { RuntimePortBinding, RuntimeTarget } from "@aetherpanel/shared";
 import { buildInstallPlan, loadTemplates, prepareServiceFiles } from "@aetherpanel/templates";
 
 const connection = {
@@ -19,12 +19,18 @@ const pool = new Pool({
   password: process.env.POSTGRES_PASSWORD || "change-me",
 });
 
-const runtime = createDockerRuntime();
-
 async function updateJob(requestId: string, status: string, data: Record<string, unknown> = {}) {
   await pool.query(
     "update provisioning_jobs set status = $1, data = data || $2::jsonb, updated_at = now() where id = $3",
     [status, JSON.stringify(data), requestId],
+  );
+}
+
+async function markServiceFailed(serviceId: string, error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  await pool.query(
+    "update services set status = $1, power_state = $2, data = data || $3::jsonb, updated_at = now() where id = $4",
+    ["failed", "failed", JSON.stringify({ status: "failed", power_state: "failed", provision_error: message, updated_at: new Date().toISOString() }), serviceId],
   );
 }
 
@@ -57,6 +63,9 @@ async function provisionService(serviceId: string, requestId: string) {
   const serviceResult = await pool.query("select data from services where id = $1", [serviceId]);
   const service = serviceResult.rows[0]?.data;
   if (!service) throw new Error(`Service ${serviceId} not found`);
+  const nodeResult = service.node_id ? await pool.query("select data from nodes where id = $1", [service.node_id]) : { rows: [] };
+  const node = nodeResult.rows[0]?.data || {};
+  const runtime = createDockerRuntime(runtimeTarget(node));
 
   const template = loadTemplates().find((candidate) => candidate.id === service.template_id);
   if (!template) throw new Error(`Template ${service.template_id} not found`);
@@ -79,6 +88,7 @@ async function provisionService(serviceId: string, requestId: string) {
     memoryMb: template.resources.recommended_ram_mb,
     dataPath: "/data",
     startupCommand: template.runtime.startup,
+    installPlan,
   });
 
   const patch = { runtime_id: runtimeId, status: "active", power_state: "created", install: installPlan, network_mappings: buildNetworkMappings(service), updated_at: new Date().toISOString() };
@@ -88,6 +98,15 @@ async function provisionService(serviceId: string, requestId: string) {
   );
   await updateJob(requestId, "completed", { runtime_id: runtimeId, completed_at: new Date().toISOString() });
   return patch;
+}
+
+function runtimeTarget(node: Record<string, unknown>): RuntimeTarget {
+  return {
+    mode: String(node.runtime_mode || node.mode || (node.agent_url ? "agent" : node.docker_host ? "docker_host" : "local")) as RuntimeTarget["mode"],
+    docker_host: String(node.docker_host || process.env.DOCKER_HOST || ""),
+    agent_url: String(node.agent_url || ""),
+    agent_token: String(node.agent_token || process.env.AETHERPANEL_AGENT_TOKEN || ""),
+  };
 }
 
 const worker = new Worker(
@@ -105,7 +124,9 @@ worker.on("completed", (job) => console.log(`[worker] completed ${job.id}`));
 worker.on("failed", async (job, error) => {
   console.error(`[worker] failed ${job?.id}`, error);
   const requestId = job?.data?.requestId;
+  const serviceId = job?.data?.serviceId;
   if (requestId) await updateJob(requestId, "failed", { error: error.message, failed_at: new Date().toISOString() }).catch(() => undefined);
+  if (serviceId) await markServiceFailed(serviceId, error).catch(() => undefined);
 });
 
 console.log("AetherPanel provisioning worker started");

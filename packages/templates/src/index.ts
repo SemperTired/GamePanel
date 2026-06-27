@@ -6,7 +6,7 @@ import { GameTemplate, ModEntry, gameTemplateSchema } from "@aetherpanel/shared"
 export { additionalStarterTemplates } from "./starter-catalog.js";
 export { buildInstallPlan, cacheRoot, dataRoot } from "./installers.js";
 export type { InstallPlan } from "./installers.js";
-export { prepareServiceFiles } from "./provisioning-files.js";
+export { prepareServiceFiles, refreshInstallCache } from "./provisioning-files.js";
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const templateDirCandidates = [

@@ -19,6 +19,7 @@ export class ConfigurationsService {
         value: service.startup_variables?.[variable.key] ?? variable.default,
       })),
       config_files: template.config_files,
+      runtime: template.runtime,
       ports: service.ports,
     };
   }

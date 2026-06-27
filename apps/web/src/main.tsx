@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Activity, Bell, Boxes, CreditCard, Database, ExternalLink, FileText, Folder, Gauge, Gamepad2, Globe2, ImageIcon, KeyRound, LayoutDashboard, ListChecks, Loader2, Mail, Network, Play, Plus, RotateCcw, Router, Save, Search, Server, Settings, Shield, SlidersHorizontal, Sparkles, Square, UploadCloud, Users, Wifi } from "lucide-react";
+import { Activity, Bell, Boxes, CreditCard, Database, ExternalLink, FileText, Folder, Gauge, Gamepad2, Globe2, ImageIcon, KeyRound, LayoutDashboard, ListChecks, Loader2, Mail, Network, Play, Plus, RotateCcw, Router, Save, Search, Server, Settings, Shield, SlidersHorizontal, Sparkles, Square, Trash2, UploadCloud, Users, Wifi } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import "./styles/global.css";
 import { api, login, logout, token } from "./lib/api";
 
-type Template = { id: string; name: string; category: string; summary: string; resources: { recommended_ram_mb: number; min_disk_gb: number; cpu: string }; workshop: { enabled: boolean; providers: string[] }; ports: Array<{ key: string; default: number; protocol: string }>; source?: { needs_review?: boolean; type?: string } };
+type Template = { id: string; name: string; category: string; summary: string; install?: { method: string; image?: string; app_id?: string; cache_key?: string; copy_strategy?: string }; runtime?: { startup: string; working_dir?: string; stop_command?: string }; resources: { recommended_ram_mb: number; min_ram_mb?: number; min_disk_gb: number; cpu: string }; workshop: { enabled: boolean; providers: string[] }; ports: Array<{ key: string; default: number; protocol: string }>; config_files?: Array<{ path: string; type: string; editable: boolean }>; source?: { needs_review?: boolean; type?: string }; readiness?: { customer_ready: boolean; required_env: string[]; missing_env: string[]; operator_actions: string[]; warnings: string[] } };
 type ModEntry = { id: string; provider: string; name?: string; summary?: string; thumbnail_url?: string; page_url?: string; enabled: boolean; order: number };
 type ServicePort = { key: string; host: number; container?: number; protocol: string; host_ip?: string };
 type NetworkMapping = { id?: string; name?: string; wan_ip?: string; external_port?: number; internal_ip?: string; internal_port?: number };
@@ -60,7 +60,7 @@ function Shell() {
   }), [services, templates, nodes]);
 
   const navGroups: Array<{ label: string; items: NavItem[] }> = [
-    { label: "Operate", items: [["dashboard", LayoutDashboard, "Overview"], ["services", Server, "Instances"], ["files", Folder, "Files"], ["config", SlidersHorizontal, "Config"], ["mods", Boxes, "Mods"]] },
+    { label: "Operate", items: [["dashboard", LayoutDashboard, "Overview"], ["services", Server, "Instances"], ["files", Folder, "Files"], ["config", SlidersHorizontal, "Config"], ["mods", Boxes, "Mods"], ["backups", Database, "Backups"]] },
     { label: "Deploy", items: [["templates", Gamepad2, "Game Library"], ["provisioning", ListChecks, "Queue"], ["nodes", Network, "Nodes"]] },
     { label: "Business", items: [["billing", CreditCard, "Billing"], ["users", Users, "Users"], ["audit", Shield, "Audit"]] },
     { label: "Platform", items: [["infrastructure", Router, "Network"], ["settings", Settings, "Settings"]] },
@@ -135,11 +135,12 @@ function Shell() {
         {active === "files" && <FilesPanel service={selectedService} />}
         {active === "config" && <ConfigurationPanel service={selectedService} />}
         {active === "mods" && <Mods service={selectedService} refresh={refresh} />}
+        {active === "backups" && <BackupsPanel service={selectedService} />}
         {active === "infrastructure" && <InfrastructurePanel service={selectedService} />}
         {active === "nodes" && <Nodes nodes={nodes} refresh={refresh} />}
         {active === "billing" && <Billing />}
         {active === "provisioning" && <Provisioning />}
-        {active === "users" && <Placeholder icon={Users} title="Users & Roles" body="RBAC contracts are implemented for superadmin, provider admin, staff, customer, and viewer roles." />}
+        {active === "users" && <UsersPanel />}
         {active === "settings" && <SettingsPanel />}
         {active === "audit" && <Panel title="Audit Log" items={audits} empty="No audit events yet." />}
       </main>
@@ -207,6 +208,7 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
   const [cpuLimit, setCpuLimit] = useState(4);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [editor, setEditor] = useState<any>({});
   const filtered = templates.filter((template) => `${template.name} ${template.category} ${template.id}`.toLowerCase().includes(q.toLowerCase()));
   const selected = templates.find((template) => template.id === selectedId) || templates.find((template) => template.id === "path-of-titans") || templates[0];
 
@@ -215,6 +217,19 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
     setServiceName((current) => current && current !== "AetherNode Path of Titans Test" ? current : `AetherNode ${selected.name} Test`);
     setMemoryMb(selected.resources.recommended_ram_mb);
     setDiskGb(selected.resources.min_disk_gb);
+    setEditor({
+      name: selected.name,
+      category: selected.category,
+      summary: selected.summary,
+      install_method: selected.install?.method || "docker_image",
+      install_image: selected.install?.image || "",
+      app_id: selected.install?.app_id || "",
+      startup: selected.runtime?.startup || "",
+      working_dir: selected.runtime?.working_dir || "/data",
+      recommended_ram_mb: selected.resources.recommended_ram_mb,
+      min_disk_gb: selected.resources.min_disk_gb,
+      cpu: selected.resources.cpu,
+    });
   }, [selected?.id]);
 
   async function deploy(provision = true) {
@@ -242,6 +257,31 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
       setActive("services");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Deploy failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveTemplate() {
+    if (!selected) return;
+    setBusy(true);
+    setMessage("");
+    try {
+      await api<Template>(`/templates/${selected.id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          name: editor.name,
+          category: editor.category,
+          summary: editor.summary,
+          install: { method: editor.install_method, image: editor.install_image || undefined, app_id: editor.app_id || undefined },
+          runtime: { startup: editor.startup, working_dir: editor.working_dir },
+          resources: { recommended_ram_mb: Number(editor.recommended_ram_mb), min_disk_gb: Number(editor.min_disk_gb), cpu: editor.cpu },
+        }),
+      });
+      setMessage(`Saved template override for ${editor.name}`);
+      await refresh();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Template save failed");
     } finally {
       setBusy(false);
     }
@@ -310,6 +350,36 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
           </div>
           <InfoBlock title="Ports" items={selected.ports.map((port) => [port.key, `${port.default}/${port.protocol}`])} />
           <InfoBlock title="Install" items={[["method", selected.id === "path-of-titans" ? "alderon" : selected.source?.type || "template"], ["mods", selected.workshop.enabled ? selected.workshop.providers.join(", ") : "none"]]} />
+          <div className={`rounded-2xl border p-4 ${selected.readiness?.customer_ready ? "border-emerald-400/30 bg-emerald-500/10" : "border-amber-400/30 bg-amber-500/10"}`}>
+            <div className="flex items-center justify-between gap-3">
+              <h4 className="font-semibold">{selected.readiness?.customer_ready ? "Ready to Sell" : "Setup Required"}</h4>
+              <span className={`status-pill ${selected.readiness?.customer_ready ? "status-good" : ""}`}>{selected.install?.method || "template"}</span>
+            </div>
+            <div className="mt-3 space-y-2 text-sm text-slate-300">
+              {(selected.readiness?.missing_env || []).map((item) => <div key={item}>Missing env: <span className="font-mono text-amber-100">{item}</span></div>)}
+              {(selected.readiness?.operator_actions || []).map((item) => <div key={item}>{item}</div>)}
+              {(selected.readiness?.warnings || []).slice(0, 2).map((item) => <div key={item} className="text-slate-400">{item}</div>)}
+              {selected.readiness?.customer_ready && <div className="text-emerald-100">No blocking installer prerequisites detected on this API node.</div>}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+            <div className="mb-3 font-display text-xl">Template Editor</div>
+            <div className="space-y-3">
+              <input className="field" value={editor.name || ""} onChange={(e) => setEditor({ ...editor, name: e.target.value })} placeholder="Template name" />
+              <input className="field" value={editor.category || ""} onChange={(e) => setEditor({ ...editor, category: e.target.value })} placeholder="Category" />
+              <textarea className="field min-h-24" value={editor.summary || ""} onChange={(e) => setEditor({ ...editor, summary: e.target.value })} placeholder="Summary" />
+              <select className="field" value={editor.install_method || "docker_image"} onChange={(e) => setEditor({ ...editor, install_method: e.target.value })}><option value="docker_image">Docker Image</option><option value="steamcmd">SteamCMD</option><option value="alderon">Alderon</option><option value="fivem">FiveM</option><option value="direct_archive">Direct Archive</option><option value="custom">Custom</option></select>
+              <input className="field" value={editor.install_image || ""} onChange={(e) => setEditor({ ...editor, install_image: e.target.value })} placeholder="Runtime image" />
+              <input className="field" value={editor.app_id || ""} onChange={(e) => setEditor({ ...editor, app_id: e.target.value })} placeholder="Steam App ID / installer app id" />
+              <textarea className="field min-h-20 font-mono text-sm" value={editor.startup || ""} onChange={(e) => setEditor({ ...editor, startup: e.target.value })} placeholder="Startup command" />
+              <div className="grid grid-cols-3 gap-2">
+                <input className="field" type="number" value={editor.recommended_ram_mb || 0} onChange={(e) => setEditor({ ...editor, recommended_ram_mb: Number(e.target.value) })} />
+                <input className="field" type="number" value={editor.min_disk_gb || 0} onChange={(e) => setEditor({ ...editor, min_disk_gb: Number(e.target.value) })} />
+                <input className="field" value={editor.cpu || ""} onChange={(e) => setEditor({ ...editor, cpu: e.target.value })} />
+              </div>
+              <button className="icon-button w-full" onClick={saveTemplate} disabled={busy}><Save className="h-4 w-4" /> Save Template Override</button>
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <button disabled={busy} className="icon-button" onClick={() => deploy(false)}><Plus className="h-4 w-4" /> Create Only</button>
             <button disabled={busy} className="primary-button" onClick={() => deploy(true)}>{busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />} Create & Provision</button>
@@ -328,13 +398,26 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
   }
   async function power(action: string) {
     if (!selected) return;
-    await api(`/services/${selected.id}/power/${action}`, { method: "POST" });
+    const service = await api<Service>(`/services/${selected.id}/power/${action}`, { method: "POST" });
+    setSelected(service);
     await refresh();
   }
   async function provision() {
     if (!selected) return;
     const service = await api<Service>(`/services/${selected.id}/provision`, { method: "POST" });
     setSelected(service);
+    await refresh();
+  }
+  async function serviceAction(action: "reinstall" | "refresh-cache" | "suspend" | "activate") {
+    if (!selected) return;
+    const result = await api<Service | any>(`/services/${selected.id}/${action}`, { method: "POST" });
+    if (result?.id) setSelected(result);
+    await refresh();
+  }
+  async function terminate() {
+    if (!selected || !confirm(`Terminate ${selected.name}? This removes the runtime container and service record.`)) return;
+    await api(`/services/${selected.id}`, { method: "DELETE" });
+    setSelected(null);
     await refresh();
   }
   const template = selected ? templates.find((item: Template) => item.id === selected.template_id) : null;
@@ -356,6 +439,13 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
             {!selected.runtime_id && <button onClick={provision} className="primary-button"><UploadCloud className="h-4 w-4" /> Provision</button>}
             {["start", "stop", "restart", "kill"].map((action) => <button key={action} onClick={() => power(action)} className="control-button">{action === "start" ? <Play className="h-4 w-4" /> : action === "stop" ? <Square className="h-4 w-4" /> : <RotateCcw className="h-4 w-4" />} {action}</button>)}
           </div>
+        </div>
+        <div className="mb-5 flex flex-wrap gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+          <button className="control-button" onClick={() => serviceAction("suspend")}><Shield className="h-4 w-4" /> Suspend</button>
+          <button className="control-button" onClick={() => serviceAction("activate")}><Activity className="h-4 w-4" /> Activate</button>
+          <button className="control-button" onClick={() => serviceAction("reinstall")}><RotateCcw className="h-4 w-4" /> Reinstall</button>
+          <button className="control-button" onClick={() => serviceAction("refresh-cache")}><Database className="h-4 w-4" /> Refresh Cache</button>
+          <button className="control-button border-red-400/40 text-red-100 hover:bg-red-500/10" onClick={terminate}><Trash2 className="h-4 w-4" /> Terminate</button>
         </div>
         <div className="mb-5 grid grid-cols-5 gap-3">
           <DataPoint icon={Activity} label="State" value={selected.power_state} />
@@ -395,7 +485,11 @@ function Nodes({ nodes, refresh }: { nodes: any[]; refresh: () => Promise<void> 
     name: "AMP Linux Target",
     host: "10.1.10.48",
     ssh_user: "user",
-    runtime: "docker-ssh",
+    runtime: "docker",
+    runtime_mode: "agent",
+    agent_url: "http://10.1.10.48:4210",
+    agent_token: "",
+    docker_host: "",
     role: "linux-target",
     status: "ready",
     data_root: "/srv/aetherpanel/services",
@@ -498,6 +592,8 @@ function FilesPanel({ service }: { service: Service | null }) {
 function ConfigurationPanel({ service }: { service: Service | null }) {
   const [config, setConfig] = useState<any>(null);
   const [values, setValues] = useState<Record<string, string>>({});
+  const [openFile, setOpenFile] = useState<any>(null);
+  const [fileContent, setFileContent] = useState("");
   const [message, setMessage] = useState("");
 
   async function load() {
@@ -512,6 +608,29 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
     const data = await api<any>(`/services/${service.id}/configuration/startup`, { method: "PUT", body: JSON.stringify({ values }) });
     setConfig(data);
     setMessage("Configuration saved. Restart the service to apply startup changes.");
+  }
+
+  async function openManagedFile(file: any) {
+    if (!service) return;
+    const query = new URLSearchParams({ path: file.path, create: "true", type: file.type || "text" });
+    if (file.template) query.set("template", file.template);
+    const data = await api<{ path: string; content: string }>(`/services/${service.id}/files/content?${query.toString()}`);
+    setOpenFile({ ...file, path: data.path });
+    setFileContent(data.content);
+    setMessage("");
+  }
+
+  async function saveManagedFile() {
+    if (!service || !openFile) return;
+    await api(`/services/${service.id}/files/content`, { method: "PUT", body: JSON.stringify({ path: openFile.path, content: fileContent }) });
+    setMessage(`Saved ${openFile.path}. Restart the service if the game only reads this at startup.`);
+  }
+
+  function commandPreview() {
+    const startup = config?.runtime?.startup || "";
+    const portValues = Object.fromEntries((config?.ports || []).flatMap((port: ServicePort) => [[`${port.key}_port`, String(port.host)], [port.key, String(port.host)]]));
+    const merged = { ...portValues, ...values };
+    return startup.replace(/\{([a-zA-Z0-9_]+)\}/g, (_match: string, key: string) => merged[key] ?? `{${key}}`);
   }
 
   useEffect(() => { load().catch((error) => setMessage(error.message)); }, [service?.id]);
@@ -532,12 +651,24 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
       </div>
       <div className="command-panel rounded-3xl p-5">
         <h3 className="mb-4 font-display text-2xl">Managed Config Files</h3>
-        <div className="space-y-3">{(config?.config_files || []).map((file: any) => <div key={file.path} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-          <strong>{file.path}</strong><div className="mt-1 text-xs text-slate-400">{file.type} · {file.editable ? "editable" : "locked"}</div>
-        </div>)}</div>
+        <div className="space-y-3">{(config?.config_files || []).map((file: any) => <button key={file.path} className="w-full rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-cyan/50 hover:bg-cyan/10" onClick={() => openManagedFile(file)}>
+          <strong>{file.path}</strong><div className="mt-1 text-xs text-slate-400">{file.type} · {file.editable ? "editable" : "locked"} · click to open</div>
+        </button>)}</div>
         {!config?.config_files?.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">This template has no managed config files yet. Use Files for manual edits.</div>}
       </div>
     </div>
+    <div className="command-panel rounded-3xl p-5">
+      <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">Command Line Builder</h3><span className="status-pill">{config?.runtime?.working_dir || "/data"}</span></div>
+      <div className="rounded-2xl border border-white/10 bg-black/35 p-4 font-mono text-sm text-emerald-100">{commandPreview() || "No startup command declared."}</div>
+      <p className="mt-3 text-sm text-slate-400">Preview updates as startup variables change. Save variables and restart the service to apply.</p>
+    </div>
+    {openFile && <div className="command-panel rounded-3xl p-5">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div><h3 className="font-display text-2xl">{openFile.path}</h3><p className="text-sm text-slate-400">{openFile.type} managed config</p></div>
+        <button className="primary-button" onClick={saveManagedFile} disabled={!openFile.editable}><Save className="h-4 w-4" /> Save File</button>
+      </div>
+      <textarea value={fileContent} onChange={(event) => setFileContent(event.target.value)} disabled={!openFile.editable} className="h-[520px] w-full rounded-2xl border border-white/10 bg-black/40 p-4 font-mono text-sm text-emerald-100 outline-none focus:border-cyan/50 disabled:opacity-60" spellCheck={false} />
+    </div>}
     {message && <div className="rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
   </div>;
 }
@@ -770,9 +901,108 @@ function Mods({ service, refresh }: any) {
   </div>;
 }
 
-function Billing() { return <Placeholder icon={CreditCard} title="Billing Gateways" body="PayPal endpoint and settings placeholders are implemented. Add credentials in environment/settings before live payments." />; }
-function Provisioning() { return <Placeholder icon={ListChecks} title="Provisioning Queue" body="BullMQ queue contracts are implemented for install/reinstall/update jobs." />; }
-function Placeholder({ icon: Icon, title, body }: any) { return <div className="glass rounded-2xl p-10 text-center"><Icon className="mx-auto mb-4 h-10 w-10 text-cyan" /><h2 className="font-display text-3xl">{title}</h2><p className="mx-auto mt-3 max-w-xl text-slate-400">{body}</p></div>; }
+function BackupsPanel({ service }: { service: Service | null }) {
+  const [backups, setBackups] = useState<any[]>([]);
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function load() {
+    if (!service) return;
+    setBackups(await api<any[]>(`/services/${service.id}/backups`));
+  }
+  async function create() {
+    if (!service) return;
+    setBusy(true);
+    setMessage("");
+    try {
+      const backup = await api<any>(`/services/${service.id}/backups`, { method: "POST" });
+      setMessage(`Backup created: ${backup.name}`);
+      await load();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Backup failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function restore(name: string) {
+    if (!service || !window.confirm(`Restore ${name}? This stops the service and replaces the current server files.`)) return;
+    setBusy(true);
+    setMessage("");
+    try {
+      await api<any>(`/services/${service.id}/backups/restore`, { method: "POST", body: JSON.stringify({ name }) });
+      setMessage(`Restored backup: ${name}`);
+      await load();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Restore failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+  useEffect(() => { load().catch((error) => setMessage(error.message)); }, [service?.id]);
+  if (!service) return <div className="empty-state"><Database className="mx-auto mb-4 h-12 w-12 text-cyan" /><h2>Select a server</h2><p>Backups are created per game instance on the node that owns the service data.</p></div>;
+  return <div className="space-y-5">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10 flex items-center justify-between gap-5"><div><div className="text-sm uppercase tracking-[0.25em] text-cyan">Snapshots</div><h2 className="font-display text-4xl font-bold">{service.name}</h2><p className="mt-2 text-sm text-slate-300">Create archived restore points from the live service directory.</p></div><button className="primary-button" onClick={create} disabled={busy}>{busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />} Create Backup</button></div></section>
+    <div className="command-panel rounded-3xl p-5">
+      <h3 className="mb-4 font-display text-2xl">Available Backups</h3>
+      {backups.length ? <div className="grid grid-cols-3 gap-4">{backups.map((backup) => <article key={backup.name} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+        <div className="font-semibold">{backup.name}</div><div className="mt-2 text-sm text-slate-400">{Math.ceil((backup.size || 0) / 1024)} KB</div><div className="mt-1 text-xs text-slate-500">{backup.created_at || backup.updated_at}</div>
+        <button className="control-button mt-4 w-full justify-center" onClick={() => restore(backup.name)} disabled={busy}><RotateCcw className="h-4 w-4" /> Restore</button>
+      </article>)}</div> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No backups yet.</div>}
+      {message && <div className="mt-4 rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
+    </div>
+  </div>;
+}
+
+function UsersPanel() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [roles, setRoles] = useState<string[]>([]);
+  const [message, setMessage] = useState("");
+  async function load() {
+    const [userData, roleData] = await Promise.all([api<any[]>("/users"), api<string[]>("/users/roles")]);
+    setUsers(userData);
+    setRoles(roleData);
+  }
+  async function updateRole(user: any, role: string) {
+    const updated = await api<any>(`/users/${user.id}/role`, { method: "PUT", body: JSON.stringify({ role }) });
+    setUsers((items) => items.map((item) => item.id === updated.id ? updated : item));
+    setMessage(`${updated.email} is now ${updated.role}`);
+  }
+  useEffect(() => { load().catch((error) => setMessage(error.message)); }, []);
+  return <div className="space-y-5">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Access Control</div><h2 className="font-display text-4xl font-bold">Users & Roles</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Assign platform roles for staff, customers, viewers, and superadmins.</p></div></section>
+    <div className="command-panel rounded-3xl p-5">
+      <div className="space-y-3">{users.map((user) => <div key={user.id} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+        <div><div className="font-semibold">{user.name}</div><div className="text-sm text-slate-400">{user.email}</div></div>
+        <select className="field max-w-64" value={user.role} onChange={(event) => updateRole(user, event.target.value)}>{roles.map((role) => <option key={role} value={role}>{role}</option>)}</select>
+      </div>)}</div>
+      {!users.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No users loaded.</div>}
+      {message && <div className="mt-4 rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
+    </div>
+  </div>;
+}
+
+function Billing() {
+  const [gateways, setGateways] = useState<any[]>([]);
+  const [message, setMessage] = useState("");
+  useEffect(() => { api<any[]>("/billing/gateways").then(setGateways).catch((error) => setMessage(error.message)); }, []);
+  return <div className="space-y-5">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Revenue</div><h2 className="font-display text-4xl font-bold">Billing Gateways</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Payment gateways and fulfillment status for AetherNode checkout automation.</p></div></section>
+    <Panel title="Gateways" items={gateways} empty="No payment gateways returned by the API." />
+    {message && <div className="rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-100">{message}</div>}
+  </div>;
+}
+
+function Provisioning() {
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [message, setMessage] = useState("");
+  async function load() { setJobs(await api<any[]>("/provisioning/jobs")); }
+  useEffect(() => { load().catch((error) => setMessage(error.message)); }, []);
+  return <div className="space-y-5">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10 flex items-center justify-between gap-5"><div><div className="text-sm uppercase tracking-[0.25em] text-cyan">Automation</div><h2 className="font-display text-4xl font-bold">Provisioning Queue</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Install, reinstall, update, and fulfillment jobs submitted by the panel and billing pipeline.</p></div><button className="icon-button" onClick={load}><RotateCcw className="h-4 w-4" /> Refresh</button></div></section>
+    <Panel title="Jobs" items={jobs} empty="No provisioning jobs have been queued yet." />
+    {message && <div className="rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-100">{message}</div>}
+  </div>;
+}
+
 function Panel({ title, items, empty }: any) { return <div className="glass rounded-2xl p-6"><h2 className="mb-4 font-display text-2xl">{title}</h2>{items?.length ? <pre className="max-h-[620px] overflow-auto text-xs text-slate-300">{JSON.stringify(items, null, 2)}</pre> : <div className="rounded-xl border border-dashed border-white/15 p-8 text-center text-slate-400">{empty}</div>}</div>; }
 
 function Login() {

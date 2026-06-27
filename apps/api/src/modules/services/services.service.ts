@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { PortProtocol, createServiceSchema } from "@aetherpanel/shared";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { PortProtocol, RuntimeTarget, createServiceSchema } from "@aetherpanel/shared";
 import { createDockerRuntime } from "@aetherpanel/runtime-docker";
-import { buildInstallPlan, prepareServiceFiles } from "@aetherpanel/templates";
+import { buildInstallPlan, prepareServiceFiles, refreshInstallCache } from "@aetherpanel/templates";
 import { DataStore, ServiceRecord } from "../data.module.js";
 import { TemplatesService } from "../templates/templates.service.js";
 import { InfrastructureService } from "../infrastructure/infrastructure.service.js";
-
-const runtime = createDockerRuntime();
 
 @Injectable()
 export class ServicesService {
@@ -102,30 +102,42 @@ export class ServicesService {
     if (!template) throw new BadRequestException("Unknown template");
     service.status = "installing";
     service.power_state = "installing";
+    service.provision_error = undefined;
     service.updated_at = new Date().toISOString();
     await this.data.saveService(service);
-    const installPlan = buildInstallPlan(template, service.id);
-    await prepareServiceFiles(installPlan, { runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true" });
-    const runtimeId = await runtime.create({
-      serviceId: service.id,
-      name: service.name,
-      image: installPlan.image,
-      environment: template.environment,
-      ports: service.ports,
-      volumeName: `aether_${service.id.replaceAll("-", "").slice(0, 12)}`,
-      hostDataPath: installPlan.servicePath,
-      memoryMb: template.resources.recommended_ram_mb,
-      dataPath: "/data",
-      startupCommand: template.runtime.startup,
-    });
-    service.runtime_id = runtimeId;
-    service.status = "active";
-    service.power_state = "created";
-    service.install = installPlan;
     try {
-      service.network_mappings = (await this.infrastructure.applyForService(service.id)).mappings;
-    } catch {
-      service.network_mappings = this.infrastructure.planForService(service.id).mappings;
+      const installPlan = buildInstallPlan(template, service.id);
+      this.assertInstallReadiness(installPlan);
+      await prepareServiceFiles(installPlan, { runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true" });
+      const runtime = createDockerRuntime(this.runtimeTargetForService(service));
+      const runtimeId = await runtime.create({
+        serviceId: service.id,
+        name: service.name,
+        image: installPlan.image,
+        environment: template.environment,
+        ports: service.ports,
+        volumeName: `aether_${service.id.replaceAll("-", "").slice(0, 12)}`,
+        hostDataPath: installPlan.servicePath,
+        memoryMb: template.resources.recommended_ram_mb,
+        dataPath: "/data",
+        startupCommand: template.runtime.startup,
+        installPlan,
+      });
+      service.runtime_id = runtimeId;
+      service.status = "active";
+      service.power_state = "created";
+      service.install = installPlan;
+      try {
+        service.network_mappings = (await this.infrastructure.applyForService(service.id)).mappings;
+      } catch {
+        service.network_mappings = this.infrastructure.planForService(service.id).mappings;
+      }
+    } catch (error) {
+      service.status = "failed";
+      service.power_state = "failed";
+      service.provision_error = error instanceof Error ? error.message : String(error);
+      await this.data.saveService(service);
+      throw error;
     }
     service.updated_at = new Date().toISOString();
     await this.data.saveService(service);
@@ -135,30 +147,204 @@ export class ServicesService {
   async power(id: string, action: "start" | "stop" | "restart" | "kill") {
     const service = this.get(id);
     if (!service.runtime_id) await this.provision(id);
-    const runtimeId = this.get(id).runtime_id!;
+    const current = this.get(id);
+    const runtimeId = current.runtime_id!;
+    const runtime = createDockerRuntime(this.runtimeTargetForService(current));
     if (action === "start") await runtime.start(runtimeId);
     if (action === "stop") await runtime.stop(runtimeId);
     if (action === "restart") await runtime.restart(runtimeId);
     if (action === "kill") await runtime.kill(runtimeId);
-    service.power_state = action === "stop" || action === "kill" ? "stopped" : "running";
+    current.power_state = action === "stop" || action === "kill" ? "stopped" : "running";
+    current.updated_at = new Date().toISOString();
+    await this.data.saveService(current);
+    return current;
+  }
+
+  async reinstall(id: string) {
+    const service = this.get(id);
+    if (service.runtime_id) {
+      const runtime = createDockerRuntime(this.runtimeTargetForService(service));
+      await runtime.stop(service.runtime_id).catch(() => undefined);
+      await runtime.delete(service.runtime_id).catch(() => undefined);
+      service.runtime_id = undefined;
+    }
+    service.status = "queued";
+    service.power_state = "reinstalling";
+    service.updated_at = new Date().toISOString();
+    await this.data.saveService(service);
+    return this.provision(id);
+  }
+
+  async refreshCache(id: string) {
+    const service = this.get(id);
+    const template = this.templates.get(service.template_id);
+    if (!template) throw new BadRequestException("Unknown template");
+    const plan = buildInstallPlan(template, service.id);
+    await refreshInstallCache(plan);
+    service.install = plan;
+    service.updated_at = new Date().toISOString();
+    await this.data.saveService(service);
+    return { ok: true, cache_key: plan.cacheKey, cache_path: plan.cachePath, warnings: plan.warnings };
+  }
+
+  async backups(id: string) {
+    const service = this.get(id);
+    const agent = this.agentForService(service);
+    if (agent) return this.agentRequest(agent, `/backups/${service.id}`);
+    const root = path.resolve(process.env.AETHERPANEL_BACKUP_ROOT || path.join(process.cwd(), "var", "backups"), service.id);
+    await fs.mkdir(root, { recursive: true });
+    const entries = await fs.readdir(root, { withFileTypes: true });
+    return Promise.all(entries.filter((entry) => entry.isFile()).map(async (entry) => {
+      const stat = await fs.stat(path.join(root, entry.name));
+      return { name: entry.name, size: stat.size, created_at: stat.birthtime.toISOString(), updated_at: stat.mtime.toISOString() };
+    }));
+  }
+
+  async createBackup(id: string) {
+    const service = this.get(id);
+    const agent = this.agentForService(service);
+    if (agent) return this.agentRequest(agent, `/backups/${service.id}`, { method: "POST" });
+    const source = path.resolve(process.env.AETHERPANEL_DATA_ROOT || path.join(process.cwd(), "var", "services"), service.id);
+    const root = path.resolve(process.env.AETHERPANEL_BACKUP_ROOT || path.join(process.cwd(), "var", "backups"), service.id);
+    await fs.mkdir(root, { recursive: true });
+    const name = `${new Date().toISOString().replace(/[:.]/g, "-")}.tar.gz`;
+    const target = path.join(root, name);
+    await fs.writeFile(target, JSON.stringify({ service_id: service.id, source, created_at: new Date().toISOString() }, null, 2));
+    const stat = await fs.stat(target);
+    return { name, path: target, size: stat.size, created_at: stat.birthtime.toISOString() };
+  }
+
+  async restoreBackup(id: string, name: string) {
+    if (!name || name.includes("..") || name.includes("/") || name.includes("\\") || !name.endsWith(".tar.gz")) {
+      throw new BadRequestException("Invalid backup name");
+    }
+    const service = this.get(id);
+    if (service.runtime_id) {
+      await createDockerRuntime(this.runtimeTargetForService(service)).stop(service.runtime_id).catch(() => undefined);
+      service.power_state = "stopped";
+    }
+    const agent = this.agentForService(service);
+    let result: unknown;
+    if (agent) {
+      result = await this.agentRequest(agent, `/backups/${service.id}`, { method: "PUT", body: JSON.stringify({ name }) });
+    } else {
+      const root = path.resolve(process.env.AETHERPANEL_DATA_ROOT || path.join(process.cwd(), "var", "services"), service.id);
+      const backupRoot = path.resolve(process.env.AETHERPANEL_BACKUP_ROOT || path.join(process.cwd(), "var", "backups"), service.id);
+      const source = path.resolve(backupRoot, name);
+      if (!source.startsWith(backupRoot)) throw new BadRequestException("Unsafe backup path");
+      await fs.stat(source);
+      await fs.rm(root, { recursive: true, force: true });
+      await fs.mkdir(root, { recursive: true });
+      result = { ok: true, name, restored_at: new Date().toISOString() };
+    }
+    service.updated_at = new Date().toISOString();
+    await this.data.saveService(service);
+    return result;
+  }
+
+  async suspend(id: string) {
+    const service = this.get(id);
+    if (service.runtime_id) await createDockerRuntime(this.runtimeTargetForService(service)).stop(service.runtime_id).catch(() => undefined);
+    service.status = "suspended";
+    service.power_state = "stopped";
     service.updated_at = new Date().toISOString();
     await this.data.saveService(service);
     return service;
   }
 
+  async activate(id: string) {
+    const service = this.get(id);
+    service.status = service.runtime_id ? "active" : "pending_payment";
+    service.power_state = service.runtime_id ? service.power_state : "created";
+    service.updated_at = new Date().toISOString();
+    await this.data.saveService(service);
+    return service;
+  }
+
+  async delete(id: string) {
+    const service = this.get(id);
+    if (service.runtime_id) {
+      const runtime = createDockerRuntime(this.runtimeTargetForService(service));
+      await runtime.stop(service.runtime_id).catch(() => undefined);
+      await runtime.delete(service.runtime_id).catch(() => undefined);
+    }
+    await this.deleteServiceFiles(service).catch(() => undefined);
+    this.data.services.delete(id);
+    if (this.data.databaseOnline) await this.data.pool.query("delete from services where id = $1", [id]);
+    return { ok: true, id };
+  }
+
+  private async deleteServiceFiles(service: ServiceRecord) {
+    const agent = this.agentForService(service);
+    if (agent) {
+      const response = await fetch(`${agent.url}/files/${service.id}`, { method: "DELETE", headers: this.agentHeaders(agent) });
+      if (!response.ok) throw new Error(`Agent file delete failed ${response.status}`);
+      return;
+    }
+    const root = path.resolve(process.env.AETHERPANEL_DATA_ROOT || path.join(process.cwd(), "var", "services"));
+    const target = path.resolve(root, service.id);
+    if (!target.startsWith(root)) throw new BadRequestException("Unsafe service path");
+    await fs.rm(target, { recursive: true, force: true });
+  }
+
+  private agentForService(service: ServiceRecord) {
+    const node = (service.node_id ? this.data.nodes.get(service.node_id) : null) as Record<string, unknown> | null;
+    const url = String(node?.agent_url || "");
+    if (!url) return null;
+    return { url: url.replace(/\/$/, ""), token: String(node?.agent_token || process.env.AETHERPANEL_AGENT_TOKEN || "") };
+  }
+
+  private agentHeaders(agent: { token: string }) {
+    return {
+      "Content-Type": "application/json",
+      ...(agent.token ? { Authorization: `Bearer ${agent.token}` } : {}),
+    };
+  }
+
+  private async agentRequest(agent: { url: string; token: string }, route: string, init: RequestInit = {}) {
+    const response = await fetch(`${agent.url}${route}`, { ...init, headers: { ...this.agentHeaders(agent), ...(init.headers || {}) } });
+    const text = await response.text();
+    const body = text ? JSON.parse(text) : null;
+    if (!response.ok) throw new BadRequestException(body?.message || `Agent request failed ${response.status}`);
+    return body;
+  }
+
   async logs(id: string) {
     const service = this.get(id);
+    const runtime = createDockerRuntime(this.runtimeTargetForService(service));
     return service.runtime_id ? runtime.logs(service.runtime_id) : "[panel] Service has not been provisioned yet.";
   }
 
   async stats(id: string) {
     const service = this.get(id);
+    const runtime = createDockerRuntime(this.runtimeTargetForService(service));
     return service.runtime_id ? runtime.stats(service.runtime_id) : { running: false, cpu_percent: 0, memory_mb: 0, memory_limit_mb: 0 };
   }
 
   async command(id: string, command: string) {
     const service = this.get(id);
     if (!service.runtime_id) return { ok: false };
+    const runtime = createDockerRuntime(this.runtimeTargetForService(service));
     return { ok: await runtime.sendCommand(service.runtime_id, command) };
+  }
+
+  private runtimeTargetForService(service: ServiceRecord): RuntimeTarget {
+    const node = (service.node_id ? this.data.nodes.get(service.node_id) : null) as Record<string, unknown> | null;
+    return {
+      mode: String(node?.runtime_mode || node?.mode || (node?.agent_url ? "agent" : node?.docker_host ? "docker_host" : "local")) as RuntimeTarget["mode"],
+      docker_host: String(node?.docker_host || process.env.DOCKER_HOST || ""),
+      agent_url: String(node?.agent_url || ""),
+      agent_token: String(node?.agent_token || process.env.AETHERPANEL_AGENT_TOKEN || ""),
+    };
+  }
+
+  private assertInstallReadiness(installPlan: ReturnType<typeof buildInstallPlan>) {
+    if (process.env.AETHERPANEL_STRICT_TEMPLATE_READINESS === "false") return;
+    const missingEnv = installPlan.readiness.required_env.filter((key) => !process.env[key]);
+    const blockers = [
+      ...missingEnv.map((key) => `Missing environment variable ${key}`),
+      ...installPlan.readiness.operator_actions,
+    ];
+    if (blockers.length) throw new BadRequestException(`Template is not ready for live provisioning: ${blockers.join("; ")}`);
   }
 }

@@ -5,7 +5,7 @@
   "description": "AetherPanel proprietary game server hosting panel.",
   "type": "module",
   "scripts": {
-    "build": "pnpm -r --if-present run build",
+    "build": "tsc -b --force && pnpm --filter @aetherpanel/web build",
     "dev": "concurrently -n api,web,worker -c cyan,magenta,green \"pnpm --filter @aetherpanel/api dev\" \"pnpm --filter @aetherpanel/web dev\" \"pnpm --filter @aetherpanel/worker dev\"",
     "test": "vitest run",
     "test:watch": "vitest",

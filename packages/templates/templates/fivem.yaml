@@ -1,0 +1,61 @@
+schema: aetherpanel.template/v1
+id: fivem
+name: FiveM
+category: Roleplay
+summary: Cfx.re FXServer for Grand Theft Auto V roleplay communities with server-data and resource management.
+install:
+  method: fivem
+  anonymous: false
+  install_dir: /data
+  image: ghcr.io/aetherpanel/fivem-runtime:latest
+  cache_key: fivem
+  copy_strategy: copy
+  preinstall: []
+  postinstall: []
+runtime:
+  executable: server/run.sh
+  working_dir: /data/server-data
+  startup: bash /data/server/run.sh +exec server.cfg
+  stop_command: quit
+  console: true
+resources:
+  min_ram_mb: 4096
+  recommended_ram_mb: 8192
+  min_disk_gb: 20
+  cpu: 4 shared vCPU
+ports:
+  - key: game
+    name: FXServer
+    default: 30120
+    protocol: both
+    required: true
+config_files:
+  - path: server-data/server.cfg
+    type: text
+    editable: true
+environment:
+  AETHERPANEL_GAME: fivem
+startup_variables:
+  - key: SERVER_NAME
+    label: Server Name
+    default: AetherNode FiveM
+    customer_editable: true
+  - key: MAX_PLAYERS
+    label: Max Players
+    default: "48"
+    customer_editable: true
+workshop:
+  enabled: true
+  providers: [github, direct_url, manual]
+  collection_support: true
+backup:
+  include:
+    - server-data/server.cfg
+    - server-data/resources
+  exclude:
+    - server/cache
+supported_os: [linux]
+source:
+  type: curated
+  url: https://docs.fivem.net/docs/server-manual/setting-up-a-server/
+  needs_review: false

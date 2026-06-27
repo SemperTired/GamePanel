@@ -202,6 +202,14 @@ export interface RuntimeCreateInput {
   cpuLimit?: number;
   dataPath: string;
   startupCommand?: string;
+  installPlan?: unknown;
+}
+
+export interface RuntimeTarget {
+  mode?: "local" | "docker_host" | "agent" | "mock";
+  docker_host?: string;
+  agent_url?: string;
+  agent_token?: string;
 }
 
 export interface RuntimeStats {

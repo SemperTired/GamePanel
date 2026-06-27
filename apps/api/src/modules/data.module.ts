@@ -23,6 +23,7 @@ export interface ServiceRecord {
   node_id?: string;
   location_id?: string;
   install?: unknown;
+  provision_error?: string;
   ports: Array<{ key: string; host: number; container: number; protocol: PortProtocol; host_ip: string }>;
   mods: unknown[];
   startup_variables?: Record<string, string>;
@@ -206,6 +207,8 @@ export class DataStore {
       location_id: "local",
       status: "online",
       runtime: "docker",
+      runtime_mode: "local",
+      docker_host: process.env.DOCKER_HOST || "unix:///var/run/docker.sock",
       created_at: new Date().toISOString(),
     });
   }

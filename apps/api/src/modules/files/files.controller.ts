@@ -18,8 +18,8 @@ export class FilesController {
 
   @Get("content")
   @RequirePermission("services:files")
-  read(@Param("serviceId") serviceId: string, @Query("path") requested: string) {
-    return this.files.read(serviceId, requested);
+  read(@Param("serviceId") serviceId: string, @Query("path") requested: string, @Query("create") create?: string, @Query("type") type?: string, @Query("template") template?: string) {
+    return this.files.read(serviceId, requested, { create: create === "true", type, template });
   }
 
   @Put("content")

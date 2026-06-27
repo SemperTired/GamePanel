@@ -5,6 +5,7 @@
     { "path": "packages/templates" },
     { "path": "packages/runtime-docker" },
     { "path": "apps/api" },
+    { "path": "apps/agent" },
     { "path": "apps/worker" },
     { "path": "apps/web" }
   ]

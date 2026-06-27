@@ -14,6 +14,7 @@ import { AuditModule } from "./audit/audit.module.js";
 import { FilesModule } from "./files/files.module.js";
 import { ConfigurationsModule } from "./configurations/configurations.module.js";
 import { InfrastructureModule } from "./infrastructure/infrastructure.module.js";
+import { UsersModule } from "./users/users.module.js";
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { InfrastructureModule } from "./infrastructure/infrastructure.module.js"
     SettingsModule,
     NodesModule,
     BillingModule,
+    UsersModule,
     FilesModule,
     ConfigurationsModule,
     InfrastructureModule,
