@@ -50,7 +50,7 @@ config_schema:
       keywords: server,name,server-name
       input_type: text
       param_field_name: server-name
-      default: AMP Powered Minecraft Bedrock Server
+      default: AetherNode Minecraft Bedrock Server
       required: false
       sensitive: false
       hidden: false
@@ -67,7 +67,7 @@ config_schema:
         FieldName: server-name
         InputType: text
         ParamFieldName: server-name
-        DefaultValue: AMP Powered Minecraft Bedrock Server
+        DefaultValue: AetherNode Minecraft Bedrock Server
         EnumValues: {}
     - key: gamemode
       label: Game Mode
@@ -370,7 +370,7 @@ config_schema:
       subcategory: Server
       description: >-
         WARNING: READ THIS BEFORE ENABLING THIS SETTING! This setting enables LAN discoverability of the server. Only
-        enable this setting if the Server Ports allocated in AMP to your server are 19132 and 19133. Otherwise, your
+        enable this setting if the Server Ports allocated in AetherPanel to your server are 19132 and 19133. Otherwise, your
         server will either not start or will not be joinable
       keywords: lan,visible,visibility,discoverable,enable-lan-visibility
       input_type: checkbox
@@ -391,7 +391,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           WARNING: READ THIS BEFORE ENABLING THIS SETTING! This setting enables LAN discoverability of the server. Only
-          enable this setting if the Server Ports allocated in AMP to your server are 19132 and 19133. Otherwise, your
+          enable this setting if the Server Ports allocated in AetherPanel to your server are 19132 and 19133. Otherwise, your
           server will either not start or will not be joinable
         Keywords: lan,visible,visibility,discoverable,enable-lan-visibility
         FieldName: enable-lan-visibility
@@ -1288,7 +1288,7 @@ config_schema:
       category: Minecraft Bedrock
       subcategory: Server
       description: >-
-        Specifies additional settings to include in 'server.properties' that are not otherwise set by AMP. One setting
+        Specifies additional settings to include in 'server.properties' that are not otherwise set by AetherPanel. One setting
         per line. Useful for new settings in preview server builds
       keywords: additional,settings,custom
       input_type: Textarea
@@ -1306,7 +1306,7 @@ config_schema:
         Category: Minecraft Bedrock:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional settings to include in 'server.properties' that are not otherwise set by AMP. One setting
+          Specifies additional settings to include in 'server.properties' that are not otherwise set by AetherPanel. One setting
           per line. Useful for new settings in preview server builds
         Keywords: additional,settings,custom
         FieldName: UserSettings
@@ -1495,7 +1495,7 @@ environment: {}
 startup_variables:
   - key: server-name
     label: Server Name
-    default: AMP Powered Minecraft Bedrock Server
+    default: AetherNode Minecraft Bedrock Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1746,6 +1746,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

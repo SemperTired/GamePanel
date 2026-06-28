@@ -149,8 +149,8 @@ config_schema:
       keywords: server,name,ServerName
       input_type: text
       param_field_name: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.ServerName
-      default: AMP Powered Renown Server
-      placeholder: AMP Powered Renown Server
+      default: AetherNode Renown Server
+      placeholder: AetherNode Renown Server
       required: false
       sensitive: false
       hidden: false
@@ -167,8 +167,8 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: /Game/Core/Blueprints/Renown_GameInstance.Renown_GameInstance_C.ServerName
-        DefaultValue: AMP Powered Renown Server
-        Placeholder: AMP Powered Renown Server
+        DefaultValue: AetherNode Renown Server
+        Placeholder: AetherNode Renown Server
         EnumValues: {}
     - key: Region
       label: Server Region
@@ -786,7 +786,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: AMP Powered Renown Server
+    default: AetherNode Renown Server
     customer_editable: true
     required: false
     sensitive: false
@@ -901,6 +901,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

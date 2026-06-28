@@ -146,8 +146,8 @@ config_schema:
       keywords: public,name,PublicName
       input_type: text
       param_field_name: PublicName
-      default: AMP Powered PZ Server
-      placeholder: AMP Powered PZ Server
+      default: AetherNode PZ Server
+      placeholder: AetherNode PZ Server
       required: false
       sensitive: false
       hidden: false
@@ -166,8 +166,8 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: PublicName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered PZ Server
-        Placeholder: AMP Powered PZ Server
+        DefaultValue: AetherNode PZ Server
+        Placeholder: AetherNode PZ Server
         EnumValues: {}
     - key: Public
       label: Make Server Public
@@ -1820,7 +1820,7 @@ config_schema:
       category: Project Zomboid
       subcategory: Server
       description: >-
-        Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AMP. Use
+        Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AetherPanel. Use
         with care
       keywords: custom,java,arguments,parameters
       input_type: text
@@ -1839,7 +1839,7 @@ config_schema:
         Category: Project Zomboid:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AMP. Use
+          Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AetherPanel. Use
           with care
         Keywords: custom,java,arguments,parameters
         FieldName: CustomJavaArgs
@@ -1890,7 +1890,7 @@ config_schema:
       category: Project Zomboid
       subcategory: Server
       description: >-
-        Additional server arguments (not Java arguments) as startup parameters that are not otherwise set by AMP. Use
+        Additional server arguments (not Java arguments) as startup parameters that are not otherwise set by AetherPanel. Use
         with care
       keywords: custom,server,arguments,parameters
       input_type: text
@@ -1909,7 +1909,7 @@ config_schema:
         Category: Project Zomboid:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Additional server arguments (not Java arguments) as startup parameters that are not otherwise set by AMP. Use
+          Additional server arguments (not Java arguments) as startup parameters that are not otherwise set by AetherPanel. Use
           with care
         Keywords: custom,server,arguments,parameters
         FieldName: CustomServerArgs
@@ -4992,7 +4992,7 @@ environment: {}
 startup_variables:
   - key: PublicName
     label: Server Public Name
-    default: AMP Powered PZ Server
+    default: AetherNode PZ Server
     customer_editable: true
     required: false
     sensitive: false
@@ -5873,6 +5873,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

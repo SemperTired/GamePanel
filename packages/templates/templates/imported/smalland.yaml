@@ -50,7 +50,7 @@ config_schema:
       keywords: server,name,servername
       input_type: text
       param_field_name: SERVERNAME
-      default: 'AMP Powered Smalland: Survive the Wilds Server'
+      default: 'AetherNode Smalland: Survive the Wilds Server'
       required: true
       sensitive: false
       hidden: false
@@ -68,7 +68,7 @@ config_schema:
         InputType: text
         ParamFieldName: SERVERNAME
         IncludeInCommandLine: true
-        DefaultValue: 'AMP Powered Smalland: Survive the Wilds Server'
+        DefaultValue: 'AetherNode Smalland: Survive the Wilds Server'
         Required: true
         EnumValues: {}
     - key: WORLDNAME
@@ -757,7 +757,7 @@ config_schema:
       category: Smalland
       subcategory: Server
       description: >-
-        Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+        Sets whether the server or AetherPanel should automatically select the public IP advertised for the server, or whether
         it should use the IP set under Server Public IP
       keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
       input_type: enum
@@ -771,14 +771,14 @@ config_schema:
       skip_if_empty: false
       enum_values:
         '': Server automatically selects (default)
-        '{{$ExternalIP}}': AMP automatically selects
+        '{{$ExternalIP}}': AetherPanel automatically selects
         '{{ManualPublicIP}}': Manual selection
       raw:
         DisplayName: Public IP Selection Mode
         Category: Smalland:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+          Sets whether the server or AetherPanel should automatically select the public IP advertised for the server, or whether
           it should use the IP set under Server Public IP
         Keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
         FieldName: EOS_OVERRIDE_HOST_IP
@@ -787,7 +787,7 @@ config_schema:
         DefaultValue: ''
         EnumValues:
           '': Server automatically selects (default)
-          '{{$ExternalIP}}': AMP automatically selects
+          '{{$ExternalIP}}': AetherPanel automatically selects
           '{{ManualPublicIP}}': Manual selection
     - key: ManualPublicIP
       label: Server Public IP
@@ -826,7 +826,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets custom command line options for the server (those that start with a ? (question mark)). Include the
-        question mark but do not separate with a space. Don't use options already in AMP's settings!
+        question mark but do not separate with a space. Don't use options already in AetherPanel's settings!
       keywords: custom,command,line,options
       input_type: text
       param_field_name: CustomOptions
@@ -844,7 +844,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets custom command line options for the server (those that start with a ? (question mark)). Include the
-          question mark but do not separate with a space. Don't use options already in AMP's settings!
+          question mark but do not separate with a space. Don't use options already in AetherPanel's settings!
         Keywords: custom,command,line,options
         FieldName: CustomOptions
         InputType: text
@@ -856,7 +856,7 @@ environment: {}
 startup_variables:
   - key: SERVERNAME
     label: Server Name
-    default: 'AMP Powered Smalland: Survive the Wilds Server'
+    default: 'AetherNode Smalland: Survive the Wilds Server'
     customer_editable: true
     required: true
     sensitive: false
@@ -1019,6 +1019,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

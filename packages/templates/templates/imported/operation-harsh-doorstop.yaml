@@ -50,7 +50,7 @@ config_schema:
       keywords: server,name,servername,steamservername
       input_type: text
       param_field_name: ServerName
-      default: 'AMP Powered Operation: Harsh Doorstop Server'
+      default: 'AetherNode Operation: Harsh Doorstop Server'
       required: false
       sensitive: false
       hidden: false
@@ -67,7 +67,7 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: ServerName
-        DefaultValue: 'AMP Powered Operation: Harsh Doorstop Server'
+        DefaultValue: 'AetherNode Operation: Harsh Doorstop Server'
         EnumValues: {}
     - key: Map
       label: Initial Map
@@ -868,7 +868,7 @@ config_schema:
       subcategory: Server
       description: >-
         If required, you can change the binding of the server and Source RCON by changing the Application IP Binding for
-        this instance. Ensure AMP itself can reach that IP or the console will not work
+        this instance. Ensure AetherPanel itself can reach that IP or the console will not work
       keywords: ip,binding,address,multihome
       input_type: hidden
       param_field_name: MultiHome
@@ -886,7 +886,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           If required, you can change the binding of the server and Source RCON by changing the Application IP Binding
-          for this instance. Ensure AMP itself can reach that IP or the console will not work
+          for this instance. Ensure AetherPanel itself can reach that IP or the console will not work
         Keywords: ip,binding,address,multihome
         FieldName: MultiHome
         InputType: hidden
@@ -898,7 +898,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets custom command line flags for the server (those that start with a - (dash)). Include the dash and separate
-        with a space. Don't use flags already in AMP's settings!
+        with a space. Don't use flags already in AetherPanel's settings!
       keywords: custom,command,line,flags
       input_type: text
       param_field_name: CustomFlags
@@ -917,7 +917,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets custom command line flags for the server (those that start with a - (dash)). Include the dash and
-          separate with a space. Don't use flags already in AMP's settings!
+          separate with a space. Don't use flags already in AetherPanel's settings!
         Keywords: custom,command,line,flags
         FieldName: CustomFlags
         InputType: text
@@ -931,7 +931,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets custom command line options for the server (those that start with a ? (question mark)). Include the
-        question mark but do not separate with a space. Don't use options already in AMP's settings!
+        question mark but do not separate with a space. Don't use options already in AetherPanel's settings!
       keywords: custom,command,line,options
       input_type: text
       param_field_name: CustomOptions
@@ -949,7 +949,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets custom command line options for the server (those that start with a ? (question mark)). Include the
-          question mark but do not separate with a space. Don't use options already in AMP's settings!
+          question mark but do not separate with a space. Don't use options already in AetherPanel's settings!
         Keywords: custom,command,line,options
         FieldName: CustomOptions
         InputType: text
@@ -999,7 +999,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: 'AMP Powered Operation: Harsh Doorstop Server'
+    default: 'AetherNode Operation: Harsh Doorstop Server'
     customer_editable: true
     required: false
     sensitive: false
@@ -1156,6 +1156,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

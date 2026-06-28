@@ -1,6 +1,6 @@
 # AetherPanel
 
-AetherPanel is the proprietary game server hosting control plane for AetherNode.org. It is designed as a standalone subprocess/platform service under the AetherNode business stack, with no runtime dependency on AMP, WHMCS, or TCAdmin.
+AetherPanel is the proprietary game server hosting control plane for AetherNode.org. It is designed as a standalone subprocess/platform service under the AetherNode business stack, with no runtime dependency on external hosting panels or billing platforms.
 
 It is a greenfield TypeScript monorepo with a NestJS API, React customer/admin portal, Docker-per-game runtime, PostgreSQL persistence, Redis/BullMQ provisioning, PayPal-ready fulfillment hooks, and an extensible YAML game template engine.
 
@@ -22,15 +22,15 @@ The web app runs on `http://127.0.0.1:4000` and proxies API calls to `http://127
 - `apps/web` - React + Tailwind admin/customer panel.
 - `apps/worker` - BullMQ provisioning worker.
 - `packages/shared` - shared contracts, enums, Zod schemas, runtime interfaces.
-- `packages/templates` - template schema, curated templates, AMPTemplates importer.
+- `packages/templates` - template schema, curated templates, and converted public game metadata.
 - `packages/runtime-docker` - Docker runtime provider.
 - `deploy` - Docker Compose, Nginx, installer, systemd examples.
 
 ## Game Catalog
 
-The catalog contains curated first-party templates plus 236 imported templates from CubeCoders/AMPTemplates converted into AetherPanel YAML. Imported templates are marked `needs_review` until a game-specific install/runtime adapter has been verified.
+The catalog contains curated first-party templates plus more than 230 converted public game templates. Imported templates are marked `needs_review` until a game-specific install/runtime adapter has been verified.
 
-No proprietary AMP or TCAdmin code is used. AMPTemplates are treated as public template input for compatibility concepts only.
+No proprietary third-party panel code is used. Converted public templates are treated as compatibility input only and are owned by the AetherPanel runtime schema.
 
 ## Production Shape
 

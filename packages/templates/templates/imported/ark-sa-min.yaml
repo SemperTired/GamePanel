@@ -927,7 +927,7 @@ config_schema:
       description: >-
         Sets custom [command line flags](https://ark.wiki.gg/wiki/Server_configuration_(Survival_Ascended%29) for the
         server (those that start with a - (dash)). Include the dash and separate with a space. Don't use flags already
-        in AMP's settings!
+        in AetherPanel's settings!
       keywords: custom,command,line,flags
       input_type: text
       param_field_name: CustomFlags
@@ -947,7 +947,7 @@ config_schema:
         Description: >-
           Sets custom [command line flags](https://ark.wiki.gg/wiki/Server_configuration_(Survival_Ascended%29) for the
           server (those that start with a - (dash)). Include the dash and separate with a space. Don't use flags already
-          in AMP's settings!
+          in AetherPanel's settings!
         Keywords: custom,command,line,flags
         FieldName: CustomFlags
         InputType: text
@@ -962,7 +962,7 @@ config_schema:
       description: >-
         Sets custom [command line options](https://ark.wiki.gg/wiki/Server_configuration_(Survival_Ascended%29) for the
         server (those that start with a ? (question mark)). Include the question mark but do not separate with a space.
-        Don't use options already in AMP's settings!
+        Don't use options already in AetherPanel's settings!
       keywords: custom,command,line,options
       input_type: text
       param_field_name: CustomOptions
@@ -982,7 +982,7 @@ config_schema:
         Description: >-
           Sets custom [command line options](https://ark.wiki.gg/wiki/Server_configuration_(Survival_Ascended%29) for
           the server (those that start with a ? (question mark)). Include the question mark but do not separate with a
-          space. Don't use options already in AMP's settings!
+          space. Don't use options already in AetherPanel's settings!
         Keywords: custom,command,line,options
         FieldName: CustomOptions
         InputType: text
@@ -1674,6 +1674,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

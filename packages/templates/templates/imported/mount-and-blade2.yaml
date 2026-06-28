@@ -173,7 +173,7 @@ config_schema:
       category: M+B II Bannerlord
       subcategory: Server
       description: >-
-        Sets the maximum number of players at one time to display in the AMP status tab. This is visual only - the
+        Sets the maximum number of players at one time to display in the AetherPanel status tab. This is visual only - the
         actual maximum is determined by the configuration file that is loaded
       keywords: maximum,players,clients,limit,MaxNumberOfPlayers
       input_type: number
@@ -193,7 +193,7 @@ config_schema:
         Category: M+B II Bannerlord:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets the maximum number of players at one time to display in the AMP status tab. This is visual only - the
+          Sets the maximum number of players at one time to display in the AetherPanel status tab. This is visual only - the
           actual maximum is determined by the configuration file that is loaded
         Keywords: maximum,players,clients,limit,MaxNumberOfPlayers
         FieldName: $MaxUsers
@@ -209,7 +209,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies additional command line launch arguments (anything that begins with a /) that are not otherwise set by
-        AMP
+        AetherPanel
       keywords: custom,server,arguments
       input_type: text
       param_field_name: CustomArgs
@@ -227,7 +227,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional command line launch arguments (anything that begins with a /) that are not otherwise set
-          by AMP
+          by AetherPanel
         Keywords: custom,server,arguments
         FieldName: CustomArgs
         InputType: text
@@ -323,6 +323,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

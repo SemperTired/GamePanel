@@ -48,7 +48,7 @@ config_schema:
       keywords: servername
       input_type: text
       param_field_name: servername
-      default: AMP Powered Server
+      default: AetherNode Server
       required: false
       sensitive: false
       hidden: false
@@ -67,7 +67,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: servername
         IncludeInCommandLine: true
-        DefaultValue: AMP Powered Server
+        DefaultValue: AetherNode Server
         EnumValues: {}
     - key: serverpassword
       label: Server Password
@@ -598,7 +598,7 @@ environment: {}
 startup_variables:
   - key: servername
     label: Server Name
-    default: AMP Powered Server
+    default: AetherNode Server
     customer_editable: true
     required: false
     sensitive: false
@@ -707,6 +707,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

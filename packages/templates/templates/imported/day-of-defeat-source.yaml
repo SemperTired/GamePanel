@@ -81,7 +81,7 @@ config_schema:
       keywords: server,name,hostname
       input_type: text
       param_field_name: hostname
-      default: 'AMP Powered Day of Defeat: Source Server'
+      default: 'AetherNode Day of Defeat: Source Server'
       required: false
       sensitive: false
       hidden: false
@@ -98,7 +98,7 @@ config_schema:
         FieldName: hostname
         InputType: text
         ParamFieldName: hostname
-        DefaultValue: 'AMP Powered Day of Defeat: Source Server'
+        DefaultValue: 'AetherNode Day of Defeat: Source Server'
         EnumValues: {}
     - key: sv_tags
       label: Server Tags
@@ -1056,8 +1056,8 @@ config_schema:
       subcategory: Server
       description: >-
         If required, you can change the IPv4 IP binding of the server and RCON by changing the Application IP Binding
-        for this instance. NOTE: AMP requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
-        server to log to AMP's console. The IP must also be reachable by AMP
+        for this instance. NOTE: AetherPanel requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
+        server to log to AetherPanel's console. The IP must also be reachable by AetherPanel
       keywords: ip,binding
       input_type: hidden
       param_field_name: ip
@@ -1075,8 +1075,8 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           If required, you can change the IPv4 IP binding of the server and RCON by changing the Application IP Binding
-          for this instance. NOTE: AMP requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
-          server to log to AMP's console. The IP must also be reachable by AMP
+          for this instance. NOTE: AetherPanel requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
+          server to log to AetherPanel's console. The IP must also be reachable by AetherPanel
         Keywords: ip,binding
         FieldName: ip
         InputType: hidden
@@ -1089,7 +1089,7 @@ config_schema:
       description: >-
         Specifies additional [command line
         parameters](https://developer.valvesoftware.com/wiki/Command_line_options#Command-Line_Parameters_6) (anything
-        that begins with a -) that are not otherwise set by AMP. Use with care
+        that begins with a -) that are not otherwise set by AetherPanel. Use with care
       keywords: custom,server,arguments,parameters
       input_type: text
       param_field_name: CustomParameters
@@ -1108,7 +1108,7 @@ config_schema:
         Description: >-
           Specifies additional [command line
           parameters](https://developer.valvesoftware.com/wiki/Command_line_options#Command-Line_Parameters_6) (anything
-          that begins with a -) that are not otherwise set by AMP. Use with care
+          that begins with a -) that are not otherwise set by AetherPanel. Use with care
         Keywords: custom,server,arguments,parameters
         FieldName: CustomParameters
         InputType: text
@@ -1121,7 +1121,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies additional [console variables](https://www.gamerconfig.eu/commands/day-of-defeat-source/) (anything
-        that begins with a +) that are not otherwise set by AMP. Use with care. Preferably, specify the equivalent under
+        that begins with a +) that are not otherwise set by AetherPanel. Use with care. Preferably, specify the equivalent under
         "Additional Server Settings"
       keywords: custom,server,arguments,variables,cvars,convars
       input_type: text
@@ -1141,7 +1141,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional [console variables](https://www.gamerconfig.eu/commands/day-of-defeat-source/) (anything
-          that begins with a +) that are not otherwise set by AMP. Use with care. Preferably, specify the equivalent
+          that begins with a +) that are not otherwise set by AetherPanel. Use with care. Preferably, specify the equivalent
           under "Additional Server Settings"
         Keywords: custom,server,arguments,variables,cvars,convars
         FieldName: CustomConVars
@@ -1156,7 +1156,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies additional [settings](https://www.gamerconfig.eu/commands/day-of-defeat-source/) to include in
-        'server.cfg' that are not otherwise set by AMP. Example: sv_maxcmdrate 66. One setting per line
+        'server.cfg' that are not otherwise set by AetherPanel. Example: sv_maxcmdrate 66. One setting per line
       keywords: additional,settings,custom
       input_type: Textarea
       param_field_name: UserSettings
@@ -1174,7 +1174,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional [settings](https://www.gamerconfig.eu/commands/day-of-defeat-source/) to include in
-          'server.cfg' that are not otherwise set by AMP. Example: sv_maxcmdrate 66. One setting per line
+          'server.cfg' that are not otherwise set by AetherPanel. Example: sv_maxcmdrate 66. One setting per line
         Keywords: additional,settings,custom
         FieldName: UserSettings
         InputType: Textarea
@@ -1942,7 +1942,7 @@ environment: {}
 startup_variables:
   - key: hostname
     label: Server Name
-    default: 'AMP Powered Day of Defeat: Source Server'
+    default: 'AetherNode Day of Defeat: Source Server'
     customer_editable: true
     required: false
     sensitive: false
@@ -2279,6 +2279,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

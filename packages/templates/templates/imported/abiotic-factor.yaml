@@ -109,7 +109,7 @@ config_schema:
       keywords: name,ServerName
       input_type: text
       param_field_name: ServerName
-      default: AMP Powered Abiotic Factor Server
+      default: AetherNode Abiotic Factor Server
       required: false
       sensitive: false
       hidden: false
@@ -126,7 +126,7 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: ServerName
-        DefaultValue: AMP Powered Abiotic Factor Server
+        DefaultValue: AetherNode Abiotic Factor Server
         EnumValues: {}
     - key: WorldSaveName
       label: World Save Name
@@ -507,7 +507,7 @@ config_schema:
       category: Abiotic Factor
       subcategory: Server
       description: >-
-        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AMP.
+        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AetherPanel.
         Use with care
       keywords: custom,server,arguments,parameters
       input_type: text
@@ -526,7 +526,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by
-          AMP. Use with care
+          AetherPanel. Use with care
         Keywords: custom,server,arguments,parameters
         FieldName: CustomArgs
         InputType: text
@@ -2232,7 +2232,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: AMP Powered Abiotic Factor Server
+    default: AetherNode Abiotic Factor Server
     customer_editable: true
     required: false
     sensitive: false
@@ -2599,6 +2599,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

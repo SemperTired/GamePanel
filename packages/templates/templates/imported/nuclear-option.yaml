@@ -189,8 +189,8 @@ config_schema:
       keywords: server,name,ServerName
       input_type: text
       param_field_name: $.ServerName
-      default: AMP Powered Nuclear Option Server
-      placeholder: AMP Powered Nuclear Option Server
+      default: AetherNode Nuclear Option Server
+      placeholder: AetherNode Nuclear Option Server
       required: false
       sensitive: false
       hidden: false
@@ -207,8 +207,8 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: $.ServerName
-        DefaultValue: AMP Powered Nuclear Option Server
-        Placeholder: AMP Powered Nuclear Option Server
+        DefaultValue: AetherNode Nuclear Option Server
+        Placeholder: AetherNode Nuclear Option Server
         EnumValues: {}
     - key: Password
       label: Server Password
@@ -472,7 +472,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: AMP Powered Nuclear Option Server
+    default: AetherNode Nuclear Option Server
     customer_editable: true
     required: false
     sensitive: false
@@ -533,6 +533,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

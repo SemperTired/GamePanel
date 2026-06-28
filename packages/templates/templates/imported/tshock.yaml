@@ -242,8 +242,8 @@ config_schema:
       keywords: world,seed
       input_type: text
       param_field_name: seed
-      default: Powered By AMP
-      placeholder: Powered By AMP
+      default: Hosted by AetherNode
+      placeholder: Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -262,8 +262,8 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: seed
         IncludeInCommandLine: true
-        DefaultValue: Powered By AMP
-        Placeholder: Powered By AMP
+        DefaultValue: Hosted by AetherNode
+        Placeholder: Hosted by AetherNode
         EnumValues: {}
     - key: autocreate
       label: World Size
@@ -379,7 +379,7 @@ config_schema:
       keywords: server,name,servername
       input_type: text
       param_field_name: $.Settings.ServerName
-      default: AMP Powered TShock Server
+      default: AetherNode TShock Server
       required: false
       sensitive: false
       hidden: false
@@ -398,7 +398,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: $.Settings.ServerName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered TShock Server
+        DefaultValue: AetherNode TShock Server
         EnumValues: {}
     - key: UseServerName
       label: Use Server Name For World Name
@@ -1179,7 +1179,7 @@ config_schema:
       label: Additional Command Line Parameters
       category: TShock
       subcategory: Server
-      description: Specifies additional command line parameters that are not otherwise set by AMP. ONE LINE ONLY! Use with care
+      description: Specifies additional command line parameters that are not otherwise set by AetherPanel. ONE LINE ONLY! Use with care
       keywords: custom,server,arguments,variables,parameters
       input_type: Textarea
       param_field_name: CustomServerArgs
@@ -1196,7 +1196,7 @@ config_schema:
         DisplayName: Additional Command Line Parameters
         Category: TShock:stadia_controller
         Subcategory: Server:dns:1
-        Description: Specifies additional command line parameters that are not otherwise set by AMP. ONE LINE ONLY! Use with care
+        Description: Specifies additional command line parameters that are not otherwise set by AetherPanel. ONE LINE ONLY! Use with care
         Keywords: custom,server,arguments,variables,parameters
         FieldName: CustomServerArgs
         InputType: Textarea
@@ -5134,7 +5134,7 @@ startup_variables:
     sensitive: false
   - key: seed
     label: World Seed
-    default: Powered By AMP
+    default: Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -5158,7 +5158,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: AMP Powered TShock Server
+    default: AetherNode TShock Server
     customer_editable: true
     required: false
     sensitive: false
@@ -6017,6 +6017,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

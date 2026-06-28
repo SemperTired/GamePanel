@@ -13,7 +13,7 @@ install:
   postinstall: []
 runtime:
   working_dir: /data
-  startup: pgsql/bin/psql {CustomClientOptions} {PlatformArgs} --username=amp --pset=pager=off {FormattedArgs}
+  startup: pgsql/bin/psql {CustomClientOptions} {PlatformArgs} --username=AetherPanel --pset=pager=off {FormattedArgs}
   console: true
 resources:
   min_ram_mb: 2048
@@ -36,7 +36,7 @@ config_files:
 config_schema:
   fields:
     - key: AMPPassword
-      label: AMP User Password
+      label: AetherPanel User Password
       category: PostgreSQL
       subcategory: Server
       description: ''
@@ -52,7 +52,7 @@ config_schema:
       skip_if_empty: false
       enum_values: {}
       raw:
-        DisplayName: AMP User Password
+        DisplayName: AetherPanel User Password
         Category: PostgreSQL:database
         Subcategory: Server:dns:1
         Description: ''
@@ -68,8 +68,8 @@ config_schema:
       category: PostgreSQL
       subcategory: Server
       description: >-
-        Sets the database to connect to when the client run in AMP is started. The database must exist on the server.
-        Default is 'postgres' - do not delete this database! Use the command '\connect <database name>' in the AMP
+        Sets the database to connect to when the client run in AetherPanel is started. The database must exist on the server.
+        Default is 'postgres' - do not delete this database! Use the command '\connect <database name>' in the AetherPanel
         console to switch to another database once connected
       keywords: database,name,dbname
       input_type: text
@@ -88,8 +88,8 @@ config_schema:
         Category: PostgreSQL:database
         Subcategory: Server:dns:1
         Description: >-
-          Sets the database to connect to when the client run in AMP is started. The database must exist on the server.
-          Default is 'postgres' - do not delete this database! Use the command '\connect <database name>' in the AMP
+          Sets the database to connect to when the client run in AetherPanel is started. The database must exist on the server.
+          Default is 'postgres' - do not delete this database! Use the command '\connect <database name>' in the AetherPanel
           console to switch to another database once connected
         Keywords: database,name,dbname
         FieldName: dbname
@@ -132,7 +132,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies [additional command line options](https://www.postgresql.org/docs/17/app-psql.html) for the PostgreSQL
-        client run by AMP (a super user called 'amp') that are not otherwise set by AMP. Use with care
+        client run by AetherPanel (a super user called 'AetherPanel') that are not otherwise set by AetherPanel. Use with care
       keywords: custom,client,options,arguments
       input_type: Textarea
       param_field_name: CustomClientOptions
@@ -150,7 +150,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies [additional command line options](https://www.postgresql.org/docs/17/app-psql.html) for the
-          PostgreSQL client run by AMP (a super user called 'amp') that are not otherwise set by AMP. Use with care
+          PostgreSQL client run by AetherPanel (a super user called 'AetherPanel') that are not otherwise set by AetherPanel. Use with care
         Keywords: custom,client,options,arguments
         FieldName: CustomClientOptions
         InputType: Textarea
@@ -241,7 +241,7 @@ config_schema:
 environment: {}
 startup_variables:
   - key: AMPPassword
-    label: AMP User Password
+    label: AetherPanel User Password
     default: '{{newguid()}}'
     customer_editable: true
     required: false
@@ -283,6 +283,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

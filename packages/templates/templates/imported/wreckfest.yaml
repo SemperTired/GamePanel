@@ -170,7 +170,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: server_name
-      default: Wreckfest Server - Powered by AMP
+      default: Wreckfest Server - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -189,7 +189,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: server_name
         IncludeInCommandLine: false
-        DefaultValue: Wreckfest Server - Powered by AMP
+        DefaultValue: Wreckfest Server - Hosted by AetherNode
         EnumValues: {}
     - key: password
       label: Server Password
@@ -232,7 +232,7 @@ config_schema:
       keywords: welcome,message,motd,welcome_message
       input_type: text
       param_field_name: welcome_message
-      default: Welcome to Wreckfest. Hosted using AMP by CubeCoders
+      default: Welcome to Wreckfest. Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -251,7 +251,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: welcome_message
         IncludeInCommandLine: false
-        DefaultValue: Welcome to Wreckfest. Hosted using AMP by CubeCoders
+        DefaultValue: Welcome to Wreckfest. Hosted by AetherNode
         EnumValues: {}
     - key: $MaxUsers
       label: Player Limit
@@ -1413,7 +1413,7 @@ startup_variables:
     sensitive: false
   - key: server_name
     label: Server Name
-    default: Wreckfest Server - Powered by AMP
+    default: Wreckfest Server - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -1425,7 +1425,7 @@ startup_variables:
     sensitive: true
   - key: welcome_message
     label: Welcome Message
-    default: Welcome to Wreckfest. Hosted using AMP by CubeCoders
+    default: Welcome to Wreckfest. Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -1624,6 +1624,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

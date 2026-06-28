@@ -332,8 +332,8 @@ config_schema:
       keywords: server,name,connection.name
       input_type: text
       param_field_name: connection.name
-      default: AMP Powered MX Bikes Server
-      placeholder: AMP Powered MX Bikes Server
+      default: AetherNode MX Bikes Server
+      placeholder: AetherNode MX Bikes Server
       required: false
       sensitive: false
       hidden: false
@@ -350,8 +350,8 @@ config_schema:
         FieldName: connection_name
         InputType: text
         ParamFieldName: connection.name
-        DefaultValue: AMP Powered MX Bikes Server
-        Placeholder: AMP Powered MX Bikes Server
+        DefaultValue: AetherNode MX Bikes Server
+        Placeholder: AetherNode MX Bikes Server
         EnumValues: {}
     - key: connection_motd
       label: Server MOTD
@@ -2741,7 +2741,7 @@ startup_variables:
     sensitive: false
   - key: connection_name
     label: Server Name
-    default: AMP Powered MX Bikes Server
+    default: AetherNode MX Bikes Server
     customer_editable: true
     required: false
     sensitive: false
@@ -3180,6 +3180,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -93,8 +93,8 @@ config_schema:
       category: MariaDB
       subcategory: Server
       description: >-
-        Optionally sets the initial database to connect to when the client run in AMP is started. The database must
-        exist on the server. Alternatively send the command 'use <database name>' in the AMP console to switch to a
+        Optionally sets the initial database to connect to when the client run in AetherPanel is started. The database must
+        exist on the server. Alternatively send the command 'use <database name>' in the AetherPanel console to switch to a
         specific database
       keywords: database,name
       input_type: text
@@ -112,8 +112,8 @@ config_schema:
         Category: MariaDB:database
         Subcategory: Server:dns:1
         Description: >-
-          Optionally sets the initial database to connect to when the client run in AMP is started. The database must
-          exist on the server. Alternatively send the command 'use <database name>' in the AMP console to switch to a
+          Optionally sets the initial database to connect to when the client run in AetherPanel is started. The database must
+          exist on the server. Alternatively send the command 'use <database name>' in the AetherPanel console to switch to a
           specific database
         Keywords: database,name
         FieldName: database
@@ -129,7 +129,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies [options file settings](https://mariadb.com/kb/en/configuring-mariadb-with-option-files/) to include
-        in 'my.cnf' for the MariaDB server that are not otherwise set by AMP. One setting per line, including the option
+        in 'my.cnf' for the MariaDB server that are not otherwise set by AetherPanel. One setting per line, including the option
         group heading. Additional information on [server variables](https://mariadb.com/kb/en/server-system-variables/)
       keywords: options,file,settings
       input_type: Textarea
@@ -148,7 +148,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies [options file settings](https://mariadb.com/kb/en/configuring-mariadb-with-option-files/) to include
-          in 'my.cnf' for the MariaDB server that are not otherwise set by AMP. One setting per line, including the
+          in 'my.cnf' for the MariaDB server that are not otherwise set by AetherPanel. One setting per line, including the
           option group heading. Additional information on [server
           variables](https://mariadb.com/kb/en/server-system-variables/)
         Keywords: options,file,settings
@@ -163,8 +163,8 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies [additional command line options](https://mariadb.com/kb/en/mariadb-command-line-client/) for the
-        MariaDB client run by AMP (a super user called 'amp' on Linux and 'root' on Windows) that are not otherwise set
-        by AMP. Use with care
+        MariaDB client run by AetherPanel (a super user called 'AetherPanel' on Linux and 'root' on Windows) that are not otherwise set
+        by AetherPanel. Use with care
       keywords: custom,client,options,arguments
       input_type: Textarea
       param_field_name: CustomClientOptions
@@ -182,8 +182,8 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies [additional command line options](https://mariadb.com/kb/en/mariadb-command-line-client/) for the
-          MariaDB client run by AMP (a super user called 'amp' on Linux and 'root' on Windows) that are not otherwise
-          set by AMP. Use with care
+          MariaDB client run by AetherPanel (a super user called 'AetherPanel' on Linux and 'root' on Windows) that are not otherwise
+          set by AetherPanel. Use with care
         Keywords: custom,client,options,arguments
         FieldName: CustomClientOptions
         InputType: Textarea
@@ -341,6 +341,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

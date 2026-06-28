@@ -57,7 +57,7 @@ config_schema:
       keywords: server,name,hostname
       input_type: text
       param_field_name: hostname
-      default: AMP Powered Garry's Mod Server
+      default: AetherNode Garry's Mod Server
       required: false
       sensitive: false
       hidden: false
@@ -74,7 +74,7 @@ config_schema:
         FieldName: hostname
         InputType: text
         ParamFieldName: hostname
-        DefaultValue: AMP Powered Garry's Mod Server
+        DefaultValue: AetherNode Garry's Mod Server
         EnumValues: {}
     - key: sv_lan
       label: LAN Server
@@ -1174,8 +1174,8 @@ config_schema:
       subcategory: Server
       description: >-
         If required, you can change the IPv4 IP binding of the server and RCON by changing the Application IP Binding
-        for this instance. NOTE: AMP requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
-        server to log to AMP's console. The IP must also be reachable by AMP
+        for this instance. NOTE: AetherPanel requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
+        server to log to AetherPanel's console. The IP must also be reachable by AetherPanel
       keywords: ip,binding
       input_type: hidden
       param_field_name: ip
@@ -1193,8 +1193,8 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           If required, you can change the IPv4 IP binding of the server and RCON by changing the Application IP Binding
-          for this instance. NOTE: AMP requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
-          server to log to AMP's console. The IP must also be reachable by AMP
+          for this instance. NOTE: AetherPanel requires the server to be bound to a specific IP, rather than 0.0.0.0, for the
+          server to log to AetherPanel's console. The IP must also be reachable by AetherPanel
         Keywords: ip,binding
         FieldName: ip
         InputType: hidden
@@ -1205,7 +1205,7 @@ config_schema:
       category: Garry's Mod
       subcategory: Server
       description: >-
-        Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by AMP.
+        Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by AetherPanel.
         Use with care
       keywords: custom,server,arguments,variables,cvars,convars,parameters
       input_type: text
@@ -1224,7 +1224,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by
-          AMP. Use with care
+          AetherPanel. Use with care
         Keywords: custom,server,arguments,variables,cvars,convars,parameters
         FieldName: CustomParameters
         InputType: text
@@ -1238,7 +1238,7 @@ config_schema:
       description: >-
         Specifies additional [console
         variables](https://developer.valvesoftware.com/wiki/List_of_Garry%27s_Mod_console_commands_and_variables)
-        (anything that begins with a +) that are not otherwise set by AMP. Use with care. Preferably, specify the
+        (anything that begins with a +) that are not otherwise set by AetherPanel. Use with care. Preferably, specify the
         equivalent under "Additional Server Settings"
       keywords: custom,server,arguments,variables,cvars,convars,parameters
       input_type: text
@@ -1259,7 +1259,7 @@ config_schema:
         Description: >-
           Specifies additional [console
           variables](https://developer.valvesoftware.com/wiki/List_of_Garry%27s_Mod_console_commands_and_variables)
-          (anything that begins with a +) that are not otherwise set by AMP. Use with care. Preferably, specify the
+          (anything that begins with a +) that are not otherwise set by AetherPanel. Use with care. Preferably, specify the
           equivalent under "Additional Server Settings"
         Keywords: custom,server,arguments,variables,cvars,convars,parameters
         FieldName: CustomConVars
@@ -1272,7 +1272,7 @@ config_schema:
       label: Additional Server Settings
       category: Garry's Mod
       subcategory: Server
-      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per line
+      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AetherPanel. One setting per line
       keywords: additional,settings,custom
       input_type: Textarea
       param_field_name: UserSettings
@@ -1289,7 +1289,7 @@ config_schema:
         Category: Garry's Mod:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per
+          Specifies additional settings to include in "server.cfg" that are not otherwise set by AetherPanel. One setting per
           line
         Keywords: additional,settings,custom
         FieldName: UserSettings
@@ -1304,7 +1304,7 @@ config_schema:
       subcategory: Server
       description: >-
         For advanced/power users, specifies additional settings to include in "server.cfg" that override any settings
-        set by AMP in that file. One setting per line. USE AT YOUR OWN RISK
+        set by AetherPanel in that file. One setting per line. USE AT YOUR OWN RISK
       keywords: additional,advanced,power,settings,custom
       input_type: Textarea
       param_field_name: PowerUserSettings
@@ -1322,7 +1322,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           For advanced/power users, specifies additional settings to include in "server.cfg" that override any settings
-          set by AMP in that file. One setting per line. USE AT YOUR OWN RISK
+          set by AetherPanel in that file. One setting per line. USE AT YOUR OWN RISK
         Keywords: additional,advanced,power,settings,custom
         FieldName: PowerUserSettings
         InputType: Textarea
@@ -2457,7 +2457,7 @@ environment: {}
 startup_variables:
   - key: hostname
     label: Server Name
-    default: AMP Powered Garry's Mod Server
+    default: AetherNode Garry's Mod Server
     customer_editable: true
     required: false
     sensitive: false
@@ -2890,6 +2890,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -129,6 +129,7 @@ NODE_BIND_IP=0.0.0.0
 NODE_LAN_IP=10.1.10.x
 AETHERNODE_WAN_IP=75.122.94.89
 NETWORK_APPLY_MODE=dry_run
+REQUIRE_NETWORK_APPLY=false
 ```
 
 Services allocate unique host ports at creation time. Provisioning records network mappings for every exposed port.
@@ -143,7 +144,7 @@ For automatic UniFiOS forwarding, open **Network & Ports** in AetherPanel and cr
 - `wan_interface`: usually `wan`.
 - `dry_run`: disable this after the Test action succeeds.
 
-When live mode is enabled, instance provisioning creates or updates UniFi Network port-forward rules named `AetherPanel <instance> <port> <protocol>`. Re-running provisioning is idempotent: existing rules are updated instead of duplicated. Keep `NETWORK_APPLY_MODE=dry_run` for initial staging, then switch to `NETWORK_APPLY_MODE=live` and restart the API before taking paid orders that require automatic public access.
+When live mode is enabled, instance provisioning creates or updates UniFi Network port-forward rules named `AetherPanel <instance> <port> <protocol>`. Re-running provisioning is idempotent: existing rules are updated instead of duplicated. Keep `NETWORK_APPLY_MODE=dry_run` for initial staging, then switch to `NETWORK_APPLY_MODE=live` and `REQUIRE_NETWORK_APPLY=true` before taking paid orders that require automatic public access.
 
 ## Queue Requirements
 
@@ -177,7 +178,7 @@ Recommended on-prem layout:
 ```json
 {
   "id": "amp-linux-target",
-  "name": "AMP Linux Target",
+  "name": "Linux Docker Target",
   "host": "10.1.10.48",
   "runtime_mode": "agent",
   "agent_url": "http://10.1.10.48:4210",

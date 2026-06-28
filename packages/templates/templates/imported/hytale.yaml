@@ -139,8 +139,8 @@ config_schema:
       keywords: server,name,servername,display
       input_type: text
       param_field_name: $.ServerName
-      default: AMP Powered Hytale Server
-      placeholder: AMP Powered Hytale Server
+      default: AetherNode Hytale Server
+      placeholder: AetherNode Hytale Server
       required: false
       sensitive: false
       hidden: false
@@ -157,8 +157,8 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: $.ServerName
-        DefaultValue: AMP Powered Hytale Server
-        Placeholder: AMP Powered Hytale Server
+        DefaultValue: AetherNode Hytale Server
+        Placeholder: AetherNode Hytale Server
         EnumValues: {}
     - key: MOTD
       label: Server MOTD
@@ -454,7 +454,7 @@ config_schema:
       subcategory: Server
       description: >-
         If set, the server's automatic backups system will be enabled. Backups will be stored in the directory set under
-        Automatic Backup Directory. This is separate from AMP's own backup system, which uses the 'Backups' directory by
+        Automatic Backup Directory. This is separate from AetherPanel's own backup system, which uses the 'Backups' directory by
         default
       keywords: backup,automatic,enable
       input_type: checkbox
@@ -475,7 +475,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           If set, the server's automatic backups system will be enabled. Backups will be stored in the directory set
-          under Automatic Backup Directory. This is separate from AMP's own backup system, which uses the 'Backups'
+          under Automatic Backup Directory. This is separate from AetherPanel's own backup system, which uses the 'Backups'
           directory by default
         Keywords: backup,automatic,enable
         FieldName: backup
@@ -693,7 +693,7 @@ config_schema:
       category: Hytale
       subcategory: Java and Memory
       description: >-
-        Sets the Java version to run the server with. Minimum Java 25 required. The version must be accessible to AMP.
+        Sets the Java version to run the server with. Minimum Java 25 required. The version must be accessible to AetherPanel.
         For "Specific system version", also set Specific System Java Version. For "Specific instance version", also set
         Specific Instance Java Version. Ensure the version is compatible with the server
       keywords: java,version,JavaVersion
@@ -715,7 +715,7 @@ config_schema:
         Category: Hytale:stadia_controller
         Subcategory: Java and Memory:code:2
         Description: >-
-          Sets the Java version to run the server with. Minimum Java 25 required. The version must be accessible to AMP.
+          Sets the Java version to run the server with. Minimum Java 25 required. The version must be accessible to AetherPanel.
           For "Specific system version", also set Specific System Java Version. For "Specific instance version", also
           set Specific Instance Java Version. Ensure the version is compatible with the server
         Keywords: java,version,JavaVersion
@@ -765,7 +765,7 @@ config_schema:
       description: >-
         Sets the Eclipse Temurin Java version to install in the instance to run the server with, if "Specific instance
         version" is selected under Java Version. Useful for using a Java version that is not installed on the system or
-        in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+        in AetherPanel's Docker image (if using AetherPanel's Docker). Update the server after changing this setting
       keywords: java,version,instance,SpecificInstanceJavaVersion
       input_type: enum
       param_field_name: SpecificInstanceJavaVersion
@@ -785,7 +785,7 @@ config_schema:
         Description: >-
           Sets the Eclipse Temurin Java version to install in the instance to run the server with, if "Specific instance
           version" is selected under Java Version. Useful for using a Java version that is not installed on the system
-          or in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+          or in AetherPanel's Docker image (if using AetherPanel's Docker). Update the server after changing this setting
         Keywords: java,version,instance,SpecificInstanceJavaVersion
         FieldName: SpecificInstanceJavaVersion
         InputType: enum
@@ -899,7 +899,7 @@ config_schema:
       subcategory: Java and Memory
       description: >-
         Specifies any [command line arguments](https://www.baeldung.com/jvm-parameters) to run Java with that are not
-        otherwise set by AMP (NOT options passed to the server jar)
+        otherwise set by AetherPanel (NOT options passed to the server jar)
       keywords: command,line,arguments,args,java,JavaArgs
       input_type: text
       param_field_name: JavaArgs
@@ -917,7 +917,7 @@ config_schema:
         Subcategory: Java and Memory:code:2
         Description: >-
           Specifies any [command line arguments](https://www.baeldung.com/jvm-parameters) to run Java with that are not
-          otherwise set by AMP (NOT options passed to the server jar)
+          otherwise set by AetherPanel (NOT options passed to the server jar)
         Keywords: command,line,arguments,args,java,JavaArgs
         FieldName: JavaArgs
         InputType: text
@@ -1061,7 +1061,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: AMP Powered Hytale Server
+    default: AetherNode Hytale Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1228,6 +1228,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

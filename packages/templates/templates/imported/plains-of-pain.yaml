@@ -48,7 +48,7 @@ config_schema:
       keywords: server,name,serverName
       input_type: text
       param_field_name: serverName
-      default: AMP Powered Plains of Pain Server
+      default: AetherNode Plains of Pain Server
       required: true
       sensitive: false
       hidden: false
@@ -65,7 +65,7 @@ config_schema:
         FieldName: serverName
         InputType: text
         ParamFieldName: serverName
-        DefaultValue: AMP Powered Plains of Pain Server
+        DefaultValue: AetherNode Plains of Pain Server
         Required: true
         EnumValues: {}
     - key: worldId
@@ -353,7 +353,7 @@ environment: {}
 startup_variables:
   - key: serverName
     label: Server Name
-    default: AMP Powered Plains of Pain Server
+    default: AetherNode Plains of Pain Server
     customer_editable: true
     required: true
     sensitive: false
@@ -420,6 +420,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

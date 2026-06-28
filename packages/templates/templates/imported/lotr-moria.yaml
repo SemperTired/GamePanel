@@ -100,7 +100,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: World.Name
-      default: 'AMP Powered LOTR: Return to Moria Server'
+      default: 'AetherNode LOTR: Return to Moria Server'
       required: false
       sensitive: false
       hidden: false
@@ -119,7 +119,7 @@ config_schema:
         FieldName: World.Name
         InputType: text
         ParamFieldName: World.Name
-        DefaultValue: 'AMP Powered LOTR: Return to Moria Server'
+        DefaultValue: 'AetherNode LOTR: Return to Moria Server'
         EnumValues: {}
     - key: World.OptionalWorldFilename
       label: World Filename
@@ -953,7 +953,7 @@ startup_variables:
     sensitive: false
   - key: World.Name
     label: Server Name
-    default: 'AMP Powered LOTR: Return to Moria Server'
+    default: 'AetherNode LOTR: Return to Moria Server'
     customer_editable: true
     required: false
     sensitive: false
@@ -1110,6 +1110,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

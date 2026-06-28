@@ -207,7 +207,7 @@ config_schema:
       category: Sapiens
       subcategory: Server
       description: >-
-        Sets the maximum number of players at one time to display in the AMP status tab. This is visual only - the
+        Sets the maximum number of players at one time to display in the AetherPanel status tab. This is visual only - the
         actual maximum is set by 'maxPlayers' in config.lua for the world
       keywords: maximum,players,clients,limit,maxplayers
       input_type: number
@@ -227,7 +227,7 @@ config_schema:
         Category: Sapiens:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets the maximum number of players at one time to display in the AMP status tab. This is visual only - the
+          Sets the maximum number of players at one time to display in the AetherPanel status tab. This is visual only - the
           actual maximum is set by 'maxPlayers' in config.lua for the world
         Keywords: maximum,players,clients,limit,maxplayers
         FieldName: $MaxUsers
@@ -328,6 +328,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

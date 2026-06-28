@@ -944,7 +944,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies a semi-colon separated list of additional console variables to launch the server with that are not
-        otherwise set by AMP. Use with care
+        otherwise set by AetherPanel. Use with care
       keywords: custom,server,arguments,variables,cvars,convars,parameters
       input_type: text
       param_field_name: CustomConVars
@@ -962,7 +962,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies a semi-colon separated list of additional console variables to launch the server with that are not
-          otherwise set by AMP. Use with care
+          otherwise set by AetherPanel. Use with care
         Keywords: custom,server,arguments,variables,cvars,convars,parameters
         FieldName: CustomConVars
         InputType: text
@@ -1147,6 +1147,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

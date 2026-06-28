@@ -319,7 +319,7 @@ config_schema:
       category: StarRupture
       subcategory: Server
       description: >-
-        Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+        Sets whether the server or AetherPanel should automatically select the public IP advertised for the server, or whether
         it should use the IP set under Server Public IP. Experimental
       keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
       input_type: enum
@@ -333,14 +333,14 @@ config_schema:
       skip_if_empty: false
       enum_values:
         '': Server automatically selects (default)
-        '{{$ExternalIP}}': AMP automatically selects
+        '{{$ExternalIP}}': AetherPanel automatically selects
         '{{ManualPublicIP}}': Manual selection
       raw:
         DisplayName: Public IP Selection Mode
         Category: StarRupture:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+          Sets whether the server or AetherPanel should automatically select the public IP advertised for the server, or whether
           it should use the IP set under Server Public IP. Experimental
         Keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
         FieldName: EOS_OVERRIDE_HOST_IP
@@ -349,7 +349,7 @@ config_schema:
         DefaultValue: ''
         EnumValues:
           '': Server automatically selects (default)
-          '{{$ExternalIP}}': AMP automatically selects
+          '{{$ExternalIP}}': AetherPanel automatically selects
           '{{ManualPublicIP}}': Manual selection
     - key: ManualPublicIP
       label: Server Public IP
@@ -484,6 +484,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

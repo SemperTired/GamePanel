@@ -47,7 +47,7 @@ config_schema:
       keywords: ''
       input_type: text
       param_field_name: name
-      default: My Valheim Server - Powered by AMP
+      default: My Valheim Server - Hosted by AetherNode
       required: true
       sensitive: false
       hidden: false
@@ -65,7 +65,7 @@ config_schema:
         ParamFieldName: name
         IncludeInCommandLine: false
         Required: true
-        DefaultValue: My Valheim Server - Powered by AMP
+        DefaultValue: My Valheim Server - Hosted by AetherNode
     - key: WorldName
       label: World Name
       category: Valheim
@@ -12270,7 +12270,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: My Valheim Server - Powered by AMP
+    default: My Valheim Server - Hosted by AetherNode
     customer_editable: true
     required: true
     sensitive: false
@@ -14467,6 +14467,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

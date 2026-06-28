@@ -51,7 +51,7 @@ config_schema:
       keywords: name
       input_type: text
       param_field_name: SteamServerName
-      default: AMP Powered Day of Dragons Server
+      default: AetherNode Day of Dragons Server
       required: false
       sensitive: false
       hidden: false
@@ -70,7 +70,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: SteamServerName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Day of Dragons Server
+        DefaultValue: AetherNode Day of Dragons Server
         EnumValues: {}
     - key: sServerMOTD
       label: Welcome Message
@@ -80,7 +80,7 @@ config_schema:
       keywords: welcome,message,motd
       input_type: text
       param_field_name: /Game/_Dev/Runtime/Classes/DragonsGI.DragonsGI_C.sServerMOTD
-      default: Welcome to this Day of Dragons server - powered by AMP!
+      default: Welcome to this Day of Dragons server - Hosted by AetherNode!
       required: false
       sensitive: false
       hidden: false
@@ -99,7 +99,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /Game/_Dev/Runtime/Classes/DragonsGI.DragonsGI_C.sServerMOTD
         IncludeInCommandLine: false
-        DefaultValue: Welcome to this Day of Dragons server - powered by AMP!
+        DefaultValue: Welcome to this Day of Dragons server - Hosted by AetherNode!
         EnumValues: {}
     - key: sServerPassword
       label: Admin Password
@@ -822,13 +822,13 @@ environment: {}
 startup_variables:
   - key: SteamServerName
     label: Server Name
-    default: AMP Powered Day of Dragons Server
+    default: AetherNode Day of Dragons Server
     customer_editable: true
     required: false
     sensitive: false
   - key: sServerMOTD
     label: Welcome Message
-    default: Welcome to this Day of Dragons server - powered by AMP!
+    default: Welcome to this Day of Dragons server - Hosted by AetherNode!
     customer_editable: true
     required: false
     sensitive: false
@@ -961,6 +961,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

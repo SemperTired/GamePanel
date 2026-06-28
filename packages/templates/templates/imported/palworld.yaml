@@ -182,7 +182,7 @@ config_schema:
       keywords: server,name,servername
       input_type: text
       param_field_name: ServerName
-      default: AMP Powered Palworld Server
+      default: AetherNode Palworld Server
       required: false
       sensitive: false
       hidden: false
@@ -199,7 +199,7 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: ServerName
-        DefaultValue: AMP Powered Palworld Server
+        DefaultValue: AetherNode Palworld Server
         EnumValues: {}
     - key: ServerDescription
       label: Server Description
@@ -400,7 +400,7 @@ config_schema:
       category: Palworld
       subcategory: Server
       description: >-
-        Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+        Sets whether AetherPanel should automatically select the public IP advertised for the server, or whether it should use
         the IP set under Server Public IP
       keywords: public,ip,publicip
       input_type: enum
@@ -420,7 +420,7 @@ config_schema:
         Category: Palworld:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+          Sets whether AetherPanel should automatically select the public IP advertised for the server, or whether it should use
           the IP set under Server Public IP
         Keywords: public,ip,publicip
         FieldName: PublicIP
@@ -1112,7 +1112,7 @@ config_schema:
       label: Custom Command Line Arguments
       category: Palworld
       subcategory: Server
-      description: Sets custom command line arguments. Don't use arguments already in AMP's settings!
+      description: Sets custom command line arguments. Don't use arguments already in AetherPanel's settings!
       keywords: custom,command,line,arguments
       input_type: text
       param_field_name: CustomArgs
@@ -1129,7 +1129,7 @@ config_schema:
         DisplayName: Custom Command Line Arguments
         Category: Palworld:stadia_controller
         Subcategory: Server:dns:1
-        Description: Sets custom command line arguments. Don't use arguments already in AMP's settings!
+        Description: Sets custom command line arguments. Don't use arguments already in AetherPanel's settings!
         Keywords: custom,command,line,arguments
         FieldName: CustomArgs
         InputType: text
@@ -1143,7 +1143,7 @@ config_schema:
       subcategory: Server
       description: >-
         Comma-separated list of additional settings to include in "PalWorldSettings.ini" that are not otherwise set by
-        AMP. Useful for new settings that are not yet in AMP's UI. Use with care
+        AetherPanel. Useful for new settings that are not yet in AetherPanel's UI. Use with care
       keywords: additional,settings,custom
       input_type: text
       param_field_name: UserSettings
@@ -1162,7 +1162,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Comma-separated list of additional settings to include in "PalWorldSettings.ini" that are not otherwise set by
-          AMP. Useful for new settings that are not yet in AMP's UI. Use with care
+          AetherPanel. Useful for new settings that are not yet in AetherPanel's UI. Use with care
         Keywords: additional,settings,custom
         FieldName: UserSettings
         InputType: text
@@ -3956,7 +3956,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: AMP Powered Palworld Server
+    default: AetherNode Palworld Server
     customer_editable: true
     required: false
     sensitive: false
@@ -4653,6 +4653,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

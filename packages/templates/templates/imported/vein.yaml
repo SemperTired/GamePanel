@@ -56,7 +56,7 @@ config_schema:
       keywords: name,ServerName
       input_type: text
       param_field_name: /Script/Vein.VeinGameSession.ServerName
-      default: AMP Powered VEIN Server
+      default: AetherNode VEIN Server
       required: false
       sensitive: false
       hidden: false
@@ -73,7 +73,7 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: /Script/Vein.VeinGameSession.ServerName
-        DefaultValue: AMP Powered VEIN Server
+        DefaultValue: AetherNode VEIN Server
         EnumValues: {}
     - key: ServerDescription
       label: Server Description
@@ -417,7 +417,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies additional settings to include in the [/Script/Engine.GameSession] section of Game.ini that are not
-        otherwise set by AMP. One setting per line
+        otherwise set by AetherPanel. One setting per line
       keywords: additional,gamesession,settings,custom
       input_type: Textarea
       param_field_name: GameSessionUserSettings
@@ -435,7 +435,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional settings to include in the [/Script/Engine.GameSession] section of Game.ini that are not
-          otherwise set by AMP. One setting per line
+          otherwise set by AetherPanel. One setting per line
         Keywords: additional,gamesession,settings,custom
         FieldName: GameSessionUserSettings
         InputType: Textarea
@@ -448,7 +448,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies additional settings to include in the [/Script/Vein.VeinGameSession] section of Game.ini that are not
-        otherwise set by AMP. One setting per line
+        otherwise set by AetherPanel. One setting per line
       keywords: additional,veingamesession,settings,custom
       input_type: Textarea
       param_field_name: VeinGameSessionUserSettings
@@ -466,7 +466,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional settings to include in the [/Script/Vein.VeinGameSession] section of Game.ini that are
-          not otherwise set by AMP. One setting per line
+          not otherwise set by AetherPanel. One setting per line
         Keywords: additional,veingamesession,settings,custom
         FieldName: VeinGameSessionUserSettings
         InputType: Textarea
@@ -479,7 +479,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies additional settings to include in the [/Script/Vein.VeinGameStateBase] section of Game.ini that are
-        not otherwise set by AMP. One setting per line
+        not otherwise set by AetherPanel. One setting per line
       keywords: additional,VeinGameStateBase,settings,custom
       input_type: Textarea
       param_field_name: VeinGameStateBaseUserSettings
@@ -497,7 +497,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional settings to include in the [/Script/Vein.VeinGameStateBase] section of Game.ini that are
-          not otherwise set by AMP. One setting per line
+          not otherwise set by AetherPanel. One setting per line
         Keywords: additional,VeinGameStateBase,settings,custom
         FieldName: VeinGameStateBaseUserSettings
         InputType: Textarea
@@ -510,7 +510,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies additional settings to include in the [/Script/Vein.ServerSettings] section of Game.ini that are not
-        otherwise set by AMP. One setting per line
+        otherwise set by AetherPanel. One setting per line
       keywords: additional,serversettings,settings,custom
       input_type: Textarea
       param_field_name: ServerSettingsUserSettings
@@ -528,7 +528,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional settings to include in the [/Script/Vein.ServerSettings] section of Game.ini that are not
-          otherwise set by AMP. One setting per line
+          otherwise set by AetherPanel. One setting per line
         Keywords: additional,serversettings,settings,custom
         FieldName: ServerSettingsUserSettings
         InputType: Textarea
@@ -541,7 +541,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies additional settings to include in the [OnlineSubsystem] section of Game.ini that are not otherwise set
-        by AMP. One setting per line
+        by AetherPanel. One setting per line
       keywords: additional,onlinesubsystemsteam,settings,custom
       input_type: Textarea
       param_field_name: OnlineSubsystemSteamUserSettings
@@ -559,7 +559,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional settings to include in the [OnlineSubsystem] section of Game.ini that are not otherwise
-          set by AMP. One setting per line
+          set by AetherPanel. One setting per line
         Keywords: additional,onlinesubsystemsteam,settings,custom
         FieldName: OnlineSubsystemSteamUserSettings
         InputType: Textarea
@@ -748,7 +748,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: AMP Powered VEIN Server
+    default: AetherNode VEIN Server
     customer_editable: true
     required: false
     sensitive: false
@@ -845,6 +845,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

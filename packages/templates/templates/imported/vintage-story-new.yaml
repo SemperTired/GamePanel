@@ -102,7 +102,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: $.ServerName
-      default: Vintage Story Server - Powered by AMP
+      default: Vintage Story Server - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -121,7 +121,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: $.ServerName
         IncludeInCommandLine: false
-        DefaultValue: Vintage Story Server - Powered by AMP
+        DefaultValue: Vintage Story Server - Hosted by AetherNode
         EnumValues: {}
     - key: WelcomeMessage
       label: Welcome Message
@@ -537,7 +537,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: Vintage Story Server - Powered by AMP
+    default: Vintage Story Server - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -614,6 +614,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

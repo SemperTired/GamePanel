@@ -159,7 +159,7 @@ config_schema:
       keywords: name,game,listing
       input_type: text
       param_field_name: $.name
-      default: AMP Powered Factorio Server
+      default: AetherNode Factorio Server
       required: false
       sensitive: false
       hidden: false
@@ -176,7 +176,7 @@ config_schema:
         FieldName: name
         InputType: text
         ParamFieldName: $.name
-        DefaultValue: AMP Powered Factorio Server
+        DefaultValue: AetherNode Factorio Server
         EnumValues: {}
     - key: description
       label: Server Description
@@ -1193,7 +1193,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets custom [command line arguments](https://wiki.factorio.com/Command_line_parameters) for the server. Don't
-        use options already in AMP's settings!
+        use options already in AetherPanel's settings!
       keywords: custom,command,line,options,parameters,arguments
       input_type: text
       param_field_name: CustomArgs
@@ -1212,7 +1212,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets custom [command line arguments](https://wiki.factorio.com/Command_line_parameters) for the server. Don't
-          use options already in AMP's settings!
+          use options already in AetherPanel's settings!
         Keywords: custom,command,line,options,parameters,arguments
         FieldName: CustomArgs
         InputType: text
@@ -1341,7 +1341,7 @@ startup_variables:
     sensitive: false
   - key: name
     label: Server Name
-    default: AMP Powered Factorio Server
+    default: AetherNode Factorio Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1552,6 +1552,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

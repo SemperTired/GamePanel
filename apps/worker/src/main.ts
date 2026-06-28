@@ -138,6 +138,14 @@ function findExistingRule(existing: any[], rule: any) {
       && String(candidate.proto || candidate.protocol || "").toLowerCase() === String(rule.proto).toLowerCase());
 }
 
+function networkApplyRequired() {
+  return String(process.env.REQUIRE_NETWORK_APPLY || "").toLowerCase() === "true";
+}
+
+function failedNetworkMappings(mappings: any[]) {
+  return mappings.filter((mapping) => mapping.applied !== true && mapping.applied !== "dry_run");
+}
+
 async function applyNetworkMappings(service: any, mappings: any[]) {
   const connector = await loadEnabledConnector();
   if (!connector) return mappings.map((mapping) => ({ ...mapping, applied: false, error: "No infrastructure connector is configured" }));
@@ -219,6 +227,29 @@ async function provisionService(serviceId: string, requestId: string) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     networkMappings = networkMappings.map((mapping: any) => ({ ...mapping, applied: false, error: message }));
+  }
+
+  const failedMappings = failedNetworkMappings(networkMappings);
+  if (networkApplyRequired() && failedMappings.length) {
+    const details = failedMappings.map((mapping) => `${mapping.external_port || mapping.host_port}/${mapping.protocol || "tcp"}: ${mapping.error || "not applied"}`).join("; ");
+    await pool.query(
+      "update services set status = $1, power_state = $2, data = data || $3::jsonb, updated_at = now() where id = $4",
+      [
+        "failed",
+        "failed",
+        JSON.stringify({
+          runtime_id: runtimeId,
+          status: "failed",
+          power_state: "failed",
+          install: installPlan,
+          network_mappings: networkMappings,
+          provision_error: `Network automation failed: ${details}`,
+          updated_at: new Date().toISOString(),
+        }),
+        serviceId,
+      ],
+    );
+    throw new Error(`Network automation failed: ${details}`);
   }
 
   const patch = { runtime_id: runtimeId, status: "active", power_state: "created", install: installPlan, network_mappings: networkMappings, updated_at: new Date().toISOString() };

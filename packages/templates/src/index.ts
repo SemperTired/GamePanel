@@ -105,7 +105,7 @@ export function convertAmpKvp(id: string, kvp: Record<string, string>, metadata:
     id: slugify(id.replace(/\.kvp$/, "")),
     name,
     category: kvp["Meta.Category"] || "Imported",
-    summary: kvp["Meta.Description"] || `${name} imported from AMPTemplates metadata.`,
+    summary: kvp["Meta.Description"] || `${name} imported from public game template metadata.`,
     install: {
       method,
       app_id: steamApp,
@@ -132,7 +132,7 @@ export function convertAmpKvp(id: string, kvp: Record<string, string>, metadata:
     workshop: { enabled: Boolean(workshopApp), providers: workshopApp ? ["steam"] : [], app_id: workshopApp, collection_support: Boolean(workshopApp) },
     backup: { include: ["/data"], exclude: ["/data/steamapps/downloading"] },
     supported_os: String(kvp["Meta.OS"] || "Linux").toLowerCase().includes("windows") ? ["linux", "windows"] : ["linux"],
-    source: { type: "amp_import", url: "https://github.com/CubeCoders/AMPTemplates", needs_review: true },
+    source: { type: "external_import", url: "public-game-template-source", needs_review: true },
   });
 }
 

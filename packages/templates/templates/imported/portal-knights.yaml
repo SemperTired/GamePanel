@@ -41,7 +41,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: $.basicServerData.name
-      default: AMP Powered Portal Knights Server
+      default: AetherNode Portal Knights Server
       required: false
       sensitive: false
       hidden: false
@@ -60,7 +60,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: $.basicServerData.name
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Portal Knights Server
+        DefaultValue: AetherNode Portal Knights Server
         EnumValues: {}
     - key: $ApplicationIPBinding
       label: Game IP
@@ -253,7 +253,7 @@ config_schema:
       label: Hide Console Window
       category: Portal Knights
       subcategory: Server
-      description: This will hide the console window and break the console in AMP if changed.
+      description: This will hide the console window and break the console in AetherPanel if changed.
       keywords: ''
       input_type: text
       param_field_name: $.hideConsoleWindow
@@ -269,7 +269,7 @@ config_schema:
         DisplayName: Hide Console Window
         Category: Portal Knights:stadia_controller
         Subcategory: Server:dns:1
-        Description: This will hide the console window and break the console in AMP if changed.
+        Description: This will hide the console window and break the console in AetherPanel if changed.
         Keywords: ''
         FieldName: hideConsoleWindow
         InputType: text
@@ -984,7 +984,7 @@ environment: {}
 startup_variables:
   - key: name
     label: Server Name
-    default: AMP Powered Portal Knights Server
+    default: AetherNode Portal Knights Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1159,6 +1159,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

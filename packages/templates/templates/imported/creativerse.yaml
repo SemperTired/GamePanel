@@ -305,7 +305,7 @@ config_schema:
       keywords: world,name
       input_type: text
       param_field_name: $.WorldName
-      default: AMP Powered Creativerse Server
+      default: AetherNode Creativerse Server
       required: false
       sensitive: false
       hidden: false
@@ -324,7 +324,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: $.WorldName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Creativerse Server
+        DefaultValue: AetherNode Creativerse Server
         EnumValues: {}
     - key: WorldDescription
       label: World Description
@@ -424,7 +424,7 @@ startup_variables:
     sensitive: true
   - key: WorldName
     label: World Name
-    default: AMP Powered Creativerse Server
+    default: AetherNode Creativerse Server
     customer_editable: true
     required: false
     sensitive: false
@@ -449,6 +449,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

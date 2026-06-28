@@ -56,7 +56,7 @@ config_schema:
       keywords: server,name,servername
       input_type: text
       param_field_name: /Script/Pavlov.DedicatedServer.ServerName
-      default: Pavlov VR Server - Powered by AMP
+      default: Pavlov VR Server - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -75,7 +75,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /Script/Pavlov.DedicatedServer.ServerName
         IncludeInCommandLine: false
-        DefaultValue: Pavlov VR Server - Powered by AMP
+        DefaultValue: Pavlov VR Server - Hosted by AetherNode
         EnumValues: {}
     - key: bEnabled
       label: Include In Server List
@@ -735,7 +735,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: Pavlov VR Server - Powered by AMP
+    default: Pavlov VR Server - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -855,6 +855,7 @@ backup:
 supported_os:
   - linux
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

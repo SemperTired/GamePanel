@@ -154,7 +154,7 @@ config_schema:
       category: Geyser
       subcategory: Java
       description: >-
-        Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AMP. Use
+        Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AetherPanel. Use
         with care
       keywords: custom,java,arguments,parameters
       input_type: text
@@ -173,7 +173,7 @@ config_schema:
         Category: Geyser
         Subcategory: Java:settings:1
         Description: >-
-          Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AMP. Use
+          Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AetherPanel. Use
           with care
         Keywords: custom,java,arguments,parameters
         FieldName: CustomJavaArgs
@@ -224,6 +224,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

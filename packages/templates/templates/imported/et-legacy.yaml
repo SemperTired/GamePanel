@@ -184,7 +184,7 @@ config_schema:
       keywords: server,name,sv_hostname
       input_type: text
       param_field_name: sv_hostname
-      default: 'AMP Powered ET: Legacy'
+      default: 'AetherNode ET: Legacy'
       required: false
       sensitive: false
       hidden: false
@@ -201,7 +201,7 @@ config_schema:
         FieldName: sv_hostname
         InputType: text
         ParamFieldName: sv_hostname
-        DefaultValue: 'AMP Powered ET: Legacy'
+        DefaultValue: 'AetherNode ET: Legacy'
         EnumValues: {}
     - key: server_motd0
       label: Message Of The Day
@@ -1243,7 +1243,7 @@ config_schema:
       label: Additional Console Variables
       category: ET Legacy
       subcategory: Server
-      description: Additional console variables that are not otherwise set by AMP can be specified in 'etmain/etl_server.cfg'
+      description: Additional console variables that are not otherwise set by AetherPanel can be specified in 'etmain/etl_server.cfg'
       keywords: custom,server,variables,cvars,convars,parameters
       input_type: hidden
       param_field_name: CustomConVars
@@ -1259,7 +1259,7 @@ config_schema:
         DisplayName: Additional Console Variables
         Category: ET Legacy:stadia_controller
         Subcategory: Server:dns:1
-        Description: Additional console variables that are not otherwise set by AMP can be specified in 'etmain/etl_server.cfg'
+        Description: Additional console variables that are not otherwise set by AetherPanel can be specified in 'etmain/etl_server.cfg'
         Keywords: custom,server,variables,cvars,convars,parameters
         FieldName: CustomConVars
         InputType: hidden
@@ -1306,7 +1306,7 @@ config_schema:
       category: Updates
       subcategory: Server Updates
       description: >-
-        If set, AMP will not download the Wolfenstein: Enemy Territory client files when the server is updated. The
+        If set, AetherPanel will not download the Wolfenstein: Enemy Territory client files when the server is updated. The
         pak0.pk3, pak1.pk3 and pak2.pk3 files will need to be installed manually in the 'etmain' directory in the
         instance's base directory in order to be used
       keywords: wet,client,files,download
@@ -1327,7 +1327,7 @@ config_schema:
         Category: Updates
         Subcategory: Server Updates:build:-1
         Description: >-
-          If set, AMP will not download the Wolfenstein: Enemy Territory client files when the server is updated. The
+          If set, AetherPanel will not download the Wolfenstein: Enemy Territory client files when the server is updated. The
           pak0.pk3, pak1.pk3 and pak2.pk3 files will need to be installed manually in the 'etmain' directory in the
           instance's base directory in order to be used
         Keywords: wet,client,files,download
@@ -1371,7 +1371,7 @@ startup_variables:
     sensitive: false
   - key: sv_hostname
     label: Server Name
-    default: 'AMP Powered ET: Legacy'
+    default: 'AetherNode ET: Legacy'
     customer_editable: true
     required: false
     sensitive: false
@@ -1576,6 +1576,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

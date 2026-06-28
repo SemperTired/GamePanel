@@ -103,8 +103,8 @@ config_schema:
       category: MySQL
       subcategory: Server
       description: >-
-        Optionally sets the initial database to connect to when the client run in AMP is started. The database must
-        exist on the server. Alternatively send the command 'use <database name>' in the AMP console to switch to a
+        Optionally sets the initial database to connect to when the client run in AetherPanel is started. The database must
+        exist on the server. Alternatively send the command 'use <database name>' in the AetherPanel console to switch to a
         specific database
       keywords: database,name
       input_type: text
@@ -122,8 +122,8 @@ config_schema:
         Category: MySQL:database
         Subcategory: Server:dns:1
         Description: >-
-          Optionally sets the initial database to connect to when the client run in AMP is started. The database must
-          exist on the server. Alternatively send the command 'use <database name>' in the AMP console to switch to a
+          Optionally sets the initial database to connect to when the client run in AetherPanel is started. The database must
+          exist on the server. Alternatively send the command 'use <database name>' in the AetherPanel console to switch to a
           specific database
         Keywords: database,name
         FieldName: database
@@ -176,7 +176,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies [options file settings](https://dev.mysql.com/doc/refman/8.4/en/option-files.html) to include in
-        'my.cnf' for the MySQL server that are not otherwise set by AMP. One setting per line, including the option
+        'my.cnf' for the MySQL server that are not otherwise set by AetherPanel. One setting per line, including the option
         group heading. Additional information on [server
         variables](https://dev.mysql.com/doc/refman/8.4/en/server-system-variables.html)
       keywords: options,file,settings
@@ -196,7 +196,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies [options file settings](https://dev.mysql.com/doc/refman/8.4/en/option-files.html) to include in
-          'my.cnf' for the MySQL server that are not otherwise set by AMP. One setting per line, including the option
+          'my.cnf' for the MySQL server that are not otherwise set by AetherPanel. One setting per line, including the option
           group heading. Additional information on [server
           variables](https://dev.mysql.com/doc/refman/8.4/en/server-system-variables.html)
         Keywords: options,file,settings
@@ -211,7 +211,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies [additional command line options](https://mysql.com/kb/en/mysql-options/) for the MySQL client run by
-        AMP (a super user called 'amp' on Linux and 'root' on Windows) that are not otherwise set by AMP. Use with care
+        AetherPanel (a super user called 'AetherPanel' on Linux and 'root' on Windows) that are not otherwise set by AetherPanel. Use with care
       keywords: custom,client,options,arguments
       input_type: Textarea
       param_field_name: CustomClientOptions
@@ -229,7 +229,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies [additional command line options](https://mysql.com/kb/en/mysql-options/) for the MySQL client run
-          by AMP (a super user called 'amp' on Linux and 'root' on Windows) that are not otherwise set by AMP. Use with
+          by AetherPanel (a super user called 'AetherPanel' on Linux and 'root' on Windows) that are not otherwise set by AetherPanel. Use with
           care
         Keywords: custom,client,options,arguments
         FieldName: CustomClientOptions
@@ -392,6 +392,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

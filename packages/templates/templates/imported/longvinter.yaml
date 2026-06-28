@@ -74,7 +74,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: /Game/Blueprints/Server/GI_AdvancedSessions.GI_AdvancedSessions_C.ServerName
-      default: AMP Powered Longvinter Server
+      default: AetherNode Longvinter Server
       required: false
       sensitive: false
       hidden: false
@@ -91,7 +91,7 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: /Game/Blueprints/Server/GI_AdvancedSessions.GI_AdvancedSessions_C.ServerName
-        DefaultValue: AMP Powered Longvinter Server
+        DefaultValue: AetherNode Longvinter Server
         EnumValues: {}
     - key: serverTag
       label: Server Tag
@@ -609,7 +609,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: AMP Powered Longvinter Server
+    default: AetherNode Longvinter Server
     customer_editable: true
     required: false
     sensitive: false
@@ -718,6 +718,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

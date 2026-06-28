@@ -182,7 +182,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: Engine.GameReplicationInfo.ServerName
-      default: AMP Powered Killing Floor Server
+      default: AetherNode Killing Floor Server
       required: false
       sensitive: false
       hidden: false
@@ -201,7 +201,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: Engine.GameReplicationInfo.ServerName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Killing Floor Server
+        DefaultValue: AetherNode Killing Floor Server
         EnumValues: {}
     - key: Map
       label: Starting Map
@@ -630,7 +630,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets additional command line URL arguments for the server (those that start with a ? (question mark)). Include
-        the question mark but do not separate with a space. Don't use options already in AMP's settings!
+        the question mark but do not separate with a space. Don't use options already in AetherPanel's settings!
       keywords: custom,command,line,options,url,arguments
       input_type: text
       param_field_name: CustomUrlArgs
@@ -649,7 +649,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets additional command line URL arguments for the server (those that start with a ? (question mark)). Include
-          the question mark but do not separate with a space. Don't use options already in AMP's settings!
+          the question mark but do not separate with a space. Don't use options already in AetherPanel's settings!
         Keywords: custom,command,line,options,url,arguments
         FieldName: CustomUrlArgs
         InputType: text
@@ -663,7 +663,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets additional command line switches for the server (those that start with a - (dash)). Include the dash and
-        separate with a space. Don't use switches already in AMP's settings!
+        separate with a space. Don't use switches already in AetherPanel's settings!
       keywords: custom,command,line,switches
       input_type: text
       param_field_name: CustomSwitches
@@ -682,7 +682,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets additional command line switches for the server (those that start with a - (dash)). Include the dash and
-          separate with a space. Don't use switches already in AMP's settings!
+          separate with a space. Don't use switches already in AetherPanel's settings!
         Keywords: custom,command,line,switches
         FieldName: CustomSwitches
         InputType: text
@@ -709,7 +709,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: AMP Powered Killing Floor Server
+    default: AetherNode Killing Floor Server
     customer_editable: true
     required: false
     sensitive: false
@@ -800,6 +800,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

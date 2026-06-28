@@ -196,7 +196,7 @@ config_schema:
       subcategory: ModLoader
       description: >-
         Where tModLoader will read mods from.
-        [instructions](https://github.com/jasperfirecai2/amp-templates/wiki/Managing-mods-with-tmodloader)
+        [instructions](https://github.com/jasperfirecai2/AetherPanel-templates/wiki/Managing-mods-with-tmodloader)
       keywords: folder,path,mod,mods,tmodloader
       input_type: text
       param_field_name: modpath
@@ -215,7 +215,7 @@ config_schema:
         Keywords: folder,path,mod,mods,tmodloader
         Description: >-
           Where tModLoader will read mods from.
-          [instructions](https://github.com/jasperfirecai2/amp-templates/wiki/Managing-mods-with-tmodloader)
+          [instructions](https://github.com/jasperfirecai2/AetherPanel-templates/wiki/Managing-mods-with-tmodloader)
         FieldName: ModPath
         ParamFieldName: modpath
         placeholder: ModLoader/Mods
@@ -892,6 +892,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

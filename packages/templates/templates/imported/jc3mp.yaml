@@ -264,7 +264,7 @@ config_schema:
       keywords: description
       input_type: text
       param_field_name: description
-      default: Powered By Amp
+      default: Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -283,7 +283,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: description
         IncludeInCommandLine: false
-        DefaultValue: Powered By Amp
+        DefaultValue: Hosted by AetherNode
         EnumValues: {}
     - key: tickrate
       label: Tick Rate
@@ -324,7 +324,7 @@ config_schema:
       keywords: name
       input_type: text
       param_field_name: name
-      default: JC3MP-AMP
+      default: JC3MP-AetherPanel
       required: false
       sensitive: false
       hidden: false
@@ -343,7 +343,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: name
         IncludeInCommandLine: false
-        DefaultValue: JC3MP-AMP
+        DefaultValue: JC3MP-AetherPanel
         EnumValues: {}
     - key: announce
       label: Server Announce
@@ -433,7 +433,7 @@ startup_variables:
     sensitive: true
   - key: description
     label: Description
-    default: Powered By Amp
+    default: Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -445,7 +445,7 @@ startup_variables:
     sensitive: false
   - key: name
     label: Name
-    default: JC3MP-AMP
+    default: JC3MP-AetherPanel
     customer_editable: true
     required: false
     sensitive: false
@@ -476,6 +476,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

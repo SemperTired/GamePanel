@@ -105,8 +105,8 @@ config_schema:
       keywords: server,name,Server_Name
       input_type: text
       param_field_name: NETWORK.Server_Name
-      default: AMP Soldat Server
-      placeholder: AMP Soldat Server
+      default: AetherPanel Soldat Server
+      placeholder: AetherPanel Soldat Server
       required: false
       sensitive: false
       hidden: false
@@ -123,8 +123,8 @@ config_schema:
         FieldName: Server_Name
         InputType: text
         ParamFieldName: NETWORK.Server_Name
-        DefaultValue: AMP Soldat Server
-        Placeholder: AMP Soldat Server
+        DefaultValue: AetherPanel Soldat Server
+        Placeholder: AetherPanel Soldat Server
         EnumValues: {}
     - key: Lobby_Register
       label: Show In Lobby
@@ -359,7 +359,7 @@ startup_variables:
     sensitive: false
   - key: Server_Name
     label: Server Name
-    default: AMP Soldat Server
+    default: AetherPanel Soldat Server
     customer_editable: true
     required: false
     sensitive: false
@@ -414,6 +414,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

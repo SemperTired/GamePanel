@@ -51,7 +51,7 @@ config_schema:
       keywords: name,display,name,HostServerDisplayName
       input_type: text
       param_field_name: /Script/BoatGame.BGCustomHostServerSettings.HostServerDisplayName
-      default: AMP Voyagers of Nera Server
+      default: AetherPanel Voyagers of Nera Server
       required: false
       sensitive: false
       hidden: false
@@ -68,7 +68,7 @@ config_schema:
         FieldName: HostServerDisplayName
         InputType: text
         ParamFieldName: /Script/BoatGame.BGCustomHostServerSettings.HostServerDisplayName
-        DefaultValue: AMP Voyagers of Nera Server
+        DefaultValue: AetherPanel Voyagers of Nera Server
         EnumValues: {}
     - key: HostServerPassword
       label: Server Password
@@ -172,7 +172,7 @@ config_schema:
       category: Voyagers of Nera
       subcategory: Server
       description: >-
-        Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+        Sets whether the server or AetherPanel should automatically select the public IP advertised for the server, or whether
         it should use the IP set under Server Public IP
       keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
       input_type: enum
@@ -186,14 +186,14 @@ config_schema:
       skip_if_empty: false
       enum_values:
         '': Server automatically selects (default)
-        '{{$ExternalIP}}': AMP automatically selects
+        '{{$ExternalIP}}': AetherPanel automatically selects
         '{{ManualPublicIP}}': Manual selection
       raw:
         DisplayName: Public IP Selection Mode
         Category: Voyagers of Nera:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets whether the server or AMP should automatically select the public IP advertised for the server, or whether
+          Sets whether the server or AetherPanel should automatically select the public IP advertised for the server, or whether
           it should use the IP set under Server Public IP
         Keywords: public,ip,address,eos,override,host,EOS_OVERRIDE_HOST_IP
         FieldName: EOS_OVERRIDE_HOST_IP
@@ -202,7 +202,7 @@ config_schema:
         DefaultValue: ''
         EnumValues:
           '': Server automatically selects (default)
-          '{{$ExternalIP}}': AMP automatically selects
+          '{{$ExternalIP}}': AetherPanel automatically selects
           '{{ManualPublicIP}}': Manual selection
     - key: ManualPublicIP
       label: Server Public IP
@@ -240,7 +240,7 @@ config_schema:
       category: Voyagers of Nera
       subcategory: Server
       description: >-
-        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AMP.
+        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AetherPanel.
         Use with care
       keywords: custom,server,arguments,parameters
       input_type: text
@@ -259,7 +259,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by
-          AMP. Use with care
+          AetherPanel. Use with care
         Keywords: custom,server,arguments,parameters
         FieldName: CustomArgs
         InputType: text
@@ -580,7 +580,7 @@ environment: {}
 startup_variables:
   - key: HostServerDisplayName
     label: Server Name
-    default: AMP Voyagers of Nera Server
+    default: AetherPanel Voyagers of Nera Server
     customer_editable: true
     required: false
     sensitive: false
@@ -683,6 +683,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

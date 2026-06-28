@@ -16,7 +16,7 @@ runtime:
   working_dir: /data
   startup: >-
     server/ProjectWar/Binaries/Linux/TheFrontServer ProjectWar
-    ProjectWar_Start?DedicatedServer?MaxPlayers={MaxUsers}{UseSteamSocket} -server -game -ConfigServerName="AMP"
+    ProjectWar_Start?DedicatedServer?MaxPlayers={MaxUsers}{UseSteamSocket} -server -game -ConfigServerName="AetherPanel"
     -Port={GamePort} -QueryPort={SteamQueryPort} -BeaconPort={BeaconPort} -ShutDownServicePort={ShutDownServicePort}
     -OutIPAddress={PublicIP} -QueueThreshold={MaxUsers} -ServerAdminAccounts={ServerAdminAccounts}
     -EnableParallelCharacterMovementTickFunction -EnableParallelCharacterTickFunction -UseDynamicPhysicsScene
@@ -144,8 +144,8 @@ config_schema:
       keywords: server,name,ServerName
       input_type: text
       param_field_name: BaseServerConfig.ServerName
-      default: AMP Powered The Front Server
-      placeholder: AMP Powered The Front Server
+      default: AetherNode The Front Server
+      placeholder: AetherNode The Front Server
       required: false
       sensitive: false
       hidden: false
@@ -162,8 +162,8 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: BaseServerConfig.ServerName
-        DefaultValue: AMP Powered The Front Server
-        Placeholder: AMP Powered The Front Server
+        DefaultValue: AetherNode The Front Server
+        Placeholder: AetherNode The Front Server
         EnumValues: {}
     - key: ServerName
       label: Server Name
@@ -637,7 +637,7 @@ config_schema:
       category: The Front
       subcategory: Server
       description: >-
-        Sets whether AMP should automatically select the public IP advertised as the OutIPAddress for the server, or
+        Sets whether AetherPanel should automatically select the public IP advertised as the OutIPAddress for the server, or
         whether it should use the IP set under Server Public IP
       keywords: public,ip,publicip
       input_type: enum
@@ -657,7 +657,7 @@ config_schema:
         Category: The Front:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets whether AMP should automatically select the public IP advertised as the OutIPAddress for the server, or
+          Sets whether AetherPanel should automatically select the public IP advertised as the OutIPAddress for the server, or
           whether it should use the IP set under Server Public IP
         Keywords: public,ip,publicip
         FieldName: PublicIP
@@ -702,7 +702,7 @@ config_schema:
       label: Additional Command Line Parameters
       category: The Front
       subcategory: Server
-      description: Specifies additional command line parameters that are not otherwise set by AMP. ONE LINE ONLY! Use with care
+      description: Specifies additional command line parameters that are not otherwise set by AetherPanel. ONE LINE ONLY! Use with care
       keywords: custom,server,arguments,variables,cvars,convars,parameters
       input_type: Textarea
       param_field_name: CustomServerArgs
@@ -718,7 +718,7 @@ config_schema:
         DisplayName: Additional Command Line Parameters
         Category: The Front:stadia_controller
         Subcategory: Server:dns:1
-        Description: Specifies additional command line parameters that are not otherwise set by AMP. ONE LINE ONLY! Use with care
+        Description: Specifies additional command line parameters that are not otherwise set by AetherPanel. ONE LINE ONLY! Use with care
         Keywords: custom,server,arguments,variables,cvars,convars,parameters
         FieldName: CustomServerArgs
         InputType: Textarea
@@ -4402,7 +4402,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: AMP Powered The Front Server
+    default: AetherNode The Front Server
     customer_editable: true
     required: false
     sensitive: false
@@ -5189,6 +5189,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

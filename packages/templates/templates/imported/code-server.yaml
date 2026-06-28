@@ -743,7 +743,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets custom [command line arguments](https://github.com/coder/code-server/blob/main/src/node/cli.ts) for
-        code-server. Don't use arguments already in AMP's settings!
+        code-server. Don't use arguments already in AetherPanel's settings!
       keywords: custom,args,flags,arguments,command,line
       input_type: text
       param_field_name: CustomArgs
@@ -761,7 +761,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets custom [command line arguments](https://github.com/coder/code-server/blob/main/src/node/cli.ts) for
-          code-server. Don't use arguments already in AMP's settings!
+          code-server. Don't use arguments already in AetherPanel's settings!
         Keywords: custom,args,flags,arguments,command,line
         FieldName: CustomArgs
         InputType: text
@@ -1363,6 +1363,7 @@ backup:
 supported_os:
   - linux
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

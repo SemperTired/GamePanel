@@ -52,7 +52,7 @@ config_schema:
       keywords: name,servername
       input_type: text
       param_field_name: /Script/RBZooKeeper.ZKServer.ServerName
-      default: AMP Powered Ground Branch Server
+      default: AetherNode Ground Branch Server
       required: false
       sensitive: false
       hidden: false
@@ -71,7 +71,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /Script/RBZooKeeper.ZKServer.ServerName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Ground Branch Server
+        DefaultValue: AetherNode Ground Branch Server
         EnumValues: {}
     - key: ServerMOTD
       label: MOTD
@@ -594,7 +594,7 @@ config_schema:
       category: Ground Branch
       subcategory: Server
       description: >-
-        Specifies additional command line options (if any) that are not otherwise set by AMP. ONE LINE ONLY! Format:
+        Specifies additional command line options (if any) that are not otherwise set by AetherPanel. ONE LINE ONLY! Format:
         ?<setting>=<value> (with no spaces between settings). Use with care
       keywords: custom,server,options
       input_type: Textarea
@@ -612,7 +612,7 @@ config_schema:
         Category: Ground Branch:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional command line options (if any) that are not otherwise set by AMP. ONE LINE ONLY! Format:
+          Specifies additional command line options (if any) that are not otherwise set by AetherPanel. ONE LINE ONLY! Format:
           ?<setting>=<value> (with no spaces between settings). Use with care
         Keywords: custom,server,options
         FieldName: CustomServerArgs
@@ -1761,7 +1761,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: AMP Powered Ground Branch Server
+    default: AetherNode Ground Branch Server
     customer_editable: true
     required: false
     sensitive: false
@@ -2029,6 +2029,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

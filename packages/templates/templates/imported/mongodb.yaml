@@ -68,7 +68,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies [configuration file options](https://www.mongodb.com/docs/manual/reference/configuration-options/) to
-        include in 'mongod.conf' for the MongoDB server that are not otherwise set by AMP. Must be in YAML format. Use
+        include in 'mongod.conf' for the MongoDB server that are not otherwise set by AetherPanel. Must be in YAML format. Use
         with care
       keywords: configuration,file,options
       input_type: Textarea
@@ -87,7 +87,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies [configuration file options](https://www.mongodb.com/docs/manual/reference/configuration-options/)
-          to include in 'mongod.conf' for the MongoDB server that are not otherwise set by AMP. Must be in YAML format.
+          to include in 'mongod.conf' for the MongoDB server that are not otherwise set by AetherPanel. Must be in YAML format.
           Use with care
         Keywords: configuration,file,options
         FieldName: ConfigurationFileOptions
@@ -102,7 +102,7 @@ config_schema:
       description: >-
         Specifies [additional command line
         options](https://www.mongodb.com/docs/manual/reference/program/mongod/#options) for the MongoDB server that are
-        not otherwise set by AMP. Use with care
+        not otherwise set by AetherPanel. Use with care
       keywords: custom,server,options,arguments
       input_type: Textarea
       param_field_name: CustomServerOptions
@@ -121,7 +121,7 @@ config_schema:
         Description: >-
           Specifies [additional command line
           options](https://www.mongodb.com/docs/manual/reference/program/mongod/#options) for the MongoDB server that
-          are not otherwise set by AMP. Use with care
+          are not otherwise set by AetherPanel. Use with care
         Keywords: custom,server,options,arguments
         FieldName: CustomServerOptions
         InputType: Textarea
@@ -134,7 +134,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies [additional command line options](https://www.mongodb.com/docs/mongodb-shell/reference/options/) for
-        the MongoDB client run by AMP (a root user called 'admin') that are not otherwise set by AMP. Use with care
+        the MongoDB client run by AetherPanel (a root user called 'admin') that are not otherwise set by AetherPanel. Use with care
       keywords: custom,client,options,arguments
       input_type: Textarea
       param_field_name: CustomClientOptions
@@ -152,7 +152,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies [additional command line options](https://www.mongodb.com/docs/mongodb-shell/reference/options/) for
-          the MongoDB client run by AMP (a root user called 'admin') that are not otherwise set by AMP. Use with care
+          the MongoDB client run by AetherPanel (a root user called 'admin') that are not otherwise set by AetherPanel. Use with care
         Keywords: custom,client,options,arguments
         FieldName: CustomClientOptions
         InputType: Textarea
@@ -308,6 +308,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -61,7 +61,7 @@ config_schema:
       keywords: Server,Name
       input_type: text
       param_field_name: /Script/Mordhau.MordhauGameSession.ServerName
-      default: AMP Powered Mordhau Server
+      default: AetherNode Mordhau Server
       required: false
       sensitive: false
       hidden: false
@@ -80,7 +80,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /Script/Mordhau.MordhauGameSession.ServerName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Mordhau Server
+        DefaultValue: AetherNode Mordhau Server
         EnumValues: {}
     - key: ServerPassword
       label: Server Password
@@ -576,7 +576,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: AMP Powered Mordhau Server
+    default: AetherNode Mordhau Server
     customer_editable: true
     required: false
     sensitive: false
@@ -631,6 +631,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

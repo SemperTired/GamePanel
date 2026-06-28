@@ -136,7 +136,7 @@ config_schema:
       keywords: name
       input_type: text
       param_field_name: SERVER.NAME
-      default: Assetto Corsa Server - Powered by AMP
+      default: Assetto Corsa Server - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -155,7 +155,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: SERVER.NAME
         IncludeInCommandLine: false
-        DefaultValue: Assetto Corsa Server - Powered by AMP
+        DefaultValue: Assetto Corsa Server - Hosted by AetherNode
         EnumValues: {}
     - key: SERVER_REGISTER_TO_LOBBY
       label: Make Server Public
@@ -1526,7 +1526,7 @@ environment: {}
 startup_variables:
   - key: SERVER_NAME
     label: Server Name
-    default: Assetto Corsa Server - Powered by AMP
+    default: Assetto Corsa Server - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -1785,6 +1785,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

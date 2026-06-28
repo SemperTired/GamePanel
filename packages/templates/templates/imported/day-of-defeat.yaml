@@ -44,7 +44,7 @@ config_schema:
       keywords: server,name,hostname
       input_type: text
       param_field_name: hostname
-      default: AMP Powered Day of Defeat Server
+      default: AetherNode Day of Defeat Server
       required: false
       sensitive: false
       hidden: false
@@ -61,7 +61,7 @@ config_schema:
         FieldName: hostname
         InputType: text
         ParamFieldName: hostname
-        DefaultValue: AMP Powered Day of Defeat Server
+        DefaultValue: AetherNode Day of Defeat Server
         EnumValues: {}
     - key: motd
       label: Server MOTD
@@ -1040,7 +1040,7 @@ config_schema:
       category: Day of Defeat
       subcategory: Server
       description: >-
-        Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by AMP.
+        Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by AetherPanel.
         Use with care
       keywords: custom,server,arguments,variables,cvars,convars,parameters
       input_type: text
@@ -1059,7 +1059,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by
-          AMP. Use with care
+          AetherPanel. Use with care
         Keywords: custom,server,arguments,variables,cvars,convars,parameters
         FieldName: CustomParameters
         InputType: text
@@ -1073,7 +1073,7 @@ config_schema:
       category: Day of Defeat
       subcategory: Server
       description: >-
-        Specifies additional console variables (anything that begins with a +) that are not otherwise set by AMP. Use
+        Specifies additional console variables (anything that begins with a +) that are not otherwise set by AetherPanel. Use
         with care. Preferably, specify the equivalent under "Additional Server Settings"
       keywords: custom,server,arguments,variables,cvars,convars,parameters
       input_type: text
@@ -1091,7 +1091,7 @@ config_schema:
         Category: Day of Defeat:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional console variables (anything that begins with a +) that are not otherwise set by AMP. Use
+          Specifies additional console variables (anything that begins with a +) that are not otherwise set by AetherPanel. Use
           with care. Preferably, specify the equivalent under "Additional Server Settings"
         Keywords: custom,server,arguments,variables,cvars,convars,parameters
         FieldName: CustomConVars
@@ -1105,7 +1105,7 @@ config_schema:
       label: Additional Server Settings
       category: Day of Defeat
       subcategory: Server
-      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per line
+      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AetherPanel. One setting per line
       keywords: additional,settings,custom
       input_type: Textarea
       param_field_name: UserSettings
@@ -1122,7 +1122,7 @@ config_schema:
         Category: Day of Defeat:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per
+          Specifies additional settings to include in "server.cfg" that are not otherwise set by AetherPanel. One setting per
           line
         Keywords: additional,settings,custom
         FieldName: UserSettings
@@ -1458,7 +1458,7 @@ environment: {}
 startup_variables:
   - key: hostname
     label: Server Name
-    default: AMP Powered Day of Defeat Server
+    default: AetherNode Day of Defeat Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1706,6 +1706,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

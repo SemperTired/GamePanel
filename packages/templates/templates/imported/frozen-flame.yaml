@@ -69,7 +69,7 @@ config_schema:
       keywords: name,servername
       input_type: text
       param_field_name: MetaGameServerName
-      default: AMP Powered Frozen Flame Server
+      default: AetherNode Frozen Flame Server
       required: false
       sensitive: false
       hidden: false
@@ -88,7 +88,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: MetaGameServerName
         IncludeInCommandLine: true
-        DefaultValue: AMP Powered Frozen Flame Server
+        DefaultValue: AetherNode Frozen Flame Server
         EnumValues: {}
     - key: ServerPassword
       label: Server Password
@@ -202,7 +202,7 @@ config_schema:
       category: Frozen Flame
       subcategory: Server
       description: >-
-        Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+        Sets whether AetherPanel should automatically select the public IP advertised for the server, or whether it should use
         the IP set under Server Public IP
       keywords: public,ip,publicip
       input_type: enum
@@ -222,7 +222,7 @@ config_schema:
         Category: Frozen Flame:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+          Sets whether AetherPanel should automatically select the public IP advertised for the server, or whether it should use
           the IP set under Server Public IP
         Keywords: public,ip,publicip
         FieldName: PublicIP
@@ -1455,7 +1455,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: AMP Powered Frozen Flame Server
+    default: AetherNode Frozen Flame Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1710,6 +1710,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

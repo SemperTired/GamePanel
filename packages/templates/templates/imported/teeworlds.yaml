@@ -244,7 +244,7 @@ config_schema:
       keywords: server,name,sv_name
       input_type: text
       param_field_name: sv_name
-      default: AMP Powered Teeworlds Server
+      default: AetherNode Teeworlds Server
       required: false
       sensitive: false
       hidden: false
@@ -261,7 +261,7 @@ config_schema:
         FieldName: sv_name
         InputType: text
         ParamFieldName: sv_name
-        DefaultValue: AMP Powered Teeworlds Server
+        DefaultValue: AetherNode Teeworlds Server
         EnumValues: {}
     - key: sv_motd
       label: Server MOTD
@@ -1020,7 +1020,7 @@ config_schema:
       subcategory: Server
       description: >-
         If set, a time stamp will be added to the server's log file name ('user/dumps/log.txt'), meaning the file won't
-        be overwritten on each start. The server's logs are separate to AMP's logs, which are not overwritten
+        be overwritten on each start. The server's logs are separate to AetherPanel's logs, which are not overwritten
       keywords: log,file,timestamp,logfile_timestamp
       input_type: checkbox
       param_field_name: logfile_timestamp
@@ -1040,7 +1040,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           If set, a time stamp will be added to the server's log file name ('user/dumps/log.txt'), meaning the file
-          won't be overwritten on each start. The server's logs are separate to AMP's logs, which are not overwritten
+          won't be overwritten on each start. The server's logs are separate to AetherPanel's logs, which are not overwritten
         Keywords: log,file,timestamp,logfile_timestamp
         FieldName: logfile_timestamp
         InputType: checkbox
@@ -1818,7 +1818,7 @@ startup_variables:
     sensitive: false
   - key: sv_name
     label: Server Name
-    default: AMP Powered Teeworlds Server
+    default: AetherNode Teeworlds Server
     customer_editable: true
     required: false
     sensitive: false
@@ -2131,6 +2131,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

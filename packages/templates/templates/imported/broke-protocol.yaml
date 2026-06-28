@@ -75,7 +75,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: $.serverName
-      default: AMP Powered Broke Protocol Server
+      default: AetherNode Broke Protocol Server
       required: false
       sensitive: false
       hidden: false
@@ -94,7 +94,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: $.serverName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Broke Protocol Server
+        DefaultValue: AetherNode Broke Protocol Server
         EnumValues: {}
     - key: map
       label: Server Map
@@ -292,7 +292,7 @@ environment: {}
 startup_variables:
   - key: serverName
     label: Server Name
-    default: AMP Powered Broke Protocol Server
+    default: AetherNode Broke Protocol Server
     customer_editable: true
     required: false
     sensitive: false
@@ -341,6 +341,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

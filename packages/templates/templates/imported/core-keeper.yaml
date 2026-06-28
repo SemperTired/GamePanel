@@ -119,7 +119,7 @@ config_schema:
       keywords: world
       input_type: text
       param_field_name: worldname
-      default: Core Keeper Server Powered by AMP
+      default: Core Keeper Server Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -139,7 +139,7 @@ config_schema:
         ParamFieldName: worldname
         IncludeInCommandLine: true
         SkipIfEmpty: true
-        DefaultValue: Core Keeper Server Powered by AMP
+        DefaultValue: Core Keeper Server Hosted by AetherNode
         EnumValues: {}
     - key: worldseed
       label: World Seed
@@ -572,7 +572,7 @@ startup_variables:
     sensitive: false
   - key: worldname
     label: World Name
-    default: Core Keeper Server Powered by AMP
+    default: Core Keeper Server Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -645,6 +645,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

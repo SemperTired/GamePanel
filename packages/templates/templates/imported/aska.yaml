@@ -139,7 +139,7 @@ config_schema:
       keywords: display,name,displayName
       input_type: text
       param_field_name: display name
-      default: AMP Powered ASKA Server
+      default: AetherNode ASKA Server
       required: false
       sensitive: false
       hidden: false
@@ -158,7 +158,7 @@ config_schema:
         FieldName: displayName
         InputType: text
         ParamFieldName: display name
-        DefaultValue: AMP Powered ASKA Server
+        DefaultValue: AetherNode ASKA Server
         EnumValues: {}
     - key: serverName
       label: Server Name Override
@@ -168,7 +168,7 @@ config_schema:
       keywords: server,name,serverName
       input_type: text
       param_field_name: server name
-      default: AMP Powered ASKA Server
+      default: AetherNode ASKA Server
       required: false
       sensitive: false
       hidden: false
@@ -185,7 +185,7 @@ config_schema:
         FieldName: serverName
         InputType: text
         ParamFieldName: server name
-        DefaultValue: AMP Powered ASKA Server
+        DefaultValue: AetherNode ASKA Server
         EnumValues: {}
     - key: seed
       label: Seed
@@ -890,7 +890,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets custom command line arguments to start the server with. Format: -<key> "<value>". Don't use options already
-        in AMP's settings!
+        in AetherPanel's settings!
       keywords: custom,command,line,arguments
       input_type: text
       param_field_name: CustomArgs
@@ -908,7 +908,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets custom command line arguments to start the server with. Format: -<key> "<value>". Don't use options
-          already in AMP's settings!
+          already in AetherPanel's settings!
         Keywords: custom,command,line,arguments
         FieldName: CustomArgs
         InputType: text
@@ -937,13 +937,13 @@ startup_variables:
     sensitive: false
   - key: displayName
     label: Display Name
-    default: AMP Powered ASKA Server
+    default: AetherNode ASKA Server
     customer_editable: true
     required: false
     sensitive: false
   - key: serverName
     label: Server Name Override
-    default: AMP Powered ASKA Server
+    default: AetherNode ASKA Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1088,6 +1088,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

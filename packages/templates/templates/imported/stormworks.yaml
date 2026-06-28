@@ -176,8 +176,8 @@ config_schema:
       keywords: server,name,servername
       input_type: text
       param_field_name: /server_data/@name
-      default: AMP Powered Stormworks Server
-      placeholder: AMP Powered Stormworks Server
+      default: AetherNode Stormworks Server
+      placeholder: AetherNode Stormworks Server
       required: false
       sensitive: false
       hidden: false
@@ -196,8 +196,8 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /server_data/@name
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Stormworks Server
-        Placeholder: AMP Powered Stormworks Server
+        DefaultValue: AetherNode Stormworks Server
+        Placeholder: AetherNode Stormworks Server
         EnumValues: {}
     - key: save_name
       label: Save Name
@@ -2005,7 +2005,7 @@ startup_variables:
     sensitive: true
   - key: name
     label: Server Name
-    default: AMP Powered Stormworks Server
+    default: AetherNode Stormworks Server
     customer_editable: true
     required: false
     sensitive: false
@@ -2312,6 +2312,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

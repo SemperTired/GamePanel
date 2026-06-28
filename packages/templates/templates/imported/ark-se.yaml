@@ -70,7 +70,7 @@ config_schema:
       keywords: server,name,sessionname
       input_type: text
       param_field_name: SessionName
-      default: 'AMP Powered ARK: Survival Evolved Server'
+      default: 'AetherNode ARK: Survival Evolved Server'
       required: false
       sensitive: false
       hidden: false
@@ -89,7 +89,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: SessionName
         IncludeInCommandLine: false
-        DefaultValue: 'AMP Powered ARK: Survival Evolved Server'
+        DefaultValue: 'AetherNode ARK: Survival Evolved Server'
         EnumValues: {}
     - key: SessionName
       label: Server Name
@@ -279,7 +279,7 @@ config_schema:
       category: ARK SE
       subcategory: Server
       description: >-
-        Sets whether and how mods specifed under Mods List are downloaded, updated and installed. AMP manages = AMP
+        Sets whether and how mods specifed under Mods List are downloaded, updated and installed. AetherPanel manages = AetherPanel
         manages mods when the server is updated (can overcome failures with ARK's system, especially on Windows, but may
         be slower). ARK manages = the ARK server manages mods when the server is started
       keywords: auto,managed,mods,management,mode,automanagedmods
@@ -294,14 +294,14 @@ config_schema:
       skip_if_empty: false
       enum_values:
         '': Manual
-        ' ': AMP manages
+        ' ': AetherPanel manages
         '-automanagedmods ': ARK manages
       raw:
         DisplayName: Mod Management Mode
         Category: ARK SE:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets whether and how mods specifed under Mods List are downloaded, updated and installed. AMP manages = AMP
+          Sets whether and how mods specifed under Mods List are downloaded, updated and installed. AetherPanel manages = AetherPanel
           manages mods when the server is updated (can overcome failures with ARK's system, especially on Windows, but
           may be slower). ARK manages = the ARK server manages mods when the server is started
         Keywords: auto,managed,mods,management,mode,automanagedmods
@@ -311,7 +311,7 @@ config_schema:
         DefaultValue: ''
         EnumValues:
           '': Manual
-          ' ': AMP manages
+          ' ': AetherPanel manages
           '-automanagedmods ': ARK manages
     - key: GameModIds
       label: Mods List
@@ -754,7 +754,7 @@ config_schema:
       subcategory: Server
       description: >-
         If required, you can change the binding of the server and RCON by changing the Application IP Binding for this
-        instance. NOTE: The IP must be reachable by AMP, otherwise AMP's console won't work
+        instance. NOTE: The IP must be reachable by AetherPanel, otherwise AetherPanel's console won't work
       keywords: ip,binding,address,multihome
       input_type: hidden
       param_field_name: MultiHome
@@ -772,7 +772,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           If required, you can change the binding of the server and RCON by changing the Application IP Binding for this
-          instance. NOTE: The IP must be reachable by AMP, otherwise AMP's console won't work
+          instance. NOTE: The IP must be reachable by AetherPanel, otherwise AetherPanel's console won't work
         Keywords: ip,binding,address,multihome
         FieldName: MultiHome
         InputType: hidden
@@ -1367,7 +1367,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets custom [command line flags](https://ark.wiki.gg/wiki/Server_configuration#Command_Line) for the server
-        (those that start with a - (dash)). Include the dash and separate with a space. Don't use flags already in AMP's
+        (those that start with a - (dash)). Include the dash and separate with a space. Don't use flags already in AetherPanel's
         settings!
       keywords: custom,command,line,flags
       input_type: text
@@ -1388,7 +1388,7 @@ config_schema:
         Description: >-
           Sets custom [command line flags](https://ark.wiki.gg/wiki/Server_configuration#Command_Line) for the server
           (those that start with a - (dash)). Include the dash and separate with a space. Don't use flags already in
-          AMP's settings!
+          AetherPanel's settings!
         Keywords: custom,command,line,flags
         FieldName: CustomFlags
         InputType: text
@@ -1405,7 +1405,7 @@ config_schema:
       description: >-
         Sets custom [command line options](https://ark.wiki.gg/wiki/Server_configuration#Command_Line) for the server
         (those that start with a ? (question mark)). Include the question mark but do not separate with a space. Don't
-        use options already in AMP's settings!
+        use options already in AetherPanel's settings!
       keywords: custom,command,line,options
       input_type: text
       param_field_name: CustomOptions
@@ -1425,7 +1425,7 @@ config_schema:
         Description: >-
           Sets custom [command line options](https://ark.wiki.gg/wiki/Server_configuration#Command_Line) for the server
           (those that start with a ? (question mark)). Include the question mark but do not separate with a space. Don't
-          use options already in AMP's settings!
+          use options already in AetherPanel's settings!
         Keywords: custom,command,line,options
         FieldName: CustomOptions
         InputType: text
@@ -7852,7 +7852,7 @@ environment: {}
 startup_variables:
   - key: SessionName
     label: Server Name
-    default: 'AMP Powered ARK: Survival Evolved Server'
+    default: 'AetherNode ARK: Survival Evolved Server'
     customer_editable: true
     required: false
     sensitive: false
@@ -9257,6 +9257,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

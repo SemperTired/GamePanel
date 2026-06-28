@@ -44,7 +44,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets the GUID of the world save to load (the part of the world save name after the ~ symbol). The save must be
-        in the Worlds directory. Default = world supplied by AMP
+        in the Worlds directory. Default = world supplied by AetherPanel
       keywords: world,save,guid,worldGuid
       input_type: text
       param_field_name: worldGuid
@@ -63,7 +63,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets the GUID of the world save to load (the part of the world save name after the ~ symbol). The save must be
-          in the Worlds directory. Default = world supplied by AMP
+          in the Worlds directory. Default = world supplied by AetherPanel
         Keywords: world,save,guid,worldGuid
         FieldName: worldGuid
         InputType: text
@@ -236,7 +236,7 @@ config_schema:
       skip_if_empty: true
       enum_values:
         '': Not explicity set (default)
-        '{{$ExternalIP}}': Automatically set by AMP
+        '{{$ExternalIP}}': Automatically set by AetherPanel
         '{{ManualPublicIP}}': Manually set
       raw:
         DisplayName: Public IP Selection Mode
@@ -254,7 +254,7 @@ config_schema:
         DefaultValue: ''
         EnumValues:
           '': Not explicity set (default)
-          '{{$ExternalIP}}': Automatically set by AMP
+          '{{$ExternalIP}}': Automatically set by AetherPanel
           '{{ManualPublicIP}}': Manually set
     - key: ManualPublicIP
       label: Manual Public IP
@@ -293,7 +293,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets custom command line arguments to start the server with. Format: -<key> "<value>". Don't use options already
-        in AMP's settings!
+        in AetherPanel's settings!
       keywords: custom,command,line,arguments
       input_type: text
       param_field_name: CustomArgs
@@ -311,7 +311,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets custom command line arguments to start the server with. Format: -<key> "<value>". Don't use options
-          already in AMP's settings!
+          already in AetherPanel's settings!
         Keywords: custom,command,line,arguments
         FieldName: CustomArgs
         InputType: text
@@ -415,6 +415,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

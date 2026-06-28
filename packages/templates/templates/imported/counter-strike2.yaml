@@ -47,7 +47,7 @@ config_schema:
       keywords: server,name,hostname
       input_type: text
       param_field_name: hostname
-      default: AMP Powered Counter-Strike 2 Server
+      default: AetherNode Counter-Strike 2 Server
       required: false
       sensitive: false
       hidden: false
@@ -65,7 +65,7 @@ config_schema:
         InputType: text
         ParamFieldName: hostname
         IncludeInCommandLine: true
-        DefaultValue: AMP Powered Counter-Strike 2 Server
+        DefaultValue: AetherNode Counter-Strike 2 Server
         EnumValues: {}
     - key: sv_tags
       label: Server Tags
@@ -643,7 +643,7 @@ config_schema:
       subcategory: Server
       description: >-
         If required, you can change the binding of the server and Source RCON by changing the Application IP Binding for
-        this instance. NOTE: The IP must be reachable by AMP, otherwise AMP's console won't work
+        this instance. NOTE: The IP must be reachable by AetherPanel, otherwise AetherPanel's console won't work
       keywords: ip,binding
       input_type: hidden
       param_field_name: ip
@@ -661,7 +661,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           If required, you can change the binding of the server and Source RCON by changing the Application IP Binding
-          for this instance. NOTE: The IP must be reachable by AMP, otherwise AMP's console won't work
+          for this instance. NOTE: The IP must be reachable by AetherPanel, otherwise AetherPanel's console won't work
         Keywords: ip,binding
         FieldName: ip
         InputType: hidden
@@ -672,7 +672,7 @@ config_schema:
       category: Counter-Strike 2
       subcategory: Server
       description: >-
-        Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by AMP.
+        Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by AetherPanel.
         Use with care
       keywords: custom,server,arguments,variables,cvars,convars,parameters
       input_type: text
@@ -691,7 +691,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional command line parameters (anything that begins with a -) that are not otherwise set by
-          AMP. Use with care
+          AetherPanel. Use with care
         Keywords: custom,server,arguments,variables,cvars,convars,parameters
         FieldName: CustomParameters
         InputType: text
@@ -704,7 +704,7 @@ config_schema:
       category: Counter-Strike 2
       subcategory: Server
       description: >-
-        Specifies additional console variables (anything that begins with a +) that are not otherwise set by AMP. Use
+        Specifies additional console variables (anything that begins with a +) that are not otherwise set by AetherPanel. Use
         with care
       keywords: custom,server,arguments,variables,cvars,convars,parameters
       input_type: text
@@ -722,7 +722,7 @@ config_schema:
         Category: Counter-Strike 2:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional console variables (anything that begins with a +) that are not otherwise set by AMP. Use
+          Specifies additional console variables (anything that begins with a +) that are not otherwise set by AetherPanel. Use
           with care
         Keywords: custom,server,arguments,variables,cvars,convars,parameters
         FieldName: CustomConVars
@@ -936,7 +936,7 @@ environment: {}
 startup_variables:
   - key: hostname
     label: Server Name
-    default: AMP Powered Counter-Strike 2 Server
+    default: AetherNode Counter-Strike 2 Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1087,6 +1087,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

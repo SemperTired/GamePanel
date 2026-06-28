@@ -361,7 +361,7 @@ config_schema:
       description: >-
         Sets the specific Python 3 version to run the app with. The version must be installed on the system for all
         users (and in the System Path on Windows). Make sure the version is compatible with the app and any required
-        packages. If using AMP's Docker, you will limited to its installed version
+        packages. If using AetherPanel's Docker, you will limited to its installed version
       keywords: python,version,PythonVersion
       input_type: enum
       param_field_name: PythonVersion
@@ -388,7 +388,7 @@ config_schema:
         Description: >-
           Sets the specific Python 3 version to run the app with. The version must be installed on the system for all
           users (and in the System Path on Windows). Make sure the version is compatible with the app and any required
-          packages. If using AMP's Docker, you will limited to its installed version
+          packages. If using AetherPanel's Docker, you will limited to its installed version
         Keywords: python,version,PythonVersion
         FieldName: PythonVersion
         InputType: enum
@@ -790,6 +790,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

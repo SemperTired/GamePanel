@@ -252,7 +252,7 @@ config_schema:
       category: Java App Runner
       subcategory: App
       description: >-
-        Sets the Java version to run the app with. The version must be accessible to AMP. For "Specific system version",
+        Sets the Java version to run the app with. The version must be accessible to AetherPanel. For "Specific system version",
         also set Specific System Java Version. For "Specific instance version", also set Specific Instance Java Version.
         Ensure the version is compatible with the app
       keywords: java,version,JavaVersion
@@ -274,7 +274,7 @@ config_schema:
         Category: Java App Runner:code
         Subcategory: App:settings:1
         Description: >-
-          Sets the Java version to run the app with. The version must be accessible to AMP. For "Specific system
+          Sets the Java version to run the app with. The version must be accessible to AetherPanel. For "Specific system
           version", also set Specific System Java Version. For "Specific instance version", also set Specific Instance
           Java Version. Ensure the version is compatible with the app
         Keywords: java,version,JavaVersion
@@ -324,7 +324,7 @@ config_schema:
       description: >-
         Sets the Eclipse Temurin Java version to install in the instance to run the app with, if "Specific instance
         version" is selected under Java Version. Useful for using a Java version that is not installed on the system or
-        in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+        in AetherPanel's Docker image (if using AetherPanel's Docker). Update the server after changing this setting
       keywords: java,version,instance,SpecificInstanceJavaVersion
       input_type: enum
       param_field_name: SpecificInstanceJavaVersion
@@ -355,7 +355,7 @@ config_schema:
         Description: >-
           Sets the Eclipse Temurin Java version to install in the instance to run the app with, if "Specific instance
           version" is selected under Java Version. Useful for using a Java version that is not installed on the system
-          or in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+          or in AetherPanel's Docker image (if using AetherPanel's Docker). Update the server after changing this setting
         Keywords: java,version,instance,SpecificInstanceJavaVersion
         FieldName: SpecificInstanceJavaVersion
         InputType: enum
@@ -631,6 +631,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

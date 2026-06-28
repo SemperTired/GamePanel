@@ -9,7 +9,7 @@ describe("templates", () => {
     expect(templates.some((template) => template.id === "arma3")).toBe(true);
   });
 
-  it("converts AMP kvp metadata into review templates", () => {
+  it("converts public kvp metadata into review templates", () => {
     const template = convertAmpKvp("example-game.kvp", {
       "Meta.DisplayName": "Example Game",
       "Meta.Description": "Example",

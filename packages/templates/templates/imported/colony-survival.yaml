@@ -80,7 +80,7 @@ config_schema:
       keywords: server,name,browser,list,server.name
       input_type: text
       param_field_name: server.name
-      default: AMP Powered Colony Survival Server
+      default: AetherNode Colony Survival Server
       required: false
       sensitive: false
       hidden: false
@@ -98,7 +98,7 @@ config_schema:
         InputType: text
         ParamFieldName: server.name
         IncludeInCommandLine: true
-        DefaultValue: AMP Powered Colony Survival Server
+        DefaultValue: AetherNode Colony Survival Server
         EnumValues: {}
     - key: server.networktype
       label: Connection Mode
@@ -375,7 +375,7 @@ startup_variables:
     sensitive: false
   - key: server.name
     label: Server Name
-    default: AMP Powered Colony Survival Server
+    default: AetherNode Colony Survival Server
     customer_editable: true
     required: false
     sensitive: false
@@ -436,6 +436,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

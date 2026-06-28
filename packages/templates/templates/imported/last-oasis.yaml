@@ -272,7 +272,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets how the connection address advertised for the server is set. "Server IP address" = the server's IP address,
-        "Automatic public IP address" = the public IP address automatically selected by AMP, "Manual address" = the
+        "Automatic public IP address" = the public IP address automatically selected by AetherPanel, "Manual address" = the
         address set under Manual Connection Address
       keywords: override,connection,address,mode,overrideconnectionaddress,external,public,ip
       input_type: enum
@@ -294,7 +294,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets how the connection address advertised for the server is set. "Server IP address" = the server's IP
-          address, "Automatic public IP address" = the public IP address automatically selected by AMP, "Manual address"
+          address, "Automatic public IP address" = the public IP address automatically selected by AetherPanel, "Manual address"
           = the address set under Manual Connection Address
         Keywords: override,connection,address,mode,overrideconnectionaddress,external,public,ip
         FieldName: OverrideConnectionAddress
@@ -443,6 +443,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

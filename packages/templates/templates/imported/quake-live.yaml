@@ -305,8 +305,8 @@ config_schema:
       keywords: server,name,sv_hostname
       input_type: text
       param_field_name: sv_hostname
-      default: AMP Powered Quake Live Server
-      placeholder: AMP Powered Quake Live Server
+      default: AetherNode Quake Live Server
+      placeholder: AetherNode Quake Live Server
       required: false
       sensitive: false
       hidden: false
@@ -323,8 +323,8 @@ config_schema:
         FieldName: sv_hostname
         InputType: text
         ParamFieldName: sv_hostname
-        DefaultValue: AMP Powered Quake Live Server
-        Placeholder: AMP Powered Quake Live Server
+        DefaultValue: AetherNode Quake Live Server
+        Placeholder: AetherNode Quake Live Server
         EnumValues: {}
     - key: sv_tags
       label: Server Tags
@@ -1462,7 +1462,7 @@ startup_variables:
     sensitive: false
   - key: sv_hostname
     label: Server Name
-    default: AMP Powered Quake Live Server
+    default: AetherNode Quake Live Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1678,6 +1678,7 @@ backup:
 supported_os:
   - linux
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -46,7 +46,7 @@ config_schema:
       keywords: motd,server,name
       input_type: text
       param_field_name: motd
-      default: AMP Powered Nukkit Server
+      default: AetherNode Nukkit Server
       required: false
       sensitive: false
       hidden: false
@@ -63,7 +63,7 @@ config_schema:
         FieldName: motd
         InputType: text
         ParamFieldName: motd
-        DefaultValue: AMP Powered Nukkit Server
+        DefaultValue: AetherNode Nukkit Server
         EnumValues: {}
     - key: sub-motd
       label: Server Sub MOTD
@@ -534,7 +534,7 @@ config_schema:
       category: Nukkit
       subcategory: Server
       description: >-
-        Specifies additional settings to include in 'server.properties' that are not otherwise set by AMP. One setting
+        Specifies additional settings to include in 'server.properties' that are not otherwise set by AetherPanel. One setting
         per line. Useful for new settings in beta server builds
       keywords: additional,settings,custom
       input_type: Textarea
@@ -552,7 +552,7 @@ config_schema:
         Category: Nukkit:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional settings to include in 'server.properties' that are not otherwise set by AMP. One setting
+          Specifies additional settings to include in 'server.properties' that are not otherwise set by AetherPanel. One setting
           per line. Useful for new settings in beta server builds
         Keywords: additional,settings,custom
         FieldName: UserSettings
@@ -1017,7 +1017,7 @@ config_schema:
       category: Nukkit
       subcategory: Java
       description: >-
-        Sets the Java version to run Nukkit with. The version must be accessible to AMP. For "Specific system version",
+        Sets the Java version to run Nukkit with. The version must be accessible to AetherPanel. For "Specific system version",
         also set Specific System Java Version. For "Specific instance version", also set Specific Instance Java Version.
         Note that later Java versions may not be compatible with some plugins
       keywords: java,version,JavaVersion
@@ -1039,7 +1039,7 @@ config_schema:
         Category: Nukkit:stadia_controller
         Subcategory: Java:local_cafe:2
         Description: >-
-          Sets the Java version to run Nukkit with. The version must be accessible to AMP. For "Specific system
+          Sets the Java version to run Nukkit with. The version must be accessible to AetherPanel. For "Specific system
           version", also set Specific System Java Version. For "Specific instance version", also set Specific Instance
           Java Version. Note that later Java versions may not be compatible with some plugins
         Keywords: java,version,JavaVersion
@@ -1089,7 +1089,7 @@ config_schema:
       description: >-
         Sets the Eclipse Temurin Java version to install in the instance to run Nukkit with, if "Specific instance
         version" is selected under Java Version. Useful for using a Java version that is not installed on the system or
-        in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+        in AetherPanel's Docker image (if using AetherPanel's Docker). Update the server after changing this setting
       keywords: java,version,instance,SpecificInstanceJavaVersion
       input_type: enum
       param_field_name: SpecificInstanceJavaVersion
@@ -1120,7 +1120,7 @@ config_schema:
         Description: >-
           Sets the Eclipse Temurin Java version to install in the instance to run Nukkit with, if "Specific instance
           version" is selected under Java Version. Useful for using a Java version that is not installed on the system
-          or in AMP's Docker image (if using AMP's Docker). Update the server after changing this setting
+          or in AetherPanel's Docker image (if using AetherPanel's Docker). Update the server after changing this setting
         Keywords: java,version,instance,SpecificInstanceJavaVersion
         FieldName: SpecificInstanceJavaVersion
         InputType: enum
@@ -1351,7 +1351,7 @@ environment: {}
 startup_variables:
   - key: motd
     label: Server Name
-    default: AMP Powered Nukkit Server
+    default: AetherNode Nukkit Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1578,6 +1578,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

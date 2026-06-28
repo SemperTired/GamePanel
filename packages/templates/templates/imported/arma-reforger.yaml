@@ -257,7 +257,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: game.name
-      default: Arma Reforger Server - Powered by AMP
+      default: Arma Reforger Server - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -276,7 +276,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: game.name
         IncludeInCommandLine: false
-        DefaultValue: Arma Reforger Server - Powered by AMP
+        DefaultValue: Arma Reforger Server - Hosted by AetherNode
         EnumValues: {}
     - key: scenarioId
       label: Server Mission/Scenario
@@ -479,7 +479,7 @@ config_schema:
       category: Arma Reforger
       subcategory: Server
       description: >-
-        Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+        Sets whether AetherPanel should automatically select the public IP advertised for the server, or whether it should use
         the IP set under Server Public IP
       keywords: public,ip,address,publicAddress
       input_type: enum
@@ -499,7 +499,7 @@ config_schema:
         Category: Arma Reforger:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+          Sets whether AetherPanel should automatically select the public IP advertised for the server, or whether it should use
           the IP set under Server Public IP
         Keywords: public,ip,address,publicAddress
         FieldName: publicAddress
@@ -705,7 +705,7 @@ config_schema:
       category: Arma Reforger
       subcategory: Server
       description: >-
-        Sets the maximum number of clients that can connect to RCON at the same time. Note that AMP itself takes one
+        Sets the maximum number of clients that can connect to RCON at the same time. Note that AetherPanel itself takes one
         slot
       keywords: rcon,maxClients
       input_type: number
@@ -726,7 +726,7 @@ config_schema:
         Category: Arma Reforger:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets the maximum number of clients that can connect to RCON at the same time. Note that AMP itself takes one
+          Sets the maximum number of clients that can connect to RCON at the same time. Note that AetherPanel itself takes one
           slot
         Keywords: rcon,maxClients
         FieldName: maxClients
@@ -2072,7 +2072,7 @@ config_schema:
       label: Additional Server Startup Parameters
       category: Arma Reforger
       subcategory: Server
-      description: Specifies additional startup parameters that are not otherwise set by AMP. Use with care
+      description: Specifies additional startup parameters that are not otherwise set by AetherPanel. Use with care
       keywords: custom,server,arguments,parameters
       input_type: text
       param_field_name: CustomServerArgs
@@ -2089,7 +2089,7 @@ config_schema:
         DisplayName: Additional Server Startup Parameters
         Category: Arma Reforger:stadia_controller
         Subcategory: Server:dns:1
-        Description: Specifies additional startup parameters that are not otherwise set by AMP. Use with care
+        Description: Specifies additional startup parameters that are not otherwise set by AetherPanel. Use with care
         Keywords: custom,server,arguments,parameters
         FieldName: CustomServerArgs
         InputType: text
@@ -2147,7 +2147,7 @@ environment: {}
 startup_variables:
   - key: name
     label: Server Name
-    default: Arma Reforger Server - Powered by AMP
+    default: Arma Reforger Server - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -2454,6 +2454,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

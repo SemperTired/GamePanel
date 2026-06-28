@@ -152,8 +152,8 @@ config_schema:
       keywords: name
       input_type: text
       param_field_name: ServerName
-      default: The Isle Server - Powered by AMP
-      placeholder: The Isle Server - Powered by AMP
+      default: The Isle Server - Hosted by AetherNode
+      placeholder: The Isle Server - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -170,8 +170,8 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: ServerName
-        DefaultValue: The Isle Server - Powered by AMP
-        Placeholder: The Isle Server - Powered by AMP
+        DefaultValue: The Isle Server - Hosted by AetherNode
+        Placeholder: The Isle Server - Hosted by AetherNode
         EnumValues: {}
     - key: MultiHome
       label: Set MultiHome IP
@@ -1653,7 +1653,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: The Isle Server - Powered by AMP
+    default: The Isle Server - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -1980,6 +1980,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

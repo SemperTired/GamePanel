@@ -98,7 +98,7 @@ config_schema:
       category: DOOM II
       subcategory: Server
       description: >-
-        Sets the path to the DOOM II IWAD file to use. 'Default' assumes that AMP manages the download from Steam of the
+        Sets the path to the DOOM II IWAD file to use. 'Default' assumes that AetherPanel manages the download from Steam of the
         client files. If that is disabled under Updates, select 'Custom' and specify Custom IWAD Path accordingly
       keywords: iwad,path
       input_type: enum
@@ -118,7 +118,7 @@ config_schema:
         Category: DOOM II:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets the path to the DOOM II IWAD file to use. 'Default' assumes that AMP manages the download from Steam of
+          Sets the path to the DOOM II IWAD file to use. 'Default' assumes that AetherPanel manages the download from Steam of
           the client files. If that is disabled under Updates, select 'Custom' and specify Custom IWAD Path accordingly
         Keywords: iwad,path
         FieldName: IWADPath
@@ -199,8 +199,8 @@ config_schema:
       keywords: hostname,server,name,sv_hostname
       input_type: text
       param_field_name: sv_hostname
-      default: AMP Powered DOOM II server
-      placeholder: AMP Powered DOOM II server
+      default: AetherNode DOOM II server
+      placeholder: AetherNode DOOM II server
       required: false
       sensitive: false
       hidden: false
@@ -217,8 +217,8 @@ config_schema:
         FieldName: sv_hostname
         InputType: text
         ParamFieldName: sv_hostname
-        DefaultValue: AMP Powered DOOM II server
-        Placeholder: AMP Powered DOOM II server
+        DefaultValue: AetherNode DOOM II server
+        Placeholder: AetherNode DOOM II server
         EnumValues: {}
     - key: sv_forcejoinpassword
       label: Force Join Password
@@ -2348,7 +2348,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies additional [command line arguments](https://wiki.zandronum.com/Command-line_parameters) that are not
-        otherwise set by AMP. Use with care
+        otherwise set by AetherPanel. Use with care
       keywords: custom,server,arguments,parameters
       input_type: text
       param_field_name: CustomArgs
@@ -2366,7 +2366,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional [command line arguments](https://wiki.zandronum.com/Command-line_parameters) that are not
-          otherwise set by AMP. Use with care
+          otherwise set by AetherPanel. Use with care
         Keywords: custom,server,arguments,parameters
         FieldName: CustomArgs
         InputType: text
@@ -2969,7 +2969,7 @@ startup_variables:
     sensitive: false
   - key: sv_hostname
     label: Server Hostname
-    default: AMP Powered DOOM II server
+    default: AetherNode DOOM II server
     customer_editable: true
     required: false
     sensitive: false
@@ -3491,6 +3491,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

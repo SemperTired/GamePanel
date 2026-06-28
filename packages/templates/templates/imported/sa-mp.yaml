@@ -96,8 +96,8 @@ config_schema:
       keywords: server,name,hostname
       input_type: text
       param_field_name: hostname
-      default: AMP Powered SA-MP Server
-      placeholder: AMP Powered SA-MP Server
+      default: AetherNode SA-MP Server
+      placeholder: AetherNode SA-MP Server
       required: false
       sensitive: false
       hidden: false
@@ -114,8 +114,8 @@ config_schema:
         FieldName: hostname
         InputType: text
         ParamFieldName: hostname
-        DefaultValue: AMP Powered SA-MP Server
-        Placeholder: AMP Powered SA-MP Server
+        DefaultValue: AetherNode SA-MP Server
+        Placeholder: AetherNode SA-MP Server
         EnumValues: {}
     - key: mapname
       label: Map Name
@@ -876,7 +876,7 @@ config_schema:
       label: Additional Server Settings
       category: San Andreas MP
       subcategory: Server
-      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per line
+      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AetherPanel. One setting per line
       keywords: additional,settings,custom
       input_type: Textarea
       param_field_name: UserSettings
@@ -893,7 +893,7 @@ config_schema:
         Category: San Andreas MP:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per
+          Specifies additional settings to include in "server.cfg" that are not otherwise set by AetherPanel. One setting per
           line
         Keywords: additional,settings,custom
         FieldName: UserSettings
@@ -915,7 +915,7 @@ environment: {}
 startup_variables:
   - key: hostname
     label: Server Name
-    default: AMP Powered SA-MP Server
+    default: AetherNode SA-MP Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1072,6 +1072,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

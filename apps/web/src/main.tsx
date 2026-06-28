@@ -723,7 +723,7 @@ function ServiceRows({ services, onPick, selectedId, detailed }: any) {
 function Nodes({ nodes, refresh }: { nodes: any[]; refresh: () => Promise<void> }) {
   const [form, setForm] = useState({
     id: "amp-linux-target",
-    name: "AMP Linux Target",
+    name: "Linux Docker Target",
     host: "10.1.10.48",
     ssh_user: "user",
     runtime: "docker",
@@ -758,7 +758,7 @@ function Nodes({ nodes, refresh }: { nodes: any[]; refresh: () => Promise<void> 
           <span>{key.replaceAll("_", " ")}</span>
           <input className="field" value={String(value)} onChange={(event) => setForm({ ...form, [key]: event.target.value })} />
         </label>)}
-        <button className="primary-button w-full" onClick={saveNode}><Save className="h-4 w-4" /> Save AMP Linux Target</button>
+        <button className="primary-button w-full" onClick={saveNode}><Save className="h-4 w-4" /> Save Linux Target</button>
         {message && <div className="rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
       </div>
     </section>
@@ -1094,7 +1094,7 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="font-display text-2xl">Game Settings</h3>
-          <p className="text-sm text-slate-400">{visibleFields.length} controls imported from AMP metadata for this game template.</p>
+          <p className="text-sm text-slate-400">{visibleFields.length} controls generated from game template metadata.</p>
         </div>
         <button type="button" className="primary-button" onClick={save} disabled={Boolean(saving)}>{saving === "settings" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saving === "settings" ? "Saving..." : "Save Settings"}</button>
       </div>
@@ -1119,7 +1119,7 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
             </label>)}
           </div>
         </section>)}
-        {!visibleFields.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">This template has not imported AMP config metadata yet.</div>}
+        {!visibleFields.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">This template does not have managed config metadata yet.</div>}
       </div>
     </div>
     <div className="grid grid-cols-2 gap-5">

@@ -44,7 +44,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: name
-      default: 'AMP Powered Project 5: Sightseer Server'
+      default: 'AetherNode Project 5: Sightseer Server'
       required: false
       sensitive: false
       hidden: false
@@ -64,7 +64,7 @@ config_schema:
         ParamFieldName: name
         IncludeInCommandLine: true
         SkipIfEmpty: true
-        DefaultValue: 'AMP Powered Project 5: Sightseer Server'
+        DefaultValue: 'AetherNode Project 5: Sightseer Server'
         EnumValues: {}
     - key: public
       label: Make Server Public
@@ -171,7 +171,7 @@ environment: {}
 startup_variables:
   - key: name
     label: Server Name
-    default: 'AMP Powered Project 5: Sightseer Server'
+    default: 'AetherNode Project 5: Sightseer Server'
     customer_editable: true
     required: false
     sensitive: false
@@ -208,6 +208,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

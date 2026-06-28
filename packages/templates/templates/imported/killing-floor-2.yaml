@@ -363,7 +363,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: Engine.GameReplicationInfo.ServerName
-      default: AMP Powered KF2 Server
+      default: AetherNode KF2 Server
       required: false
       sensitive: false
       hidden: false
@@ -382,7 +382,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: Engine.GameReplicationInfo.ServerName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered KF2 Server
+        DefaultValue: AetherNode KF2 Server
         EnumValues: {}
     - key: $MaxUsers
       label: Max Players
@@ -555,7 +555,7 @@ config_schema:
       keywords: clan,motto
       input_type: text
       param_field_name: KFGame.KFGameInfo.ClanMotto
-      default: We are the AMP clan!
+      default: We are the AetherPanel clan!
       required: false
       sensitive: false
       hidden: false
@@ -574,7 +574,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: KFGame.KFGameInfo.ClanMotto
         IncludeInCommandLine: false
-        DefaultValue: We are the AMP clan!
+        DefaultValue: We are the AetherPanel clan!
         EnumValues: {}
     - key: ServerMOTD
       label: MOTD
@@ -642,7 +642,7 @@ config_schema:
       keywords: Website,Link
       input_type: text
       param_field_name: KFGame.KFGameInfo.WebsiteLink
-      default: https://cubecoders.com/AMP
+      default: https://cubecoders.com/AetherPanel
       required: false
       sensitive: false
       hidden: false
@@ -661,7 +661,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: KFGame.KFGameInfo.WebsiteLink
         IncludeInCommandLine: false
-        DefaultValue: https://cubecoders.com/AMP
+        DefaultValue: https://cubecoders.com/AetherPanel
         EnumValues: {}
     - key: CustomUrlArgs
       label: Additional Command Line URL Arguments
@@ -671,7 +671,7 @@ config_schema:
         Sets additional [command line URL
         arguments](https://wiki.killingfloor2.com/index.php?title=Dedicated_Server_(Killing_Floor_2%29#Command_Line_Launch_Options)
         for the server (those that start with a ? (question mark)). Include the question mark but do not separate with a
-        space. Don't use options already in AMP's settings!
+        space. Don't use options already in AetherPanel's settings!
       keywords: custom,command,line,options,url,arguments
       input_type: text
       param_field_name: CustomUrlArgs
@@ -692,7 +692,7 @@ config_schema:
           Sets additional [command line URL
           arguments](https://wiki.killingfloor2.com/index.php?title=Dedicated_Server_(Killing_Floor_2%29#Command_Line_Launch_Options)
           for the server (those that start with a ? (question mark)). Include the question mark but do not separate with
-          a space. Don't use options already in AMP's settings!
+          a space. Don't use options already in AetherPanel's settings!
         Keywords: custom,command,line,options,url,arguments
         FieldName: CustomUrlArgs
         InputType: text
@@ -708,7 +708,7 @@ config_schema:
         Sets additional [command line
         switches](https://wiki.killingfloor2.com/index.php?title=Dedicated_Server_(Killing_Floor_2%29#Command_Line_Launch_Options)
         for the server (those that start with a - (dash)). Include the dash and separate with a space. Don't use
-        switches already in AMP's settings!
+        switches already in AetherPanel's settings!
       keywords: custom,command,line,switches
       input_type: text
       param_field_name: CustomSwitches
@@ -729,7 +729,7 @@ config_schema:
           Sets additional [command line
           switches](https://wiki.killingfloor2.com/index.php?title=Dedicated_Server_(Killing_Floor_2%29#Command_Line_Launch_Options)
           for the server (those that start with a - (dash)). Include the dash and separate with a space. Don't use
-          switches already in AMP's settings!
+          switches already in AetherPanel's settings!
         Keywords: custom,command,line,switches
         FieldName: CustomSwitches
         InputType: text
@@ -805,7 +805,7 @@ startup_variables:
     sensitive: true
   - key: ServerName
     label: Server Name
-    default: AMP Powered KF2 Server
+    default: AetherNode KF2 Server
     customer_editable: true
     required: false
     sensitive: false
@@ -835,7 +835,7 @@ startup_variables:
     sensitive: false
   - key: ClanMotto
     label: Clan Motto
-    default: We are the AMP clan!
+    default: We are the AetherPanel clan!
     customer_editable: true
     required: false
     sensitive: false
@@ -853,7 +853,7 @@ startup_variables:
     sensitive: false
   - key: WebsiteLink
     label: MOTD Website Link
-    default: https://cubecoders.com/AMP
+    default: https://cubecoders.com/AetherPanel
     customer_editable: true
     required: false
     sensitive: false
@@ -884,6 +884,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

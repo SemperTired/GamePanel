@@ -138,7 +138,7 @@ config_schema:
       keywords: host,name,server,sv_hostname
       input_type: text
       param_field_name: sv_hostname
-      default: ROR2 - Powered by AMP
+      default: ROR2 - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -157,7 +157,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: sv_hostname
         IncludeInCommandLine: false
-        DefaultValue: ROR2 - Powered by AMP
+        DefaultValue: ROR2 - Hosted by AetherNode
         EnumValues: {}
     - key: sv_custom_tags
       label: Custom Tags
@@ -434,7 +434,7 @@ environment: {}
 startup_variables:
   - key: sv_hostname
     label: Host Name
-    default: ROR2 - Powered by AMP
+    default: ROR2 - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -494,6 +494,7 @@ backup:
 supported_os:
   - linux
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

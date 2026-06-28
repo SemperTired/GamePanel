@@ -484,7 +484,7 @@ config_schema:
       category: TeamSpeak 3
       subcategory: Server
       description: >-
-        Protocols that can be used to connect to the ServerQuery. You must choose a Telnet option for AMP console to
+        Protocols that can be used to connect to the ServerQuery. You must choose a Telnet option for AetherPanel console to
         function fully.
       keywords: query,protocols
       input_type: enum
@@ -510,7 +510,7 @@ config_schema:
         Category: TeamSpeak 3:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Protocols that can be used to connect to the ServerQuery. You must choose a Telnet option for AMP console to
+          Protocols that can be used to connect to the ServerQuery. You must choose a Telnet option for AetherPanel console to
           function fully.
         Keywords: query,protocols
         FieldName: query_protocols
@@ -1401,6 +1401,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -258,7 +258,7 @@ config_schema:
       keywords: server description
       input_type: text
       param_field_name: default_server_description
-      default: AMP Powered Server
+      default: AetherNode Server
       required: false
       sensitive: false
       hidden: false
@@ -277,7 +277,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: default_server_description
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Server
+        DefaultValue: AetherNode Server
         EnumValues: {}
     - key: pvp
       label: Enable PVP
@@ -586,7 +586,7 @@ config_schema:
       keywords: cluster description
       input_type: text
       param_field_name: cluster_description
-      default: AMP Powered Cluster
+      default: AetherNode Cluster
       required: false
       sensitive: false
       hidden: false
@@ -605,7 +605,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: cluster_description
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Cluster
+        DefaultValue: AetherNode Cluster
         EnumValues: {}
     - key: cluster_name
       label: Cluster Name
@@ -615,7 +615,7 @@ config_schema:
       keywords: cluster name
       input_type: text
       param_field_name: cluster_name
-      default: AMP Cluster
+      default: AetherPanel Cluster
       required: false
       sensitive: false
       hidden: false
@@ -634,7 +634,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: cluster_name
         IncludeInCommandLine: false
-        DefaultValue: AMP Cluster
+        DefaultValue: AetherPanel Cluster
         EnumValues: {}
     - key: cluster_password
       label: Cluster Password
@@ -698,7 +698,7 @@ config_schema:
       label: Master Port
       category: Don't Starve Together
       subcategory: Clusters
-      description: Port of the master server (Remote Admin Port of the Master in AMP)
+      description: Port of the master server (Remote Admin Port of the Master in AetherPanel)
       keywords: master server port
       input_type: text
       param_field_name: master_port
@@ -714,7 +714,7 @@ config_schema:
         DisplayName: Master Port
         Category: Don't Starve Together:stadia_controller
         Subcategory: Clusters:share:2
-        Description: Port of the master server (Remote Admin Port of the Master in AMP)
+        Description: Port of the master server (Remote Admin Port of the Master in AetherPanel)
         Keywords: master server port
         FieldName: master_port
         InputType: text
@@ -1067,7 +1067,7 @@ startup_variables:
     sensitive: false
   - key: default_server_description
     label: Server Description
-    default: AMP Powered Server
+    default: AetherNode Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1127,13 +1127,13 @@ startup_variables:
     sensitive: false
   - key: cluster_description
     label: Cluster Description
-    default: AMP Powered Cluster
+    default: AetherNode Cluster
     customer_editable: true
     required: false
     sensitive: false
   - key: cluster_name
     label: Cluster Name
-    default: AMP Cluster
+    default: AetherPanel Cluster
     customer_editable: true
     required: false
     sensitive: false
@@ -1206,6 +1206,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

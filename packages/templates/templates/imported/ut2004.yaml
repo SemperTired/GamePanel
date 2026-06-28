@@ -110,7 +110,7 @@ config_schema:
       keywords: name
       input_type: text
       param_field_name: Engine.GameReplicationInfo.ServerName
-      default: AMP Powered UT2004 Server
+      default: AetherNode UT2004 Server
       required: false
       sensitive: false
       hidden: false
@@ -129,7 +129,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: Engine.GameReplicationInfo.ServerName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered UT2004 Server
+        DefaultValue: AetherNode UT2004 Server
         EnumValues: {}
     - key: ShortName
       label: Server Shortname
@@ -2584,7 +2584,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: AMP Powered UT2004 Server
+    default: AetherNode UT2004 Server
     customer_editable: true
     required: false
     sensitive: false
@@ -2969,6 +2969,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

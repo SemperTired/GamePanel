@@ -283,7 +283,7 @@ config_schema:
       category: SCUM
       subcategory: Server
       description: >-
-        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AMP.
+        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AetherPanel.
         Use with care
       keywords: custom,server,arguments,parameters
       input_type: text
@@ -302,7 +302,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by
-          AMP. Use with care
+          AetherPanel. Use with care
         Keywords: custom,server,arguments,parameters
         FieldName: CustomArgs
         InputType: text
@@ -413,6 +413,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

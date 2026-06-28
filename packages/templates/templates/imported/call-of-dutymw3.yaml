@@ -59,7 +59,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: sv_hostname
-      default: 'AMP Powered Call of Duty: Modern Warfare 3 Server'
+      default: 'AetherNode Call of Duty: Modern Warfare 3 Server'
       required: false
       sensitive: false
       hidden: false
@@ -78,7 +78,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: sv_hostname
         IncludeInCommandLine: false
-        DefaultValue: 'AMP Powered Call of Duty: Modern Warfare 3 Server'
+        DefaultValue: 'AetherNode Call of Duty: Modern Warfare 3 Server'
         EnumValues: {}
     - key: dedicated
       label: Make Server Public
@@ -540,7 +540,7 @@ environment: {}
 startup_variables:
   - key: sv_hostname
     label: Server Name
-    default: 'AMP Powered Call of Duty: Modern Warfare 3 Server'
+    default: 'AetherNode Call of Duty: Modern Warfare 3 Server'
     customer_editable: true
     required: false
     sensitive: false
@@ -631,6 +631,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -115,7 +115,7 @@ config_schema:
       keywords: name,server_name
       input_type: text
       param_field_name: /data/@server_name
-      default: AMP Powered Carrier Command 2 Server
+      default: AetherNode Carrier Command 2 Server
       required: false
       sensitive: false
       hidden: false
@@ -134,7 +134,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /data/@server_name
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Carrier Command 2 Server
+        DefaultValue: AetherNode Carrier Command 2 Server
         EnumValues: {}
     - key: password
       label: Server Password
@@ -584,7 +584,7 @@ startup_variables:
     sensitive: false
   - key: server_name
     label: Server Name
-    default: AMP Powered Carrier Command 2 Server
+    default: AetherNode Carrier Command 2 Server
     customer_editable: true
     required: false
     sensitive: false
@@ -663,6 +663,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

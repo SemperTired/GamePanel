@@ -4360,7 +4360,7 @@ config_schema:
       keywords: Server, name
       input_type: text
       param_field_name: Name
-      default: AMP V Rising Server
+      default: AetherPanel V Rising Server
       required: false
       sensitive: false
       hidden: false
@@ -4379,7 +4379,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: Name
         IncludeInCommandLine: false
-        DefaultValue: AMP V Rising Server
+        DefaultValue: AetherPanel V Rising Server
         EnumValues: {}
     - key: Description
       label: Description
@@ -4389,8 +4389,8 @@ config_schema:
       keywords: Server, description
       input_type: Textarea
       param_field_name: Description
-      default: AMP V Rising Server
-      placeholder: AMP V Rising Server
+      default: AetherPanel V Rising Server
+      placeholder: AetherPanel V Rising Server
       required: false
       sensitive: false
       hidden: false
@@ -4409,8 +4409,8 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: Description
         IncludeInCommandLine: false
-        DefaultValue: AMP V Rising Server
-        Placeholder: AMP V Rising Server
+        DefaultValue: AetherPanel V Rising Server
+        Placeholder: AetherPanel V Rising Server
         EnumValues: {}
     - key: $ApplicationPort1
       label: Port
@@ -6147,13 +6147,13 @@ startup_variables:
     sensitive: false
   - key: Name
     label: Server Name
-    default: AMP V Rising Server
+    default: AetherPanel V Rising Server
     customer_editable: true
     required: false
     sensitive: false
   - key: Description
     label: Description
-    default: AMP V Rising Server
+    default: AetherPanel V Rising Server
     customer_editable: true
     required: false
     sensitive: false
@@ -6298,6 +6298,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

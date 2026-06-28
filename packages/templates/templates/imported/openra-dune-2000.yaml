@@ -42,8 +42,8 @@ config_schema:
       keywords: server,name,Server.Name
       input_type: text
       param_field_name: Server.Name
-      default: AMP Powered OpenRA Server
-      placeholder: AMP Powered OpenRA Server
+      default: AetherNode OpenRA Server
+      placeholder: AetherNode OpenRA Server
       required: false
       sensitive: false
       hidden: false
@@ -61,8 +61,8 @@ config_schema:
         InputType: text
         ParamFieldName: Server.Name
         IncludeInCommandLine: true
-        DefaultValue: AMP Powered OpenRA Server
-        Placeholder: AMP Powered OpenRA Server
+        DefaultValue: AetherNode OpenRA Server
+        Placeholder: AetherNode OpenRA Server
         EnumValues: {}
     - key: motd
       label: MOTD
@@ -344,7 +344,7 @@ config_schema:
       category: OpenRA
       subcategory: Server
       description: >-
-        Sets the maximum number of players at one time to display in the AMP status tab. This is visual only - the
+        Sets the maximum number of players at one time to display in the AetherPanel status tab. This is visual only - the
         actual maximum is determined by the map being played
       keywords: maximum,players,clients,limit,maxplayers
       input_type: number
@@ -365,7 +365,7 @@ config_schema:
         Category: OpenRA:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets the maximum number of players at one time to display in the AMP status tab. This is visual only - the
+          Sets the maximum number of players at one time to display in the AetherPanel status tab. This is visual only - the
           actual maximum is determined by the map being played
         Keywords: maximum,players,clients,limit,maxplayers
         FieldName: $MaxUsers
@@ -843,7 +843,7 @@ environment: {}
 startup_variables:
   - key: Server.Name
     label: Server Name
-    default: AMP Powered OpenRA Server
+    default: AetherNode OpenRA Server
     customer_editable: true
     required: false
     sensitive: false
@@ -998,6 +998,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -141,7 +141,7 @@ config_schema:
       keywords: name,servername
       input_type: text
       param_field_name: /Script/Astro.AstroServerSettings.ServerName
-      default: Astroneer Server - Powered by AMP
+      default: Astroneer Server - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -160,7 +160,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /Script/Astro.AstroServerSettings.ServerName
         IncludeInCommandLine: false
-        DefaultValue: Astroneer Server - Powered by AMP
+        DefaultValue: Astroneer Server - Hosted by AetherNode
         EnumValues: {}
     - key: ServerPassword
       label: Server Password
@@ -491,7 +491,7 @@ config_schema:
       category: Astroneer
       subcategory: Server
       description: >-
-        Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+        Sets whether AetherPanel should automatically select the public IP advertised for the server, or whether it should use
         the IP set under Server Public IP
       keywords: public,ip,publicip
       input_type: enum
@@ -511,7 +511,7 @@ config_schema:
         Category: Astroneer:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Sets whether AMP should automatically select the public IP advertised for the server, or whether it should use
+          Sets whether AetherPanel should automatically select the public IP advertised for the server, or whether it should use
           the IP set under Server Public IP
         Keywords: public,ip,publicip
         FieldName: PublicIP
@@ -615,7 +615,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: Astroneer Server - Powered by AMP
+    default: Astroneer Server - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -706,6 +706,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

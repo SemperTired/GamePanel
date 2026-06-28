@@ -113,8 +113,8 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: $.Name
-      default: AMP Powered Rimworld Together Server
-      placeholder: AMP Powered Rimworld Together Server
+      default: AetherNode Rimworld Together Server
+      placeholder: AetherNode Rimworld Together Server
       required: false
       sensitive: false
       hidden: false
@@ -131,8 +131,8 @@ config_schema:
         FieldName: Name
         InputType: text
         ParamFieldName: $.Name
-        DefaultValue: AMP Powered Rimworld Together Server
-        Placeholder: AMP Powered Rimworld Together Server
+        DefaultValue: AetherNode Rimworld Together Server
+        Placeholder: AetherNode Rimworld Together Server
         EnumValues: {}
     - key: Description
       label: Server Description
@@ -214,7 +214,7 @@ config_schema:
       skip_if_empty: false
       enum_values:
         '': IP automatically set by Rimworld Together (default)
-        '{{$ExternalIP}}': IP automatically set by AMP
+        '{{$ExternalIP}}': IP automatically set by AetherPanel
         '{{ManualPublicEndPoint}}': Address manually set
       raw:
         DisplayName: Public Endpoint Address Selection Mode
@@ -231,7 +231,7 @@ config_schema:
         DefaultValue: ''
         EnumValues:
           '': IP automatically set by Rimworld Together (default)
-          '{{$ExternalIP}}': IP automatically set by AMP
+          '{{$ExternalIP}}': IP automatically set by AetherPanel
           '{{ManualPublicEndPoint}}': Address manually set
     - key: ManualPublicEndPoint
       label: Manual Public Endpoint Address
@@ -1731,7 +1731,7 @@ config_schema:
       subcategory: Server Updates
       description: >-
         Sets the [server release version](https://github.com/RimworldTogether/Rimworld-Together/releases) to install.
-        Empty = latest. Minimum version 1.4.0. Note that AMP's settings may not work with older versions. Update the
+        Empty = latest. Minimum version 1.4.0. Note that AetherPanel's settings may not work with older versions. Update the
         server after changing this setting
       keywords: server,release,version
       input_type: text
@@ -1751,7 +1751,7 @@ config_schema:
         Subcategory: Server Updates:build:-1
         Description: >-
           Sets the [server release version](https://github.com/RimworldTogether/Rimworld-Together/releases) to install.
-          Empty = latest. Minimum version 1.4.0. Note that AMP's settings may not work with older versions. Update the
+          Empty = latest. Minimum version 1.4.0. Note that AetherPanel's settings may not work with older versions. Update the
           server after changing this setting
         Keywords: server,release,version
         FieldName: ReleaseVersion
@@ -1847,7 +1847,7 @@ environment: {}
 startup_variables:
   - key: Name
     label: Server Name
-    default: AMP Powered Rimworld Together Server
+    default: AetherNode Rimworld Together Server
     customer_editable: true
     required: false
     sensitive: false
@@ -2178,6 +2178,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -48,7 +48,7 @@ config_schema:
       keywords: server,name,lobby,servername,steamservername
       input_type: text
       param_field_name: SteamServerName
-      default: AMP Powered Server
+      default: AetherNode Server
       required: false
       sensitive: false
       hidden: false
@@ -67,7 +67,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: SteamServerName
         IncludeInCommandLine: true
-        DefaultValue: AMP Powered Server
+        DefaultValue: AetherNode Server
         EnumValues: {}
     - key: SteamServerName
       label: Lobby Header
@@ -106,7 +106,7 @@ config_schema:
       keywords: server,motd,welcome,message,day
       input_type: text
       param_field_name: /Script/DeadMatter.DMGameSession.MOTD
-      default: This server is powered by AMP
+      default: This server is Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -125,7 +125,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /Script/DeadMatter.DMGameSession.MOTD
         IncludeInCommandLine: false
-        DefaultValue: This server is powered by AMP
+        DefaultValue: This server is Hosted by AetherNode
         EnumValues: {}
     - key: $MaxUsers
       label: Player Limit
@@ -370,7 +370,7 @@ environment: {}
 startup_variables:
   - key: SteamServerName
     label: Server Name
-    default: AMP Powered Server
+    default: AetherNode Server
     customer_editable: true
     required: false
     sensitive: false
@@ -382,7 +382,7 @@ startup_variables:
     sensitive: false
   - key: MOTD
     label: MOTD
-    default: This server is powered by AMP
+    default: This server is Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -431,6 +431,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

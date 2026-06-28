@@ -2,7 +2,7 @@ schema: aetherpanel.template/v1
 id: sven-co-op
 name: Sven Co-op
 category: Imported
-summary: Sven Co-op imported from AMPTemplates metadata.
+summary: Sven Co-op imported from public game template metadata.
 install:
   method: steamcmd
   app_id: '276060'
@@ -71,7 +71,7 @@ config_schema:
       keywords: hostname
       input_type: text
       param_field_name: hostname
-      default: AMP Powered Sven Server
+      default: AetherNode Sven Server
       required: false
       sensitive: false
       hidden: false
@@ -90,7 +90,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: hostname
         IncludeInCommandLine: true
-        DefaultValue: AMP Powered Sven Server
+        DefaultValue: AetherNode Sven Server
         EnumValues: {}
     - key: $MaxUsers
       label: Player Limit
@@ -3074,7 +3074,7 @@ config_schema:
       description: >-
         Specifies additional [command line
         parameters](https://developer.valvesoftware.com/wiki/Command_line_options#Command-Line_Parameters_6) (anything
-        that begins with a -) that are not otherwise set by AMP. Use with care
+        that begins with a -) that are not otherwise set by AetherPanel. Use with care
       keywords: custom,server,arguments,variables,cvars,convars,parameters
       input_type: text
       param_field_name: CustomParameters
@@ -3093,7 +3093,7 @@ config_schema:
         Description: >-
           Specifies additional [command line
           parameters](https://developer.valvesoftware.com/wiki/Command_line_options#Command-Line_Parameters_6) (anything
-          that begins with a -) that are not otherwise set by AMP. Use with care
+          that begins with a -) that are not otherwise set by AetherPanel. Use with care
         Keywords: custom,server,arguments,variables,cvars,convars,parameters
         FieldName: CustomParameters
         InputType: text
@@ -3106,7 +3106,7 @@ config_schema:
       subcategory: Server
       description: >-
         Specifies additional [console variables](https://wiki.svencoop.com/Console/Variables) (anything that begins with
-        a +) that are not otherwise set by AMP. Use with care. Preferably, specify the equivalent under "Additional
+        a +) that are not otherwise set by AetherPanel. Use with care. Preferably, specify the equivalent under "Additional
         Server Settings"
       keywords: custom,server,arguments,variables,cvars,convars,parameters
       input_type: text
@@ -3125,7 +3125,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional [console variables](https://wiki.svencoop.com/Console/Variables) (anything that begins
-          with a +) that are not otherwise set by AMP. Use with care. Preferably, specify the equivalent under
+          with a +) that are not otherwise set by AetherPanel. Use with care. Preferably, specify the equivalent under
           "Additional Server Settings"
         Keywords: custom,server,arguments,variables,cvars,convars,parameters
         FieldName: CustomConVars
@@ -3137,7 +3137,7 @@ config_schema:
       label: Additional Server Settings
       category: Sven Co-op
       subcategory: Server
-      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per line
+      description: Specifies additional settings to include in "server.cfg" that are not otherwise set by AetherPanel. One setting per line
       keywords: additional,settings,custom
       input_type: Textarea
       param_field_name: UserSettings
@@ -3154,7 +3154,7 @@ config_schema:
         Category: Sven Co-op:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional settings to include in "server.cfg" that are not otherwise set by AMP. One setting per
+          Specifies additional settings to include in "server.cfg" that are not otherwise set by AetherPanel. One setting per
           line
         Keywords: additional,settings,custom
         FieldName: UserSettings
@@ -4502,7 +4502,7 @@ environment: {}
 startup_variables:
   - key: hostname
     label: Host Name
-    default: AMP Powered Sven Server
+    default: AetherNode Sven Server
     customer_editable: true
     required: false
     sensitive: false
@@ -5325,6 +5325,8 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+
+

@@ -8,7 +8,7 @@ install:
   anonymous: true
   install_dir: /data
   image: ghcr.io/aetherpanel/steamcmd:latest
-  installer_url: https://raw.githubusercontent.com/CubeCoders/AMPTemplates/main/ragempconf.json
+  installer_url: https://raw.githubusercontent.com/AetherNode/public game template/main/ragempconf.json
   copy_strategy: copy
   preinstall: []
   postinstall: []
@@ -135,7 +135,7 @@ config_schema:
       keywords: name,server
       input_type: text
       param_field_name: $.name
-      default: AMP Powered RAGE:MP Server
+      default: AetherNode RAGE:MP Server
       required: false
       sensitive: false
       hidden: false
@@ -154,7 +154,7 @@ config_schema:
         FieldName: name
         InputType: text
         ParamFieldName: $.name
-        DefaultValue: AMP Powered RAGE:MP Server
+        DefaultValue: AetherNode RAGE:MP Server
         EnumValues: {}
     - key: gamemode
       label: Game Mode
@@ -1224,7 +1224,7 @@ startup_variables:
     sensitive: false
   - key: name
     label: Server Name
-    default: AMP Powered RAGE:MP Server
+    default: AetherNode RAGE:MP Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1441,6 +1441,8 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+
+

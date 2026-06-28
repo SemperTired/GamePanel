@@ -43,8 +43,8 @@ config_schema:
       keywords: name,servername
       input_type: text
       param_field_name: /Game/DeadPoly/BP_Game.BP_Game_C.ServerName
-      default: AMP Powered DeadPoly Server
-      placeholder: AMP Powered DeadPoly Server
+      default: AetherNode DeadPoly Server
+      placeholder: AetherNode DeadPoly Server
       required: false
       sensitive: false
       hidden: false
@@ -63,8 +63,8 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: /Game/DeadPoly/BP_Game.BP_Game_C.ServerName
-        DefaultValue: AMP Powered DeadPoly Server
-        Placeholder: AMP Powered DeadPoly Server
+        DefaultValue: AetherNode DeadPoly Server
+        Placeholder: AetherNode DeadPoly Server
         EnumValues: {}
     - key: Mode
       label: Game Mode
@@ -299,7 +299,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: AMP Powered DeadPoly Server
+    default: AetherNode DeadPoly Server
     customer_editable: true
     required: false
     sensitive: false
@@ -336,6 +336,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -46,8 +46,8 @@ config_schema:
       keywords: lobby,name
       input_type: text
       param_field_name: lobby_name
-      default: American Truck Simulator Server - Powered by AMP
-      placeholder: American Truck Simulator Server - Powered by AMP
+      default: American Truck Simulator Server - Hosted by AetherNode
+      placeholder: American Truck Simulator Server - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -66,8 +66,8 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: lobby_name
         IncludeInCommandLine: false
-        DefaultValue: American Truck Simulator Server - Powered by AMP
-        Placeholder: American Truck Simulator Server - Powered by AMP
+        DefaultValue: American Truck Simulator Server - Hosted by AetherNode
+        Placeholder: American Truck Simulator Server - Hosted by AetherNode
         EnumValues: {}
     - key: description
       label: Description
@@ -784,7 +784,7 @@ environment: {}
 startup_variables:
   - key: lobby_name
     label: Lobby Name
-    default: American Truck Simulator Server - Powered by AMP
+    default: American Truck Simulator Server - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -917,6 +917,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

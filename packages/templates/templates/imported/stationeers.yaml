@@ -168,7 +168,7 @@ config_schema:
       keywords: server,name,ServerName
       input_type: text
       param_field_name: ServerName
-      default: AMP Powered Stationeers Server
+      default: AetherNode Stationeers Server
       required: true
       sensitive: false
       hidden: false
@@ -188,7 +188,7 @@ config_schema:
         ParamFieldName: ServerName
         IncludeInCommandLine: true
         Required: true
-        DefaultValue: AMP Powered Stationeers Server
+        DefaultValue: AetherNode Stationeers Server
         EnumValues: {}
     - key: ServerName
       label: Server Name
@@ -1234,7 +1234,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: AMP Powered Stationeers Server
+    default: AetherNode Stationeers Server
     customer_editable: true
     required: true
     sensitive: false
@@ -1409,6 +1409,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

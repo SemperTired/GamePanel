@@ -44,7 +44,7 @@ config_schema:
       keywords: server,name,sv_hostname
       input_type: text
       param_field_name: sv_hostname
-      default: AMP Powered Quake III Arena Server
+      default: AetherNode Quake III Arena Server
       required: false
       sensitive: false
       hidden: false
@@ -62,7 +62,7 @@ config_schema:
         InputType: text
         ParamFieldName: sv_hostname
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Quake III Arena Server
+        DefaultValue: AetherNode Quake III Arena Server
         EnumValues: {}
     - key: g_motd
       label: Message Of The Day
@@ -908,7 +908,7 @@ config_schema:
       label: Additional Console Variables
       category: Quake III Arena
       subcategory: Server
-      description: Additional console variables that are not otherwise set by AMP can be specified in 'server.cfg'
+      description: Additional console variables that are not otherwise set by AetherPanel can be specified in 'server.cfg'
       keywords: custom,server,variables,cvars,convars,parameters
       input_type: hidden
       param_field_name: CustomConVars
@@ -924,7 +924,7 @@ config_schema:
         DisplayName: Additional Console Variables
         Category: Quake III Arena:stadia_controller
         Subcategory: Server:dns:1
-        Description: Additional console variables that are not otherwise set by AMP can be specified in 'server.cfg'
+        Description: Additional console variables that are not otherwise set by AetherPanel can be specified in 'server.cfg'
         Keywords: custom,server,variables,cvars,convars,parameters
         FieldName: CustomConVars
         InputType: hidden
@@ -1534,7 +1534,7 @@ config_schema:
       category: Updates
       subcategory: Steam Downloads
       description: >-
-        If set, AMP will not download the pak0.pk3 game file from Steam when the server is updated. The file will need
+        If set, AetherPanel will not download the pak0.pk3 game file from Steam when the server is updated. The file will need
         to be installed manually in the baseq3 directory in the instance's base directory in order for the server to
         function
       keywords: steam,game,file,download,pak,pk3
@@ -1555,7 +1555,7 @@ config_schema:
         Category: Updates
         Subcategory: Steam Downloads:download
         Description: >-
-          If set, AMP will not download the pak0.pk3 game file from Steam when the server is updated. The file will need
+          If set, AetherPanel will not download the pak0.pk3 game file from Steam when the server is updated. The file will need
           to be installed manually in the baseq3 directory in the instance's base directory in order for the server to
           function
         Keywords: steam,game,file,download,pak,pk3
@@ -1574,7 +1574,7 @@ config_schema:
         - heading: $root
           setting_mappings:
             //: |-
-              This file is controlled by AMP
+              This file is controlled by AetherPanel
               // Use server.cfg for any other desired settings
             exec: server.cfg
             seta sv_hostname: sv_hostname
@@ -1620,7 +1620,7 @@ config_schema:
           - Heading: $root
             SettingMappings:
               //: |-
-                This file is controlled by AMP
+                This file is controlled by AetherPanel
                 // Use server.cfg for any other desired settings
               exec: server.cfg
               seta sv_hostname: sv_hostname
@@ -1662,7 +1662,7 @@ environment: {}
 startup_variables:
   - key: sv_hostname
     label: Server Name
-    default: AMP Powered Quake III Arena Server
+    default: AetherNode Quake III Arena Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1915,6 +1915,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

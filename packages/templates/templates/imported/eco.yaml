@@ -132,7 +132,7 @@ config_schema:
       keywords: name
       input_type: text
       param_field_name: Name
-      default: Eco Server - Powered by AMP
+      default: Eco Server - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -149,7 +149,7 @@ config_schema:
         FieldName: Description
         InputType: text
         ParamFieldName: Name
-        DefaultValue: Eco Server - Powered by AMP
+        DefaultValue: Eco Server - Hosted by AetherNode
         EnumValues: {}
     - key: Description
       label: Server Name
@@ -559,7 +559,7 @@ config_schema:
       skip_if_empty: false
       enum_values:
         '': Address automatically set by Eco (default)
-        '{{$ExternalIP}}:{{$ApplicationPort1}}': Address automatically set by AMP
+        '{{$ExternalIP}}:{{$ApplicationPort1}}': Address automatically set by AetherPanel
         '{{ManualRemoteAddress}}': Address manually set
       raw:
         DisplayName: Remote Address Selection Mode
@@ -576,7 +576,7 @@ config_schema:
         DefaultValue: ''
         EnumValues:
           '': Address automatically set by Eco (default)
-          '{{$ExternalIP}}:{{$ApplicationPort1}}': Address automatically set by AMP
+          '{{$ExternalIP}}:{{$ApplicationPort1}}': Address automatically set by AetherPanel
           '{{ManualRemoteAddress}}': Address manually set
     - key: ManualRemoteAddress
       label: Manual Remote Address
@@ -773,7 +773,7 @@ environment: {}
 startup_variables:
   - key: Description
     label: Server Name
-    default: Eco Server - Powered by AMP
+    default: Eco Server - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -900,6 +900,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

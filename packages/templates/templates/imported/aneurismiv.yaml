@@ -112,7 +112,7 @@ config_schema:
       keywords: server,name,serverName
       input_type: text
       param_field_name: serverName
-      default: AMP Powered ANEURISM IV Server
+      default: AetherNode ANEURISM IV Server
       required: false
       sensitive: false
       hidden: false
@@ -129,7 +129,7 @@ config_schema:
         FieldName: serverName
         InputType: text
         ParamFieldName: serverName
-        DefaultValue: AMP Powered ANEURISM IV Server
+        DefaultValue: AetherNode ANEURISM IV Server
         EnumValues: {}
     - key: motd
       label: Server MOTD
@@ -519,7 +519,7 @@ config_schema:
       label: Additional Command Line Arguments
       category: ANEURISM IV
       subcategory: Server
-      description: Specifies additional command line arguments that are not otherwise set by AMP. Use with care
+      description: Specifies additional command line arguments that are not otherwise set by AetherPanel. Use with care
       keywords: custom,server,arguments,parameters
       input_type: text
       param_field_name: CustomArgs
@@ -535,7 +535,7 @@ config_schema:
         DisplayName: Additional Command Line Arguments
         Category: ANEURISM IV:stadia_controller
         Subcategory: Server:dns:1
-        Description: Specifies additional command line arguments that are not otherwise set by AMP. Use with care
+        Description: Specifies additional command line arguments that are not otherwise set by AetherPanel. Use with care
         Keywords: custom,server,arguments,parameters
         FieldName: CustomArgs
         InputType: text
@@ -616,7 +616,7 @@ startup_variables:
     sensitive: false
   - key: serverName
     label: Server Name
-    default: AMP Powered ANEURISM IV Server
+    default: AetherNode ANEURISM IV Server
     customer_editable: true
     required: false
     sensitive: false
@@ -720,6 +720,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

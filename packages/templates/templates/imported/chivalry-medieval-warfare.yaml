@@ -54,7 +54,7 @@ config_schema:
       keywords: server,name,servername
       input_type: text
       param_field_name: Engine.GameReplicationInfo.ServerName
-      default: 'AMP Powered Chivalry: Medieval Warfare Server'
+      default: 'AetherNode Chivalry: Medieval Warfare Server'
       required: false
       sensitive: false
       hidden: false
@@ -71,7 +71,7 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: Engine.GameReplicationInfo.ServerName
-        DefaultValue: 'AMP Powered Chivalry: Medieval Warfare Server'
+        DefaultValue: 'AetherNode Chivalry: Medieval Warfare Server'
         EnumValues: {}
     - key: MessageOfTheDay
       label: Server MOTD
@@ -786,7 +786,7 @@ config_schema:
       subcategory: Server
       description: >-
         Sets custom command line options for the server (those that start with a ? (question mark)). Useful for mods.
-        Include the question mark but do not separate with a space. Don't use options already in AMP's settings!
+        Include the question mark but do not separate with a space. Don't use options already in AetherPanel's settings!
       keywords: custom,command,line,options
       input_type: text
       param_field_name: CustomOptions
@@ -804,7 +804,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Sets custom command line options for the server (those that start with a ? (question mark)). Useful for mods.
-          Include the question mark but do not separate with a space. Don't use options already in AMP's settings!
+          Include the question mark but do not separate with a space. Don't use options already in AetherPanel's settings!
         Keywords: custom,command,line,options
         FieldName: CustomOptions
         InputType: text
@@ -823,7 +823,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: 'AMP Powered Chivalry: Medieval Warfare Server'
+    default: 'AetherNode Chivalry: Medieval Warfare Server'
     customer_editable: true
     required: false
     sensitive: false
@@ -932,6 +932,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

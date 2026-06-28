@@ -45,7 +45,7 @@ config_schema:
       keywords: motd,server,name
       input_type: text
       param_field_name: motd
-      default: AMP Powered PocketMine-MP Server
+      default: AetherNode PocketMine-MP Server
       required: false
       sensitive: false
       hidden: false
@@ -62,7 +62,7 @@ config_schema:
         FieldName: motd
         InputType: text
         ParamFieldName: motd
-        DefaultValue: AMP Powered PocketMine-MP Server
+        DefaultValue: AetherNode PocketMine-MP Server
         EnumValues: {}
     - key: gamemode
       label: Game Mode
@@ -640,7 +640,7 @@ config_schema:
       category: PocketMine-MP
       subcategory: Server
       description: >-
-        Specifies additional settings to include in 'server.properties' that are not otherwise set by AMP. One setting
+        Specifies additional settings to include in 'server.properties' that are not otherwise set by AetherPanel. One setting
         per line. Useful for new settings in beta server builds
       keywords: additional,settings,custom
       input_type: Textarea
@@ -658,7 +658,7 @@ config_schema:
         Category: PocketMine-MP:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional settings to include in 'server.properties' that are not otherwise set by AMP. One setting
+          Specifies additional settings to include in 'server.properties' that are not otherwise set by AetherPanel. One setting
           per line. Useful for new settings in beta server builds
         Keywords: additional,settings,custom
         FieldName: UserSettings
@@ -799,7 +799,7 @@ environment: {}
 startup_variables:
   - key: motd
     label: Server Name
-    default: AMP Powered PocketMine-MP Server
+    default: AetherNode PocketMine-MP Server
     customer_editable: true
     required: false
     sensitive: false
@@ -930,6 +930,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

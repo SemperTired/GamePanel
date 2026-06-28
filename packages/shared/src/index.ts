@@ -208,7 +208,7 @@ export const gameTemplateSchema = z.object({
   }).default({ include: [], exclude: [] }),
   supported_os: z.array(z.enum(["linux", "windows"])).default(["linux"]),
   source: z.object({
-    type: z.enum(["curated", "amp_import", "custom"]).default("curated"),
+    type: z.enum(["curated", "external_import", "custom"]).default("curated"),
     url: z.string().optional(),
     needs_review: z.boolean().default(false),
   }).default({ type: "curated", needs_review: false }),

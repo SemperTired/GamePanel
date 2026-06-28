@@ -115,7 +115,7 @@ config_schema:
       keywords: name
       input_type: text
       param_field_name: /script/theisle.igamesession.ServerName
-      default: The Isle Server - Powered by AMP
+      default: The Isle Server - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -134,7 +134,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /script/theisle.igamesession.ServerName
         IncludeInCommandLine: false
-        DefaultValue: The Isle Server - Powered by AMP
+        DefaultValue: The Isle Server - Hosted by AetherNode
         EnumValues: {}
     - key: MOTD
       label: Welcome Message
@@ -144,7 +144,7 @@ config_schema:
       keywords: welcome,message,motd
       input_type: text
       param_field_name: MOTD
-      default: Welcome to The Isle Server - powered by AMP!
+      default: Welcome to The Isle Server - Hosted by AetherNode!
       required: false
       sensitive: false
       hidden: false
@@ -163,7 +163,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: MOTD
         IncludeInCommandLine: false
-        DefaultValue: Welcome to The Isle Server - powered by AMP!
+        DefaultValue: Welcome to The Isle Server - Hosted by AetherNode!
         EnumValues: {}
     - key: ServerPassword
       label: Server Password
@@ -1205,13 +1205,13 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: The Isle Server - Powered by AMP
+    default: The Isle Server - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
   - key: MOTD
     label: Welcome Message
-    default: Welcome to The Isle Server - powered by AMP!
+    default: Welcome to The Isle Server - Hosted by AetherNode!
     customer_editable: true
     required: false
     sensitive: false
@@ -1410,6 +1410,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

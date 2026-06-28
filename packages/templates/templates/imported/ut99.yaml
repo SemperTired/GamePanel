@@ -169,7 +169,7 @@ config_schema:
       keywords: name
       input_type: text
       param_field_name: Engine.GameReplicationInfo.ServerName
-      default: AMP Powered UT99 Server
+      default: AetherNode UT99 Server
       required: false
       sensitive: false
       hidden: false
@@ -188,7 +188,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: Engine.GameReplicationInfo.ServerName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered UT99 Server
+        DefaultValue: AetherNode UT99 Server
         EnumValues: {}
     - key: ShortName
       label: Server Shortname
@@ -1840,7 +1840,7 @@ config_schema:
       category: Updates
       subcategory: Runtime Configuration
       description: >-
-        Sets the OldUnreal patch version to apply to the server. On Linux, AMP installs the 64 bit version for 469c and
+        Sets the OldUnreal patch version to apply to the server. On Linux, AetherPanel installs the 64 bit version for 469c and
         above, unless the 32 bit version is selected. Set the Server Executable for Linux accordingly. Update the server
         after changing this setting!
       keywords: oldunreal,patch,version
@@ -1866,7 +1866,7 @@ config_schema:
         Category: Updates
         Subcategory: Runtime Configuration:build:-1
         Description: >-
-          Sets the OldUnreal patch version to apply to the server. On Linux, AMP installs the 64 bit version for 469c
+          Sets the OldUnreal patch version to apply to the server. On Linux, AetherPanel installs the 64 bit version for 469c
           and above, unless the 32 bit version is selected. Set the Server Executable for Linux accordingly. Update the
           server after changing this setting!
         Keywords: oldunreal,patch,version
@@ -1944,7 +1944,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: AMP Powered UT99 Server
+    default: AetherNode UT99 Server
     customer_editable: true
     required: false
     sensitive: false
@@ -2227,6 +2227,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

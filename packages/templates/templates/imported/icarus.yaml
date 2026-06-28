@@ -139,7 +139,7 @@ config_schema:
       keywords: session,name
       input_type: text
       param_field_name: SteamServerName
-      default: AMP Powered Icarus Server
+      default: AetherNode Icarus Server
       required: false
       sensitive: false
       hidden: false
@@ -159,7 +159,7 @@ config_schema:
         ParamFieldName: SteamServerName
         IncludeInCommandLine: true
         SkipIfEmpty: true
-        DefaultValue: AMP Powered Icarus Server
+        DefaultValue: AetherNode Icarus Server
         EnumValues: {}
     - key: SessionName
       label: Session Name
@@ -799,7 +799,7 @@ config_schema:
       description: >-
         Sets the period after which the server will exit a prospect and return to the lobby, if no player has joined. -1
         = run indefinitely, 0 = return to lobby immediately, >0 = interval for shutdown. Note that data loss/corruption
-        may occur if the server is shut down in AMP before returning to the lobby
+        may occur if the server is shut down in AetherPanel before returning to the lobby
       keywords: shutdown,not,joined,interval,shutdownifnotjoinedfor
       input_type: number
       param_field_name: /Script/Icarus.DedicatedServerSettings.ShutdownIfNotJoinedFor
@@ -821,7 +821,7 @@ config_schema:
         Description: >-
           Sets the period after which the server will exit a prospect and return to the lobby, if no player has joined.
           -1 = run indefinitely, 0 = return to lobby immediately, >0 = interval for shutdown. Note that data
-          loss/corruption may occur if the server is shut down in AMP before returning to the lobby
+          loss/corruption may occur if the server is shut down in AetherPanel before returning to the lobby
         Keywords: shutdown,not,joined,interval,shutdownifnotjoinedfor
         FieldName: ShutdownIfNotJoinedFor
         InputType: number
@@ -840,7 +840,7 @@ config_schema:
       description: >-
         Sets the period after which the server will exit a prospect and return to the lobby, if the server becomes
         empty. -1 = run indefinitely, 0 = return to lobby immediately, >0 = interval for shutdown. Note that data
-        loss/corruption may occur if the server is shut down in AMP before returning to the lobby
+        loss/corruption may occur if the server is shut down in AetherPanel before returning to the lobby
       keywords: shutdown,not,joined,interval,shutdownifemptyfor
       input_type: number
       param_field_name: /Script/Icarus.DedicatedServerSettings.ShutdownIfEmptyFor
@@ -862,7 +862,7 @@ config_schema:
         Description: >-
           Sets the period after which the server will exit a prospect and return to the lobby, if the server becomes
           empty. -1 = run indefinitely, 0 = return to lobby immediately, >0 = interval for shutdown. Note that data
-          loss/corruption may occur if the server is shut down in AMP before returning to the lobby
+          loss/corruption may occur if the server is shut down in AetherPanel before returning to the lobby
         Keywords: shutdown,not,joined,interval,shutdownifemptyfor
         FieldName: ShutdownIfEmptyFor
         InputType: number
@@ -1219,7 +1219,7 @@ startup_variables:
     sensitive: false
   - key: SessionName
     label: Session Name
-    default: AMP Powered Icarus Server
+    default: AetherNode Icarus Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1364,6 +1364,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

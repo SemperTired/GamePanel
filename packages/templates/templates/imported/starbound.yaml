@@ -305,7 +305,7 @@ config_schema:
       keywords: server,name,serverName
       input_type: text
       param_field_name: $.serverName
-      default: AMP Powered Starbound Server
+      default: AetherNode Starbound Server
       required: false
       sensitive: false
       hidden: false
@@ -322,7 +322,7 @@ config_schema:
         FieldName: Name
         InputType: text
         ParamFieldName: $.serverName
-        DefaultValue: AMP Powered Starbound Server
+        DefaultValue: AetherNode Starbound Server
         EnumValues: {}
     - key: clientIPJoinable
       label: Client IP Joinable
@@ -1190,7 +1190,7 @@ startup_variables:
     sensitive: false
   - key: Name
     label: Server Name
-    default: AMP Powered Starbound Server
+    default: AetherNode Starbound Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1359,6 +1359,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

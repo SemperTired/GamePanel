@@ -75,7 +75,7 @@ config_schema:
       keywords: server name, name
       input_type: text
       param_field_name: ServerName
-      default: A Squad Server Powered by AMP
+      default: A Squad Server Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -94,7 +94,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: ServerName
         IncludeInCommandLine: false
-        DefaultValue: A Squad Server Powered by AMP
+        DefaultValue: A Squad Server Hosted by AetherNode
     - key: $MaxUsers
       label: Max Players
       category: Squad
@@ -971,7 +971,7 @@ config_schema:
       category: Squad
       subcategory: Server
       description: >-
-        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AMP.
+        Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by AetherPanel.
         Use with care
       keywords: custom,server,arguments,parameters
       input_type: text
@@ -991,7 +991,7 @@ config_schema:
         Subcategory: Server:dns:1
         Description: >-
           Specifies additional command line arguments (anything that begins with a - ) that are not otherwise set by
-          AMP. Use with care
+          AetherPanel. Use with care
         Keywords: custom,server,arguments,parameters
         FieldName: CustomArgs
         InputType: text
@@ -1022,7 +1022,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: A Squad Server Powered by AMP
+    default: A Squad Server Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -1203,6 +1203,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -48,7 +48,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: name
-      default: AMP TSU Server
+      default: AetherPanel TSU Server
       required: false
       sensitive: false
       hidden: false
@@ -66,7 +66,7 @@ config_schema:
         InputType: text
         ParamFieldName: name
         IncludeInCommandLine: true
-        DefaultValue: AMP TSU Server
+        DefaultValue: AetherPanel TSU Server
         EnumValues: {}
     - key: info
       label: Server Info
@@ -351,7 +351,7 @@ config_schema:
       label: Additional Command Line Parameters
       category: Turbo Sliders Unlimited
       subcategory: Server
-      description: Specifies additional command line parameters that are not otherwise set by AMP. Use with care
+      description: Specifies additional command line parameters that are not otherwise set by AetherPanel. Use with care
       keywords: custom,server,arguments,parameters
       input_type: text
       param_field_name: CustomServerArgs
@@ -367,7 +367,7 @@ config_schema:
         DisplayName: Additional Command Line Parameters
         Category: Turbo Sliders Unlimited:stadia_controller
         Subcategory: Server:dns:1
-        Description: Specifies additional command line parameters that are not otherwise set by AMP. Use with care
+        Description: Specifies additional command line parameters that are not otherwise set by AetherPanel. Use with care
         Keywords: custom,server,arguments,parameters
         FieldName: CustomServerArgs
         InputType: text
@@ -418,7 +418,7 @@ environment: {}
 startup_variables:
   - key: name
     label: Server Name
-    default: AMP TSU Server
+    default: AetherPanel TSU Server
     customer_editable: true
     required: false
     sensitive: false
@@ -497,6 +497,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

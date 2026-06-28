@@ -123,8 +123,8 @@ config_schema:
       keywords: name,server,hostname
       input_type: text
       param_field_name: General.hostname
-      default: AMP Powered TES3MP Server
-      placeholder: AMP Powered TES3MP Server
+      default: AetherNode TES3MP Server
+      placeholder: AetherNode TES3MP Server
       required: false
       sensitive: false
       hidden: false
@@ -141,8 +141,8 @@ config_schema:
         FieldName: General.hostname
         InputType: text
         ParamFieldName: General.hostname
-        DefaultValue: AMP Powered TES3MP Server
-        Placeholder: AMP Powered TES3MP Server
+        DefaultValue: AetherNode TES3MP Server
+        Placeholder: AetherNode TES3MP Server
         EnumValues: {}
     - key: General.password
       label: Server Password
@@ -272,7 +272,7 @@ config_schema:
       label: Log Level
       category: TES3MP
       subcategory: Server
-      description: Sets the log level for the server console. A minimum of "Info" is required in AMP
+      description: Sets the log level for the server console. A minimum of "Info" is required in AetherPanel
       keywords: log,level,loglevel
       input_type: enum
       param_field_name: General.logLevel
@@ -290,7 +290,7 @@ config_schema:
         DisplayName: Log Level
         Category: TES3MP:stadia_controller
         Subcategory: Server:dns:1
-        Description: Sets the log level for the server console. A minimum of "Info" is required in AMP
+        Description: Sets the log level for the server console. A minimum of "Info" is required in AetherPanel
         Keywords: log,level,loglevel
         FieldName: General.logLevel
         InputType: enum
@@ -407,7 +407,7 @@ startup_variables:
     sensitive: false
   - key: General.hostname
     label: Server Name
-    default: AMP Powered TES3MP Server
+    default: AetherNode TES3MP Server
     customer_editable: true
     required: false
     sensitive: false
@@ -468,6 +468,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

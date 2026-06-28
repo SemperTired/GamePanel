@@ -2,7 +2,7 @@ schema: aetherpanel.template/v1
 id: gatekeeperv2
 name: GatekeeperV2 Bot (Deprecated)
 category: Imported
-summary: AMP Discord Bot created by k8thekat - https://github.com/k8thekat/GatekeeperV2
+summary: AetherPanel Discord Bot created by k8thekat - https://github.com/k8thekat/GatekeeperV2
 install:
   method: direct_archive
   anonymous: true
@@ -39,7 +39,7 @@ config_schema:
       subcategory: Bot
       description: >-
         Sets the specific Python 3 version to run the bot with (requires 3.8 to 3.11). The version must be installed on
-        the system for all users (and in the System Path on Windows). If using AMP's Docker, you will be limited to its
+        the system for all users (and in the System Path on Windows). If using AetherPanel's Docker, you will be limited to its
         installed version.
       keywords: python,version,PythonVersion
       input_type: enum
@@ -63,7 +63,7 @@ config_schema:
         Subcategory: Bot:settings:1
         Description: >-
           Sets the specific Python 3 version to run the bot with (requires 3.8 to 3.11). The version must be installed
-          on the system for all users (and in the System Path on Windows). If using AMP's Docker, you will be limited to
+          on the system for all users (and in the System Path on Windows). If using AetherPanel's Docker, you will be limited to
           its installed version.
         Keywords: python,version,PythonVersion
         FieldName: PythonVersion
@@ -106,17 +106,17 @@ config_schema:
         Placeholder: 319/f0dsA0jk0PKge2jkpSFWEauopbvejwaioj32omoi32JIOabdsajotjewq3jr2==
         EnumValues: {}
     - key: AMPUser
-      label: AMP User
+      label: AetherPanel User
       category: GatekeeperV2
       subcategory: Bot
       description: >-
-        Sets the login name for the AMP account that the the bot will use. This account must have "Super Admin"
+        Sets the login name for the AetherPanel account that the the bot will use. This account must have "Super Admin"
         privileges for setup of new instances and after upgrades.
-      keywords: amp,user
+      keywords: AetherPanel,user
       input_type: text
       param_field_name: AMPUser
       default: ''
-      placeholder: amp-bot
+      placeholder: AetherPanel-bot
       required: false
       sensitive: false
       hidden: false
@@ -125,25 +125,25 @@ config_schema:
       skip_if_empty: false
       enum_values: {}
       raw:
-        DisplayName: AMP User
+        DisplayName: AetherPanel User
         Category: GatekeeperV2:code
         Subcategory: Bot:settings:1
         Description: >-
-          Sets the login name for the AMP account that the the bot will use. This account must have "Super Admin"
+          Sets the login name for the AetherPanel account that the the bot will use. This account must have "Super Admin"
           privileges for setup of new instances and after upgrades.
-        Keywords: amp,user
+        Keywords: AetherPanel,user
         FieldName: AMPUser
         InputType: text
         ParamFieldName: AMPUser
         DefaultValue: ''
-        Placeholder: amp-bot
+        Placeholder: AetherPanel-bot
         EnumValues: {}
     - key: AMPPassword
-      label: AMP Password
+      label: AetherPanel Password
       category: GatekeeperV2
       subcategory: Bot
-      description: Sets the password for the AMP user that the bot will use.
-      keywords: amp,password
+      description: Sets the password for the AetherPanel user that the bot will use.
+      keywords: AetherPanel,password
       input_type: password
       param_field_name: AMPPassword
       default: ''
@@ -155,22 +155,22 @@ config_schema:
       skip_if_empty: false
       enum_values: {}
       raw:
-        DisplayName: AMP Password
+        DisplayName: AetherPanel Password
         Category: GatekeeperV2:code
         Subcategory: Bot:settings:1
-        Description: Sets the password for the AMP user that the bot will use.
-        Keywords: amp,password
+        Description: Sets the password for the AetherPanel user that the bot will use.
+        Keywords: AetherPanel,password
         FieldName: AMPPassword
         InputType: password
         ParamFieldName: AMPPassword
         DefaultValue: ''
         EnumValues: {}
     - key: AMPAuth
-      label: AMP 2FA Token
+      label: AetherPanel 2FA Token
       category: GatekeeperV2
       subcategory: Bot
-      description: Sets the two factor authorisation token (if any) for the AMP user that the bot will use.
-      keywords: amp,2factor,2fa,token
+      description: Sets the two factor authorisation token (if any) for the AetherPanel user that the bot will use.
+      keywords: AetherPanel,2factor,2fa,token
       input_type: password
       param_field_name: AMPAuth
       default: ''
@@ -183,11 +183,11 @@ config_schema:
       skip_if_empty: false
       enum_values: {}
       raw:
-        DisplayName: AMP 2FA Token
+        DisplayName: AetherPanel 2FA Token
         Category: GatekeeperV2:code
         Subcategory: Bot:settings:1
-        Description: Sets the two factor authorisation token (if any) for the AMP user that the bot will use.
-        Keywords: amp,2factor,2fa,token
+        Description: Sets the two factor authorisation token (if any) for the AetherPanel user that the bot will use.
+        Keywords: AetherPanel,2factor,2fa,token
         FieldName: AMPAuth
         InputType: password
         ParamFieldName: AMPAuth
@@ -195,11 +195,11 @@ config_schema:
         Placeholder: MQ2TMMETGB4WCYJY8NRDINDEMKQTGMZTMIZDOZTFME3TSMRXGA2A
         EnumValues: {}
     - key: AMPurl
-      label: AMP URL
+      label: AetherPanel URL
       category: GatekeeperV2
       subcategory: Bot
-      description: Sets the URL or IP of the AMP ADS instance that the bot will connect to.
-      keywords: amp,url
+      description: Sets the URL or IP of the AetherPanel ADS instance that the bot will connect to.
+      keywords: AetherPanel,url
       input_type: text
       param_field_name: AMPurl
       default: http://127.0.0.1:8080
@@ -212,11 +212,11 @@ config_schema:
       skip_if_empty: false
       enum_values: {}
       raw:
-        DisplayName: AMP URL
+        DisplayName: AetherPanel URL
         Category: GatekeeperV2:code
         Subcategory: Bot:settings:1
-        Description: Sets the URL or IP of the AMP ADS instance that the bot will connect to.
-        Keywords: amp,url
+        Description: Sets the URL or IP of the AetherPanel ADS instance that the bot will connect to.
+        Keywords: AetherPanel,url
         FieldName: AMPurl
         InputType: text
         ParamFieldName: AMPurl
@@ -423,25 +423,25 @@ startup_variables:
     required: false
     sensitive: true
   - key: AMPUser
-    label: AMP User
+    label: AetherPanel User
     default: ''
     customer_editable: true
     required: false
     sensitive: false
   - key: AMPPassword
-    label: AMP Password
+    label: AetherPanel Password
     default: ''
     customer_editable: true
     required: false
     sensitive: true
   - key: AMPAuth
-    label: AMP 2FA Token
+    label: AetherPanel 2FA Token
     default: ''
     customer_editable: true
     required: false
     sensitive: true
   - key: AMPurl
-    label: AMP URL
+    label: AetherPanel URL
     default: http://127.0.0.1:8080
     customer_editable: true
     required: false
@@ -488,6 +488,7 @@ backup:
 supported_os:
   - linux
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

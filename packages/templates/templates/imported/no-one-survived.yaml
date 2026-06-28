@@ -109,7 +109,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: ServerName
-      default: AMP Powered No One Survived Server
+      default: AetherNode No One Survived Server
       required: false
       sensitive: false
       hidden: false
@@ -128,7 +128,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: ServerName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered No One Survived Server
+        DefaultValue: AetherNode No One Survived Server
         EnumValues: {}
     - key: SaveName
       label: Save Name
@@ -1041,7 +1041,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: AMP Powered No One Survived Server
+    default: AetherNode No One Survived Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1198,6 +1198,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

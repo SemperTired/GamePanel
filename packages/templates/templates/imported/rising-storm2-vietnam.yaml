@@ -85,7 +85,7 @@ config_schema:
       keywords: name,servername
       input_type: text
       param_field_name: Engine.GameReplicationInfo.ServerName
-      default: 'AMP Powered Rising Storm 2: Vietnam Server'
+      default: 'AetherNode Rising Storm 2: Vietnam Server'
       required: false
       sensitive: false
       hidden: false
@@ -102,7 +102,7 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: Engine.GameReplicationInfo.ServerName
-        DefaultValue: 'AMP Powered Rising Storm 2: Vietnam Server'
+        DefaultValue: 'AetherNode Rising Storm 2: Vietnam Server'
         EnumValues: {}
     - key: GamePassword
       label: Server Password
@@ -429,7 +429,7 @@ config_schema:
       category: Rising Storm 2 Vietnam
       subcategory: Server
       description: >-
-        Specifies additional command line options (URL arguments) that are not otherwise set by AMP. ONE LINE ONLY!
+        Specifies additional command line options (URL arguments) that are not otherwise set by AetherPanel. ONE LINE ONLY!
         Format: ?<setting>=<value> (with no spaces between settings). Use with care
       keywords: custom,server,options,url,arguments
       input_type: Textarea
@@ -447,7 +447,7 @@ config_schema:
         Category: Rising Storm 2 Vietnam:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional command line options (URL arguments) that are not otherwise set by AMP. ONE LINE ONLY!
+          Specifies additional command line options (URL arguments) that are not otherwise set by AetherPanel. ONE LINE ONLY!
           Format: ?<setting>=<value> (with no spaces between settings). Use with care
         Keywords: custom,server,options,url,arguments
         FieldName: CustomServerOptions
@@ -460,7 +460,7 @@ config_schema:
       category: Rising Storm 2 Vietnam
       subcategory: Server
       description: >-
-        Specifies additional command line switches that are not otherwise set by AMP. ONE LINE ONLY! Format:
+        Specifies additional command line switches that are not otherwise set by AetherPanel. ONE LINE ONLY! Format:
         -<setting>=<value> (with spaces between settings). Use with care
       keywords: custom,server,switches
       input_type: Textarea
@@ -478,7 +478,7 @@ config_schema:
         Category: Rising Storm 2 Vietnam:stadia_controller
         Subcategory: Server:dns:1
         Description: >-
-          Specifies additional command line switches that are not otherwise set by AMP. ONE LINE ONLY! Format:
+          Specifies additional command line switches that are not otherwise set by AetherPanel. ONE LINE ONLY! Format:
           -<setting>=<value> (with spaces between settings). Use with care
         Keywords: custom,server,switches
         FieldName: CustomServerSwitches
@@ -511,7 +511,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: 'AMP Powered Rising Storm 2: Vietnam Server'
+    default: 'AetherNode Rising Storm 2: Vietnam Server'
     customer_editable: true
     required: false
     sensitive: false
@@ -584,6 +584,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

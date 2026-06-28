@@ -121,7 +121,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: ServerConfig.Srv_Name
-      default: AMP Powered Server
+      default: AetherNode Server
       required: false
       sensitive: false
       hidden: false
@@ -140,7 +140,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: ServerConfig.Srv_Name
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Server
+        DefaultValue: AetherNode Server
         EnumValues: {}
     - key: Srv_Password
       label: Server Password
@@ -240,7 +240,7 @@ config_schema:
       keywords: Server,Description
       input_type: text
       param_field_name: ServerConfig.Srv_Description
-      default: AMP Powered Empyrion Server
+      default: AetherNode Empyrion Server
       required: false
       sensitive: false
       hidden: false
@@ -261,7 +261,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: ServerConfig.Srv_Description
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Empyrion Server
+        DefaultValue: AetherNode Empyrion Server
         EnumValues: {}
     - key: Srv_ReservePlayfields
       label: Reserve Playfields
@@ -1006,7 +1006,7 @@ environment: {}
 startup_variables:
   - key: Srv_Name
     label: Server Name
-    default: AMP Powered Server
+    default: AetherNode Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1018,7 +1018,7 @@ startup_variables:
     sensitive: true
   - key: Srv_Description
     label: Server Description
-    default: AMP Powered Empyrion Server
+    default: AetherNode Empyrion Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1163,6 +1163,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

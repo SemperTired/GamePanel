@@ -43,7 +43,7 @@ config_schema:
       keywords: server,name,sv_hostname
       input_type: text
       param_field_name: sv_hostname
-      default: AMP Powered Jedi Academy Server
+      default: AetherNode Jedi Academy Server
       required: false
       sensitive: false
       hidden: false
@@ -60,7 +60,7 @@ config_schema:
         FieldName: sv_hostname
         InputType: text
         ParamFieldName: sv_hostname
-        DefaultValue: AMP Powered Jedi Academy Server
+        DefaultValue: AetherNode Jedi Academy Server
         EnumValues: {}
     - key: g_motd
       label: Message Of The Day
@@ -802,7 +802,7 @@ config_schema:
       label: Additional Console Variables
       category: Jedi Knight Academy
       subcategory: Server
-      description: Additional console variables that are not otherwise set by AMP can be specified in 'server.cfg'
+      description: Additional console variables that are not otherwise set by AetherPanel can be specified in 'server.cfg'
       keywords: custom,server,variables,cvars,convars,parameters
       input_type: hidden
       param_field_name: CustomConVars
@@ -818,7 +818,7 @@ config_schema:
         DisplayName: Additional Console Variables
         Category: Jedi Knight Academy:stadia_controller
         Subcategory: Server:dns:1
-        Description: Additional console variables that are not otherwise set by AMP can be specified in 'server.cfg'
+        Description: Additional console variables that are not otherwise set by AetherPanel can be specified in 'server.cfg'
         Keywords: custom,server,variables,cvars,convars,parameters
         FieldName: CustomConVars
         InputType: hidden
@@ -1305,7 +1305,7 @@ config_schema:
         - heading: $root
           setting_mappings:
             //: |-
-              This file is controlled by AMP
+              This file is controlled by AetherPanel
               // Use server.cfg for any other desired settings
             exec: server.cfg
             set sv_hostname: sv_hostname
@@ -1350,7 +1350,7 @@ config_schema:
           - Heading: $root
             SettingMappings:
               //: |-
-                This file is controlled by AMP
+                This file is controlled by AetherPanel
                 // Use server.cfg for any other desired settings
               exec: server.cfg
               set sv_hostname: sv_hostname
@@ -1391,7 +1391,7 @@ environment: {}
 startup_variables:
   - key: sv_hostname
     label: Server Name
-    default: AMP Powered Jedi Academy Server
+    default: AetherNode Jedi Academy Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1614,6 +1614,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

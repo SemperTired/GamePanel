@@ -94,7 +94,7 @@ config_schema:
         Sets the full URL to download the server from.
         [Login](https://www.nexusmods.com/skyrimspecialedition/mods/69993?tab=files) to Nexus Mods, select Manual
         Download for the required server version, and continue until the download begins. Then cancel the download and
-        copy the "click here" download URL to AMP. Update the server before the URL expires
+        copy the "click here" download URL to AetherPanel. Update the server before the URL expires
       keywords: download,url
       input_type: url
       param_field_name: DownloadURL
@@ -114,7 +114,7 @@ config_schema:
           Sets the full URL to download the server from.
           [Login](https://www.nexusmods.com/skyrimspecialedition/mods/69993?tab=files) to Nexus Mods, select Manual
           Download for the required server version, and continue until the download begins. Then cancel the download and
-          copy the "click here" download URL to AMP. Update the server before the URL expires
+          copy the "click here" download URL to AetherPanel. Update the server before the URL expires
         Keywords: download,url
         FieldName: DownloadURL
         InputType: url
@@ -130,8 +130,8 @@ config_schema:
       keywords: name,server,sservername
       input_type: text
       param_field_name: GameServer.sServerName
-      default: AMP Powered Skyrim Together Reborn Server
-      placeholder: AMP Powered Skyrim Together Reborn Server
+      default: AetherNode Skyrim Together Reborn Server
+      placeholder: AetherNode Skyrim Together Reborn Server
       required: false
       sensitive: false
       hidden: false
@@ -149,8 +149,8 @@ config_schema:
         InputType: text
         ParamFieldName: GameServer.sServerName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Skyrim Together Reborn Server
-        Placeholder: AMP Powered Skyrim Together Reborn Server
+        DefaultValue: AetherNode Skyrim Together Reborn Server
+        Placeholder: AetherNode Skyrim Together Reborn Server
     - key: bAnnounceServer
       label: Announce Server
       category: Skyrim Together Reborn
@@ -781,7 +781,7 @@ startup_variables:
     sensitive: false
   - key: sServerName
     label: Server Name
-    default: AMP Powered Skyrim Together Reborn Server
+    default: AetherNode Skyrim Together Reborn Server
     customer_editable: true
     required: false
     sensitive: false
@@ -902,6 +902,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -110,7 +110,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: config name
-      default: AMP Powered Mindustry Server
+      default: AetherNode Mindustry Server
       required: false
       sensitive: false
       hidden: false
@@ -129,7 +129,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: config name
         IncludeInCommandLine: true
-        DefaultValue: AMP Powered Mindustry Server
+        DefaultValue: AetherNode Mindustry Server
         EnumValues: {}
     - key: desc
       label: Server Description
@@ -1166,7 +1166,7 @@ config_schema:
       category: Mindustry
       subcategory: Java
       description: >-
-        Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AMP. Use
+        Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AetherPanel. Use
         with care
       keywords: custom,java,arguments,parameters
       input_type: text
@@ -1184,7 +1184,7 @@ config_schema:
         Category: Mindustry:stadia_controller
         Subcategory: Java:code:3
         Description: >-
-          Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AMP. Use
+          Additional Java arguments (not server arguments) as startup parameters that are not otherwise set by AetherPanel. Use
           with care
         Keywords: custom,java,arguments,parameters
         FieldName: CustomJavaArgs
@@ -1211,7 +1211,7 @@ startup_variables:
     sensitive: false
   - key: name
     label: Server Name
-    default: AMP Powered Mindustry Server
+    default: AetherNode Mindustry Server
     customer_editable: true
     required: false
     sensitive: false
@@ -1398,6 +1398,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

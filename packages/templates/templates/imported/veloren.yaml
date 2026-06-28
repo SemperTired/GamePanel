@@ -104,7 +104,7 @@ config_schema:
       keywords: server,name
       input_type: text
       param_field_name: server_name
-      default: Veloren Server - Powered by AMP
+      default: Veloren Server - Hosted by AetherNode
       required: false
       sensitive: false
       hidden: false
@@ -123,7 +123,7 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: server_name
         IncludeInCommandLine: false
-        DefaultValue: Veloren Server - Powered by AMP
+        DefaultValue: Veloren Server - Hosted by AetherNode
         EnumValues: {}
     - key: $MaxUsers
       label: Player Limit
@@ -204,7 +204,7 @@ environment: {}
 startup_variables:
   - key: ServerName
     label: Server Name
-    default: Veloren Server - Powered by AMP
+    default: Veloren Server - Hosted by AetherNode
     customer_editable: true
     required: false
     sensitive: false
@@ -227,6 +227,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

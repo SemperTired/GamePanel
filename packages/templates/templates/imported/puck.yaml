@@ -71,7 +71,7 @@ config_schema:
       keywords: display,server,browser,name
       input_type: text
       param_field_name: $.name
-      default: AMP Powered Puck Server
+      default: AetherNode Puck Server
       required: false
       sensitive: false
       hidden: false
@@ -90,7 +90,7 @@ config_schema:
         FieldName: name
         InputType: text
         ParamFieldName: $.name
-        DefaultValue: AMP Powered Puck Server
+        DefaultValue: AetherNode Puck Server
         EnumValues: {}
     - key: password
       label: Server Password
@@ -413,7 +413,7 @@ environment: {}
 startup_variables:
   - key: name
     label: Server Name
-    default: AMP Powered Puck Server
+    default: AetherNode Puck Server
     customer_editable: true
     required: false
     sensitive: false
@@ -480,6 +480,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

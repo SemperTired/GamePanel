@@ -2,7 +2,7 @@ schema: aetherpanel.template/v1
 id: kaboom
 name: Kaboom!
 category: Imported
-summary: Dedicated server for Kaboom! - AMP Exclusive
+summary: Dedicated server for Kaboom! - AetherPanel Exclusive
 install:
   method: steamcmd
   app_id: '1007'
@@ -667,6 +667,7 @@ backup:
 supported_os:
   - linux
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

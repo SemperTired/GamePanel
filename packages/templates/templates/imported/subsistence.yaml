@@ -168,7 +168,7 @@ config_schema:
       keywords: server,name,servername
       input_type: text
       param_field_name: ColdGame.ColdDedServerSettings.ServerName
-      default: AMP Powered Subsistence Server
+      default: AetherNode Subsistence Server
       required: false
       sensitive: false
       hidden: false
@@ -185,7 +185,7 @@ config_schema:
         FieldName: ServerName
         InputType: text
         ParamFieldName: ColdGame.ColdDedServerSettings.ServerName
-        DefaultValue: AMP Powered Subsistence Server
+        DefaultValue: AetherNode Subsistence Server
         EnumValues: {}
     - key: ServerDescription
       label: Server Description
@@ -226,7 +226,7 @@ config_schema:
       keywords: host,name,hosted,hostedbyname
       input_type: text
       param_field_name: ColdGame.ColdDedServerSettings.HostedByName
-      default: AMP
+      default: AetherPanel
       required: false
       sensitive: false
       hidden: false
@@ -243,7 +243,7 @@ config_schema:
         FieldName: HostedByName
         InputType: text
         ParamFieldName: ColdGame.ColdDedServerSettings.HostedByName
-        DefaultValue: AMP
+        DefaultValue: AetherPanel
         EnumValues: {}
     - key: Password
       label: Server Password
@@ -846,7 +846,7 @@ startup_variables:
     sensitive: false
   - key: ServerName
     label: Server Name
-    default: AMP Powered Subsistence Server
+    default: AetherNode Subsistence Server
     customer_editable: true
     required: false
     sensitive: false
@@ -858,7 +858,7 @@ startup_variables:
     sensitive: false
   - key: HostedByName
     label: Host Name
-    default: AMP
+    default: AetherPanel
     customer_editable: true
     required: false
     sensitive: false
@@ -973,6 +973,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

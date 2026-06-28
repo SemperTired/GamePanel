@@ -1014,8 +1014,8 @@ config_schema:
       keywords: Server,Name,ServerName
       input_type: text
       param_field_name: /MyConfigDedicated/ServerName
-      default: AMP Powered Server
-      placeholder: AMP Powered Server
+      default: AetherNode Server
+      placeholder: AetherNode Server
       required: false
       sensitive: false
       hidden: false
@@ -1034,8 +1034,8 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /MyConfigDedicated/ServerName
         IncludeInCommandLine: false
-        DefaultValue: AMP Powered Server
-        Placeholder: AMP Powered Server
+        DefaultValue: AetherNode Server
+        Placeholder: AetherNode Server
         EnumValues: {}
     - key: WorldName
       label: World Name
@@ -1233,7 +1233,7 @@ config_schema:
       subcategory: General
       description: >-
         MAY NOT WORK WITH TORCH! Enable/Disable the remote API to manage the server from a browser. Remote API Security
-        Key must also be set. NOTE: To work in AMP on Windows in service mode, run the following as Administrator first
+        Key must also be set. NOTE: To work in AetherPanel on Windows in service mode, run the following as Administrator first
         (change 8777 to your Remote API Port if needed): netsh http add urlacl url=http://*:8777/vrageremote/ user="NT
         AUTHORITY\NETWORK SERVICE"
       keywords: Remote,API,Enabled,RemoteApiEnabled
@@ -1255,7 +1255,7 @@ config_schema:
         Subcategory: General:settings:1
         Description: >-
           MAY NOT WORK WITH TORCH! Enable/Disable the remote API to manage the server from a browser. Remote API
-          Security Key must also be set. NOTE: To work in AMP on Windows in service mode, run the following as
+          Security Key must also be set. NOTE: To work in AetherPanel on Windows in service mode, run the following as
           Administrator first (change 8777 to your Remote API Port if needed): netsh http add urlacl
           url=http://*:8777/vrageremote/ user="NT AUTHORITY\NETWORK SERVICE"
         Keywords: Remote,API,Enabled,RemoteApiEnabled
@@ -1339,8 +1339,8 @@ config_schema:
       keywords: Server,Description,ServerDescription
       input_type: Textarea
       param_field_name: /MyConfigDedicated/ServerDescription
-      default: My AMP Powered Space Engineers Server
-      placeholder: My AMP Powered Space Engineers Server
+      default: My AetherNode Space Engineers Server
+      placeholder: My AetherNode Space Engineers Server
       required: false
       sensitive: false
       hidden: false
@@ -1359,8 +1359,8 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /MyConfigDedicated/ServerDescription
         IncludeInCommandLine: false
-        DefaultValue: My AMP Powered Space Engineers Server
-        Placeholder: My AMP Powered Space Engineers Server
+        DefaultValue: My AetherNode Space Engineers Server
+        Placeholder: My AetherNode Space Engineers Server
         EnumValues: {}
     - key: VerboseNetworkLogging
       label: Verbose Network Logging
@@ -1605,8 +1605,8 @@ config_schema:
       keywords: Message,Of,The,Day,MessageOfTheDay
       input_type: Textarea
       param_field_name: /MyConfigDedicated/MessageOfTheDay
-      default: Welcome to my Space Engineers Server, powered by AMP!
-      placeholder: Welcome to my Space Engineers Server, powered by AMP!
+      default: Welcome to my Space Engineers Server, Hosted by AetherNode!
+      placeholder: Welcome to my Space Engineers Server, Hosted by AetherNode!
       required: false
       sensitive: false
       hidden: false
@@ -1625,8 +1625,8 @@ config_schema:
         IsFlagArgument: false
         ParamFieldName: /MyConfigDedicated/MessageOfTheDay
         IncludeInCommandLine: false
-        DefaultValue: Welcome to my Space Engineers Server, powered by AMP!
-        Placeholder: Welcome to my Space Engineers Server, powered by AMP!
+        DefaultValue: Welcome to my Space Engineers Server, Hosted by AetherNode!
+        Placeholder: Welcome to my Space Engineers Server, Hosted by AetherNode!
         EnumValues: {}
     - key: MessageOfTheDayUrl
       label: Message Of The Day URL
@@ -1637,7 +1637,7 @@ config_schema:
       input_type: text
       param_field_name: /MyConfigDedicated/MessageOfTheDayUrl
       default: ''
-      placeholder: https://cubecoders.com/AMP
+      placeholder: https://cubecoders.com/AetherPanel
       required: false
       sensitive: false
       hidden: false
@@ -1657,7 +1657,7 @@ config_schema:
         ParamFieldName: /MyConfigDedicated/MessageOfTheDayUrl
         IncludeInCommandLine: false
         DefaultValue: ''
-        Placeholder: https://cubecoders.com/AMP
+        Placeholder: https://cubecoders.com/AetherPanel
         EnumValues: {}
     - key: SaveChatToLog
       label: Log Chat
@@ -8651,7 +8651,7 @@ startup_variables:
     sensitive: true
   - key: ServerName
     label: Server Name
-    default: AMP Powered Server
+    default: AetherNode Server
     customer_editable: true
     required: false
     sensitive: false
@@ -8711,7 +8711,7 @@ startup_variables:
     sensitive: false
   - key: ServerDescription
     label: Server Description
-    default: My AMP Powered Space Engineers Server
+    default: My AetherNode Space Engineers Server
     customer_editable: true
     required: false
     sensitive: false
@@ -8759,7 +8759,7 @@ startup_variables:
     sensitive: false
   - key: MessageOfTheDay
     label: Message Of The Day
-    default: Welcome to my Space Engineers Server, powered by AMP!
+    default: Welcome to my Space Engineers Server, Hosted by AetherNode!
     customer_editable: true
     required: false
     sensitive: false
@@ -9864,6 +9864,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

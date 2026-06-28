@@ -149,8 +149,8 @@ config_schema:
       keywords: server,session,name,SessionName
       input_type: text
       param_field_name: SessionName
-      default: AMP Powered Myth of Empires Server
-      placeholder: AMP Powered Myth of Empires Server
+      default: AetherNode Myth of Empires Server
+      placeholder: AetherNode Myth of Empires Server
       required: false
       sensitive: false
       hidden: false
@@ -167,8 +167,8 @@ config_schema:
         FieldName: SessionName
         InputType: text
         ParamFieldName: SessionName
-        DefaultValue: AMP Powered Myth of Empires Server
-        Placeholder: AMP Powered Myth of Empires Server
+        DefaultValue: AetherNode Myth of Empires Server
+        Placeholder: AetherNode Myth of Empires Server
         EnumValues: {}
     - key: Description
       label: Server Description
@@ -656,7 +656,7 @@ config_schema:
       description: >-
         Specifies [additional command line
         arguments](https://docs.google.com/spreadsheets/d/1xTy0iQzI6utIqVBSQ4IIOjIyrAeDzLyYpGUVKbjwudY/edit#gid=1781338141)
-        that are not otherwise set by AMP. Alternatively use PrivateServerTool.exe on the client to generate relevant
+        that are not otherwise set by AetherPanel. Alternatively use PrivateServerTool.exe on the client to generate relevant
         command line arguments. Use with care
       keywords: custom,server,arguments
       input_type: text
@@ -676,7 +676,7 @@ config_schema:
         Description: >-
           Specifies [additional command line
           arguments](https://docs.google.com/spreadsheets/d/1xTy0iQzI6utIqVBSQ4IIOjIyrAeDzLyYpGUVKbjwudY/edit#gid=1781338141)
-          that are not otherwise set by AMP. Alternatively use PrivateServerTool.exe on the client to generate relevant
+          that are not otherwise set by AetherPanel. Alternatively use PrivateServerTool.exe on the client to generate relevant
           command line arguments. Use with care
         Keywords: custom,server,arguments
         FieldName: CustomArgs
@@ -1705,7 +1705,7 @@ startup_variables:
     sensitive: false
   - key: SessionName
     label: Server Name
-    default: AMP Powered Myth of Empires Server
+    default: AetherNode Myth of Empires Server
     customer_editable: true
     required: false
     sensitive: false
@@ -2000,6 +2000,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+

@@ -130,8 +130,8 @@ config_schema:
       keywords: server,name,serverName
       input_type: text
       param_field_name: serverName
-      default: AMP Powered Cubic Odyssey Server
-      placeholder: AMP Powered Cubic Odyssey Server
+      default: AetherNode Cubic Odyssey Server
+      placeholder: AetherNode Cubic Odyssey Server
       required: false
       sensitive: false
       hidden: false
@@ -148,8 +148,8 @@ config_schema:
         FieldName: serverName
         InputType: text
         ParamFieldName: serverName
-        DefaultValue: AMP Powered Cubic Odyssey Server
-        Placeholder: AMP Powered Cubic Odyssey Server
+        DefaultValue: AetherNode Cubic Odyssey Server
+        Placeholder: AetherNode Cubic Odyssey Server
         EnumValues: {}
     - key: galaxySeed
       label: Galaxy Seed
@@ -461,7 +461,7 @@ startup_variables:
     sensitive: false
   - key: serverName
     label: Server Name
-    default: AMP Powered Cubic Odyssey Server
+    default: AetherNode Cubic Odyssey Server
     customer_editable: true
     required: false
     sensitive: false
@@ -528,6 +528,7 @@ supported_os:
   - linux
   - windows
 source:
-  type: amp_import
-  url: https://github.com/CubeCoders/AMPTemplates
+  type: external_import
+  url: public-game-template-source
   needs_review: true
+
