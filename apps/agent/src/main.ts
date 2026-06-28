@@ -6,6 +6,7 @@ import { execFile as execFileCallback } from "node:child_process";
 import { promisify } from "node:util";
 import { createDockerRuntime } from "@aetherpanel/runtime-docker";
 import { assertSafeRelativePath, RuntimeCreateInput } from "@aetherpanel/shared";
+import { prepareServiceFiles } from "@aetherpanel/templates";
 
 const port = Number(process.env.AGENT_PORT || 4210);
 const token = process.env.AETHERPANEL_AGENT_TOKEN || "";
@@ -149,7 +150,14 @@ const server = http.createServer(async (request, response) => {
       return send(response, 404, { message: "Not found" });
     }
     if (request.method === "POST" && url.pathname === "/runtime/create") {
-      const runtimeId = await runtime.create(await readJson(request) as RuntimeCreateInput);
+      const input = await readJson(request) as RuntimeCreateInput;
+      if (input.installPlan) {
+        await prepareServiceFiles(input.installPlan as any, {
+          runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true",
+          variables: input.environment || {},
+        });
+      }
+      const runtimeId = await runtime.create(input);
       return send(response, 200, { runtime_id: runtimeId });
     }
     const match = url.pathname.match(/^\/runtime\/([^/]+)(?:\/([^/]+))?$/);

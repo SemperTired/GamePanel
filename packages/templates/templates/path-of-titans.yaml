@@ -7,7 +7,7 @@ install:
   method: alderon
   anonymous: false
   install_dir: /data
-  image: ghcr.io/aetherpanel/alderon-runtime:latest
+  image: debian:bookworm-slim
   cache_key: path-of-titans
   copy_strategy: copy
   preinstall: []

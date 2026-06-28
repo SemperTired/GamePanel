@@ -965,7 +965,7 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
         <div className="space-y-3">
           {(config?.startup_variables || []).map((variable: any) => <label key={variable.key} className="block">
             <span className="mb-1 block text-sm text-slate-300">{variable.label}</span>
-            <input className="field" value={values[variable.key] || ""} onChange={(event) => setValues({ ...values, [variable.key]: event.target.value })} disabled={!variable.customer_editable} />
+            <input className="field" type={variable.sensitive ? "password" : "text"} value={values[variable.key] || ""} onChange={(event) => setValues({ ...values, [variable.key]: event.target.value })} disabled={!variable.customer_editable} />
           </label>)}
           {!config?.startup_variables?.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No startup variables declared for this template yet.</div>}
         </div>

@@ -160,7 +160,7 @@ export class ServicesService {
     await this.data.saveService(service);
     try {
       const installPlan = buildInstallPlan(template, service.id);
-      this.assertInstallReadiness(installPlan);
+      this.assertInstallReadiness(installPlan, service.startup_variables || {});
       await prepareServiceFiles(installPlan, { runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true", variables: service.startup_variables || {} });
       await writeManagedConfigFiles(installPlan, template, service.startup_variables || {});
       const runtime = createDockerRuntime(this.runtimeTargetForService(service));
@@ -196,7 +196,7 @@ export class ServicesService {
       service.power_state = "failed";
       service.provision_error = error instanceof Error ? error.message : String(error);
       await this.data.saveService(service);
-      throw error;
+      throw new BadRequestException(service.provision_error);
     }
     service.updated_at = new Date().toISOString();
     await this.data.saveService(service);
@@ -422,11 +422,13 @@ export class ServicesService {
     };
   }
 
-  private assertInstallReadiness(installPlan: ReturnType<typeof buildInstallPlan>) {
+  private assertInstallReadiness(installPlan: ReturnType<typeof buildInstallPlan>, startupVariables: Record<string, string>) {
     if (process.env.AETHERPANEL_STRICT_TEMPLATE_READINESS === "false") return;
     const missingEnv = installPlan.readiness.required_env.filter((key) => !process.env[key]);
+    const missingCustomerVariables = installPlan.readiness.required_customer_variables.filter((key) => !String(startupVariables[key] || "").trim());
     const blockers = [
       ...missingEnv.map((key) => `Missing environment variable ${key}`),
+      ...missingCustomerVariables.map((key) => `Missing required startup variable ${key}`),
       ...installPlan.readiness.operator_actions,
     ];
     if (blockers.length) throw new BadRequestException(`Template is not ready for live provisioning: ${blockers.join("; ")}`);

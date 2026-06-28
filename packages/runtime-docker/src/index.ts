@@ -41,6 +41,8 @@ export class DockerRuntimeProvider implements RuntimeProvider {
         name: `aether-${input.serviceId}`,
         Image: input.image,
         Env: this.environment(input),
+        WorkingDir: input.dataPath,
+        Cmd: input.startupCommand ? ["sh", "-lc", input.startupCommand] : undefined,
         ExposedPorts: exposed,
         HostConfig: {
           PortBindings: ports,
