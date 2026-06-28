@@ -177,6 +177,9 @@ importers:
       '@aetherpanel/templates':
         specifier: workspace:*
         version: link:../../packages/templates
+      dockerode:
+        specifier: ^4.0.9
+        version: 4.0.12
 
   apps/api:
     dependencies:

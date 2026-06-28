@@ -15,6 +15,9 @@ type EmailRecord = { id: string; to: string; subject: string; body: string; stat
 type ModProvider = { id: string; name: string; configured: boolean; searchable: boolean; web_url: string; note: string };
 type ModSearchItem = { id: string; provider: string; name: string; summary?: string; thumbnail_url?: string; page_url?: string; tags?: string[]; subscriptions?: number; favorited?: number };
 type FileEntry = { name: string; type: "file" | "directory"; size: number; updated_at: string };
+type DockerContainer = { id: string; short_id: string; names: string[]; image: string; created_at: string; state: string; status: string; ports: Array<{ IP?: string; PrivatePort: number; PublicPort?: number; Type: string }>; service_id?: string; aether_managed?: boolean };
+type DockerImage = { id: string; short_id: string; tags: string[]; size: number; created_at: string };
+type DockerInventory = { host: string; info?: { containers: number; containers_running: number; images: number; driver: string; server_version: string } | null; containers: DockerContainer[]; images: DockerImage[] };
 type NavItem = [string, LucideIcon, string];
 
 type DebugEntry = { ts: string; level: "info" | "warn" | "error"; source: string; message: string; detail?: unknown };
@@ -106,7 +109,7 @@ function Shell() {
 
   const navGroups: Array<{ label: string; items: NavItem[] }> = [
     { label: "Operate", items: [["dashboard", LayoutDashboard, "Overview"], ["services", Server, "Instances"], ["console", Terminal, "Console"], ["files", Folder, "Files"], ["config", SlidersHorizontal, "Config"], ["mods", Boxes, "Mods"], ["backups", Database, "Backups"], ["scheduler", CalendarClock, "Scheduler"]] },
-    { label: "Provision", items: [["templates", Gamepad2, "Game Library"], ["provisioning", ListChecks, "Queue"], ["nodes", Network, "Nodes"]] },
+    { label: "Provision", items: [["templates", Gamepad2, "Game Library"], ["provisioning", ListChecks, "Queue"], ["nodes", Network, "Nodes"], ["docker", Boxes, "Docker"]] },
     { label: "Business", items: [["billing", CreditCard, "Billing"], ["users", Users, "Users"], ["mail", Mail, "Mail"], ["audit", Shield, "Audit"]] },
     { label: "Platform", items: [["infrastructure", Router, "Network"], ["settings", Settings, "Settings"], ["debug", Terminal, "Debug"]] },
   ];
@@ -185,6 +188,7 @@ function Shell() {
         {active === "scheduler" && <SchedulerPanel service={selectedService} services={services} />}
         {active === "infrastructure" && <InfrastructurePanel service={selectedService} />}
         {active === "nodes" && <Nodes nodes={nodes} refresh={refresh} />}
+        {active === "docker" && <DockerManager nodes={nodes} services={services} refreshPanel={refresh} />}
         {active === "billing" && <Billing />}
         {active === "mail" && <MailOutbox />}
         {active === "provisioning" && <Provisioning />}
@@ -768,6 +772,141 @@ function Nodes({ nodes, refresh }: { nodes: any[]; refresh: () => Promise<void> 
           <div className="flex justify-between gap-3"><span className="text-slate-500">Data</span><span className="truncate font-mono">{node.data_root || "default"}</span></div>
         </div>
       </article>)}</div> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No nodes registered yet.</div>}
+    </section>
+  </div>;
+}
+
+function DockerManager({ nodes, services, refreshPanel }: { nodes: any[]; services: Service[]; refreshPanel: () => Promise<void> }) {
+  const agentNodes = nodes.filter((node) => node.agent_url);
+  const [nodeId, setNodeId] = useState(agentNodes[0]?.id || nodes[0]?.id || "");
+  const [inventory, setInventory] = useState<DockerInventory | null>(null);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const serviceById = useMemo(() => new Map(services.map((service) => [service.id, service])), [services]);
+
+  async function load(targetNodeId = nodeId) {
+    if (!targetNodeId) return;
+    setLoading(true);
+    setMessage("");
+    try {
+      const data = await api<DockerInventory>(`/nodes/${targetNodeId}/docker`);
+      setInventory(data);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not load Docker inventory");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function removeContainer(container: DockerContainer) {
+    const name = container.names[0] || container.short_id;
+    const confirmation = window.prompt(`Force remove Docker container ${name}? Type REMOVE to confirm.`);
+    if (confirmation !== "REMOVE") return;
+    setLoading(true);
+    setMessage("");
+    try {
+      await api(`/nodes/${nodeId}/docker/containers/${encodeURIComponent(container.id)}`, { method: "DELETE", body: JSON.stringify({ confirm: "REMOVE", force: true }) });
+      await load(nodeId);
+      await refreshPanel();
+      setMessage(`Removed container ${name}.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not remove container");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!nodeId && agentNodes[0]?.id) setNodeId(agentNodes[0].id);
+  }, [agentNodes.length, nodeId]);
+  useEffect(() => { if (nodeId) load(nodeId); }, [nodeId]);
+
+  const containers = inventory?.containers || [];
+  const stale = containers.filter((container) => container.aether_managed && container.service_id && !serviceById.has(container.service_id));
+  const running = containers.filter((container) => container.state === "running").length;
+
+  if (!nodes.length) return <div className="empty-state"><Boxes className="mx-auto mb-4 h-12 w-12 text-cyan" /><h2>No nodes registered</h2><p>Add a node agent before using Docker Manager.</p></div>;
+
+  return <div className="space-y-5">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7">
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-5">
+        <div>
+          <div className="text-sm uppercase tracking-[0.25em] text-cyan">Runtime Operations</div>
+          <h2 className="font-display text-4xl font-bold">Docker Manager</h2>
+          <p className="mt-2 max-w-2xl text-sm text-slate-300">Inspect node containers, identify orphaned AetherPanel instances, and force-remove stale containers when provisioning fails.</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <select className="field min-w-64" value={nodeId} onChange={(event) => setNodeId(event.target.value)}>
+            {nodes.map((node) => <option key={node.id} value={node.id}>{node.name || node.id}{node.agent_url ? "" : " (no agent)"}</option>)}
+          </select>
+          <button className="icon-button" onClick={() => load()} disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />} Refresh</button>
+        </div>
+      </div>
+    </section>
+
+    {message && <div className="rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
+
+    <div className="grid grid-cols-4 gap-4">
+      <div className="metric-card"><Boxes className="text-cyan" /><div className="mt-4 text-3xl font-bold">{containers.length}</div><div className="text-sm font-semibold">Containers</div><p>Total visible on this Docker host.</p></div>
+      <div className="metric-card"><Activity className="text-emerald-300" /><div className="mt-4 text-3xl font-bold">{running}</div><div className="text-sm font-semibold">Running</div><p>Currently active workloads.</p></div>
+      <div className="metric-card"><Shield className="text-amber-200" /><div className="mt-4 text-3xl font-bold">{stale.length}</div><div className="text-sm font-semibold">Stale</div><p>Aether containers without matching services.</p></div>
+      <div className="metric-card"><Database className="text-purple-200" /><div className="mt-4 text-3xl font-bold">{inventory?.images.length || 0}</div><div className="text-sm font-semibold">Images</div><p>{inventory?.info?.driver || "Docker"} storage driver.</p></div>
+    </div>
+
+    {inventory?.info && <section className="command-panel rounded-3xl p-5">
+      <div className="grid grid-cols-5 gap-3 text-sm">
+        <InfoBlock title="Host" items={[["Endpoint", inventory.host], ["Version", inventory.info.server_version], ["Driver", inventory.info.driver]]} />
+        <InfoBlock title="Totals" items={[["Containers", String(inventory.info.containers)], ["Running", String(inventory.info.containers_running)], ["Images", String(inventory.info.images)]]} />
+        <InfoBlock title="AetherPanel" items={[["Managed", String(containers.filter((c) => c.aether_managed).length)], ["Stale", String(stale.length)], ["Services", String(services.length)]]} />
+        <InfoBlock title="Node" items={[["Selected", nodeId], ["Agent", nodes.find((node) => node.id === nodeId)?.agent_url || "not configured"]]} />
+        <InfoBlock title="Safety" items={[["Removal", "requires REMOVE"], ["Volumes", "preserved"], ["Audit", "enabled"]]} />
+      </div>
+    </section>}
+
+    <section className="command-panel rounded-3xl p-5">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="font-display text-2xl">Containers</h2>
+        {stale.length > 0 && <span className="status-pill border-amber-300/30 bg-amber-300/10 text-amber-100">{stale.length} stale detected</span>}
+      </div>
+      <div className="space-y-3">
+        {containers.map((container) => {
+          const service = container.service_id ? serviceById.get(container.service_id) : undefined;
+          const isStale = container.aether_managed && container.service_id && !service;
+          return <article key={container.id} className={`rounded-2xl border p-4 ${isStale ? "border-amber-300/35 bg-amber-300/10" : "border-white/10 bg-white/[0.035]"}`}>
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <strong className="truncate text-lg">{container.names.join(", ") || container.short_id}</strong>
+                  <span className={`status-pill ${container.state === "running" ? "status-good" : ""}`}>{container.state}</span>
+                  {container.aether_managed && <span className="status-pill">AetherPanel</span>}
+                  {isStale && <span className="status-pill border-amber-300/30 bg-amber-300/10 text-amber-100">stale</span>}
+                </div>
+                <div className="mt-1 text-sm text-slate-400">{service ? service.name : container.service_id ? `No service record for ${container.service_id}` : "External Docker container"}</div>
+                <div className="mt-3 grid grid-cols-4 gap-3 text-xs text-slate-300">
+                  <span className="rounded-xl bg-black/25 px-3 py-2"><span className="text-slate-500">ID</span><br /><span className="font-mono text-cyan">{container.short_id}</span></span>
+                  <span className="rounded-xl bg-black/25 px-3 py-2"><span className="text-slate-500">Image</span><br /><span className="font-mono">{container.image}</span></span>
+                  <span className="rounded-xl bg-black/25 px-3 py-2"><span className="text-slate-500">Created</span><br />{new Date(container.created_at).toLocaleString()}</span>
+                  <span className="rounded-xl bg-black/25 px-3 py-2"><span className="text-slate-500">Ports</span><br />{container.ports?.length ? container.ports.map((port) => `${port.PublicPort || "-"}:${port.PrivatePort}/${port.Type}`).join(", ") : "none"}</span>
+                </div>
+              </div>
+              <button className={`control-button ${isStale ? "danger" : ""}`} onClick={() => removeContainer(container)} disabled={loading}>
+                <Trash2 className="h-4 w-4" /> Force Remove
+              </button>
+            </div>
+          </article>;
+        })}
+        {!containers.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No containers returned by this node.</div>}
+      </div>
+    </section>
+
+    <section className="command-panel rounded-3xl p-5">
+      <h2 className="mb-4 font-display text-2xl">Installed Images</h2>
+      <div className="grid grid-cols-3 gap-3">
+        {(inventory?.images || []).slice(0, 36).map((image) => <div key={image.id} className="rounded-2xl border border-white/10 bg-black/20 p-3">
+          <div className="truncate font-mono text-sm text-cyan">{image.tags[0] || image.short_id}</div>
+          <div className="mt-1 text-xs text-slate-500">{(image.size / 1024 / 1024).toFixed(1)} MB · {new Date(image.created_at).toLocaleDateString()}</div>
+        </div>)}
+      </div>
     </section>
   </div>;
 }

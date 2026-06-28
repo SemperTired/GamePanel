@@ -4,6 +4,7 @@ import http from "node:http";
 import path from "node:path";
 import { execFile as execFileCallback } from "node:child_process";
 import { promisify } from "node:util";
+import Docker from "dockerode";
 import { createDockerRuntime } from "@aetherpanel/runtime-docker";
 import { assertSafeRelativePath, RuntimeCreateInput } from "@aetherpanel/shared";
 import { prepareServiceFiles } from "@aetherpanel/templates";
@@ -11,9 +12,19 @@ import { prepareServiceFiles } from "@aetherpanel/templates";
 const port = Number(process.env.AGENT_PORT || 4210);
 const token = process.env.AETHERPANEL_AGENT_TOKEN || "";
 const runtime = createDockerRuntime({ mode: "local", docker_host: process.env.DOCKER_HOST || "unix:///var/run/docker.sock" });
+const docker = new Docker(dockerOptions(process.env.DOCKER_HOST || "unix:///var/run/docker.sock"));
 const dataRoot = () => path.resolve(process.env.AETHERPANEL_DATA_ROOT || "/srv/aetherpanel/services");
 const backupRoot = () => path.resolve(process.env.AETHERPANEL_BACKUP_ROOT || "/srv/aetherpanel/backups");
 const execFile = promisify(execFileCallback);
+
+function dockerOptions(host?: string) {
+  if (!host || host.startsWith("unix://")) return { socketPath: host?.replace("unix://", "") || "/var/run/docker.sock" };
+  if (host.startsWith("tcp://")) {
+    const parsed = new URL(host);
+    return { host: parsed.hostname, port: Number(parsed.port || 2375), protocol: "http" as const };
+  }
+  return { socketPath: "/var/run/docker.sock" };
+}
 
 async function readJson(request: http.IncomingMessage) {
   const chunks: Buffer[] = [];
@@ -114,11 +125,73 @@ async function restoreBackup(serviceId: string, name: string) {
   return { ok: true, name: safeName, restored_at: new Date().toISOString() };
 }
 
+function normalizeContainer(container: Docker.ContainerInfo) {
+  const labels = container.Labels || {};
+  const names = container.Names.map((name) => name.replace(/^\//, ""));
+  const serviceId = names.find((name) => name.startsWith("aether-"))?.replace(/^aether-/, "") || labels["com.aetherpanel.service_id"] || "";
+  return {
+    id: container.Id,
+    short_id: container.Id.slice(0, 12),
+    names,
+    image: container.Image,
+    image_id: container.ImageID,
+    command: container.Command,
+    created_at: new Date(container.Created * 1000).toISOString(),
+    state: container.State,
+    status: container.Status,
+    ports: container.Ports,
+    labels,
+    service_id: serviceId,
+    aether_managed: names.some((name) => name.startsWith("aether-")) || Boolean(serviceId),
+  };
+}
+
+async function listDocker() {
+  const [containers, images, info] = await Promise.all([
+    docker.listContainers({ all: true }),
+    docker.listImages({ all: true }),
+    docker.info().catch(() => null),
+  ]);
+  return {
+    host: process.env.DOCKER_HOST || "unix:///var/run/docker.sock",
+    containers: containers.map(normalizeContainer).sort((a, b) => Number(b.aether_managed) - Number(a.aether_managed) || a.names.join(",").localeCompare(b.names.join(","))),
+    images: images.map((image) => ({
+      id: image.Id,
+      short_id: image.Id.replace(/^sha256:/, "").slice(0, 12),
+      tags: image.RepoTags || [],
+      size: image.Size,
+      created_at: new Date(image.Created * 1000).toISOString(),
+    })),
+    info: info ? { containers: info.Containers, containers_running: info.ContainersRunning, images: info.Images, driver: info.Driver, server_version: info.ServerVersion } : null,
+  };
+}
+
+async function removeDockerContainer(identifier: string, force: boolean) {
+  if (!identifier || !/^[a-zA-Z0-9_.:-]+$/.test(identifier)) throw new Error("Invalid container id or name");
+  const container = docker.getContainer(identifier);
+  const inspected = await container.inspect();
+  await container.remove({ force, v: false });
+  return {
+    ok: true,
+    removed: inspected.Id,
+    name: inspected.Name?.replace(/^\//, ""),
+    state: inspected.State?.Status,
+    force,
+  };
+}
+
 const server = http.createServer(async (request, response) => {
   try {
     if (!authorized(request)) return send(response, 401, { message: "Unauthorized" });
     const url = new URL(request.url || "/", `http://${request.headers.host || "127.0.0.1"}`);
     if (request.method === "GET" && url.pathname === "/health") return send(response, 200, { ok: true, runtime: "docker", host: process.env.DOCKER_HOST || "unix:///var/run/docker.sock" });
+    if (request.method === "GET" && url.pathname === "/docker") return send(response, 200, await listDocker());
+    const dockerContainerMatch = url.pathname.match(/^\/docker\/containers\/([^/]+)$/);
+    if (dockerContainerMatch && request.method === "DELETE") {
+      const body = await readJson(request);
+      if (body.confirm !== "REMOVE") return send(response, 400, { message: "Type REMOVE to confirm container removal" });
+      return send(response, 200, await removeDockerContainer(decodeURIComponent(dockerContainerMatch[1]), body.force !== false));
+    }
     const backupMatch = url.pathname.match(/^\/backups\/([^/]+)$/);
     if (backupMatch) {
       const [, serviceId] = backupMatch;

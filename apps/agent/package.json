@@ -12,6 +12,7 @@
   "dependencies": {
     "@aetherpanel/runtime-docker": "workspace:*",
     "@aetherpanel/shared": "workspace:*",
-    "@aetherpanel/templates": "workspace:*"
+    "@aetherpanel/templates": "workspace:*",
+    "dockerode": "^4.0.9"
   }
 }
