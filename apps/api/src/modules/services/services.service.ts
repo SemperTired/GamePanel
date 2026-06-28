@@ -206,7 +206,7 @@ export class ServicesService {
   async markPaid(id: string, options: { provision?: boolean; start?: boolean } = {}) {
     const service = this.get(id);
     if (service.status === "terminated") throw new BadRequestException("Terminated services cannot be marked paid");
-    const shouldProvision = Boolean(options.provision || !service.runtime_id);
+    const shouldProvision = options.provision === true;
     service.status = "paid";
     service.updated_at = new Date().toISOString();
     await this.data.saveService(service);

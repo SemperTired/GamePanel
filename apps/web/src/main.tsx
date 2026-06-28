@@ -854,6 +854,7 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
   const [openFile, setOpenFile] = useState<any>(null);
   const [fileContent, setFileContent] = useState("");
   const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState<"settings" | "file" | "">("");
 
   async function load() {
     if (!service) return;
@@ -865,9 +866,20 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
 
   async function save() {
     if (!service) return;
-    const data = await api<any>(`/services/${service.id}/configuration/startup`, { method: "PUT", body: JSON.stringify({ values }) });
-    setConfig(data);
-    setMessage("Configuration saved. Restart the service to apply startup changes.");
+    setSaving("settings");
+    setMessage("Saving configuration...");
+    try {
+      const data = await api<any>(`/services/${service.id}/configuration/startup`, { method: "PUT", body: JSON.stringify({ values }) });
+      setConfig(data);
+      setMessage("Configuration saved. Restart the service to apply startup changes.");
+      addDebug("info", "config", `Saved configuration for ${service.name}`, { service_id: service.id });
+    } catch (error) {
+      const detail = normalizeConsoleValue(error, "Configuration save failed.");
+      setMessage(detail);
+      addDebug("error", "config", `Failed saving configuration for ${service.name}`, detail);
+    } finally {
+      setSaving("");
+    }
   }
 
   async function openManagedFile(file: any) {
@@ -882,8 +894,19 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
 
   async function saveManagedFile() {
     if (!service || !openFile) return;
-    await api(`/services/${service.id}/files/content`, { method: "PUT", body: JSON.stringify({ path: openFile.path, content: fileContent }) });
-    setMessage(`Saved ${openFile.path}. Restart the service if the game only reads this at startup.`);
+    setSaving("file");
+    setMessage(`Saving ${openFile.path}...`);
+    try {
+      await api(`/services/${service.id}/files/content`, { method: "PUT", body: JSON.stringify({ path: openFile.path, content: fileContent }) });
+      setMessage(`Saved ${openFile.path}. Restart the service if the game only reads this at startup.`);
+      addDebug("info", "config", `Saved managed file ${openFile.path}`, { service_id: service.id });
+    } catch (error) {
+      const detail = normalizeConsoleValue(error, "File save failed.");
+      setMessage(detail);
+      addDebug("error", "config", `Failed saving managed file ${openFile.path}`, detail);
+    } finally {
+      setSaving("");
+    }
   }
 
   function commandPreview() {
@@ -934,8 +957,9 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
           <h3 className="font-display text-2xl">Game Settings</h3>
           <p className="text-sm text-slate-400">{visibleFields.length} controls imported from AMP metadata for this game template.</p>
         </div>
-        <button className="primary-button" onClick={save}><Save className="h-4 w-4" /> Save Settings</button>
+        <button type="button" className="primary-button" onClick={save} disabled={Boolean(saving)}>{saving === "settings" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saving === "settings" ? "Saving..." : "Save Settings"}</button>
       </div>
+      {message && <div className="mb-5 rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{message}</div>}
       <div className="space-y-5">
         {Object.entries(groupedFields).map(([group, fields]) => <section key={group} className="config-group">
           <div className="mb-3 flex items-center justify-between gap-3">
@@ -961,11 +985,11 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
     </div>
     <div className="grid grid-cols-2 gap-5">
       <div className="command-panel rounded-3xl p-5">
-        <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">Startup Variables</h3><button className="primary-button" onClick={save}><Save className="h-4 w-4" /> Save</button></div>
+        <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">Startup Variables</h3><button type="button" className="primary-button" onClick={save} disabled={Boolean(saving)}>{saving === "settings" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saving === "settings" ? "Saving..." : "Save"}</button></div>
         <div className="space-y-3">
           {(config?.startup_variables || []).map((variable: any) => <label key={variable.key} className="block">
             <span className="mb-1 block text-sm text-slate-300">{variable.label}</span>
-            <input className="field" type={variable.sensitive ? "password" : "text"} value={values[variable.key] || ""} onChange={(event) => setValues({ ...values, [variable.key]: event.target.value })} disabled={!variable.customer_editable} />
+            <input className="field" type={variable.sensitive ? "password" : "text"} value={values[variable.key] || ""} onChange={(event) => setValues((current) => ({ ...current, [variable.key]: event.target.value }))} disabled={!variable.customer_editable} />
           </label>)}
           {!config?.startup_variables?.length && <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No startup variables declared for this template yet.</div>}
         </div>
@@ -986,7 +1010,7 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
     {openFile && <div className="command-panel rounded-3xl p-5">
       <div className="mb-4 flex items-center justify-between gap-3">
         <div><h3 className="font-display text-2xl">{openFile.path}</h3><p className="text-sm text-slate-400">{openFile.type} managed config</p></div>
-        <button className="primary-button" onClick={saveManagedFile} disabled={!openFile.editable}><Save className="h-4 w-4" /> Save File</button>
+        <button type="button" className="primary-button" onClick={saveManagedFile} disabled={!openFile.editable || Boolean(saving)}>{saving === "file" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saving === "file" ? "Saving..." : "Save File"}</button>
       </div>
       <textarea value={fileContent} onChange={(event) => setFileContent(event.target.value)} disabled={!openFile.editable} className="h-[520px] w-full rounded-2xl border border-white/10 bg-black/40 p-4 font-mono text-sm text-emerald-100 outline-none focus:border-cyan/50 disabled:opacity-60" spellCheck={false} />
     </div>}

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Put, Req, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { AuthGuard, RequirePermission } from "../auth/auth.guard.js";
 import { ConfigurationsService } from "./configurations.service.js";
@@ -12,13 +12,12 @@ export class ConfigurationsController {
 
   @Get()
   @RequirePermission("services:read")
-  get(@Param("serviceId") serviceId: string) {
-    return this.configurations.get(serviceId);
+  get(@Param("serviceId") serviceId: string, @Req() request: { user: { sub?: string; role?: string } }) {
+    return this.configurations.get(serviceId, request.user);
   }
 
   @Put("startup")
-  @RequirePermission("services:write")
-  updateStartup(@Param("serviceId") serviceId: string, @Body() body: { values: Record<string, string> }) {
-    return this.configurations.updateStartupVariables(serviceId, body.values || {});
+  updateStartup(@Param("serviceId") serviceId: string, @Body() body: { values: Record<string, string> }, @Req() request: { user: { sub?: string; role?: string } }) {
+    return this.configurations.updateStartupVariables(serviceId, body.values || {}, request.user);
   }
 }

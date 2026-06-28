@@ -17,7 +17,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 RUN corepack enable
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends bash curl tar xz-utils git ca-certificates libstdc++6 \
+  && apt-get install -y --no-install-recommends bash curl tar xz-utils git ca-certificates libstdc++6 libicu72 \
   && rm -rf /var/lib/apt/lists/*
 COPY --from=build /app ./
 EXPOSE 4210
