@@ -131,7 +131,19 @@ AETHERNODE_WAN_IP=75.122.94.89
 NETWORK_APPLY_MODE=dry_run
 ```
 
-Services allocate unique host ports at creation time. Provisioning records network mappings for every exposed port. Keep `NETWORK_APPLY_MODE=dry_run` until the UniFiOS or UPnP write connector is confirmed against production networking.
+Services allocate unique host ports at creation time. Provisioning records network mappings for every exposed port.
+
+For automatic UniFiOS forwarding, open **Network & Ports** in AetherPanel and create a UniFiOS connector:
+
+- `base_url`: the local UniFi console or gateway URL, for example `https://10.1.10.1`.
+- `site_id`: usually `default`.
+- `username/password` or `api_key`: credentials with permission to manage the Network application.
+- `internal_ip`: the LAN IP of the game node that receives forwarded traffic, for example `10.1.10.48`.
+- `wan_ip`: the public IP shown to players, for example `75.122.94.89`.
+- `wan_interface`: usually `wan`.
+- `dry_run`: disable this after the Test action succeeds.
+
+When live mode is enabled, instance provisioning creates or updates UniFi Network port-forward rules named `AetherPanel <instance> <port> <protocol>`. Re-running provisioning is idempotent: existing rules are updated instead of duplicated. Keep `NETWORK_APPLY_MODE=dry_run` for initial staging, then switch to `NETWORK_APPLY_MODE=live` and restart the API before taking paid orders that require automatic public access.
 
 ## Queue Requirements
 

@@ -183,8 +183,13 @@ export class ServicesService {
       service.install = installPlan;
       try {
         service.network_mappings = (await this.infrastructure.applyForService(service.id)).mappings;
-      } catch {
-        service.network_mappings = this.infrastructure.planForService(service.id).mappings;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        service.network_mappings = this.infrastructure.planForService(service.id).mappings.map((mapping: any) => ({
+          ...mapping,
+          applied: false,
+          error: message,
+        }));
       }
     } catch (error) {
       service.status = "failed";

@@ -860,7 +860,20 @@ function ConfigurationPanel({ service }: { service: Service | null }) {
 
 function InfrastructurePanel({ service }: { service: Service | null }) {
   const [connectors, setConnectors] = useState<any[]>([]);
-  const [form, setForm] = useState({ name: "AetherNode UniFi", provider: "unifi_os", base_url: "https://unifi.ui.com", site_id: "default", gateway_ip: "", wan_ip: "", dry_run: true });
+  const [form, setForm] = useState({
+    name: "AetherNode UniFi",
+    provider: "unifi_os",
+    base_url: "https://unifi.ui.com",
+    site_id: "default",
+    username: "",
+    password: "",
+    api_key: "",
+    internal_ip: "",
+    wan_ip: "",
+    wan_interface: "wan",
+    source_ip: "any",
+    dry_run: false,
+  });
   const [plan, setPlan] = useState<any>(null);
   const [message, setMessage] = useState("");
 
@@ -880,6 +893,10 @@ function InfrastructurePanel({ service }: { service: Service | null }) {
     if (!service) return;
     setPlan(await api<any>(`/infrastructure/services/${service.id}/apply-port-forwards`, { method: "POST", body: JSON.stringify({}) }));
   }
+  async function testConnector(id: string) {
+    const result = await api<any>(`/infrastructure/connectors/${id}/test`, { method: "POST", body: JSON.stringify({}) });
+    setMessage(result.message || (result.ok ? "Connector test succeeded." : "Connector test failed."));
+  }
   useEffect(() => { load().catch((error) => setMessage(error.message)); }, []);
   const mappings = plan?.mappings || (service?.network_mappings as any[]) || [];
   const fallbackPorts = service?.ports?.map((port) => ({
@@ -894,17 +911,23 @@ function InfrastructurePanel({ service }: { service: Service | null }) {
   const displayMappings = mappings.length ? mappings : fallbackPorts;
 
   return <div className="space-y-5">
-    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Connection Routing</div><h2 className="font-display text-4xl font-bold">Network & Ports</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Plan and apply the player-facing connection routes for the selected instance. Use dry-run until UniFiOS credentials are confirmed.</p></div></section>
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7"><div className="relative z-10"><div className="text-sm uppercase tracking-[0.25em] text-cyan">Connection Routing</div><h2 className="font-display text-4xl font-bold">Network & Ports</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">When an instance is provisioned, AetherPanel allocates ports and applies UniFiOS forwarding rules so players can connect without manual router work.</p></div></section>
     <div className="grid grid-cols-[420px_1fr] gap-5">
       <div className="command-panel rounded-3xl p-5">
         <h3 className="mb-4 font-display text-2xl">New Connector</h3>
         <div className="space-y-3">
           <input className="field" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Connector name" />
           <select className="field" value={form.provider} onChange={(e) => setForm({ ...form, provider: e.target.value })}><option value="unifi_os">UniFiOS</option><option value="upnp">UPnP</option><option value="manual">Manual</option></select>
-          <input className="field" value={form.base_url} onChange={(e) => setForm({ ...form, base_url: e.target.value })} placeholder="UniFiOS base URL" />
-          <input className="field" value={form.gateway_ip} onChange={(e) => setForm({ ...form, gateway_ip: e.target.value })} placeholder="Internal game node IP" />
+          <input className="field" value={form.base_url} onChange={(e) => setForm({ ...form, base_url: e.target.value })} placeholder="UniFiOS base URL, e.g. https://10.1.10.1" />
+          <input className="field" value={form.site_id} onChange={(e) => setForm({ ...form, site_id: e.target.value })} placeholder="UniFi site id, usually default" />
+          <input className="field" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} placeholder="UniFiOS username" />
+          <input className="field" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="UniFiOS password" />
+          <input className="field" type="password" value={form.api_key} onChange={(e) => setForm({ ...form, api_key: e.target.value })} placeholder="UniFi API key, optional" />
+          <input className="field" value={form.internal_ip} onChange={(e) => setForm({ ...form, internal_ip: e.target.value })} placeholder="Internal game node IP, e.g. 10.1.10.48" />
           <input className="field" value={form.wan_ip} onChange={(e) => setForm({ ...form, wan_ip: e.target.value })} placeholder="WAN IP shown to players" />
-          <label className="flex items-center gap-2 text-sm text-slate-300"><input type="checkbox" checked={form.dry_run} onChange={(e) => setForm({ ...form, dry_run: e.target.checked })} /> Dry run only</label>
+          <input className="field" value={form.wan_interface} onChange={(e) => setForm({ ...form, wan_interface: e.target.value })} placeholder="WAN interface, usually wan" />
+          <input className="field" value={form.source_ip} onChange={(e) => setForm({ ...form, source_ip: e.target.value })} placeholder="Allowed source IP, usually any" />
+          <label className="flex items-center gap-2 text-sm text-slate-300"><input type="checkbox" checked={form.dry_run} onChange={(e) => setForm({ ...form, dry_run: e.target.checked })} /> Dry run only, do not write UniFi rules</label>
           <button className="primary-button w-full" onClick={create}><Plus className="h-4 w-4" /> Save Connector</button>
         </div>
       </div>
@@ -913,18 +936,26 @@ function InfrastructurePanel({ service }: { service: Service | null }) {
           <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">Connectors</h3><span className="status-pill">{connectors.length} total</span></div>
           {connectors.length ? <div className="grid grid-cols-2 gap-3">{connectors.map((connector) => <article key={connector.id} className="record-card">
             <div className="mb-2 flex items-center justify-between gap-3"><strong>{connector.name}</strong><span className={`status-pill ${connector.enabled ? "status-good" : ""}`}>{connector.provider}</span></div>
-            <div className="space-y-2 text-sm text-slate-300"><div className="flex justify-between"><span>WAN</span><strong>{connector.wan_ip || "not set"}</strong></div><div className="flex justify-between"><span>Mode</span><strong>{connector.dry_run ? "dry run" : "live apply"}</strong></div><div className="flex justify-between"><span>Site</span><strong>{connector.site_id || "default"}</strong></div></div>
+            <div className="space-y-2 text-sm text-slate-300">
+              <div className="flex justify-between"><span>WAN</span><strong>{connector.wan_ip || "not set"}</strong></div>
+              <div className="flex justify-between"><span>Node IP</span><strong>{connector.internal_ip || connector.gateway_ip || "not set"}</strong></div>
+              <div className="flex justify-between"><span>Mode</span><strong>{connector.dry_run ? "dry run" : "live apply"}</strong></div>
+              <div className="flex justify-between"><span>Site</span><strong>{connector.site_id || "default"}</strong></div>
+              <div className="flex justify-between"><span>Auth</span><strong>{connector.has_api_key ? "API key" : connector.has_password ? "password" : "missing"}</strong></div>
+            </div>
+            <button className="mt-4 icon-button w-full" onClick={() => testConnector(connector.id)}>Test Connector</button>
           </article>)}</div> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">No infrastructure connectors yet.</div>}
         </div>
         <div className="command-panel rounded-3xl p-5">
           <div className="mb-4 flex items-center justify-between"><div><h3 className="font-display text-2xl">Connection Plan</h3><p className="text-sm text-slate-400">{service ? service.name : "Select an instance to preview routing."}</p></div><div className="flex gap-2"><button className="icon-button" onClick={planPorts}>Plan</button><button className="primary-button" onClick={applyPorts}>Apply</button></div></div>
           {service ? <div className="grid grid-cols-2 gap-3">{displayMappings.map((mapping: any) => <article key={mapping.id || `${mapping.name}-${mapping.external_port}`} className="network-route">
-            <div className="mb-3 flex items-center justify-between gap-3"><strong>{mapping.name || "Game Port"}</strong><span className="status-pill">{mapping.protocol || "tcp"}</span></div>
+            <div className="mb-3 flex items-center justify-between gap-3"><strong>{mapping.name || "Game Port"}</strong><span className={`status-pill ${mapping.applied ? "status-good" : ""}`}>{mapping.applied ? "forwarded" : mapping.protocol || "tcp"}</span></div>
             <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm">
               <div className="rounded-xl bg-black/25 p-3"><div className="text-xs uppercase tracking-[0.16em] text-slate-500">Players</div><div className="font-mono text-cyan">{mapping.wan_ip || "WAN"}:{mapping.external_port || "?"}</div></div>
               <Network className="h-5 w-5 text-slate-500" />
               <div className="rounded-xl bg-black/25 p-3"><div className="text-xs uppercase tracking-[0.16em] text-slate-500">Node</div><div className="font-mono text-emerald-200">{mapping.internal_ip || "LAN"}:{mapping.internal_port || "?"}</div></div>
             </div>
+            {mapping.error && <div className="mt-3 rounded-xl border border-rose-400/20 bg-rose-500/10 px-3 py-2 text-xs text-rose-200">{mapping.error}</div>}
           </article>)}</div> : <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-slate-400">Select a service to generate mappings.</div>}
           {plan?.result && <div className="mt-4 rounded-2xl border border-cyan/20 bg-cyan/10 px-4 py-3 text-sm text-cyan">{plan.result.message || "Port plan updated."}</div>}
         </div>
