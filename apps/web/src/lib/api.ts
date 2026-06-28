@@ -6,6 +6,7 @@ export function token() {
 }
 
 export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const started = Date.now();
   const response = await fetch(`${apiBase}${path}`, {
     ...options,
     headers: {
@@ -23,6 +24,10 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
       body = { message: text.replace(/\s+/g, " ").trim().slice(0, 500) };
     }
   }
+  const event = new CustomEvent("aetherpanel:api", {
+    detail: { path, method: options.method || "GET", status: response.status, ok: response.ok, duration_ms: Date.now() - started, message: body?.message || body?.error },
+  });
+  window.dispatchEvent(event);
   if (!response.ok) throw new Error(body?.message || body?.error || `Request failed ${response.status}`);
   return body;
 }

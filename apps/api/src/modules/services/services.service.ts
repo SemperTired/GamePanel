@@ -394,7 +394,9 @@ export class ServicesService {
   async logs(id: string) {
     const service = this.get(id);
     const runtime = createDockerRuntime(this.runtimeTargetForService(service));
-    return service.runtime_id ? runtime.logs(service.runtime_id) : "[panel] Service has not been provisioned yet.";
+    if (!service.runtime_id) return "[panel] Service has not been provisioned yet.";
+    const logs = await runtime.logs(service.runtime_id);
+    return typeof logs === "string" ? logs : JSON.stringify(logs, null, 2);
   }
 
   async stats(id: string) {

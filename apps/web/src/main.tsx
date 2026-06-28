@@ -17,6 +17,46 @@ type ModSearchItem = { id: string; provider: string; name: string; summary?: str
 type FileEntry = { name: string; type: "file" | "directory"; size: number; updated_at: string };
 type NavItem = [string, LucideIcon, string];
 
+type DebugEntry = { ts: string; level: "info" | "warn" | "error"; source: string; message: string; detail?: unknown };
+const debugBuffer: DebugEntry[] = [];
+const debugListeners = new Set<() => void>();
+
+function normalizeConsoleValue(value: unknown, fallback = "[panel] No console output yet."): string {
+  if (value === null || value === undefined || value === "") return fallback;
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean" || typeof value === "bigint") return String(value);
+  if (value instanceof Error) return `${value.name}: ${value.message}${value.stack ? `\n${value.stack}` : ""}`;
+  if (Array.isArray(value)) return value.map((item) => normalizeConsoleValue(item, "")).join("\n") || fallback;
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    if (typeof record.logs === "string") return record.logs;
+    if (typeof record.message === "string") return record.message;
+    if (Array.isArray(record.lines)) return record.lines.map((line) => normalizeConsoleValue(line, "")).join("\n");
+    try {
+      return JSON.stringify(value, null, 2);
+    } catch {
+      return String(value);
+    }
+  }
+  return String(value);
+}
+
+function addDebug(level: DebugEntry["level"], source: string, message: string, detail?: unknown) {
+  debugBuffer.push({ ts: new Date().toISOString(), level, source, message, detail });
+  if (debugBuffer.length > 400) debugBuffer.splice(0, debugBuffer.length - 400);
+  debugListeners.forEach((listener) => listener());
+}
+
+if (typeof window !== "undefined" && !(window as any).__aetherDebugInstalled) {
+  (window as any).__aetherDebugInstalled = true;
+  window.addEventListener("error", (event) => addDebug("error", "window.error", event.message, { filename: event.filename, lineno: event.lineno, colno: event.colno }));
+  window.addEventListener("unhandledrejection", (event) => addDebug("error", "promise", normalizeConsoleValue(event.reason, "Unhandled promise rejection")));
+  window.addEventListener("aetherpanel:api", ((event: Event) => {
+    const detail = (event as CustomEvent).detail || {};
+    addDebug(detail.ok ? "info" : "error", "api", `${detail.method || "GET"} ${detail.path} -> ${detail.status} (${detail.duration_ms}ms)`, detail);
+  }) as EventListener);
+}
+
 function Shell() {
   const [active, setActive] = useState("dashboard");
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -24,7 +64,7 @@ function Shell() {
   const [nodes, setNodes] = useState<any[]>([]);
   const [audits, setAudits] = useState<any[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [logs, setLogs] = useState("");
+  const [logs, setLogs] = useState<unknown>("");
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
 
@@ -47,7 +87,10 @@ function Shell() {
   useEffect(() => { refresh().catch((error) => { setLoadError(error instanceof Error ? error.message : "Unable to load panel data"); setLoading(false); }); }, []);
   useEffect(() => {
     if (!selectedService) return;
-    api<string>(`/services/${selectedService.id}/logs`).then(setLogs).catch((error) => setLogs(error.message));
+    api<unknown>(`/services/${selectedService.id}/logs`).then(setLogs).catch((error) => {
+      addDebug("error", "logs", error instanceof Error ? error.message : String(error));
+      setLogs(error);
+    });
   }, [selectedService?.id]);
 
   const stats = useMemo(() => ({
@@ -65,7 +108,7 @@ function Shell() {
     { label: "Operate", items: [["dashboard", LayoutDashboard, "Overview"], ["services", Server, "Instances"], ["console", Terminal, "Console"], ["files", Folder, "Files"], ["config", SlidersHorizontal, "Config"], ["mods", Boxes, "Mods"], ["backups", Database, "Backups"], ["scheduler", CalendarClock, "Scheduler"]] },
     { label: "Provision", items: [["templates", Gamepad2, "Game Library"], ["provisioning", ListChecks, "Queue"], ["nodes", Network, "Nodes"]] },
     { label: "Business", items: [["billing", CreditCard, "Billing"], ["users", Users, "Users"], ["mail", Mail, "Mail"], ["audit", Shield, "Audit"]] },
-    { label: "Platform", items: [["infrastructure", Router, "Network"], ["settings", Settings, "Settings"]] },
+    { label: "Platform", items: [["infrastructure", Router, "Network"], ["settings", Settings, "Settings"], ["debug", Terminal, "Debug"]] },
   ];
   const nav = navGroups.flatMap((group) => group.items);
   const selectedTemplate = selectedService ? templates.find((template) => template.id === selectedService.template_id) : null;
@@ -148,6 +191,7 @@ function Shell() {
         {active === "users" && <UsersPanel />}
         {active === "settings" && <SettingsPanel />}
         {active === "audit" && <AuditConsole audits={audits} />}
+        {active === "debug" && <DebugConsole selectedService={selectedService} services={services} templates={templates} nodes={nodes} />}
       </main>
     </div>
   );
@@ -238,6 +282,68 @@ function AuditConsole({ audits }: { audits: any[] }) {
       </div>
     </section>
     <ConsoleFrame title="Audit Console" logs={lines.join("\n") || "[audit] No audit events have been recorded yet."} />
+  </div>;
+}
+
+function DebugConsole({ selectedService, services, templates, nodes }: { selectedService: Service | null; services: Service[]; templates: Template[]; nodes: any[] }) {
+  const [entries, setEntries] = useState<DebugEntry[]>([...debugBuffer]);
+  const [probeOutput, setProbeOutput] = useState<unknown>("[debug] Run a probe to inspect panel flows.");
+  const [busy, setBusy] = useState("");
+
+  useEffect(() => {
+    const listener = () => setEntries([...debugBuffer]);
+    debugListeners.add(listener);
+    listener();
+    return () => { debugListeners.delete(listener); };
+  }, []);
+
+  async function probe(label: string, task: () => Promise<unknown>) {
+    setBusy(label);
+    addDebug("info", "probe", `Starting ${label}`);
+    try {
+      const result = await task();
+      setProbeOutput(result);
+      addDebug("info", "probe", `Completed ${label}`, result);
+    } catch (error) {
+      setProbeOutput(error);
+      addDebug("error", "probe", error instanceof Error ? error.message : String(error));
+    } finally {
+      setBusy("");
+    }
+  }
+
+  const debugLog = entries.length
+    ? entries.map((entry) => `[${new Date(entry.ts).toLocaleTimeString()}] ${entry.level.toUpperCase()} ${entry.source}: ${entry.message}${entry.detail ? `\n${normalizeConsoleValue(entry.detail, "")}` : ""}`).join("\n")
+    : "[debug] No browser/API events captured yet.";
+  const probes = [
+    ["Panel Data", () => Promise.resolve({ services: services.length, templates: templates.length, nodes: nodes.length, selected_service: selectedService?.id || null })],
+    ["Services API", () => api("/services")],
+    ["Nodes API", () => api("/nodes")],
+    ["Billing API", () => api("/billing/gateways")],
+    ["Queue API", () => api("/provisioning/jobs")],
+    ["Selected Logs", () => selectedService ? api(`/services/${selectedService.id}/logs`) : Promise.resolve("No selected service")],
+    ["Selected Stats", () => selectedService ? api(`/services/${selectedService.id}/stats`) : Promise.resolve("No selected service")],
+    ["Selected Config", () => selectedService ? api(`/services/${selectedService.id}/configuration`) : Promise.resolve("No selected service")],
+    ["Selected Files", () => selectedService ? api(`/services/${selectedService.id}/files?path=.`) : Promise.resolve("No selected service")],
+  ] as Array<[string, () => Promise<unknown>]>;
+
+  return <div className="space-y-5">
+    <section className="hero-panel overflow-hidden rounded-[2rem] p-7">
+      <div className="relative z-10 flex items-center justify-between gap-5">
+        <div><div className="text-sm uppercase tracking-[0.25em] text-cyan">Panel Diagnostics</div><h2 className="font-display text-4xl font-bold">Debug Console</h2><p className="mt-2 max-w-2xl text-sm text-slate-300">Review frontend errors, API responses, promise failures, and selected instance probes without opening browser devtools.</p></div>
+        <button className="control-button" onClick={() => { debugBuffer.splice(0); setEntries([]); setProbeOutput("[debug] Cleared."); }}>Clear</button>
+      </div>
+    </section>
+    <div className="grid grid-cols-[360px_1fr] gap-5">
+      <div className="command-panel rounded-3xl p-5">
+        <h3 className="mb-4 font-display text-2xl">Flow Probes</h3>
+        <div className="space-y-2">{probes.map(([label, task]) => <button key={label} className="control-button w-full justify-center" disabled={Boolean(busy)} onClick={() => probe(label, task)}>
+          {busy === label ? <Loader2 className="h-4 w-4 animate-spin" /> : <Terminal className="h-4 w-4" />} {label}
+        </button>)}</div>
+      </div>
+      <ConsoleFrame title="Probe Output" logs={probeOutput} compact />
+    </div>
+    <ConsoleFrame title="Browser/API Event Stream" logs={debugLog} />
   </div>;
 }
 
@@ -544,12 +650,12 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
   </div>;
 }
 
-function ConsolePanel({ service, logs, setLogs }: { service: Service | null; logs: string; setLogs: (value: string) => void }) {
+function ConsolePanel({ service, logs, setLogs }: { service: Service | null; logs: unknown; setLogs: (value: unknown) => void }) {
   const [command, setCommand] = useState("");
   const [busy, setBusy] = useState(false);
   async function refreshLogs() {
     if (!service) return;
-    setLogs(await api<string>(`/services/${service.id}/logs`));
+    setLogs(await api<unknown>(`/services/${service.id}/logs`));
   }
   async function sendCommand(event: React.FormEvent) {
     event.preventDefault();
@@ -557,9 +663,13 @@ function ConsolePanel({ service, logs, setLogs }: { service: Service | null; log
     setBusy(true);
     try {
       await api(`/services/${service.id}/command`, { method: "POST", body: JSON.stringify({ command }) });
-      setLogs(`${logs}\n> ${command}`);
+      setLogs(`${normalizeConsoleValue(logs)}\n> ${command}`);
       setCommand("");
       await refreshLogs();
+      addDebug("info", "console", `Sent command to ${service.name}`, { service_id: service.id, command });
+    } catch (error) {
+      addDebug("error", "console", error instanceof Error ? error.message : String(error));
+      setLogs(error);
     } finally {
       setBusy(false);
     }
@@ -576,8 +686,9 @@ function ConsolePanel({ service, logs, setLogs }: { service: Service | null; log
   </div>;
 }
 
-function ConsoleFrame({ title, logs, compact }: { title: string; logs: string; compact?: boolean }) {
-  const lines = (logs || "[panel] No console output yet.").split(/\r?\n/).slice(compact ? -120 : -500);
+function ConsoleFrame({ title, logs, compact }: { title: string; logs: unknown; compact?: boolean }) {
+  const normalized = normalizeConsoleValue(logs);
+  const lines = normalized.split(/\r?\n/).slice(compact ? -120 : -500);
   return <div className="console-frame rounded-3xl p-5">
     <div className="mb-4 flex items-center justify-between"><h3 className="font-display text-2xl">{title}</h3><span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200">text console</span></div>
     <div className={`${compact ? "h-64" : "h-[620px]"} overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 font-mono text-xs leading-5 text-emerald-100`}>
