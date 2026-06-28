@@ -40,6 +40,12 @@ export class ServicesController {
     return this.services.provision(id);
   }
 
+  @Post(":id/mark-paid")
+  @RequirePermission("services:write")
+  markPaid(@Param("id") id: string, @Body() body: { provision?: boolean; start?: boolean }) {
+    return this.services.markPaid(id, { provision: body?.provision, start: body?.start });
+  }
+
   @Post(":id/reinstall")
   @RequirePermission("services:write")
   reinstall(@Param("id") id: string) {

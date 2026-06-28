@@ -62,4 +62,21 @@ describe("business automation flows", () => {
     expect(result.last_status).toBe("success");
     expect((await services.backups(service.id)).length).toBe(1);
   });
+
+  it("marks an instance paid and provisions it from the operator button flow", async () => {
+    process.env.AETHERPANEL_FORCE_MOCK_RUNTIME = "1";
+    const { services } = servicesForTest();
+    const service = await services.create({
+      name: "Operator Paid Server",
+      template_id: "minecraft-java",
+      owner_user_id: "usr_superadmin",
+      location_id: "local",
+    });
+
+    const result = await services.markPaid(service.id, { provision: true, start: true });
+
+    expect(result.status).toBe("active");
+    expect(result.runtime_id).toBeTruthy();
+    expect(result.power_state).toBe("running");
+  });
 });

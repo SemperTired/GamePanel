@@ -15,7 +15,14 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     },
   });
   const text = await response.text();
-  const body = text ? JSON.parse(text) : null;
+  let body: any = null;
+  if (text) {
+    try {
+      body = JSON.parse(text);
+    } catch {
+      body = { message: text.replace(/\s+/g, " ").trim().slice(0, 500) };
+    }
+  }
   if (!response.ok) throw new Error(body?.message || body?.error || `Request failed ${response.status}`);
   return body;
 }

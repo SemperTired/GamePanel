@@ -203,7 +203,30 @@ export class ServicesService {
     return service;
   }
 
+  async markPaid(id: string, options: { provision?: boolean; start?: boolean } = {}) {
+    const service = this.get(id);
+    if (service.status === "terminated") throw new BadRequestException("Terminated services cannot be marked paid");
+    const shouldProvision = Boolean(options.provision || !service.runtime_id);
+    service.status = "paid";
+    service.updated_at = new Date().toISOString();
+    await this.data.saveService(service);
+
+    let updated = service;
+    if (shouldProvision) updated = await this.provision(id);
+    if (options.start) updated = await this.power(id, "start");
+    await this.data.recordAudit({
+      id: crypto.randomUUID(),
+      actor: "operator",
+      action: "services.mark_paid",
+      target: id,
+      metadata: { provision: shouldProvision, start: Boolean(options.start) },
+      created_at: new Date().toISOString(),
+    });
+    return updated;
+  }
+
   async power(id: string, action: "start" | "stop" | "restart" | "kill") {
+    if (!["start", "stop", "restart", "kill"].includes(action)) throw new BadRequestException("Invalid power action");
     const service = this.get(id);
     if (!service.runtime_id) await this.provision(id);
     const current = this.get(id);

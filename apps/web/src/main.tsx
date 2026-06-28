@@ -434,41 +434,64 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
   const [users, setUsers] = useState<any[]>([]);
   const [edit, setEdit] = useState<Record<string, any>>({});
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [busyAction, setBusyAction] = useState("");
   useEffect(() => { api<any[]>("/users").then(setUsers).catch(() => undefined); }, []);
   useEffect(() => {
     if (!selected) return;
     setEdit({ name: selected.name, owner_user_id: selected.owner_user_id || "", status: selected.status, node_id: selected.node_id || "local", location_id: selected.location_id || "local" });
   }, [selected?.id]);
+
+  async function runAction(label: string, action: () => Promise<Service | null | void>, success: string) {
+    setBusyAction(label);
+    setError("");
+    setMessage("");
+    try {
+      const service = await action();
+      if (service?.id) setSelected(service);
+      await refresh();
+      setMessage(success);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Action failed");
+    } finally {
+      setBusyAction("");
+    }
+  }
+
   async function power(action: string) {
     if (!selected) return;
-    const service = await api<Service>(`/services/${selected.id}/power/${action}`, { method: "POST" });
-    setSelected(service);
-    await refresh();
+    await runAction(`power:${action}`, () => api<Service>(`/services/${selected.id}/power/${action}`, { method: "POST" }), `${action} command sent`);
   }
   async function provision() {
     if (!selected) return;
-    const service = await api<Service>(`/services/${selected.id}/provision`, { method: "POST" });
-    setSelected(service);
-    await refresh();
+    await runAction("provision", () => api<Service>(`/services/${selected.id}/provision`, { method: "POST" }), "Provisioning completed");
+  }
+  async function markPaid(provisionService = false, startService = false) {
+    if (!selected) return;
+    await runAction(
+      provisionService ? "mark-paid-provision" : "mark-paid",
+      () => api<Service>(`/services/${selected.id}/mark-paid`, { method: "POST", body: JSON.stringify({ provision: provisionService, start: startService }) }),
+      provisionService ? "Marked paid and provisioned" : "Marked paid",
+    );
   }
   async function serviceAction(action: "reinstall" | "refresh-cache" | "suspend" | "activate") {
     if (!selected) return;
-    const result = await api<Service | any>(`/services/${selected.id}/${action}`, { method: "POST" });
-    if (result?.id) setSelected(result);
-    await refresh();
+    await runAction(action, async () => {
+      const result = await api<Service | any>(`/services/${selected.id}/${action}`, { method: "POST" });
+      return result?.id ? result : null;
+    }, `${action} completed`);
   }
   async function terminate() {
     if (!selected || !confirm(`Terminate ${selected.name}? This removes the runtime container and service record.`)) return;
-    await api(`/services/${selected.id}`, { method: "DELETE" });
-    setSelected(null);
-    await refresh();
+    await runAction("terminate", async () => {
+      await api(`/services/${selected.id}`, { method: "DELETE" });
+      setSelected(null);
+      return null;
+    }, "Instance terminated");
   }
   async function saveService() {
     if (!selected) return;
-    const updated = await api<Service>(`/services/${selected.id}`, { method: "PUT", body: JSON.stringify(edit) });
-    setSelected(updated);
-    setMessage("Instance settings saved");
-    await refresh();
+    await runAction("save", () => api<Service>(`/services/${selected.id}`, { method: "PUT", body: JSON.stringify(edit) }), "Instance settings saved");
   }
   const template = selected ? templates.find((item: Template) => item.id === selected.template_id) : null;
   return <div className="space-y-5">
@@ -480,16 +503,19 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           <div><h3 className="font-display text-3xl">{selected.name}</h3><div className="mt-1 text-sm text-slate-400">{template?.name || selected.template_id} · {selected.node_id || "local node"}</div></div>
           <div className="flex flex-wrap gap-2">
-            {!selected.runtime_id && <button onClick={provision} className="primary-button"><UploadCloud className="h-4 w-4" /> Provision</button>}
-            {["start", "stop", "restart", "kill"].map((action) => <button key={action} onClick={() => power(action)} className="control-button">{action === "start" ? <Play className="h-4 w-4" /> : action === "stop" ? <Square className="h-4 w-4" /> : <RotateCcw className="h-4 w-4" />} {action}</button>)}
+            <button onClick={() => markPaid(false)} className="control-button" disabled={Boolean(busyAction)}><CreditCard className="h-4 w-4" /> Mark Paid</button>
+            <button onClick={() => markPaid(true)} className="primary-button" disabled={Boolean(busyAction)}>{busyAction === "mark-paid-provision" ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />} Paid + Provision</button>
+            {!selected.runtime_id && <button onClick={provision} className="primary-button" disabled={Boolean(busyAction)}>{busyAction === "provision" ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />} Provision</button>}
+            {["start", "stop", "restart", "kill"].map((action) => <button key={action} onClick={() => power(action)} className="control-button" disabled={Boolean(busyAction)}>{busyAction === `power:${action}` ? <Loader2 className="h-4 w-4 animate-spin" /> : action === "start" ? <Play className="h-4 w-4" /> : action === "stop" ? <Square className="h-4 w-4" /> : <RotateCcw className="h-4 w-4" />} {action}</button>)}
           </div>
         </div>
+        {(message || error) && <div className={`mb-5 rounded-2xl border px-4 py-3 text-sm ${error ? "border-red-400/30 bg-red-400/10 text-red-100" : "border-cyan/20 bg-cyan/10 text-cyan"}`}>{error || message}</div>}
         <div className="mb-5 flex flex-wrap gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-3">
-          <button className="control-button" onClick={() => serviceAction("suspend")}><Shield className="h-4 w-4" /> Suspend</button>
-          <button className="control-button" onClick={() => serviceAction("activate")}><Activity className="h-4 w-4" /> Activate</button>
-          <button className="control-button" onClick={() => serviceAction("reinstall")}><RotateCcw className="h-4 w-4" /> Reinstall</button>
-          <button className="control-button" onClick={() => serviceAction("refresh-cache")}><Database className="h-4 w-4" /> Refresh Cache</button>
-          <button className="control-button border-red-400/40 text-red-100 hover:bg-red-500/10" onClick={terminate}><Trash2 className="h-4 w-4" /> Terminate</button>
+          <button className="control-button" onClick={() => serviceAction("suspend")} disabled={Boolean(busyAction)}><Shield className="h-4 w-4" /> Suspend</button>
+          <button className="control-button" onClick={() => serviceAction("activate")} disabled={Boolean(busyAction)}><Activity className="h-4 w-4" /> Activate</button>
+          <button className="control-button" onClick={() => serviceAction("reinstall")} disabled={Boolean(busyAction)}>{busyAction === "reinstall" ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />} Reinstall</button>
+          <button className="control-button" onClick={() => serviceAction("refresh-cache")} disabled={Boolean(busyAction)}>{busyAction === "refresh-cache" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />} Refresh Cache</button>
+          <button className="control-button border-red-400/40 text-red-100 hover:bg-red-500/10" onClick={terminate} disabled={Boolean(busyAction)}>{busyAction === "terminate" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />} Terminate</button>
         </div>
         <div className="mb-5 grid grid-cols-5 gap-3">
           <DataPoint icon={Activity} label="State" value={selected.power_state} />
@@ -509,8 +535,7 @@ function Services({ services, templates, selected, setSelected, refresh, logs }:
               <label className="setting-field"><span>Name</span><input className="field" value={edit.name || ""} onChange={(event) => setEdit({ ...edit, name: event.target.value })} /></label>
               <label className="setting-field"><span>Owner</span><select className="field" value={edit.owner_user_id || ""} onChange={(event) => setEdit({ ...edit, owner_user_id: event.target.value })}>{users.map((user) => <option key={user.id} value={user.id}>{user.name} - {user.email}</option>)}</select></label>
               <label className="setting-field"><span>Status</span><select className="field" value={edit.status || selected.status} onChange={(event) => setEdit({ ...edit, status: event.target.value })}>{["pending_payment", "paid", "queued", "provisioning", "installing", "active", "suspended", "terminated", "failed"].map((status) => <option key={status} value={status}>{status}</option>)}</select></label>
-              <button className="icon-button w-full" onClick={saveService}><Save className="h-4 w-4" /> Save Instance</button>
-              {message && <div className="rounded-xl border border-cyan/20 bg-cyan/10 px-3 py-2 text-sm text-cyan">{message}</div>}
+              <button className="icon-button w-full" onClick={saveService} disabled={Boolean(busyAction)}>{busyAction === "save" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save Instance</button>
             </div>
           </div>
           <ConsoleFrame title="Live Console Preview" logs={logs} compact />
