@@ -7,7 +7,7 @@ install:
   method: alderon
   anonymous: false
   install_dir: /data
-  image: debian:bookworm-slim
+  image: aetherpanel-game-runtime:latest
   cache_key: path-of-titans
   copy_strategy: copy
   preinstall: []

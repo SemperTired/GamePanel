@@ -37,9 +37,11 @@ export class DockerRuntimeProvider implements RuntimeProvider {
     const exposed = Object.fromEntries(Object.keys(ports).map((key) => [key, {}]));
     try {
       await this.ensureImage(input.image);
+      await this.removeExistingServiceContainer(input.serviceId);
       const container = await this.docker.createContainer({
         name: `aether-${input.serviceId}`,
         Image: input.image,
+        User: this.serviceUser(),
         Env: this.environment(input),
         WorkingDir: input.dataPath,
         Cmd: input.startupCommand ? ["sh", "-lc", input.startupCommand] : undefined,
@@ -70,6 +72,41 @@ export class DockerRuntimeProvider implements RuntimeProvider {
       fs.writeFileSync(path.join(input.hostDataPath, ".aetherpanel-install.json"), JSON.stringify(input.installPlan, null, 2));
       const commands = Array.isArray((input.installPlan as { commands?: unknown }).commands) ? (input.installPlan as { commands: string[] }).commands : [];
       fs.writeFileSync(path.join(input.hostDataPath, "install.aetherpanel.sh"), [`#!/usr/bin/env bash`, `set -euo pipefail`, `cd ${JSON.stringify(input.hostDataPath)}`, ...commands].join("\n") + "\n");
+    }
+    this.normalizeHostPath(input.hostDataPath);
+  }
+
+  private normalizeHostPath(hostDataPath: string) {
+    const uid = Number(process.env.AETHERPANEL_SERVICE_UID || 1000);
+    const gid = Number(process.env.AETHERPANEL_SERVICE_GID || 1000);
+    const applyPermissions = (target: string) => {
+      const stat = fs.statSync(target);
+      fs.chownSync(target, uid, gid);
+      if (stat.isDirectory()) fs.chmodSync(target, 0o755);
+      else if (path.basename(target).endsWith(".sh") || path.basename(target).includes("Server") || path.basename(target).includes("Cmd")) fs.chmodSync(target, 0o755);
+    };
+    const walk = (directory: string) => {
+      applyPermissions(directory);
+      for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+        const target = path.join(directory, entry.name);
+        applyPermissions(target);
+        if (entry.isDirectory()) walk(target);
+      }
+    };
+    walk(hostDataPath);
+  }
+
+  private serviceUser() {
+    return `${process.env.AETHERPANEL_SERVICE_UID || 1000}:${process.env.AETHERPANEL_SERVICE_GID || 1000}`;
+  }
+
+  private async removeExistingServiceContainer(serviceId: string) {
+    if (!this.docker) return;
+    const name = `aether-${serviceId}`;
+    const matches = await this.docker.listContainers({ all: true, filters: { name: [name] } });
+    for (const match of matches) {
+      if (!match.Names.some((containerName) => containerName === `/${name}`)) continue;
+      await this.docker.getContainer(match.Id).remove({ force: true, v: false });
     }
   }
 
