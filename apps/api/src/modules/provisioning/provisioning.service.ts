@@ -53,6 +53,23 @@ export class ProvisioningService implements OnModuleDestroy {
     return [...this.data.provisioningJobs.values()];
   }
 
+  async listFresh() {
+    if (this.data.databaseOnline) {
+      const result = await this.data.pool.query("select data from provisioning_jobs order by updated_at desc");
+      this.data.provisioningJobs.clear();
+      for (const row of result.rows) this.data.provisioningJobs.set(row.data.id, this.deserializeDates(row.data));
+    }
+    return [...this.data.provisioningJobs.values()];
+  }
+
+  private deserializeDates(value: Record<string, unknown>) {
+    return {
+      ...value,
+      created_at: value.created_at ? new Date(String(value.created_at)).toISOString() : new Date().toISOString(),
+      updated_at: value.updated_at ? new Date(String(value.updated_at)).toISOString() : new Date().toISOString(),
+    };
+  }
+
   async onModuleDestroy() {
     await this.queue?.close();
   }

@@ -13,7 +13,7 @@ export class ServicesController {
   @Get()
   @RequirePermission("services:read")
   list(@Req() request: { user: { sub?: string; role?: string } }) {
-    return this.services.list(request.user);
+    return this.services.listFresh(request.user);
   }
 
   @Post()
@@ -25,7 +25,7 @@ export class ServicesController {
   @Get(":id")
   @RequirePermission("services:read")
   get(@Param("id") id: string) {
-    return this.services.get(id);
+    return this.services.getFresh(id);
   }
 
   @Put(":id")

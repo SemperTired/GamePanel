@@ -13,7 +13,7 @@ export class ProvisioningController {
   @Get("jobs")
   @RequirePermission("services:read")
   list() {
-    return this.provisioning.list();
+    return this.provisioning.listFresh();
   }
 
   @Post("services/:serviceId")

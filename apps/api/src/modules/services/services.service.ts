@@ -18,10 +18,26 @@ export class ServicesService {
     return records;
   }
 
+  async listFresh(user?: { sub?: string; role?: string }) {
+    if (!this.data.databaseOnline) return this.list(user);
+    const result = await this.data.pool.query("select data from services order by updated_at desc");
+    for (const row of result.rows) this.data.services.set(row.data.id, this.deserializeDates(row.data) as ServiceRecord);
+    return this.list(user);
+  }
+
   get(id: string) {
     const service = this.data.services.get(id);
     if (!service) throw new NotFoundException("Service not found");
     return service;
+  }
+
+  async getFresh(id: string) {
+    if (this.data.databaseOnline) {
+      const result = await this.data.pool.query("select data from services where id = $1", [id]);
+      const row = result.rows[0];
+      if (row?.data) this.data.services.set(row.data.id, this.deserializeDates(row.data) as ServiceRecord);
+    }
+    return this.get(id);
   }
 
   async update(id: string, input: unknown) {
@@ -432,5 +448,13 @@ export class ServicesService {
       ...installPlan.readiness.operator_actions,
     ];
     if (blockers.length) throw new BadRequestException(`Template is not ready for live provisioning: ${blockers.join("; ")}`);
+  }
+
+  private deserializeDates(value: Record<string, unknown>) {
+    return {
+      ...value,
+      created_at: value.created_at ? new Date(String(value.created_at)).toISOString() : new Date().toISOString(),
+      updated_at: value.updated_at ? new Date(String(value.updated_at)).toISOString() : new Date().toISOString(),
+    };
   }
 }
