@@ -20,6 +20,6 @@ RUN ./node_modules/.bin/tsc -b --force
 FROM node:22-alpine
 WORKDIR /app
 ENV NODE_ENV=production
-RUN corepack enable
+RUN corepack enable && apk add --no-cache openssh-client sshpass
 COPY --from=build /app ./
 CMD ["node", "apps/worker/dist/main.js"]

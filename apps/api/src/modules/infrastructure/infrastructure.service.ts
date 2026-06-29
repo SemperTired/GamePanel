@@ -1,5 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { DataStore, ServiceRecord } from "../data.module.js";
+
+const execFileAsync = promisify(execFile);
 
 type ConnectorProvider = "unifi_os" | "upnp" | "manual";
 
@@ -101,9 +105,19 @@ export class InfrastructureService {
     }
     if (connector.dry_run) return { ok: true, provider: "unifi_os", dry_run: true, message: "Dry-run connector is configured. Toggle live apply to validate UniFiOS writes." };
 
-    const session = await this.unifiSession(connector);
-    const rules = await this.unifiListPortForwards(connector, session);
-    return { ok: true, provider: "unifi_os", message: `UniFiOS connection succeeded. ${rules.length} port-forward rules visible.`, rules: rules.length };
+    try {
+      const session = await this.unifiSession(connector);
+      const rules = await this.unifiListPortForwards(connector, session);
+      return { ok: true, provider: "unifi_os", message: `UniFiOS connection succeeded. ${rules.length} port-forward rules visible.`, rules: rules.length };
+    } catch (error) {
+      await this.sshCommand(connector, "true");
+      return {
+        ok: true,
+        provider: "unifi_os",
+        mode: "ssh",
+        message: `UniFiOS SSH connection succeeded. Web/API login is unavailable, so port automation will use SSH rules. API error: ${error instanceof Error ? error.message : String(error)}`,
+      };
+    }
   }
 
   planForService(serviceId: string, connectorId?: string) {
@@ -179,16 +193,32 @@ export class InfrastructureService {
     };
     if (connector.api_key) return session;
 
-    const response = await fetch(`${baseUrl}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: connector.username, password: connector.password }),
-    });
-    if (!response.ok) throw new BadRequestException(`UniFiOS login failed with HTTP ${response.status}`);
+    this.allowLocalUnifiCertificate(baseUrl);
+    const loginPaths = ["/api/auth/login", "/api/login"];
+    let response: Response | null = null;
+    let lastError = "";
+    for (const path of loginPaths) {
+      response = await fetch(`${baseUrl}${path}`, {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ username: connector.username, password: connector.password }),
+      });
+      if (response.ok) break;
+      const text = await response.text();
+      lastError = `HTTP ${response.status}${text ? `: ${text.slice(0, 180)}` : ""}`;
+      if (response.status !== 404) break;
+    }
+    if (!response?.ok) throw new BadRequestException(`UniFiOS login failed with ${lastError || "no response"}`);
     const setCookie = response.headers.getSetCookie?.() || this.splitSetCookie(response.headers.get("set-cookie"));
     session.cookie = setCookie.map((cookie) => cookie.split(";")[0]).join("; ");
     session.csrfToken = response.headers.get("x-csrf-token") || response.headers.get("x-csrf-token".toLowerCase()) || undefined;
     return session;
+  }
+
+  private allowLocalUnifiCertificate(baseUrl: string) {
+    if (/^https:\/\/(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(baseUrl) && !process.env.NODE_TLS_REJECT_UNAUTHORIZED) {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+    }
   }
 
   private async applyUnifiPortForwards(connector: any, service: ServiceRecord, mappings: NetworkMapping[]) {
@@ -201,8 +231,14 @@ export class InfrastructureService {
       };
     }
 
-    const session = await this.unifiSession(connector);
-    const existing = await this.unifiListPortForwards(connector, session);
+    let session: UnifiSession | null = null;
+    let existing: UnifiRule[] = [];
+    try {
+      session = await this.unifiSession(connector);
+      existing = await this.unifiListPortForwards(connector, session);
+    } catch (error) {
+      return this.applyUnifiSshPortForwards(connector, service, mappings, error);
+    }
     const appliedMappings: NetworkMapping[] = [];
     const failures: string[] = [];
     const results: Array<{ name: string; action: "created" | "updated"; rule_id?: string }> = [];
@@ -239,6 +275,98 @@ export class InfrastructureService {
       results,
       failures,
     };
+  }
+
+  private async applyUnifiSshPortForwards(connector: any, service: ServiceRecord, mappings: NetworkMapping[], apiError?: unknown) {
+    const failures: string[] = [];
+    const results: Array<{ name: string; action: "created" | "updated"; rule_id?: string }> = [];
+    for (const mapping of mappings) {
+      const errors: string[] = [];
+      const protocols = mapping.protocol === "both" ? ["tcp", "udp"] : [mapping.protocol || "tcp"];
+      for (const protocol of protocols) {
+        const comment = this.shellSafe(`aetherpanel-${service.id}-${mapping.external_port}-${protocol}`);
+        const wanInterface = this.shellSafe(this.normalizeSshWanInterface(connector.ssh_wan_interface || connector.wan_interface || "eth8"));
+        const lanCidr = this.shellSafe(connector.lan_cidr || "10.1.10.0/24");
+        const internalIp = this.shellSafe(mapping.internal_ip);
+        const externalPort = Number(mapping.external_port);
+        const internalPort = Number(mapping.internal_port);
+        const proto = this.shellSafe(protocol);
+        const ruleCommands = [
+          `iptables -t nat -C PREROUTING -i ${wanInterface} -p ${proto} --dport ${externalPort} -m comment --comment ${comment} -j DNAT --to-destination ${internalIp}:${internalPort} 2>/dev/null || iptables -t nat -I PREROUTING 1 -i ${wanInterface} -p ${proto} --dport ${externalPort} -m comment --comment ${comment} -j DNAT --to-destination ${internalIp}:${internalPort}`,
+          `iptables -C FORWARD -p ${proto} -d ${internalIp} --dport ${internalPort} -m comment --comment ${comment} -j ACCEPT 2>/dev/null || iptables -I FORWARD 1 -p ${proto} -d ${internalIp} --dport ${internalPort} -m comment --comment ${comment} -j ACCEPT`,
+          `iptables -t nat -C POSTROUTING -s ${lanCidr} -d ${internalIp} -p ${proto} --dport ${internalPort} -m comment --comment ${comment}-hairpin -j MASQUERADE 2>/dev/null || iptables -t nat -I POSTROUTING 1 -s ${lanCidr} -d ${internalIp} -p ${proto} --dport ${internalPort} -m comment --comment ${comment}-hairpin -j MASQUERADE`,
+        ];
+        const script = this.withPersistentUnifiBootRules(ruleCommands, `aetherpanel-${service.id}-${mapping.external_port}-${protocol}`);
+        try {
+          await this.sshCommand(connector, script);
+          results.push({ name: mapping.name, action: "created", rule_id: `${externalPort}/${protocol}` });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          errors.push(message);
+          failures.push(`${mapping.name}: ${message}`);
+        }
+      }
+      mapping.applied = errors.length === 0;
+      mapping.rule_ids = errors.length ? [] : results.map((result) => result.rule_id).filter(Boolean) as string[];
+      mapping.error = errors.join(" | ") || undefined;
+    }
+    return {
+      applied: failures.length === 0,
+      dry_run: false,
+      mode: "ssh",
+      message: failures.length
+        ? `UniFiOS SSH automation applied ${results.length} rules with ${failures.length} failures.`
+        : `UniFiOS SSH automation applied ${results.length} rules for ${service.name}.`,
+      api_error: apiError instanceof Error ? apiError.message : apiError ? String(apiError) : undefined,
+      service_id: service.id,
+      mappings,
+      results,
+      failures,
+    };
+  }
+
+  private async sshCommand(connector: any, command: string) {
+    const host = connector.ssh_host || connector.gateway_host || this.hostnameFromUrl(connector.base_url) || "192.168.1.1";
+    const username = connector.ssh_username || connector.username || "root";
+    const password = connector.ssh_password || connector.password;
+    if (!password) throw new BadRequestException("UniFiOS SSH password is required for SSH port automation.");
+    await execFileAsync("sshpass", [
+      "-p", password,
+      "ssh",
+      "-o", "StrictHostKeyChecking=no",
+      "-o", "UserKnownHostsFile=/dev/null",
+      "-o", "ConnectTimeout=10",
+      `${username}@${host}`,
+      command,
+    ], { timeout: 30000, maxBuffer: 1024 * 1024 });
+  }
+
+  private hostnameFromUrl(value: string) {
+    try {
+      return value ? new URL(value).hostname : "";
+    } catch {
+      return "";
+    }
+  }
+
+  private shellSafe(value: string) {
+    return `'${String(value).replace(/'/g, "'\\''")}'`;
+  }
+
+  private normalizeSshWanInterface(value: string) {
+    return !value || value === "wan" ? "eth8" : value;
+  }
+
+  private withPersistentUnifiBootRules(commands: string[], marker: string) {
+    const file = "/data/on_boot.d/aetherpanel-port-forwards.sh";
+    const body = commands.join("\n");
+    return [
+      "mkdir -p /data/on_boot.d",
+      `[ -s ${file} ] || printf '#!/bin/sh\\n' > ${file}`,
+      `chmod +x ${file}`,
+      commands.join(" && "),
+      `grep -F ${this.shellSafe(marker)} ${file} >/dev/null 2>&1 || cat >> ${file} <<'AETHERPANEL_RULE'\n${body}\nAETHERPANEL_RULE`,
+    ].join(" && ");
   }
 
   private async unifiListPortForwards(connector: any, session: UnifiSession): Promise<UnifiRule[]> {
