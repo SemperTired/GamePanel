@@ -8,6 +8,8 @@ COPY apps/agent/package.json apps/agent/package.json
 COPY packages/shared/package.json packages/shared/package.json
 RUN pnpm install --frozen-lockfile --config.dangerouslyAllowAllBuilds=true
 COPY . .
+ARG VITE_BASE_PATH=/
+ENV VITE_BASE_PATH=${VITE_BASE_PATH}
 RUN cd apps/web && ../../node_modules/.bin/vite build
 
 FROM nginx:1.27-alpine
