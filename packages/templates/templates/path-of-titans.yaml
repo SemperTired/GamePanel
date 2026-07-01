@@ -2,7 +2,7 @@ schema: aetherpanel.template/v1
 id: path-of-titans
 name: Path of Titans
 category: Survival
-summary: Alderon Games dedicated server with future TitanCore, live map, mod, and event tooling hooks.
+summary: Alderon Games dedicated server with customer auth-token install, managed config, mod, and event tooling hooks.
 install:
   method: alderon
   anonymous: false

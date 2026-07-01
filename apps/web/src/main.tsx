@@ -353,18 +353,18 @@ function DebugConsole({ selectedService, services, templates, nodes }: { selecte
 
 function Templates({ templates, nodes, refresh, setActive, setSelectedService }: { templates: Template[]; nodes: any[]; refresh: () => Promise<void>; setActive: (value: string) => void; setSelectedService: (service: Service | null) => void }) {
   const [q, setQ] = useState("");
-  const [selectedId, setSelectedId] = useState("path-of-titans");
-  const [serviceName, setServiceName] = useState("AetherNode Path of Titans Test");
+  const [selectedId, setSelectedId] = useState("minecraft-java");
+  const [serviceName, setServiceName] = useState("AetherNode Test Server");
   const [nodeId] = useState("amp-linux-target");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [editor, setEditor] = useState<any>({});
   const filtered = templates.filter((template) => `${template.name} ${template.category} ${template.id}`.toLowerCase().includes(q.toLowerCase()));
-  const selected = templates.find((template) => template.id === selectedId) || templates.find((template) => template.id === "path-of-titans") || templates[0];
+  const selected = templates.find((template) => template.id === selectedId) || templates.find((template) => template.id === "minecraft-java") || templates[0];
 
   useEffect(() => {
     if (!selected) return;
-    setServiceName((current) => current && current !== "AetherNode Path of Titans Test" ? current : `AetherNode ${selected.name} Test`);
+    setServiceName((current) => current && current !== "AetherNode Test Server" ? current : `AetherNode ${selected.name} Server`);
     setEditor({
       name: selected.name,
       category: selected.category,
@@ -455,7 +455,7 @@ function Templates({ templates, nodes, refresh, setActive, setSelectedService }:
             <h3 className="font-display text-2xl">Game Library</h3>
             <p className="text-sm text-slate-400">Curated templates deploy immediately. Imported templates are visible but marked for review.</p>
           </div>
-          <button className="primary-button" onClick={() => { setQ("Path of Titans"); setSelectedId("path-of-titans"); }}>Path of Titans Test</button>
+          <button className="primary-button" onClick={() => { setQ(""); setSelectedId("minecraft-java"); }}>Quick Test Server</button>
         </div>
         <div className="relative mb-4"><Search className="absolute left-4 top-3.5 h-4 w-4 text-slate-500" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search 247 supported games..." className="field pl-11" /></div>
         <div className="template-grid">
@@ -1376,6 +1376,8 @@ function Mods({ service, refresh }: any) {
   if (!service) {
     return <div className="empty-state"><Boxes className="mx-auto mb-4 h-12 w-12 text-cyan" /><h2>Select a server</h2><p>Choose a service first, then AetherPanel will show the mod providers supported by that game.</p></div>;
   }
+  const serviceGameLabel = `${service.template_id || ""} ${service.name || ""}`.toLowerCase();
+  const titanCoreCompatible = serviceGameLabel.includes("path-of-titans") || serviceGameLabel.includes("path of titans");
 
   return <div className="space-y-6">
     <section className="hero-panel overflow-hidden rounded-[2rem] p-7">
@@ -1391,6 +1393,25 @@ function Mods({ service, refresh }: any) {
         </div>
       </div>
     </section>
+
+    {titanCoreCompatible && <section className="command-panel rounded-3xl p-5">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div className="mb-1 text-xs uppercase tracking-[0.22em] text-violet-200">Compatible Add-On</div>
+          <h3 className="font-display text-2xl">TitanCore</h3>
+          <p className="mt-1 max-w-3xl text-sm text-slate-300">Optional managed Discord automation for Path of Titans communities. Add it to this server for live community tools, staff workflows, and AetherNode-supported bot maintenance.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="rounded-2xl border border-violet-300/30 bg-violet-400/10 px-4 py-3 text-right">
+            <div className="font-display text-2xl text-white">$5</div>
+            <div className="text-xs uppercase tracking-[0.18em] text-slate-300">per month</div>
+          </div>
+          <button className="primary-button" onClick={() => setMessage("TitanCore add-on selected. Billing attachment will be completed through the AetherNode checkout workflow.")}>
+            <Plus className="h-4 w-4" /> Add TitanCore
+          </button>
+        </div>
+      </div>
+    </section>}
 
     <section className="grid grid-cols-[320px_1fr] gap-5">
       <aside className="command-panel rounded-3xl p-5">
