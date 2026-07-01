@@ -3,6 +3,15 @@ import { PortProtocol } from "@aetherpanel/shared";
 import { ServiceRecord } from "../data.module.js";
 import { InfrastructureService } from "./infrastructure.service.js";
 
+const execFileMock = vi.hoisted(() => vi.fn((...args: unknown[]) => {
+  const callback = args.at(-1) as (error: Error | null, stdout?: string, stderr?: string) => void;
+  callback(null, "", "");
+}));
+
+vi.mock("node:child_process", () => ({
+  execFile: execFileMock,
+}));
+
 function store() {
   const data: any = {
     infrastructureConnectors: new Map(),
@@ -32,6 +41,7 @@ function serviceRecord(protocol: PortProtocol = "both"): ServiceRecord {
 
 afterEach(() => {
   vi.restoreAllMocks();
+  execFileMock.mockClear();
 });
 
 describe("InfrastructureService", () => {
@@ -55,11 +65,12 @@ describe("InfrastructureService", () => {
     const result = await infrastructure.applyForService(service.id);
 
     expect(fetchSpy).not.toHaveBeenCalled();
+    expect(execFileMock).not.toHaveBeenCalled();
     expect(result.result.dry_run).toBe(true);
     expect((service.network_mappings as any[])[0]).toMatchObject({ external_port: 30000, internal_ip: "10.1.10.48", applied: false });
   });
 
-  it("creates idempotent UniFiOS port-forward rules for each exposed protocol", async () => {
+  it("creates idempotent UniFiOS SSH port-forward rules for each exposed protocol", async () => {
     const data = store();
     const service = serviceRecord("both");
     data.services.set(service.id, service);
@@ -74,24 +85,16 @@ describe("InfrastructureService", () => {
       wan_ip: "75.122.94.89",
       dry_run: false,
     });
-    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      ok: true,
-      status: 200,
-      text: async () => JSON.stringify({ data: [] }),
-      headers: {
-        get: (name: string) => name.toLowerCase() === "set-cookie" ? "TOKEN=abc; Path=/" : null,
-        getSetCookie: () => ["TOKEN=abc; Path=/"],
-      },
-    } as any);
+    const fetchMock = vi.spyOn(globalThis, "fetch");
 
     const result = await infrastructure.applyForService(service.id);
-    const sentBodies = fetchMock.mock.calls
-      .map((call) => call[1] as RequestInit | undefined)
-      .filter((init) => init?.method === "POST" && init.body)
-      .map((init) => JSON.parse(String(init?.body)));
+    const sshCommands = execFileMock.mock.calls.map((call) => (call[1] as string[]).at(-1) || "").join("\n");
 
     expect(result.result.applied).toBe(true);
-    expect(sentBodies.some((body) => body.proto === "tcp" && body.fwd_ip === "10.1.10.48")).toBe(true);
-    expect(sentBodies.some((body) => body.proto === "udp" && body.fwd_ip === "10.1.10.48")).toBe(true);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(sshCommands).toContain("-p 'tcp' --dport 30000");
+    expect(sshCommands).toContain("-p 'udp' --dport 30000");
+    expect(sshCommands).toContain("--to-destination '10.1.10.48':30000");
+    expect(sshCommands).toContain("-d '75.122.94.89'");
   });
 });

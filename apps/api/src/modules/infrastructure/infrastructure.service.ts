@@ -100,22 +100,20 @@ export class InfrastructureService {
     if (connector.provider === "manual") return { ok: true, provider: "manual", message: "Manual connector requires no API access." };
     if (connector.provider === "upnp") return { ok: false, provider: "upnp", message: "UPnP discovery is not enabled in this Node runtime yet. Use UniFiOS API or manual mappings." };
     if (!connector.base_url) return { ok: false, provider: connector.provider, message: "UniFiOS base URL is required." };
-    if (!connector.api_key && (!connector.username || !connector.password)) {
-      return { ok: false, provider: connector.provider, message: "UniFiOS username/password or API key is required." };
+    if (!this.unifiSshPassword(connector)) {
+      return { ok: false, provider: connector.provider, mode: "ssh", message: "UniFiOS SSH password is required." };
     }
     if (connector.dry_run) return { ok: true, provider: "unifi_os", dry_run: true, message: "Dry-run connector is configured. Toggle live apply to validate UniFiOS writes." };
 
     try {
-      const session = await this.unifiSession(connector);
-      const rules = await this.unifiListPortForwards(connector, session);
-      return { ok: true, provider: "unifi_os", message: `UniFiOS connection succeeded. ${rules.length} port-forward rules visible.`, rules: rules.length };
-    } catch (error) {
       await this.sshCommand(connector, "true");
+      return { ok: true, provider: "unifi_os", mode: "ssh", message: "UniFiOS SSH connection succeeded. Port automation is locked to SSH mode." };
+    } catch (error) {
       return {
-        ok: true,
+        ok: false,
         provider: "unifi_os",
         mode: "ssh",
-        message: `UniFiOS SSH connection succeeded. Web/API login is unavailable, so port automation will use SSH rules. API error: ${error instanceof Error ? error.message : String(error)}`,
+        message: `UniFiOS SSH connection failed: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
@@ -138,7 +136,15 @@ export class InfrastructureService {
     if (!connector) throw new BadRequestException("No infrastructure connector is configured");
     const mappings = this.buildMappings(service, connector);
     const result = connector.provider === "unifi_os"
-      ? await this.applyUnifiPortForwards(connector, service, mappings)
+      ? connector.dry_run
+        ? {
+          applied: false,
+          dry_run: true,
+          mode: "ssh",
+          message: "Dry run only. SSH port-forward commands were generated but not executed.",
+          mappings: mappings.map((mapping) => ({ ...mapping, applied: false })),
+        }
+        : await this.applyUnifiSshPortForwards(connector, service, mappings)
       : { applied: false, dry_run: true, message: `${connector.provider} connector recorded mappings only.`, mappings };
 
     service.network_mappings = result.mappings || mappings;
@@ -286,7 +292,8 @@ export class InfrastructureService {
       for (const protocol of protocols) {
         const comment = this.shellSafe(`aetherpanel-${service.id}-${mapping.external_port}-${protocol}`);
         const wanInterface = this.shellSafe(this.normalizeSshWanInterface(connector.ssh_wan_interface || connector.wan_interface || "eth8"));
-        const lanCidr = this.shellSafe(connector.lan_cidr || "10.1.10.0/24");
+        const lanCidrs = this.sshLanCidrs(connector);
+        const wanIp = this.shellSafe(mapping.wan_ip || connector.wan_ip || "");
         const internalIp = this.shellSafe(mapping.internal_ip);
         const externalPort = Number(mapping.external_port);
         const internalPort = Number(mapping.internal_port);
@@ -294,7 +301,13 @@ export class InfrastructureService {
         const ruleCommands = [
           `iptables -t nat -C PREROUTING -i ${wanInterface} -p ${proto} --dport ${externalPort} -m comment --comment ${comment} -j DNAT --to-destination ${internalIp}:${internalPort} 2>/dev/null || iptables -t nat -I PREROUTING 1 -i ${wanInterface} -p ${proto} --dport ${externalPort} -m comment --comment ${comment} -j DNAT --to-destination ${internalIp}:${internalPort}`,
           `iptables -C FORWARD -p ${proto} -d ${internalIp} --dport ${internalPort} -m comment --comment ${comment} -j ACCEPT 2>/dev/null || iptables -I FORWARD 1 -p ${proto} -d ${internalIp} --dport ${internalPort} -m comment --comment ${comment} -j ACCEPT`,
-          `iptables -t nat -C POSTROUTING -s ${lanCidr} -d ${internalIp} -p ${proto} --dport ${internalPort} -m comment --comment ${comment}-hairpin -j MASQUERADE 2>/dev/null || iptables -t nat -I POSTROUTING 1 -s ${lanCidr} -d ${internalIp} -p ${proto} --dport ${internalPort} -m comment --comment ${comment}-hairpin -j MASQUERADE`,
+          ...lanCidrs.flatMap((lanCidr) => {
+            const safeLanCidr = this.shellSafe(lanCidr);
+            return [
+              `iptables -t nat -C PREROUTING -s ${safeLanCidr} -d ${wanIp} -p ${proto} --dport ${externalPort} -m comment --comment ${comment}-hairpin-dnat-${this.shellSafe(this.safeRuleSegment(lanCidr))} -j DNAT --to-destination ${internalIp}:${internalPort} 2>/dev/null || iptables -t nat -I PREROUTING 1 -s ${safeLanCidr} -d ${wanIp} -p ${proto} --dport ${externalPort} -m comment --comment ${comment}-hairpin-dnat-${this.shellSafe(this.safeRuleSegment(lanCidr))} -j DNAT --to-destination ${internalIp}:${internalPort}`,
+              `iptables -t nat -C POSTROUTING -s ${safeLanCidr} -d ${internalIp} -p ${proto} --dport ${internalPort} -m comment --comment ${comment}-hairpin-snat-${this.shellSafe(this.safeRuleSegment(lanCidr))} -j MASQUERADE 2>/dev/null || iptables -t nat -I POSTROUTING 1 -s ${safeLanCidr} -d ${internalIp} -p ${proto} --dport ${internalPort} -m comment --comment ${comment}-hairpin-snat-${this.shellSafe(this.safeRuleSegment(lanCidr))} -j MASQUERADE`,
+            ];
+          }),
         ];
         const script = this.withPersistentUnifiBootRules(ruleCommands, `aetherpanel-${service.id}-${mapping.external_port}-${protocol}`);
         try {
@@ -328,7 +341,7 @@ export class InfrastructureService {
   private async sshCommand(connector: any, command: string) {
     const host = connector.ssh_host || connector.gateway_host || this.hostnameFromUrl(connector.base_url) || "192.168.1.1";
     const username = connector.ssh_username || connector.username || "root";
-    const password = connector.ssh_password || connector.password;
+    const password = this.unifiSshPassword(connector);
     if (!password) throw new BadRequestException("UniFiOS SSH password is required for SSH port automation.");
     await execFileAsync("sshpass", [
       "-p", password,
@@ -339,6 +352,10 @@ export class InfrastructureService {
       `${username}@${host}`,
       command,
     ], { timeout: 30000, maxBuffer: 1024 * 1024 });
+  }
+
+  private unifiSshPassword(connector: any) {
+    return connector.ssh_password || connector.password;
   }
 
   private hostnameFromUrl(value: string) {
@@ -355,6 +372,18 @@ export class InfrastructureService {
 
   private normalizeSshWanInterface(value: string) {
     return !value || value === "wan" ? "eth8" : value;
+  }
+
+  private sshLanCidrs(connector: any): string[] {
+    const configured: string[] = Array.isArray(connector.lan_cidrs)
+      ? connector.lan_cidrs.map((value: unknown) => String(value))
+      : String(connector.lan_cidr || "").split(",");
+    const cidrs = configured.map((value) => value.trim()).filter(Boolean);
+    return [...new Set(cidrs.length ? cidrs : ["10.1.10.0/24", "192.168.1.0/24"])];
+  }
+
+  private safeRuleSegment(value: string) {
+    return value.replace(/[^a-zA-Z0-9_-]+/g, "-").replace(/^-+|-+$/g, "") || "lan";
   }
 
   private withPersistentUnifiBootRules(commands: string[], marker: string) {

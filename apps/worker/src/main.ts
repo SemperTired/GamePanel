@@ -38,8 +38,11 @@ async function markServiceFailed(serviceId: string, error: unknown) {
   );
 }
 
-async function prepareInstallFiles(service: any, template: any, requestId: string) {
-  const plan = buildInstallPlan(template, service.id);
+async function prepareInstallFiles(service: any, template: any, requestId: string, node: Record<string, unknown> = {}) {
+  const plan = buildInstallPlan(template, service.id, {
+    dataRoot: typeof node.data_root === "string" && node.data_root.trim() ? node.data_root : undefined,
+    cacheRoot: typeof node.cache_root === "string" && node.cache_root.trim() ? node.cache_root : undefined,
+  });
   await updateJob(requestId, "installing", { step: "prepare_files", install: plan });
   if (process.env.AETHERPANEL_RUN_INSTALLERS === "true" && plan.commands.length) await updateJob(requestId, "installing", { step: "run_installer", command_count: plan.commands.length });
   await prepareServiceFiles(plan, { runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true", variables: service.startup_variables || {} });
@@ -307,7 +310,7 @@ async function provisionService(serviceId: string, requestId: string) {
 
   const template = loadTemplates().find((candidate) => candidate.id === service.template_id);
   if (!template) throw new Error(`Template ${service.template_id} not found`);
-  const installPlan = await prepareInstallFiles(service, template, requestId);
+  const installPlan = await prepareInstallFiles(service, template, requestId, node);
 
   await pool.query("update services set status = $1, data = data || $2::jsonb, updated_at = now() where id = $3", [
     "installing",
@@ -325,7 +328,7 @@ async function provisionService(serviceId: string, requestId: string) {
     hostDataPath: installPlan.servicePath,
     memoryMb: template.resources.recommended_ram_mb,
     dataPath: "/data",
-    startupCommand: template.runtime.startup,
+    startupCommand: template.install.method === "docker_image" ? undefined : template.runtime.startup,
     installPlan,
   });
 

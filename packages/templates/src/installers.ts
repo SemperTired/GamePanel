@@ -31,9 +31,11 @@ export function cacheRoot(): string {
   return path.resolve(process.env.AETHERPANEL_CACHE_ROOT || path.join(dataRoot(), "_cache"));
 }
 
-export function buildInstallPlan(template: GameTemplate, serviceId: string): InstallPlan {
+export function buildInstallPlan(template: GameTemplate, serviceId: string, roots: { dataRoot?: string; cacheRoot?: string } = {}): InstallPlan {
   const installDir = template.install.install_dir || "/data";
   const cacheKey = safeSegment(template.install.cache_key || template.install.app_id || template.id);
+  const resolvedDataRoot = roots.dataRoot ? path.resolve(roots.dataRoot) : dataRoot();
+  const resolvedCacheRoot = roots.cacheRoot ? path.resolve(roots.cacheRoot) : cacheRoot();
   const method = template.install.method;
   const commands: string[] = [];
   const warnings: string[] = [];
@@ -101,8 +103,8 @@ EOF`);
   return {
     method,
     cacheKey,
-    cachePath: path.join(cacheRoot(), cacheKey),
-    servicePath: path.join(dataRoot(), serviceId),
+    cachePath: path.join(resolvedCacheRoot, cacheKey),
+    servicePath: path.join(resolvedDataRoot, serviceId),
     installDir,
     copyStrategy: template.install.copy_strategy,
     image: template.install.image || "ghcr.io/aetherpanel/steamcmd:latest",

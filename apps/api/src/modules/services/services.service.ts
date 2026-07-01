@@ -175,7 +175,7 @@ export class ServicesService {
     service.updated_at = new Date().toISOString();
     await this.data.saveService(service);
     try {
-      const installPlan = buildInstallPlan(template, service.id);
+      const installPlan = buildInstallPlan(template, service.id, this.installRootsForService(service));
       this.assertInstallReadiness(installPlan, service.startup_variables || {});
       await prepareServiceFiles(installPlan, { runInstallers: process.env.AETHERPANEL_RUN_INSTALLERS === "true", variables: service.startup_variables || {} });
       await writeManagedConfigFiles(installPlan, template, service.startup_variables || {});
@@ -190,7 +190,7 @@ export class ServicesService {
         hostDataPath: installPlan.servicePath,
         memoryMb: template.resources.recommended_ram_mb,
         dataPath: "/data",
-        startupCommand: template.runtime.startup,
+        startupCommand: template.install.method === "docker_image" ? undefined : template.runtime.startup,
         installPlan,
       });
       service.runtime_id = runtimeId;
@@ -435,6 +435,14 @@ export class ServicesService {
       docker_host: String(node?.docker_host || process.env.DOCKER_HOST || ""),
       agent_url: String(node?.agent_url || ""),
       agent_token: String(node?.agent_token || process.env.AETHERPANEL_AGENT_TOKEN || ""),
+    };
+  }
+
+  private installRootsForService(service: ServiceRecord) {
+    const node = (service.node_id ? this.data.nodes.get(service.node_id) : null) as Record<string, unknown> | null;
+    return {
+      dataRoot: typeof node?.data_root === "string" && node.data_root.trim() ? node.data_root : undefined,
+      cacheRoot: typeof node?.cache_root === "string" && node.cache_root.trim() ? node.cache_root : undefined,
     };
   }
 
